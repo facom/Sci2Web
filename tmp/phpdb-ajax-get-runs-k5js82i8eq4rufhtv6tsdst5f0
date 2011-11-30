@@ -62,7 +62,7 @@ SYMBOLS = Array
     [35] => 0
 )
 
-RANDID = d34z7
+RANDID = b4bqi
 ROOTPATH = /var/www/html
 SERVER = http://urania.udea.edu.co
 PAGENAME = ajax-get-runs.php
@@ -83,8 +83,8 @@ QSTRALL = TabId=5&TabId=5&TabId=5
 TabId = 5
 DATE = Array
 (
-    [seconds] => 44
-    [minutes] => 34
+    [seconds] => 4
+    [minutes] => 35
     [hours] => 17
     [mday] => 30
     [wday] => 3
@@ -93,7 +93,7 @@ DATE = Array
     [yday] => 333
     [weekday] => Wednesday
     [month] => November
-    [0] => 1322692484
+    [0] => 1322692504
 )
 
 DOCTYPE = <!doctype html public "-//W3C//DTD XHTML 1.0 Transitional//EN"
