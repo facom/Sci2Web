@@ -62,7 +62,7 @@ SYMBOLS = Array
     [35] => 0
 )
 
-RANDID = sr432
+RANDID = 805j5
 ROOTPATH = /var/www/html
 SERVER = http://urania.udea.edu.co
 PAGENAME = app.php
@@ -83,8 +83,8 @@ QSTRALL = TabId=5&TabId=5&TabId=5
 TabId = 5
 DATE = Array
 (
-    [seconds] => 1
-    [minutes] => 24
+    [seconds] => 15
+    [minutes] => 34
     [hours] => 17
     [mday] => 30
     [wday] => 3
@@ -93,7 +93,7 @@ DATE = Array
     [yday] => 333
     [weekday] => Wednesday
     [month] => November
-    [0] => 1322691841
+    [0] => 1322692455
 )
 
 DOCTYPE = <!doctype html public "-//W3C//DTD XHTML 1.0 Transitional//EN"

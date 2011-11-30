@@ -1,3 +1,13 @@
-Wed Nov 30 17:33:58 COT 2011
+Wed Nov 30 17:34:45 COT 2011
 SQL File:
 
+================================================================================
+SQL query 1:
+    select * from runs where run_code='gk67lruk'
+Result size or errors:
+1
+================================================================================
+SQL query 2:
+    select * from runs where run_code='gk67lruk'
+Result size or errors:
+1

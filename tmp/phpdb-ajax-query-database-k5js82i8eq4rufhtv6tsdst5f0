@@ -62,7 +62,7 @@ SYMBOLS = Array
     [35] => 0
 )
 
-RANDID = 6upes
+RANDID = 4zghc
 ROOTPATH = /var/www/html
 SERVER = http://urania.udea.edu.co
 PAGENAME = ajax-query-database.php
@@ -83,8 +83,8 @@ QSTRALL = Query=&Query=&Query=
 Query = 
 DATE = Array
 (
-    [seconds] => 4
-    [minutes] => 24
+    [seconds] => 18
+    [minutes] => 34
     [hours] => 17
     [mday] => 30
     [wday] => 3
@@ -93,7 +93,7 @@ DATE = Array
     [yday] => 333
     [weekday] => Wednesday
     [month] => November
-    [0] => 1322691844
+    [0] => 1322692458
 )
 
 DOCTYPE = <!doctype html public "-//W3C//DTD XHTML 1.0 Transitional//EN"
