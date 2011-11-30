@@ -1,0 +1,405 @@
+#!/usr/bin/python
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# PYTHON SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+import sys
+import os
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GLOBAL VARIABLES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+exit=sys.exit
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#MODULE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class dictobj(object):
+    def __init__(self,dic={}):self.__dict__.update(dic)
+    def __add__(self,other):
+        self.__dict__.update(other.__dict__)
+        return self
+
+def loadconf(filename):
+    d=dict()
+    conf=dictobj()
+    if os.path.lexists(filename):
+        execfile(filename,{},d)
+        conf+=dictobj(d)
+        qfile=True
+    else:
+        raise NameError
+    return conf
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#LOAD CONFIGURATION FILE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+try:
+    conf=loadconf(sys.argv[1]);
+except IndexError:
+    print >>sys.stderr,"No file provided"
+    exit(1)
+except SyntaxError as error:
+    print >>sys.stderr,"Syntax error in file:\n",error
+    exit(1)
+except NameError:
+    print >>sys.stderr,"File provided does not exist"
+    exit(1)
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+from matplotlib import use as mluse
+mluse("Agg")
+import matplotlib.pylab as plt
+import numpy as np
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#PLOT INITIALIZATION
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+plt.close('all')
+fig=plt.figure();
+ax=fig.add_subplot(111);
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#PLOT EACH FILE
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+nfiles=len(conf.DataFiles)
+for i in range(0,nfiles):
+    print "Plotting '%s'..."%conf.DataFiles[i]
+    #==================================================
+    #GET DATA AND X-AXIS VALUES
+    #==================================================
+    data=np.loadtxt(conf.DataFiles[i])
+    #CHECK CONSISTENCY
+    try:XColsPrev=int(conf.XCols[i])
+    except:pass
+
+    x=data[:,XColsPrev-1]
+    ndata=x.shape[0]
+    print "\t%d data found"%ndata
+    
+    #==================================================
+    #PLOT
+    #==================================================
+    #CHECK CONSISTENCY
+    try:YColsPrev=[int(r) for r in conf.YCols[i]]
+    except:pass
+
+    try:LinesInformationPrev=conf.LinesInformation[i]
+    except:pass
+
+    ncols=len(YColsPrev)
+    print "\tPlotting %d columns"%ncols
+    for j in range(0,ncols):
+        print "\t\tPlotting column %d"%YColsPrev[j]
+        y=data[:,YColsPrev[j]-1]
+        pars=dict(color=LinesInformationPrev[j][1],
+                  linestyle=LinesInformationPrev[j][2],
+                  linewidth=int(LinesInformationPrev[j][3]),
+                  marker=LinesInformationPrev[j][4],
+                  markeredgecolor=LinesInformationPrev[j][1],
+                  markersize=int(LinesInformationPrev[j][5]),
+                  )
+        ax.plot(x,y,label=LinesInformationPrev[j][0],**pars)
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#EXTRA CODE
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+try:exec(conf.ExtraCode)
+except AttributeError as error:
+    print >>sys.stderr,"Attribute error in Extra Decoration:\n",error
+    exit(1)
+except SyntaxError as error:
+    print >>sys.stderr,"Syntax error in Extra Code:\n",error
+    exit(1)
+        
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#PROPERTIES
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#SCALE
+ax.set_xscale(str(conf.XScale))
+ax.set_yscale(str(conf.YScale))
+
+#RANGE
+if conf.XRange is not "Auto":
+    print "\tX range:",conf.XRange
+    ax.set_xlim([int(r) for r in conf.XRange])
+else:
+    print "Automatic x-axis"
+
+if conf.YRange is not "Auto":
+    print "\tY range:",conf.YRange
+    ax.set_ylim([int(r) for r in conf.YRange])
+else:
+    print "Automatic y-axis"
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#DECORATION
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#==================================================
+#LABELS
+#==================================================
+ax.set_title(conf.Title)
+ax.set_xlabel(conf.XLabel)
+ax.set_ylabel(conf.YLabel)
+
+#==================================================
+#LEGEND
+#==================================================
+legs=ax.legend(loc=conf.LegendLocation)
+
+#==================================================
+#GRID
+#==================================================
+if conf.SetGrid is "Yes":
+    print "Setting grid..."
+    ax.grid(linewidth=conf.GridStyle[0],
+            linestyle=conf.GridStyle[1],
+            color=conf.GridStyle[2])
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#EXTRA DECORATION
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+try:exec(conf.ExtraDecoration)
+except AttributeError as error:
+    print >>sys.stderr,"Error in Extra Decoration:\n",error
+except SyntaxError as error:
+    print >>sys.stderr,"Error in Extra Decoration:\n",error
+    exit(1)
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#SAVE
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+print "Saving plot in '%s'..."%conf.ImageFile
+plt.savefig(conf.ImageFile)
+
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#DOCUMENTATION
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+"""
+==================================================
+PS2W: Sci2Web Plotting Tool
+==================================================
+
+NOTES: Before to run this script in a non interactive terminal (a cluster queue
+for example) set the MPLCONFIGDIR variable to "." for example
+
+Example: 
+  export MPLCONFIGDIR="."
+  python sci2web/bin/sci2web-plot plot-out.ps2w
+
+This is the Sci2Web Plotting Tool.  This tool is intended to generate
+good quality plots from data produced by applications in the Sci2Web
+platform either on running time or from a web application.
+
+The tools uses python and matplotlib to generate plots from data files
+passing only a set of parameters in a configuration file or a "ps2w"
+file.
+
+The configuration file describe four sets of properties for the plot:
+File, Data, and Decoration.  Additionally the user can use an "Extra"
+property to indicate custom commands (written in python and using
+matplotlib).
+
+The current properties available in each sets are:
+
+File Properties
+%%%%%%%%%%%%%%%
+
+ImageFile (string): Name of file where the 'png' image will be stored.
+
+DataFiles (list of strings): List of data files to be plotted.  PS2W
+allows to plot in the same figure data coming from several datafiles.
+
+Data Properties
+%%%%%%%%%%%%%%%
+
+XCols (list of integers): List of number of the column with the abcisa
+data.  In principle it should be one number column for each data file
+provided.  However if only one column is indicated the same column
+will be used for the rest of the files.
+
+YCols (list of lists of integers): Each list of integers are the
+number of columns containing the ordinates for the plot of each file.
+One can select several columns to plot for each file.  If just one
+list is provided the same list of columns are used to plot the rest of
+files.
+
+LinesInformation (list of list of tuple): Each list of tuples contains
+the style specification for each of the columns plotted.  The style
+specification is a 6-component tuple containing: the label of the
+column (string), the color of the line elements (line and marker), the
+linestyle ('.','-','--',':','-.','' - no line), the line width
+(integer), the marker type (circle 'o',diamond 'D', hexagons 'h','H',
+pixel ',', '+', '.', square 's', '*', triangles 'v','<','>','^',
+mathtext '$...$', 'x', '' - no marker) and the marker size (integer)
+
+Plot Properties
+%%%%%%%%%%%%%%%
+
+XRange,Yrange (string or tuple): Range of the abcisas (ordinates).
+"Auto" for auto range.  Tuple is the desired range.
+
+XScale,YScale (string): Type of scale for the abcisa (oordinates)
+axis.  Valid options: 'linear','log'.
+
+Decoration
+%%%%%%%%%%
+
+Title (string): Title of the plot
+XLabel,YLabel (string): x(y)-axis label.
+
+LegenLocation (string): Location of the "legends box".  Valid values: 'best','center', 'right', 'upper right', 'upper left', 'upper center', 'lower right', ....
+
+SetGrid (string): Yes or No.  Sets a grid.
+
+GridStyle (tuple) [OPTIONAL]: Tuple inidcating the style of the grid (line width,
+line style, line color).
+
+Extra
+%%%%%
+
+ExtraCode (long string) [OPTIONAL]: This is a code to be executed after the
+plotting commands.  It could be any code written in python and using
+the classes and objects of matplotlib.  Valid symbols: ax (axes where
+the plot is displayed), plt (abrev. for matplotlib.pylab), np,
+(abrev. for numpy).
+
+ExtraDecoration (long string) [OPTIONAL]: Same as before but the code is
+executed after all the decoration commands has been ran.
+
+Once the script is executed the image is produced.
+
+Examples:
+
+Plot column 2 vs 3 of file path-1.dat
+
+#######################################################################
+#EXAMPLE 1: PLOT A SINGLE COLUMN
+#######################################################################
+ImageFile="path-1.png"
+DataFiles=["path-1.dat"]
+
+XCols=[2]
+YCols=[[3]]
+LinesInformation=[[("Xs","red","-",2,"",1)]]
+
+XRange=YRange="Auto"
+XScale=YScale="linear"
+
+Title="Simple"
+XLabel="X"
+YLabel="Y"
+
+LegendLocation="best"
+etGrid="No"
+
+#######################################################################
+#EXAMPLE 2: PLOT TWO COLUMNS
+#######################################################################
+ImageFile="path-1.png"
+DataFiles=["path-1.dat"]
+
+XCols=[1]
+YCols=[[2,3]]
+LinesInformation=[[("Xs","red","-",2,"",1),("Ys","blue",":",3,"",1)]]
+
+XRange=YRange="Auto"
+XScale=YScale="linear"
+
+Title="Simple"
+XLabel="X($\mu$m)"
+YLabel=r"Y($\times 10^5$)"
+
+LegendLocation="best"
+SetGrid="No"
+
+#######################################################################
+#EXAMPLE 3: PLOT TWO FILES SAME COLUMN
+#######################################################################
+ImageFile="path.png"
+DataFiles=["path-1.dat","path-100.dat"]
+
+XCols=[2]
+YCols=[[3]]
+LinesInformation=[
+[("Path 1","red","-",2,"",1)],
+[("Path 100","blue","-",2,"",1)]
+]
+
+XRange=YRange="Auto"
+XScale=YScale="linear"
+
+Title="Simple"
+XLabel="X($\mu$m)"
+YLabel=r"Y($\times 10^5$ m)"
+
+LegendLocation="best"
+SetGrid="Yes"
+GridStyle=(1,":","gray")
+
+#######################################################################
+#EXAMPLE 4: PLOT TWO FILES DIFFERENT COLUMNS + RANGES AND EXTRA CODE
+#######################################################################
+ImageFile="path.png"
+DataFiles=["path-1.dat","path-100.dat"]
+
+XCols=[1]
+YCols=[[2,3],[2]]
+LinesInformation=[
+[("Xs 1","red","-",2,"",1),("Ys 1","red","-",2,"",1)],
+[("Ys 100","blue","-",2,"",1)]
+]
+
+XRange=(1,100)
+YRange="Auto"
+XScale="log"
+YScale="linear"
+
+Title="Simple"
+XLabel="X($\mu$m)"
+YLabel=r"Y($\times 10^5$ m)"
+
+LegendLocation="best"
+SetGrid="No"
+
+ExtraCode="ax.axvline(10)"
+
+#######################################################################
+#EXAMPLE 5: PLOT MANY FILES
+#######################################################################
+ImageFile="path.png"
+DataFiles=["path-1.dat","path-100.dat",
+           "path-200.dat","path-300.dat","path-400.dat"]
+
+XCols=[2]
+YCols=[[3]]
+LinesInformation=[[("Trajectory,File 1",2,"-","red")],
+                  [("File 100","blue","-",2,"",1)],
+                  [("File 200","black","-",2,"",1)],
+                  [("File 300","red","-",2,"",1)],
+                  [("File 400","green","-",2,"",1)]
+                  ]
+
+XRange=YRange="Auto"
+XScale=YScale="linear"
+
+Title="Simple"
+XLabel="X"
+YLabel="Y"
+
+LegendLocation="best"
+SetGrid="Yes"
+GridStyle=(1,"-","green")
+
+ExtraDecoration="ax.set_xticks([]);ax.set_yticks([])"
+"""

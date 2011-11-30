@@ -1,0 +1,248 @@
+#!/usr/bin/perl
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$BASEDIR=`dirname $0`;chop $BASEDIR;
+$ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+require "$BASEDIR/sci2web.pm";
+#OPERATORS
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
+#USAGE
+$USAGE="Usage:
+
+\t$0 <application-name> <application-version>
+
+<application-name> : Short name of the application (same as subdirectory)
+<application-version> : Short name of the version (same as subdirectory)
+
+";
+
+print 
+    marquee("Generating Sci2Web configuration information for the application","=");
+
+#################################################################################
+#VARIABLES
+#################################################################################
+%VARS=();
+$app=shift;
+if($app!~/\w/){
+    print "Application name not provided.\n";
+    exit(1);
+}
+$version=shift;
+if($version!~/\w/){
+    print "Version name not provided.\n";
+    exit(1);
+}
+$basedir="$APPSDIR/$app/$version";
+if(!-d $basedir and !-d "$basedir/sci2web"){
+    print "Application has not been ported to $APPSDIR/$app/$version.\n";
+    exit(1);
+}
+
+#################################################################################
+#EXTRACT VARIABLES
+#################################################################################
+$list=`find $basedir -name ".\*.temp" 2> /dev/null`;chop $list;
+@files=split /\s+/,$list;
+if($#files<0){
+    print "There is no file to change in directory '$basedir'.\n";
+    exit(0);
+}
+
+$j=0;
+foreach $file (@files)
+{
+    print "FILE: $file\n";
+    $fname=`basename $file`;
+    $fname=~/^\.(.+)\.temp/;
+    $fname=$1;
+    open(fl,"<$file");
+    @lines=<fl>;chomp @lines;
+    foreach $line (@lines){
+	@parts=split /\[/,$line;
+	foreach $part (@parts){
+	    if($part=~/^([^\]]+)\]\]/gi){
+		next if($1=~/^[\[\(\d]/);
+		@comps=split /::/,$1;
+		$i=0;
+		#DETERMINE IF THIS IS A NEW VARIABLE
+		$key=searchHashValues($comps[0],%VARS);
+		vprint "FOUND: $key\n";
+		if($key=~/^(\d+)/){
+		    $nvar=$1;
+		}
+		else{
+		    $nvar=$j;
+		    print "Variable $nvar: $comps[0]\n";
+		    $j++;
+		}
+		vprint "Variable $nvar:\n";
+		foreach $compvar (@VARSCOMP){
+		    if($VARS{$nvar,"$compvar"}!~/\w/){
+		    	$VARS{$nvar,"$compvar"}=$comps[$i];
+		    }
+		    $i++;
+		}
+		$VARS{$nvar,"files"}.="$fname,";
+		foreach $compvar (@VARSCOMP){
+		    vprint "\t$compvar: ".$VARS{$nvar,"$compvar"}."\n";
+		}
+	    }
+	}
+    }
+    close(fl);
+}
+$numvars=$j;
+print "Numvars: $numvars\n";
+
+#################################################################################
+#CLASSIFICATION BY TABS
+#################################################################################
+@vts=();
+for($j=0;$j<$numvars;$j++){
+    vprint "Var $j ".$VARS{$j,"var"}.":";
+    $vartab=$VARS{$j,"vartab"};
+    $vargroup=$VARS{$j,"vargroup"};
+    vprint "$vartab,$vargroup\n";
+    $vtgroups="${vartab}_gs";
+    $vtivars="${vartab}_${vargroup}_ivar";
+    push(@{$vtgroups},$vargroup);
+    push(@vts,$vartab);
+    push(@{$vtivars},$j);
+}
+@vartabs=unique(@vts);
+foreach $vartab (@vartabs){
+    vprint "Variable tab: $vartab\n";
+    $vtgs="${vartab}_gs";
+    $vtgroups="${vartab}_groups";
+    @{$vtgroups}=unique(@{$vtgs});
+    vprint "\tGroups:".join(",",@{$vtgroups})."\n";
+}
+
+################################################################################
+#CHECK THE UNCHANGE OF THE BASIC VARIABLES
+################################################################################
+open(fl,">/tmp/vars$$");
+foreach $vartab (@vartabs){
+    $vtgroups="${vartab}_groups";
+    foreach $vargroup (@{$vtgroups}){
+	$vtivars="${vartab}_${vargroup}_ivar";
+	foreach $j (@{$vtivars}){
+	    print fl $VARS{$j,"var"}."\n";
+	}
+    }
+}
+close(fl);
+$newhashvars=sysCmd("md5sum /tmp/vars$$ | awk '{print \$1}'");
+`rm -rf /tmp/vars$$`;
+if(-e "$basedir/sci2web/.hashvars"){
+    $hashvars=sysCmd("cat $basedir/sci2web/.hashvars");
+}else{
+    $hashvars=$newhashvars;
+    sysCmd("echo $newhashvars > $basedir/sci2web/.hashvars");
+}
+if(!($newhashvars eq $hashvars)){
+    print "A new variable has been detected in the project.
+This will affect all the instances created with this project.  
+Consider to create a new version of the application.
+";
+    exitFunc(1);
+}
+
+################################################################################
+#CREATE THE PARAMETRIZATION DESCRIPTION FILE AND DEFAULT TEMPLATE
+################################################################################
+open(fa,">$basedir/sci2web/templates/Default.conf");
+open(fv,">$basedir/sci2web/parametrization.info");
+$b1=bar("#",70);
+$b2=bar("%",60);
+$b3=bar("/",50);
+print fa "#T:Default template\n";
+print fa "#$b1\n#DEFAULT CONFIGURATION FILE\n#$b1\n";
+foreach $vartab (@vartabs){
+    print fa "#$b2\n#TAB $vartab\n#$b2\n";
+    print fv "#TAB:$vartab\n";
+    $vtgroups="${vartab}_groups";
+    foreach $vargroup (@{$vtgroups}){
+	print fa "#$b3\n#GROUP $vargroup\n#$b3\n";
+	print fv "#GROUP:$vargroup\n";
+	$vtivars="${vartab}_${vargroup}_ivar";
+	foreach $j (@{$vtivars}){
+	    foreach $compvar (@VARSCOMP){
+		$$compvar=$VARS{$j,"$compvar"};
+		if(!($compvar eq "vartab") and
+		   !($compvar eq "vargroup")){
+		    print fv $$compvar."::";
+		}
+	    }
+	    print fv $VARS{$j,"files"};
+	    $defval=~s/\"//gi;
+	    vprint "Defval: $defval\n";
+	    if($defval=~/==([^:]+)/){
+		$defval=$1;
+		vprint "\tNew defval: $defval\n";
+	    }
+	    print fa "#Variable $varname\n$var = $defval\n";
+	    print fv "\n";
+	}
+    }
+}
+close(fa);
+close(fv);
+################################################################################
+#COPY TEMPLATES TO ANY APPLICATION INSTANCE CREATED
+################################################################################
+sysCmd("find $RUNSDIR -name $app -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$version/templates \\;");
+
+print "Files generated: sci2web/parametrization.info, sci2web/templates/Default.conf\n";
+################################################################################
+#CREATE APPLICATION TABLE
+################################################################################
+$sql="drop table if exists ${app}_${version}";
+$query=$DB->prepare($sql);
+$nres=$query->execute();
+$sql="";
+$sql.=<<SQL;
+create table ${app}_${version} (
+    dbrunhash char(32) not null,
+    dbauthor varchar(255),
+    dbdate datetime not null,
+SQL
+foreach $vartab (@vartabs){
+    $vtgroups="${vartab}_groups";
+    foreach $vargroup (@{$vtgroups}){
+	$vtivars="${vartab}_${vargroup}_ivar";
+	foreach $j (@{$vtivars}){
+	    $varname=$VARS{$j,"var"};
+	    $vartype=$VARS{$j,"datatype"};
+	    $vartype=~s/boolean/tinyint\(1\)/;
+	    $vartype=~s/file/varchar\(255\)/;
+	    $sql.="$varname $vartype,\n";
+	}
+    }
+}
+$sql.=<<SQL;
+    primary key (dbrunhash),
+    #LINKS
+    runs_runcode char(8)
+);
+SQL
+$query=$DB->prepare($sql);
+$nres=$query->execute();
+print "Table for application created in database\n";
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#EXITING
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+print marquee("Application information compiled","=");
+Exit;

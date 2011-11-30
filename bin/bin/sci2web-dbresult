@@ -1,0 +1,126 @@
+#!/usr/bin/perl
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$BASEDIR=`dirname $0`;chop $BASEDIR;
+$ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+require "$BASEDIR/sci2web.pm";
+use DBI;
+use DBD::mysql;
+#OPERATORS
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
+#USAGE
+$USAGE="Usage:
+
+\t$0 <run-dir> [<author> <run-code> <application-name> <application-version>]
+
+<run-dir> : Directory where the run is
+
+Optional:
+
+<author> : Author e-mail
+<run-code> : Run 8 literals code
+<application-name> : Short name of the application (same as subdirectory)
+<application-version> : Short name of the version (same as subdirectory)
+
+If the application and version names are not provided they are taken
+from the 'run.info' file.
+
+";
+
+#################################################################################
+#VARIABLES
+#################################################################################
+$rundir=shift;
+if($rundir!~/[\w\.]/){
+    print "You must provide a valid run directory.\n";
+    exit(1);
+}
+if(!-e "$rundir/app.conf"){
+    print "This is not a valid run directory.\n";
+    exit(1);
+}
+if(-e "run.info"){
+    $app=sysCmd("grep '^run_app=' run.info | cut -f 2 -d '='");
+    $version=sysCmd("grep -e '^run_version=' run.info | cut -f 2 -d '='");
+    $author=sysCmd("grep -e '^run_author=' run.info | cut -f 2 -d '='");
+    $runcode=sysCmd("grep -e '^run_code=' run.info | cut -f 2 -d '='");
+}else{
+    $author=shift;
+    if($author!~/@/){
+	print "You must provide a valid author e-mail.\n";
+	exit(1);
+    }
+    $runcode=shift;
+    if($runcode!~/\w/){
+	print "You must provide a runcode.\n";
+	exit(1);
+    }
+    $app=shift;
+    if($app!~/[\w\.]/){
+	print "You must provide an application name.\n";
+	exit(1);
+    }
+    $version=shift;
+    if($version!~/[\w\.]/){
+	print "You must provide a version name.\n";
+	exit(1);
+    }
+}
+$tbname="${app}_${version}";
+
+#################################################################################
+#GET RUN INFORMATION
+#################################################################################
+print marquee("Storing result from '$rundir' in database table $tbname","=");
+
+readConfig("$rundir/app.conf");
+readConfig("$rundir/results.conf");
+$runhash=sysCmd("md5sum $rundir/app.conf | cut -f 1 -d ' '");
+
+#################################################################################
+#WRITE DATABASE
+#################################################################################
+$sql="replace into $tbname set
+dbrunhash='$runhash',
+runs_runcode='$runcode',
+dbauthor='$author',
+dbdate=date(now()),
+";
+for $field (keys(%CONFIG)){
+    next if($CONFIG{"$field"}!~/\w/);
+    $sql.="$field='".$CONFIG{"$field"}."',\n";
+}
+$sql=~s/,$//;
+$query=$DB->prepare($sql);
+$nres=$query->execute() or die("Error:".$query->errstr);
+
+#################################################################################
+#STORE FILES
+#################################################################################
+$dbdir="$RUNSDIR/db/$app/$version";
+if(-d $dbdir){
+    print "Storing run files...\n";
+    sysCmd("mkdir -p $dbdir/$runhash");
+    sysCmd("cp -rf $rundir/*.conf $dbdir/$runhash");
+    sysCmd("cp -rf \$(cat $rundir/sci2web/outfiles.info) $dbdir/$runhash");
+    sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");
+    sysCmd("rm -rf $dbdir/$runhash");
+}else{
+    print "Database directory $dbdir not found.";
+}
+
+#################################################################################
+#FINISH
+#################################################################################
+print marquee("Result '$runhash' stored in database","=");
+Exit;

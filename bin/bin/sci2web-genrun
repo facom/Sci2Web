@@ -1,0 +1,126 @@
+#!/usr/bin/perl
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$BASEDIR=`dirname $0`;chop $BASEDIR;
+$ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+require "$BASEDIR/sci2web.pm";
+#OPERATORS
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
+#USAGE
+$USAGE="Usage:
+
+\t$0 <application-dir> <version> <template> <target-directory>
+
+<application-dir> : application directory
+
+<version> : version 
+
+<template> : template name used to generate run (list of templates at
+             <application-dir>/<version>/sci2web/templates
+
+<target-directory> : where the instance will be installed
+
+NOTE: Indicate all the objects in absolute directories, i.e. instead
+of apps/Diffusion use /var/www/Sci2Web/apps/Diffusion.
+
+";
+
+#################################################################################
+#SCRIPTS
+#################################################################################
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#VERIFYING INPUTS
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$appdir=shift;
+if(!-d $appdir){
+    print "Application dir '$appdir' does not exist.\n";
+    exit(1);
+}
+$appname=sysCmd("basename $appdir");
+$appsdir=sysCmd("dirname $appdir");
+$version=shift;
+if(!-d "$appdir/$version/sci2web"){
+    print "Version '$version' does not created.\n";
+    exit(1);
+}
+$appdir="$appdir/$version";
+$template=shift;
+if(!-e "$appdir/sci2web/templates/$template.conf"){
+    print "Template '$template.conf' does not exist in '$appdir/sci2web/templates'.\n";
+    exit(1);
+}
+$rundir=shift;
+if($rundir!~/\w/){
+    $rundir="$RUNSDIR/RUN-".randInt(1E32);
+}
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#CREATING RUN DIRECTORY
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+print marquee("Installing application '$appname' into target directory '$rundir' using template '$template'","=");
+if(-d $rundir)
+{
+    print "Identical instance '$rundir/' already exist.\n";
+    exit(1);
+}
+sysCmd("mkdir -p $rundir");
+sleep(1);
+
+#################################################################################
+#COPY APPLICATION FILES
+#################################################################################
+print "Copying files...\n";
+$links=sysCmd("cat $appdir/sci2web/linkfiles.info");
+@list_links=split /\n/,$links;
+$exclude.=" --exclude='$_' " foreach ("app.conf","sci2web",".backup");
+$exclude.=" --exclude='$_' " foreach (@list_links);
+$out=sysCmd("(tar cvf - $exclude -C $appsdir $appname/$version |tar xf - -C $rundir) &> /tmp/src.$$");
+$files=sysCmd("cat /tmp/src.$$");
+$out=sysCmd("mv $rundir/$appname/$version/* $rundir/$appname/$version/.[a-z]* $rundir && rm -rf $rundir/$appname/$version");
+#========================================
+#CREATE SYMBOLIC LINKS
+#========================================
+print "Linking files...";
+for $link (@list_links){
+    sysCmd("ln -s $appdir/$link $rundir/$link");
+}
+
+#################################################################################
+#COPY SCI2WEB FILES AND GENERATING CONFIGURATION FILES
+#################################################################################
+print "Creating and populating sci2web directory...\n";
+$out=sysCmd("mkdir -p $rundir/sci2web");
+$out=sysCmd("cp -rf $appdir/sci2web/*.info $appdir/sci2web/*.conf $appdir/sci2web/s2w-* $appdir/sci2web/.*.temp $rundir/sci2web");
+$out=sysCmd("ln -s $ROOTDIR/bin $rundir/sci2web/bin");
+$out=sysCmd("rm -rf $rundir/$appname");
+print "Saving list of files in $rundir/sci2web/files.info...\n";
+open(fl,">$rundir/sci2web/srcfiles.info");
+for $file (split /\n/,$files){
+    $file=~s/$appname\/$version\///;
+    next if($file=~/^\..+\.temp$/ or $file!~/\w/);
+    print fl "$file\n";
+}
+close(fl);
+
+
+#################################################################################
+#GENERATING FILES FROM TEMPLATE FILES
+#################################################################################
+print "Generating application files from templates...\n";
+$out=sysCmd("cd $rundir;perl sci2web/bin/sci2web-genfiles $appdir/sci2web/templates/$template.conf .");
+
+print marquee("Successful generation","=");
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#EXITING
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Exit;

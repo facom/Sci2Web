@@ -1,0 +1,124 @@
+#!/usr/bin/perl
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$BASEDIR=`dirname $0`;chop $BASEDIR;
+$ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+require "$BASEDIR/sci2web.pm";
+#OPERATORS
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
+#USAGE
+$USAGE="Usage:
+
+\t$0 <configuration-file> <instance-dir> [compile]
+
+<configuration-file> : configuration files
+<instance-dir> : where the template files has been placed
+'compile' : Include 'compile' if you want to compile after generate files
+
+";
+
+#################################################################################
+#SCRIPT
+#################################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#INPUT VARIABLES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$file=shift;
+if(!-e $file){
+    print "Instance configuration file '$file' does not exist.\n";
+    exit(1);
+}
+$basedir=shift;
+if(!-d "$basedir"){
+    print "Instance directory '$basedir' does not exist.\n";
+    exit(1);
+}
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#EXTRACT INFORMATION FROM CONFIGURATION FILE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+print 
+    marquee("Generating files in run at '$basedir' using configuration file '$file'","=");
+
+@lines=readLines("$file");
+foreach $line (@lines)
+{
+    next if($line=~/#/ or $line!~/\w/);
+    $line=~/^([^=\s]+)\s*=\s*(.+)\s*$/;
+    push(@vars,$1);
+    push(@vals,$2);
+}
+$numvars=$#vars+1;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#SEARCHING FOR TEMPLATE FILES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$list=`find $basedir -name ".\*.temp" 2> /dev/null`;chop $list;
+@files=split /\s+/,$list;
+if($#files<0){
+    print "There is no file to change in directory '$basedir'.\n";
+    exit(1);
+}
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CHANGING VARIABLES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@lines=();
+foreach $file (@files){
+    print "FILE: $file\n";
+    @lines=readLines($file);
+    for($i=0;$i<$numvars;$i++){
+	$var=$vars[$i];
+	$val=$vals[$i];
+	for($j=0;$j<=$#lines;$j++){
+	    vprint "\tTesting $lines[$j] against -$var-\n";
+	    if($lines[$j]=~s/\[\[$var[^\]]*\]\]/$val/gi){
+		vprint "\t\tLINE: $lines[$j]\n";
+	    }
+	}
+    }
+    $file=~/(.+)\.temp/;
+    $newfile="$1";
+    $newfile=~s/\/\./\//gi;
+    print "\tNEWFILE:$newfile\n";
+    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    #BACKUP FILE: OPTATIVE
+    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if($BACKUP){
+	if(-e $file){
+	    system("mkdir -p $basedir/.backup") if(!-d "$basedir/.backup");
+	    system("cp -rf $newfile $basedir/.backup");
+	}
+    }
+    open(fl,">$newfile");
+    print fl join "\n",@lines;
+    print fl "\n";
+    close(fl);
+}
+sysCmd("cp -rf $file $basedir/app.conf");
+sysCmd("touch $basedir/.root");
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#COMPILING INSTANCE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if($#ARGV>-1){
+    print "Compiling instance...\n";
+    sysCmd("rm -rf *.sig");
+    sysCmd("cd $basedir && bash sci2web/s2w-action.sh clean compile");
+}
+
+print marquee("Successful generation","=");
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#EXITING
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Exit;

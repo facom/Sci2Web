@@ -1,0 +1,147 @@
+#!/usr/bin/perl
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$BASEDIR=`dirname $0`;chop $BASEDIR;
+$ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+require "$BASEDIR/sci2web.pm";
+
+#OPERATORS
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
+#USAGE
+$USAGE="Usage:
+
+\t$0 <application-name> <application-version> <contributor-email>
+
+<application-name> : application name
+<application-version> : application version
+<contributor-email> : e-mail of the contributor of this version
+
+";
+
+#################################################################################
+#VARIABLES
+#################################################################################
+$appname=shift;
+$appdir="$APPSDIR/$appname";
+if(!-d "$appdir" or $appdir!~/\w/){
+    print "Application directory '$appdir' does not exist.\n";
+    print $USAGE;
+    exit(1);
+}
+$appver=shift;
+$appverdir="$APPSDIR/$appname/$appver";
+if(!-d "$appverdir"  or $appver!~/\w/){
+    print "Application version directory '$appverdir' does not exist.\n";
+    print $USAGE;
+    exit(1);
+}
+$contributor=shift;
+if($contributor!~/\w/){
+    print "You should provide an e-mail for the contributor.\n";
+    print $USAGE;
+    exit(1);
+}
+
+#################################################################################
+#COPY TEMPLATE FILES
+#################################################################################
+$tempdir="$APPSDIR/template";
+$files=sysCmd("cd $tempdir;find . -type f -o -type l");
+print "Copying template files...\n";
+foreach $file (split /\s+/,$files){
+    $tgtfile=$file;
+    $tgtfile=~s/application-/$appname-/gi;
+    $tgtfile=~s/\/version\//\/$appver\//;
+
+    $dir=sysCmd("dirname $tgtfile");
+    $fname=sysCmd("basename $tgtfile");
+
+    print "\tCopying file $fname to $dir...\n";
+
+    $tgtdir="$appdir/$dir";
+    if(!-d $tgtdir){
+	print "\t\tCreating new directory $tgtdir...\n";
+	sysCmd("mkdir $tgtdir");
+    }else{
+	print "\t\tSkipping directory $tgtdir...\n";
+    }
+
+    $tgtfile="$tgtdir/$fname";
+    if(!-e $tgtfile){
+	print "\t\tCopying file $fname...\n";
+	sysCmd("cp -rf $tempdir/$file $tgtfile");
+    }else{
+	print "\t\tSkipping file $tgtfile...\n";
+    }
+}
+
+#################################################################################
+#INSERT APPLICATION AND VERSION IN DATABASE
+#################################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#QUERY DATABASE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#==============================
+#GET VER INFO AND SAVE IT
+#==============================
+$verinfo=sysCmd("cat $appverdir/ver.info");
+#CHECK FOR EXISTING VERION
+$query=$DB->prepare("select version_id from versions where version_code='$appver'");
+$query->execute();
+@verid=$query->fetchrow_array();
+if($verid[0]=~/\d/){$verline="version_id=$verid[0],"}else{$verline="";}
+#replace into versions
+$sql="
+replace into versions
+set $verline
+release_date=date(now()),
+version_code='$appver',
+apps_code_name='$appname',
+$verinfo
+";
+print "\nInserting version information in the database:\n$sql\n";
+$query=$DB->prepare($sql);
+$query->execute() or die("Please check your 'ver.info' file.");
+if($verid[0]!~/\d/){
+    $query=$DB->prepare("select version_id from versions where version_code='$appver'");
+    $query->execute();
+    @verid=$query->fetchrow_array();
+}
+print "Successful update of version with id $verid[0].\n";
+
+#==============================
+#GET APP INFO AND SAVE IT
+#==============================
+#GETTING INFO
+$appinfo=sysCmd("cat $appdir/app.info");
+#CHECK FOR EXISTING APPS
+$query=$DB->prepare("select versions_ids from apps where app_code_name='$appname'");
+$query->execute();
+@verids=$query->fetchrow_array();
+$veridsline="versions_ids='$verid[0];',";
+if($verids[0]=~/\d/ and
+   $verids[0]!~/;$verid[0];/ and
+   $verids[0]!~/^$verid[0];/){
+    $veridsline="versions_ids='$verids[0];$verid[0]',";
+}
+$sql="
+replace into apps
+set $veridsline
+creation_date=date(now()),
+app_code_name='$appname',
+$appinfo
+";
+print "\nInserting app information in the database:\n$sql\n";
+$query=$DB->prepare($sql);
+$query->execute() or die("Please check your app.info file.");
+print "Successful update of application '$appname'.\n";
