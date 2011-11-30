@@ -1,0 +1,11 @@
+#################################################################################
+#EXAMPLE VARIABLES
+#################################################################################
+# PeriodOutput=[[PeriodOutput::50--200--50==100::int::Period of Output::Configuration::General::Period to display information in the standard output::]]
+# OutputBasename=[[OutputBasename::salida::varchar(100)::Output file::Configuration::General::Name of the file where the output is stored::]]
+# PlotFile=[[PlotFile::plot.ps2w::file::Plot File::Configuration::Results::File to plot after execution::]]
+# DelayTime=[[DelayTime::0.0;;1.0;;2.0==0.0::float::Delay Time::System::General::Time of delay between the start of another particle::]]
+# QuerySleep=[[QuerySleep::1::boolean::Do you want to introudce a delay::System::General::Introduce a delay between the display of results::]]
+# GeneralComments=[[GeneralComments::This is a commentary about the parameters file::text::General Comments::System::General::Place here a comment::]]
+# #======================================================================
+# MeanDispersions=[[MeanDispersions::0::float::Average of the number of dispersions::Results::General::Result value::readonly]]
