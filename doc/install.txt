@@ -1,0 +1,192 @@
+.. .
+   ////////////////////////////////////////////////////////////////////////
+   //           _ ___               _					 //
+   //          (_)__ \             | |					 //
+   //  ___  ___ _   ) |_      _____| |					 //
+   // / __|/ __| | / /\ \ /\ / / _ \ '_ \				 //
+   // \__ \ (__| |/ /_ \ V  V /  __/ |_) |				 //
+   // |___/\___|_|____| \_/\_/ \___|_.__/				 //
+   // 		     	    						 //
+   // Bringing naturally developed scientific applications to the web	 //
+   // Jorge Zuluaga (2011)	   	      		      	  	 //
+   ////////////////////////////////////////////////////////////////////////
+   .
+.. include:: util.txt
+
+=======
+Sci2Web
+=======
+---------------------------------------------------------------
+Bringing naturally developed scientific applications to the web
+---------------------------------------------------------------
+
+Plaform Installation 
+********************
+
+:Author: Jorge Zuluaga
+:Version: Revision 1, Wed Nov 30 06:29:15 COT 2011
+:Copyright: This document has been placed in the public domain.
+
+Presentation
+~~~~~~~~~~~~
+
+This is Sci2Web_.
+
+Install Sci2Web in a new server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Sci2Web_ platform is installed as a website in your server.  You
+will need to fullfill the following basic prerequisites before trying
+to configure and use the platform:
+
+- Apache2 server (debian package, dp:``apache2``)
+
+- PHP and PHP+MySQL modules (dp: ``php5`` , ``php5-mysql`` )
+
+- Perl language
+
+- DBI and DBD-MySQL perl modules (dp: ``libdbi-perl`` , ``libdbd-mysql-perl``)
+
+- Python language
+
+- Matplotlib library (dp: ``python-matplotlib``)
+
+- Delayed job execution and batch processing package, ``at`` (dp:
+  ``at``)
+
+For debian (e.g. ubuntu) users use the following command to install
+all the packages in your server::
+
+    apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
+
+To install Sci2Web_ in a new server follow the steps described below:
+
+#. Get the source code and decompress and untar in a proper server
+   directory.  You have to track the directory where the Sci2Web_ is
+   installed.  Hereafter we will call it the **PROJPATH**.::
+
+   $ cd PROJPATH
+
+#. Set the proper permissions for the directories in the Sci2Web_
+   directory::
+
+   $ chmod a+x tmp	
+   $ chown www-data.www-data runs
+   $ chown www-data.www-data apps/templates/*.html
+
+   Here you have to replace ``www-datat`` for the appropiate user and
+   group of your web server user.
+
+#. Create the user of the database.  Using any interface to your
+   database server (Sci2Web_ is configured to use MySQL) create a
+   particular user for the platform operations:
+
+   mysql> create user 'sci2web'@'localhost' identified by 'WebPoweredNDSA';
+   mysql> grant all privileges on sci2web.* to 'sci2web'@'localhost';
+   mysql> flush privileges;
+
+   .. Important:: You have to remember and safely store the password of
+      the user database.
+
+#. Create database and basic tables and populate them.  In the doc
+   directory you will find text files, ``sci2web-create.sql``,
+   ``sci2web-populate.sql`` containing all the required sql commands
+   to create the database and their basic tables.  Using mysql command
+   line interface you can easily create the database executing::
+   
+   $ mysql -u root -p < sci2web-create.sql
+   $ mysql -u root -p < sci2web-populate.sql
+
+   By default the databases are created with an example application,
+   `Diffusion` and its respective development version `dev` and a
+   master user `zuluagajorge@gmail.com`.
+
+#. Configure the Sci2Web_ server website.  Edit the configuration file
+   ``lib/sci2web.cong``.  Specially the following variables:
+
+   + ``PROJBASE``: Base directory at the server where the project is
+     installed.  Normally this is the name of the subdirectory in the
+     web server (e.g. /var/www for linux apache2 servers) where the
+     Sci2Web_ directory is installed.
+
+   + ``PROJNAME``: Name of the subdirectory wher the Sci2Web_ platworm
+     was installed.
+
+     The PROJBASE and PROJNAME variables togheter with the server URI
+     form the base URL of the Sci2Web
+     site::``http://SERVERURL/PROJBASE/PROJNAME``.
+
+   + ``SCI2WEBSITE``: This is the name of the server where Sci2Web_ is
+     being served.  In principle many instances of the Sci2Web_
+     platform could be installed around the world.  This variable
+     individualizes them.
+
+   + ``TITLE``: Title of the project that will be presented in the web
+     pages header.
+
+   + Database information.  ``DBNAME``, ``DBSERVER``, ``DBUSER`` and
+     ``DBPASS`` are the variables controlling the access to the
+     database.  
+
+   .. Important:: It should be stressed that the access to this file
+      should be maintained as restricted as possible since it contains
+      critical information about the website.  If you want to protect
+      the file change the owner and permissions of the file to make it
+      readable only for the www-data user.
+
+#. Once this file has been properly set you can test the access to the
+   site using the link:
+   ``http://SERVERURL/PROJBASE/PROJNAME/test.php``.  This simple
+   script test that key components of the site are loaded properly
+   (javascript files, css file, database access, file access, among
+   others).  If you still have problems with files please check the
+   steps before in order to adjust the permissions.
+
+#. If everything goes OK with the test you can try to go directly to
+   the main site ``http://SERVERURL/PROJBASE/PROJNAME``.
+
+#. Create a new user.  It is specially important to create the users
+   that will register the first ported applications.
+
+#. Before to start using Sci2Web you have to be sure that:
+   
+   #. Web user can submit jobs to the queue selected by the platform
+      (at by default).  If the queue is at please uncomment the proper
+      line at the /etc/at.deny file.
+
+   #. The shell used to executed files with the at queue is bash.  You
+      can do this changing the symbolic link /bin/sh to /bin/bash
+
+Acronyms and Glossary
+~~~~~~~~~~~~~~~~~~~~~
+
+**NDSA**
+
+	Acronym for *Naturally Developed Scientific Application*.
+	NDSA are applications developed "spontaneously" by scientist
+	as a part of a research effort.  Besides differences in the
+	purpose, methods and techniques used to develop this type of
+	applications they share very common features.
+	
+	* Most of them are developed in low level languages
+          (C/C++,Fortran)
+
+	* Have a very simple user interface (configuration file,
+          non-standard command line input, keyboard input, etc.)
+
+	* They are poorly documented and tested.
+
+	* ...
+	
+**Ported Application**
+	 
+	 A *Ported Application* or *Ported NDSA* is an application
+	 configured to run with the Sci2Web_ interface.
+
+.. .
+   //////////////////////////////////////////////////////////////////////
+   //REFERENCES
+   //////////////////////////////////////////////////////////////////////
+   .
+
+.. _Sci2Web: http://localhost/user/Sci2WebPP

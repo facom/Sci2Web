@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<title>Sci2Web</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left{
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="sci2web">
+<h1 class="title">Sci2Web</h1>
+<h2 class="subtitle" id="bringing-naturally-developed-scientific-applications-to-the-web">Bringing naturally developed scientific applications to the web</h2>
+
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//ROLES
+//////////////////////////////////////////////////////////////////////
+. -->
+<style>.red{color:red}</style><!-- See more at: http://docutils.sourceforge.net/docs/ref/rst/definitions.html -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Derived from the Unicode character mappings available from
+<http://www.w3.org/2003/entities/xml/>.
+Processed by unicode2rstsubs.py, part of Docutils:
+<http://docutils.sourceforge.net>. -->
+<!-- .. include:: <isoamsb.txt>
+.. include:: <isoamsc.txt>
+.. include:: <isoamso.txt>
+.. include:: <isoamsr.txt>
+.. include:: <isogrk1.txt> -->
+<div class="section" id="plaform-installation">
+<h1>Plaform Installation</h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Author:</th><td class="field-body">Jorge Zuluaga</td>
+</tr>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">Revision 1, Wed Nov 30 06:29:15 COT 2011</td>
+</tr>
+<tr class="field"><th class="field-name">Copyright:</th><td class="field-body">This document has been placed in the public domain.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="presentation">
+<h2>Presentation</h2>
+<p>This is <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.</p>
+</div>
+<div class="section" id="install-sci2web-in-a-new-server">
+<h2>Install Sci2Web in a new server</h2>
+<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform is installed as a website in your server.  You
+will need to fullfill the following basic prerequisites before trying
+to configure and use the platform:</p>
+<ul class="simple">
+<li>Apache2 server (debian package, dp:<tt class="docutils literal">apache2</tt>)</li>
+<li>PHP and PHP+MySQL modules (dp: <tt class="docutils literal">php5</tt> , <tt class="docutils literal"><span class="pre">php5-mysql</span></tt> )</li>
+<li>Perl language</li>
+<li>DBI and DBD-MySQL perl modules (dp: <tt class="docutils literal"><span class="pre">libdbi-perl</span></tt> , <tt class="docutils literal"><span class="pre">libdbd-mysql-perl</span></tt>)</li>
+<li>Python language</li>
+<li>Matplotlib library (dp: <tt class="docutils literal"><span class="pre">python-matplotlib</span></tt>)</li>
+</ul>
+<p>For debian (e.g. ubuntu) users use the following command to install
+all the packages in your server:</p>
+<pre class="literal-block">
+apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
+</pre>
+<p>To install <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> in a new server follow the steps described below:</p>
+<ol class="arabic">
+<li><p class="first">Get the source code and decompress and untar in a proper server
+directory.  You have to track the directory where the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is
+installed.  Hereafter we will call it the <strong>PROJPATH</strong>.:</p>
+<pre class="literal-block">
+$ cd PROJPATH
+</pre>
+</li>
+<li><p class="first">Set the proper permissions for the directories in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+directory:</p>
+<pre class="literal-block">
+$ chmod a+x tmp
+$ chown www-data.www-data runs
+$ chown www-data.www-data apps/templates/*.html
+</pre>
+<p>Here you have to replace <tt class="docutils literal"><span class="pre">www-datat</span></tt> for the appropiate user and
+group of your web server user.</p>
+</li>
+<li><p class="first">Create the user of the database.  Using any interface to your
+database server (<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is configured to use MySQL) create a
+particular user for the platform operations:</p>
+<p>mysql&gt; create user <a class="reference external" href="mailto:'sci2web'&#64;'localhost">'sci2web'&#64;'localhost</a>' identified by 'WebPoweredNDSA';
+mysql&gt; grant all privileges on sci2web.* to <a class="reference external" href="mailto:'sci2web'&#64;'localhost">'sci2web'&#64;'localhost</a>';
+mysql&gt; flush privileges;</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">You have to remember and safely store the password of
+the user database.</p>
+</div>
+</li>
+<li><p class="first">Create database and basic tables and populate them.  In the doc
+directory you will find text files, <tt class="docutils literal"><span class="pre">sci2web-create.sql</span></tt>,
+<tt class="docutils literal"><span class="pre">sci2web-populate.sql</span></tt> containing all the required sql commands
+to create the database and their basic tables.  Using mysql command
+line interface you can easily create the database executing:</p>
+<pre class="literal-block">
+$ mysql -u root -p &lt; sci2web-create.sql
+$ mysql -u root -p &lt; sci2web-populate.sql
+</pre>
+<p>By default the databases are created with an example application,
+<cite>Diffusion</cite> and its respective development version <cite>dev</cite> and a
+master user <cite>zuluagajorge&#64;gmail.com</cite>.</p>
+</li>
+<li><p class="first">Configure the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server website.  Edit the configuration file
+<tt class="docutils literal">lib/sci2web.cong</tt>.  Specially the following variables:</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">PROJBASE</tt>: Base directory at the server where the project is
+installed.  Normally this is the name of the subdirectory in the
+web server (e.g. /var/www for linux apache2 servers) where the
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> directory is installed.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">PROJNAME</tt>: Name of the subdirectory wher the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platworm
+was installed.</p>
+<p>The PROJBASE and PROJNAME variables togheter with the server URI
+form the base URL of the Sci2Web
+site::<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">SCI2WEBSITE</tt>: This is the name of the server where <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is
+being served.  In principle many instances of the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+platform could be installed around the world.  This variable
+individualizes them.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">TITLE</tt>: Title of the project that will be presented in the web
+pages header.</p>
+</li>
+<li><p class="first">Database information.  <tt class="docutils literal">DBNAME</tt>, <tt class="docutils literal">DBSERVER</tt>, <tt class="docutils literal">DBUSER</tt> and
+<tt class="docutils literal">DBPASS</tt> are the variables controlling the access to the
+database.</p>
+</li>
+</ul>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">It should be stressed that the access to this file
+should be maintained as restricted as possible since it contains
+critical information about the website.  If you want to protect
+the file change the owner and permissions of the file to make it
+readable only for the www-data user.</p>
+</div>
+</li>
+<li><p class="first">Once this file has been properly set you can test the access to the
+site using the link:
+<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME/test.php</span></tt>.  This simple
+script test that key components of the site are loaded properly
+(javascript files, css file, database access, file access, among
+others).  If you still have problems with files please check the
+steps before in order to adjust the permissions.</p>
+</li>
+<li><p class="first">If everything goes OK with the test you can try to go directly to
+the main site <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
+</li>
+<li><p class="first">Create a new user.  It is specially important to create the users
+that will register the first ported applications.</p>
+</li>
+<li><p class="first">Before to start using Sci2Web you have to be sure that:</p>
+<ol class="arabic simple">
+<li>Web user can submit jobs to the queue selected by the platform
+(at by default).  If the queue is at please uncomment the proper
+line at the /etc/at.deny file.</li>
+<li>The shell used to executed files with the at queue is bash.  You
+can do this changing the symbolic link /bin/sh to /bin/bash</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="acronyms-and-glossary">
+<h2>Acronyms and Glossary</h2>
+<p><strong>NDSA</strong></p>
+<blockquote>
+<p>Acronym for <em>Naturally Developed Scientific Application</em>.
+NDSA are applications developed &quot;spontaneously&quot; by scientist
+as a part of a research effort.  Besides differences in the
+purpose, methods and techniques used to develop this type of
+applications they share very common features.</p>
+<ul class="simple">
+<li>Most of them are developed in low level languages
+(C/C++,Fortran)</li>
+<li>Have a very simple user interface (configuration file,
+non-standard command line input, keyboard input, etc.)</li>
+<li>They are poorly documented and tested.</li>
+<li>...</li>
+</ul>
+</blockquote>
+<p><strong>Ported Application</strong></p>
+<blockquote>
+A <em>Ported Application</em> or <em>Ported NDSA</em> is an application
+configured to run with the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> interface.</blockquote>
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//REFERENCES
+//////////////////////////////////////////////////////////////////////
+. -->
+</div>
+</div>
+</div>
+</body>
+</html>
