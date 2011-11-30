@@ -1,8 +1,0 @@
-Wed Nov 30 17:25:20 COT 2011
-SQL File:
-
-================================================================================
-SQL query 1:
-    select * from runs where run_code='mw2tl12n'
-Result size or errors:
-1

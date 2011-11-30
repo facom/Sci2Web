@@ -1,8 +1,0 @@
-Wed Nov 30 17:34:18 COT 2011
-SQL File:
-
-================================================================================
-SQL query 1:
-    select * from Diffusion_dev where dbdate
-Result size or errors:
-1

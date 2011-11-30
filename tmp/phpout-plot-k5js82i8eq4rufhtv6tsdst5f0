@@ -1,8 +1,0 @@
-Wed Nov 30 15:51:30 COT 2011
-Output File:
-
-================================================================================
-Command 1:
-    grep -v '^#' /var/www/html//./Sci2Web/runs/test@sci2web.org/Diffusion/dev/8fa10abb222704ccf57069b931897a02/path-300.dat | head -n 1 | awk '{print NF}'
-Output:
-3
