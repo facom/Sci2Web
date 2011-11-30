@@ -22,7 +22,7 @@ include("$RELATIVE/lib/sci2web.php");
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //CHECK STYLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-require_once("$PROJ[PROJPATH]/css/sci2web.css");
+require_once("$PROJ[PROJPATH]/lib/sci2web.css");
 $resmat=mysqlCmd("show tables;");
 $database=print_r($resmat,true);
 
@@ -30,11 +30,11 @@ echo<<<CONTENT
 <html>
 <head>
 $PROJ[STYLES]
-<script type="text/javascript" src="$PROJ[PROJDIR]/lib/jquery-1.7.js"></script>
-<script type="text/javascript" src="$PROJ[PROJDIR]/lib/jquery.DOMWindow.js"></script>
-<script type="text/javascript" src="$PROJ[PROJDIR]/lib/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="$PROJ[PROJDIR]/lib/tabber.js"></script>
-<script type="text/javascript" src="$PROJ[PROJDIR]/lib/sci2web.js"></script>
+<script type="text/javascript" src="$PROJ[PROJDIR]/js/jquery/jquery-1.7.js"></script>
+<script type="text/javascript" src="$PROJ[PROJDIR]/js/domwindow/jquery.DOMWindow.js"></script>
+<script type="text/javascript" src="$PROJ[PROJDIR]/js/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="$PROJ[PROJDIR]/js/tabber/tabber.js"></script>
+<script type="text/javascript" src="$PROJ[PROJDIR]/js/sci2web.js"></script>
 </head>
 <body>
 <div class="tabber sectabber" id=0>
