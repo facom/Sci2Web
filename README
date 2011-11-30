@@ -36,6 +36,8 @@ Quick start
 
       git clone git://github.com/facom/Sci2Web.git
 
+   Then you will be able to get updates using 'git pull'.
+
 2. Place it in a web-available directory at your server
    (e.g. /var/www/<directory>)
 
@@ -45,8 +47,21 @@ Quick start
 For the contirbutor
 ===================
 
+1. Generate a public key of your account at the server where you will
+   develop contributions:
 
+   $ ssh-keygen -t rsa -C "user@email"
 
-	$ ssh-keygen -t rsa -C "user@email"
+2. Upload public key to the github project site
+   (https://github.com/facom/Sci2Web).  You will need access to the
+   account where the repository was created.
 
-   Upload public key to github project site (https://github.com/facom/Sci2Web).
+3. Configure git:
+
+   $ git configure --global user.name "Your Name"
+   $ git configure --global user.email "your@email"
+
+4. Get an authorized clone of the master trunk:
+
+   $ git clone git@github.com:facom/Sci2Web.git
+
