@@ -64,7 +64,7 @@ SYMBOLS = Array
     [35] => 0
 )
 
-RANDID = t615u
+RANDID = wzyjn
 ROOTPATH = /var/www/html
 SERVER = http://urania.udea.edu.co
 PAGENAME = ajax-trans-run.php
@@ -86,8 +86,8 @@ RunCode = gk67lruk
 Action = GetControls
 DATE = Array
 (
-    [seconds] => 5
-    [minutes] => 35
+    [seconds] => 3
+    [minutes] => 36
     [hours] => 17
     [mday] => 30
     [wday] => 3
@@ -96,7 +96,7 @@ DATE = Array
     [yday] => 333
     [weekday] => Wednesday
     [month] => November
-    [0] => 1322692505
+    [0] => 1322692563
 )
 
 DOCTYPE = <!doctype html public "-//W3C//DTD XHTML 1.0 Transitional//EN"
