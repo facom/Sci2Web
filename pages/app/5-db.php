@@ -107,8 +107,7 @@ DB;
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-$bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		   "SubmitDatabase","Submission problems");
+$bugbut=genBugForm("SubmitDatabase","Submission problems");
 echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
 <h1>Database of Results</h1>

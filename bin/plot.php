@@ -494,8 +494,7 @@ CONTENT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FOOTER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		   "PlotGeneral","General problems with plot");
+$bugbut=genBugForm("PlotGeneral","General problems with plot");
 $footer.= <<<CONF
 </div>
 <div class="formbuttons" id="buttons">

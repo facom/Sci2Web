@@ -90,8 +90,7 @@ HEADER;
 //==================================================
 //GENERATE OPTIONS 
 //==================================================
-$bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		   "NewFromTemplate","Problems creating new from template");
+$bugbut=genBugForm("NewFromTemplate","Problems creating new from template");
 $header.=<<<HEADER
 New run from template : 
 <select name='newrun' 

@@ -32,3 +32,5 @@
    .. include:: <isoamso.txt>
    .. include:: <isoamsr.txt>
    .. include:: <isogrk1.txt>
+
+.. _Sci2Web: http://localhost/user/Sci2WebPP

@@ -57,8 +57,7 @@ foreach($apptable as $approw){
     if($version["version_code"]=="dev") $opsel="selected";
     $verstr.="<option $opsel value='$version[version_id]'>Version $version[version_code] ($version[release_date])";
   }
-  $bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		     "ApplicationVersions_${appcode}_${ver}","No version display");
+  $bugbut=genBugForm("ApplicationVersions_${appcode}_${ver}","No version display");
 $content.=<<<APPS
 <!-- ------------------------------------------------------------ -->
 <!-- $appcode APP						  -->

@@ -36,8 +36,8 @@ Install Sci2Web in a new server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Sci2Web_ platform will be installed as a website in your server.
-You will need to fullfill the following basic prerequisites before
-trying to configure and use the platform:
+You will need to have installed in your server the following
+dependences before trying to configure and use the platform:
 
 - Apache2 server (debian package, dp:``apache2``)
 
@@ -54,13 +54,13 @@ trying to configure and use the platform:
 - Delayed job execution and batch processing package, ``at`` (dp:
   ``at``)
 
-For debian (e.g. ubuntu) users use the following command to install
+For debian users (e.g. ubuntu) use the following command to install
 all the packages in your server::
 
     apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
 
-To start using the Sci2Web_ platform in your server follow the below
-procedure:
+To start using the Sci2Web_ platform in your server follow the
+procedure outlined below.
 
 .. Important:: Hereafter we will use the follwoing aliases when
    referring to important directories and files:
@@ -74,17 +74,32 @@ procedure:
 #. **Edit the master configuration file**.  You can set up the basic
    information about your server in the master configuration file
    ``PROJPATH/lib/sci2web.conf``.  The most important variables in
-   this files are:
+   this file are:
 
    + **PROJBASE** and **PROJNAME**: The URL of your project will be
      recognized as: ``http://server/PROJBASE/PROJNAME``.  Configure
-     properly these variables to properly configure the links in your
+     properly these variables in order to have right links in your
      website.
 
    + **SCI2WEBSITE**: This is the name of the *local server* where the
      Sci2Web_ platform is installed.  This name will be used in
-     different places of the platform to distinguish this instance
-     from other ones found around the web.
+     different places of the platform to distinguish this instance of
+     Sci2Web from other ones found around the web.  Here you can use
+     the name of your institution, research group and even your
+     personal name.
+
+   + **ENTRYPAGE**: The entry page is the page the site displays when
+     the above URL is enetered.  By default it is ``test.php``.  You
+     can change it according to your own interests.  Some useful entry pages are:
+     
+     * ``main.php`` , main page of the platform.
+
+     * ``main.php?TabId=3`` , main page open in the fourth tab
+       (i.e. the tab where the list of applications are displayed).
+
+     * ``app.php?SetApp=true&App=Diffusion&VersionId=1&TabId=1`` ,
+       open the page of version 'dev' (version id 1) of application
+       'Diffusion' at the first tab (i.e. description of application)
 
 #. **Set permissions for critical directories**.  Several directories
    in your website should have writing permission for the apache
@@ -113,7 +128,7 @@ procedure:
    The information about the user (login and password) should be the
    same as that stored in the master configuration file.
 
-#. **Create Sci2Web_ database and populate it with basic
+#. **Create Sci2Web database and populate it with basic
    information**.  You will find the proper sql commands to create and
    populate the Sci2Web_ database at ``doc/install``.  To perform this
    actions just run::
@@ -121,75 +136,52 @@ procedure:
          $ mysql -u root -p < doc/install/sci2web-create.sql
    	 $ mysql -u root -p < doc/install/sci2web-populate.sql
  
-#. Once this file has been properly set you can test the access to the
-   site using the link:
-   ``http://SERVERURL/PROJBASE/PROJNAME/test.php``.  This simple
-   script test that key components of the site are loaded properly
-   (javascript files, css file, database access, file access, among
-   others).  If you still have problems with files please check the
-   steps before in order to adjust the permissions.
+#. **Test the configuration**.  In order to test the configuration of
+   the site open the page
+   ``http://SERVERURL/PROJBASE/PROJNAME/test.php``.  This php script
+   test the access to the database and several key files and
+   directories.  If an error is raised at this point check your
+   configuration and reload the test script.
 
-#. If everything goes OK with the test you can try to go directly to
-   the main site ``http://SERVERURL/PROJBASE/PROJNAME``.
-
-#. Create a new user.  It is specially important to create the users
-   that will register the first ported applications.
-
-#. Before to start using Sci2Web you have to be sure that:
-   
-   #. Web user can submit jobs to the queue selected by the platform
-      (at by default).  If the queue is at please uncomment the proper
-      line at the /etc/at.deny file.
-
-   #. The shell used to executed files with the at queue is bash.  You
-      can do this changing the symbolic link /bin/sh to /bin/bash
+#. Once the test script has ran successfully check directly the
+   website by going to ``http://SERVERURL/PROJBASE/PROJNAME``.
 
 Security issues
 ~~~~~~~~~~~~~~~
 
-+ **Apache2 configuration** Allows the overriding of the apache
-  options to disable directory listings of your critical directories::
+Security is an important concern when working in the web.  In order to
+use Sci2Web_ you should be sure that several aspects of the server
+configuration has been ste up on one hand to allow the use of the
+computational power available in your server and on the other hand to
+avoid attacks to your server coming form the Sci2Web_ website.
 
-  	   # vi /etc/apache2/apache2.conf
++ **Apache2 configuration**.  To avoid the access to critical files
+  and directories in the website you should configure Apache2 to deny
+  the listing of directories where an index file is not present.  To
+  perform this allows the overriding of the apache options at the
+  ``.htaccess`` files adding to your /etc/apache2/apache2.conf file
+  the following section::
 
 	   <Directory "PROJPATH">
 	   AllowOverride All
 	   </Directory>
 
-+ **Batch system configuration**.  Configure at.
++ **Allow the use of the batch processing package**.  Sci2Web_ uses by
+  default the ``at`` delayed job execution and batch processing
+  package in order to submit and run the applications launched from
+  the website.  By default the ``at`` command is disabled for the
+  APACHEUSER.  Grant permissions to the APACHEUSER to the at queue by
+  commenting the username at the ``/etc/at.deny`` file.  
 
-+ **Configuration of shell script**. Configure bash.
+  You can configure here another batch processing packages and job
+  scheduler software.  To configure Sci2Web_ to use other submission
+  systems please see the developer guide.
 
-Acronyms and Glossary
-~~~~~~~~~~~~~~~~~~~~~
++ **Set up bash as the default shell used to executed the jobs at the
+  processing package**.  Sci2Web_ uses bash as the default language
+  for the submission scripts.  Several schedulers, including ``at``
+  uses by default ``dash`` as the default scripting language.
+  Normally this is performed by creating a symbolic link to
+  ``/bin/dash`` as ``/bin/sh``.  Change this default configuration in
+  order to make ``sh`` point out to ``bash``.
 
-**NDSA**
-
-	Acronym for *Naturally Developed Scientific Application*.
-	NDSA are applications developed "spontaneously" by scientist
-	as a part of a research effort.  Besides differences in the
-	purpose, methods and techniques used to develop this type of
-	applications they share very common features.
-	
-	* Most of them are developed in low level languages
-          (C/C++,Fortran)
-
-	* Have a very simple user interface (configuration file,
-          non-standard command line input, keyboard input, etc.)
-
-	* They are poorly documented and tested.
-
-	* ...
-	
-**Ported Application**
-	 
-	 A *Ported Application* or *Ported NDSA* is an application
-	 configured to run with the Sci2Web_ interface.
-
-.. .
-   //////////////////////////////////////////////////////////////////////
-   //REFERENCES
-   //////////////////////////////////////////////////////////////////////
-   .
-
-.. _Sci2Web: http://localhost/user/Sci2WebPP

@@ -644,8 +644,7 @@ CONF;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //WINDOW CONTROLS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		   "ConfigureGeneral","General problems with configuration");
+$bugbut=genBugForm("ConfigureGeneral","General problems with configuration");
 $controls.=<<<CONF
 </div>
 <div class="formbuttons" id="buttons">

@@ -304,7 +304,7 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="sci2web">
+<div class="document" id="id1">
 <h1 class="title">Sci2Web</h1>
 <h2 class="subtitle" id="bringing-naturally-developed-scientific-applications-to-the-web">Bringing naturally developed scientific applications to the web</h2>
 
@@ -371,8 +371,8 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <div class="section" id="install-sci2web-in-a-new-server">
 <h2>Install Sci2Web in a new server</h2>
 <p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform will be installed as a website in your server.
-You will need to fullfill the following basic prerequisites before
-trying to configure and use the platform:</p>
+You will need to have installed in your server the following
+dependences before trying to configure and use the platform:</p>
 <ul class="simple">
 <li>Apache2 server (debian package, dp:<tt class="docutils literal">apache2</tt>)</li>
 <li>PHP and PHP+MySQL modules (dp: <tt class="docutils literal">php5</tt> , <tt class="docutils literal"><span class="pre">php5-mysql</span></tt> )</li>
@@ -383,13 +383,13 @@ trying to configure and use the platform:</p>
 <li>Delayed job execution and batch processing package, <tt class="docutils literal">at</tt> (dp:
 <tt class="docutils literal">at</tt>)</li>
 </ul>
-<p>For debian (e.g. ubuntu) users use the following command to install
+<p>For debian users (e.g. ubuntu) use the following command to install
 all the packages in your server:</p>
 <pre class="literal-block">
 apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
 </pre>
-<p>To start using the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform in your server follow the below
-procedure:</p>
+<p>To start using the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform in your server follow the
+procedure outlined below.</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>Hereafter we will use the follwoing aliases when
@@ -405,16 +405,29 @@ apache2 server.  Typically they are <tt class="docutils literal"><span class="pr
 <li><p class="first"><strong>Edit the master configuration file</strong>.  You can set up the basic
 information about your server in the master configuration file
 <tt class="docutils literal">PROJPATH/lib/sci2web.conf</tt>.  The most important variables in
-this files are:</p>
+this file are:</p>
 <ul class="simple">
 <li><strong>PROJBASE</strong> and <strong>PROJNAME</strong>: The URL of your project will be
 recognized as: <tt class="docutils literal"><span class="pre">http://server/PROJBASE/PROJNAME</span></tt>.  Configure
-properly these variables to properly configure the links in your
+properly these variables in order to have right links in your
 website.</li>
 <li><strong>SCI2WEBSITE</strong>: This is the name of the <em>local server</em> where the
 <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform is installed.  This name will be used in
-different places of the platform to distinguish this instance
-from other ones found around the web.</li>
+different places of the platform to distinguish this instance of
+Sci2Web from other ones found around the web.  Here you can use
+the name of your institution, research group and even your
+personal name.</li>
+<li><strong>ENTRYPAGE</strong>: The entry page is the page the site displays when
+the above URL is enetered.  By default it is <tt class="docutils literal">test.php</tt>.  You
+can change it according to your own interests.  Some useful entry pages are:<ul>
+<li><tt class="docutils literal">main.php</tt> , main page of the platform.</li>
+<li><tt class="docutils literal"><span class="pre">main.php?TabId=3</span></tt> , main page open in the fourth tab
+(i.e. the tab where the list of applications are displayed).</li>
+<li><tt class="docutils literal"><span class="pre">app.php?SetApp=true&amp;App=Diffusion&amp;VersionId=1&amp;TabId=1</span></tt> ,
+open the page of version 'dev' (version id 1) of application
+'Diffusion' at the first tab (i.e. description of application)</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p class="first"><strong>Set permissions for critical directories</strong>.  Several directories
@@ -444,7 +457,7 @@ mysql&gt; flush privileges;
 <p>The information about the user (login and password) should be the
 same as that stored in the master configuration file.</p>
 </li>
-<li><p class="first"><strong>Create Sci2Web_ database and populate it with basic
+<li><p class="first"><strong>Create Sci2Web database and populate it with basic
 information</strong>.  You will find the proper sql commands to create and
 populate the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database at <tt class="docutils literal">doc/install</tt>.  To perform this
 actions just run:</p>
@@ -453,77 +466,57 @@ $ mysql -u root -p &lt; doc/install/sci2web-create.sql
 $ mysql -u root -p &lt; doc/install/sci2web-populate.sql
 </pre>
 </li>
-<li><p class="first">Once this file has been properly set you can test the access to the
-site using the link:
-<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME/test.php</span></tt>.  This simple
-script test that key components of the site are loaded properly
-(javascript files, css file, database access, file access, among
-others).  If you still have problems with files please check the
-steps before in order to adjust the permissions.</p>
+<li><p class="first"><strong>Test the configuration</strong>.  In order to test the configuration of
+the site open the page
+<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME/test.php</span></tt>.  This php script
+test the access to the database and several key files and
+directories.  If an error is raised at this point check your
+configuration and reload the test script.</p>
 </li>
-<li><p class="first">If everything goes OK with the test you can try to go directly to
-the main site <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
-</li>
-<li><p class="first">Create a new user.  It is specially important to create the users
-that will register the first ported applications.</p>
-</li>
-<li><p class="first">Before to start using Sci2Web you have to be sure that:</p>
-<ol class="arabic simple">
-<li>Web user can submit jobs to the queue selected by the platform
-(at by default).  If the queue is at please uncomment the proper
-line at the /etc/at.deny file.</li>
-<li>The shell used to executed files with the at queue is bash.  You
-can do this changing the symbolic link /bin/sh to /bin/bash</li>
-</ol>
+<li><p class="first">Once the test script has ran successfully check directly the
+website by going to <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
 </li>
 </ol>
 </div>
 <div class="section" id="security-issues">
 <h2>Security issues</h2>
+<p>Security is an important concern when working in the web.  In order to
+use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should be sure that several aspects of the server
+configuration has been ste up on one hand to allow the use of the
+computational power available in your server and on the other hand to
+avoid attacks to your server coming form the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> website.</p>
 <ul>
-<li><p class="first"><strong>Apache2 configuration</strong> Allows the overriding of the apache
-options to disable directory listings of your critical directories:</p>
+<li><p class="first"><strong>Apache2 configuration</strong>.  To avoid the access to critical files
+and directories in the website you should configure Apache2 to deny
+the listing of directories where an index file is not present.  To
+perform this allows the overriding of the apache options at the
+<tt class="docutils literal">.htaccess</tt> files adding to your /etc/apache2/apache2.conf file
+the following section:</p>
 <pre class="literal-block">
-# vi /etc/apache2/apache2.conf
-
 &lt;Directory &quot;PROJPATH&quot;&gt;
 AllowOverride All
 &lt;/Directory&gt;
 </pre>
 </li>
-<li><p class="first"><strong>Batch system configuration</strong>.  Configure at.</p>
+<li><p class="first"><strong>Allow the use of the batch processing package</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> uses by
+default the <tt class="docutils literal">at</tt> delayed job execution and batch processing
+package in order to submit and run the applications launched from
+the website.  By default the <tt class="docutils literal">at</tt> command is disabled for the
+APACHEUSER.  Grant permissions to the APACHEUSER to the at queue by
+commenting the username at the <tt class="docutils literal">/etc/at.deny</tt> file.</p>
+<p>You can configure here another batch processing packages and job
+scheduler software.  To configure <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to use other submission
+systems please see the developer guide.</p>
 </li>
-<li><p class="first"><strong>Configuration of shell script</strong>. Configure bash.</p>
+<li><p class="first"><strong>Set up bash as the default shell used to executed the jobs at the
+processing package</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> uses bash as the default language
+for the submission scripts.  Several schedulers, including <tt class="docutils literal">at</tt>
+uses by default <tt class="docutils literal">dash</tt> as the default scripting language.
+Normally this is performed by creating a symbolic link to
+<tt class="docutils literal">/bin/dash</tt> as <tt class="docutils literal">/bin/sh</tt>.  Change this default configuration in
+order to make <tt class="docutils literal">sh</tt> point out to <tt class="docutils literal">bash</tt>.</p>
 </li>
 </ul>
-</div>
-<div class="section" id="acronyms-and-glossary">
-<h2>Acronyms and Glossary</h2>
-<p><strong>NDSA</strong></p>
-<blockquote>
-<p>Acronym for <em>Naturally Developed Scientific Application</em>.
-NDSA are applications developed &quot;spontaneously&quot; by scientist
-as a part of a research effort.  Besides differences in the
-purpose, methods and techniques used to develop this type of
-applications they share very common features.</p>
-<ul class="simple">
-<li>Most of them are developed in low level languages
-(C/C++,Fortran)</li>
-<li>Have a very simple user interface (configuration file,
-non-standard command line input, keyboard input, etc.)</li>
-<li>They are poorly documented and tested.</li>
-<li>...</li>
-</ul>
-</blockquote>
-<p><strong>Ported Application</strong></p>
-<blockquote>
-A <em>Ported Application</em> or <em>Ported NDSA</em> is an application
-configured to run with the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> interface.</blockquote>
-<!-- .
-//////////////////////////////////////////////////////////////////////
-//REFERENCES
-//////////////////////////////////////////////////////////////////////
-. -->
 </div>
 </div>
 </div>

@@ -68,7 +68,7 @@ $PROJ["JSPATH"]="$PROJ[PROJPATH]/js";
 //AUTHENTICATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $PROJ["LOGIN"]=true;
-$PROJ["ROOTEMAIL"]="zuluagajorge@gmail.com";
+$PROJ["ROOTEMAIL"]="sci2web@gmail.com";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //COMMON ELEMENTS
@@ -381,15 +381,14 @@ User $name |
 | 
 <a href="$PROJ[PROJDIR]">Home</a> 
 | 
-<a href="$PROJ[PROJDIR]/?UserOperation=Logout">Logout</a>
+<a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a>
 HEADER;
   }    
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //BUG REPORT
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		      "UserOperation","Logout");
+  $bugbut=genBugForm("UserOperation","Logout");
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //CLOSE HEADER
@@ -1194,10 +1193,6 @@ function getControlButtons($run_code,$status,$id="")
 {
   global $PHP,$PROJ,$BUTTONS;
 
-  /*
-    $bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-    "Controls","Control Problems");
-  */
   divBlanketOver($id);
   $display=toggleButtons2($status);
   $actions=$PROJ["Actions"];
@@ -1253,13 +1248,15 @@ STATUS;
    return $bstatus;
 }
 
-function genBugForm($user,$page,$module,$subject)
+function genBugForm($module,$subject)
 {
   global $PHP,$PROJ,$BUTTONS;
   $id=md5("$user$page$module$subject");
   $bugform="";
+  $user="anonymous";
+  $page=$PHP["PAGENAME"];
   if(isset($_SESSION["User"])){
-
+    $user=$_SESSION["User"];
 $ajax_bug=<<<AJAX
 submitForm
   ('bugreport',

@@ -278,8 +278,7 @@ $DEBUG=genDebug("bottom");
 $head="";
 $TabNum=$PHP["TabId"]+1;
 $head.=genHead("","");
-$bugbut=genBugForm($_SESSION["User"],$PHP["PAGENAME"],
-		   "ResultsGeneral","General problems with results");
+$bugbut=genBugForm("ResultsGeneral","General problems with results");
 
 echo<<<CONTENT
 <html>
