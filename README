@@ -58,8 +58,8 @@ For the contirbutor
 
 3. Configure git:
 
-   $ git configure --global user.name "Your Name"
-   $ git configure --global user.email "your@email"
+   $ git config --global user.name "Your Name"
+   $ git config --global user.email "your@email"
 
 4. Get an authorized clone of the master trunk:
 
