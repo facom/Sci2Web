@@ -1,0 +1,36 @@
+Wed Nov 30 15:43:45 COT 2011
+Error File:
+
+================================================================================
+Command 1:
+    touch /var/www/html/Sci2Web/tmp/test
+Error:
+================================================================================
+Command 2:
+    rm /var/www/html/Sci2Web/tmp/test
+Error:
+================================================================================
+Command 3:
+    touch /var/www/html/Sci2Web/apps/template/application-desc.html
+Error:
+================================================================================
+Command 4:
+    rm /var/www/html/Sci2Web/apps/template/application-desc.html
+Error:
+rm: cannot remove `/var/www/html/Sci2Web/apps/template/application-desc.html': Permission denied
+================================================================================
+Command 5:
+    touch /var/www/html/Sci2Web/js/ckfinder/userfiles/test
+Error:
+================================================================================
+Command 6:
+    rm /var/www/html/Sci2Web/js/ckfinder/userfiles/test
+Error:
+================================================================================
+Command 7:
+    touch /var/www/html/Sci2Web/runs/test
+Error:
+================================================================================
+Command 8:
+    rm /var/www/html/Sci2Web/runs/test
+Error:

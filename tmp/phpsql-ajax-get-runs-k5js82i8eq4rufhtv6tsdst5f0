@@ -1,0 +1,10 @@
+Wed Nov 30 17:33:57 COT 2011
+SQL File:
+
+================================================================================
+SQL query 1:
+    select * from runs 
+where users_email='test@sci2web.org' 
+order by configuration_date
+Result size or errors:
+1

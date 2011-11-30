@@ -1,0 +1,13 @@
+Wed Nov 30 16:49:49 COT 2011
+SQL File:
+
+================================================================================
+SQL query 1:
+    select * from apps
+Result size or errors:
+1
+================================================================================
+SQL query 2:
+    select * from versions where version_id='1' order by release_date
+Result size or errors:
+1

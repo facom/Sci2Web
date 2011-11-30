@@ -1,0 +1,27 @@
+Wed Nov 30 17:24:01 COT 2011
+Error File:
+
+================================================================================
+Command 1:
+    cd /var/www/html/Sci2Web/pages/app;(ls -ld  *.php | grep '^d';ls -ld  *.php | grep '^-';ls -ld  *.php | grep '^l')  | awk '{print }'
+Error:
+================================================================================
+Command 2:
+    head -n 1 /var/www/html/Sci2Web/pages/app/1-description.php
+Error:
+================================================================================
+Command 3:
+    head -n 1 /var/www/html/Sci2Web/pages/app/2-documentation.php
+Error:
+================================================================================
+Command 4:
+    head -n 1 /var/www/html/Sci2Web/pages/app/3-downloads.php
+Error:
+================================================================================
+Command 5:
+    head -n 1 /var/www/html/Sci2Web/pages/app/4-runs.php
+Error:
+================================================================================
+Command 6:
+    head -n 1 /var/www/html/Sci2Web/pages/app/5-db.php
+Error:

@@ -1,0 +1,37 @@
+Wed Nov 30 17:24:01 COT 2011
+Output File:
+
+================================================================================
+Command 1:
+    cd /var/www/html/Sci2Web/pages/app;(ls -ld  *.php | grep '^d';ls -ld  *.php | grep '^-';ls -ld  *.php | grep '^l')  | awk '{print }'
+Output:
+1-description.php
+2-documentation.php
+3-downloads.php
+4-runs.php
+5-db.php
+================================================================================
+Command 2:
+    head -n 1 /var/www/html/Sci2Web/pages/app/1-description.php
+Output:
+<!--Description-->
+================================================================================
+Command 3:
+    head -n 1 /var/www/html/Sci2Web/pages/app/2-documentation.php
+Output:
+<!--Documentation-->
+================================================================================
+Command 4:
+    head -n 1 /var/www/html/Sci2Web/pages/app/3-downloads.php
+Output:
+<!--Download-->
+================================================================================
+Command 5:
+    head -n 1 /var/www/html/Sci2Web/pages/app/4-runs.php
+Output:
+<!--Runs-->
+================================================================================
+Command 6:
+    head -n 1 /var/www/html/Sci2Web/pages/app/5-db.php
+Output:
+<!--Database-->

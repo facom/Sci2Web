@@ -1,0 +1,120 @@
+Wed Nov 30 17:23:13 COT 2011
+Output File:
+
+================================================================================
+Command 1:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/templates/Default.conf | awk '{print }'
+Output:
+20c64ec2333222df6f44a46214f48d7c
+================================================================================
+Command 2:
+    perl /var/www/html/Sci2Web/bin/sci2web-genrun /var/www/html/Sci2Web/apps/Diffusion dev Default /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c
+Output:
+	Executing : basename /var/www/html/Sci2Web/apps/Diffusion
+	Executing : dirname /var/www/html/Sci2Web/apps/Diffusion
+===============================================================================================================================================================
+Installing application 'Diffusion' into target directory '/var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c' using template 'Default'
+===============================================================================================================================================================
+	Executing : mkdir -p /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c
+Copying files...
+	Executing : cat /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/linkfiles.info
+	Executing : (tar cvf -  --exclude='app.conf'  --exclude='sci2web'  --exclude='.backup'  --exclude='gsl'  --exclude='scratch'  --exclude='post.sh'  --exclude='stat.sh'  --exclude='Makefile'  -C /var/www/html/Sci2Web/apps Diffusion/dev |tar xf - -C /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c) &> /tmp/src.9201
+	Executing : cat /tmp/src.9201
+	Executing : mv /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/Diffusion/dev/* /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/Diffusion/dev/.[a-z]* /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c && rm -rf /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/Diffusion/dev
+Linking files...	Executing : ln -s /var/www/html/Sci2Web/apps/Diffusion/dev/gsl /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/gsl
+	Executing : ln -s /var/www/html/Sci2Web/apps/Diffusion/dev/scratch /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/scratch
+	Executing : ln -s /var/www/html/Sci2Web/apps/Diffusion/dev/post.sh /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/post.sh
+	Executing : ln -s /var/www/html/Sci2Web/apps/Diffusion/dev/stat.sh /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/stat.sh
+	Executing : ln -s /var/www/html/Sci2Web/apps/Diffusion/dev/Makefile /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/Makefile
+Creating and populating sci2web directory...
+	Executing : mkdir -p /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/sci2web
+	Executing : cp -rf /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/*.info /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/*.conf /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/s2w-* /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/.*.temp /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/sci2web
+	Executing : ln -s /var/www/html/Sci2Web/bin /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/sci2web/bin
+	Executing : rm -rf /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/Diffusion
+Saving list of files in /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c/sci2web/files.info...
+Generating application files from templates...
+	Executing : cd /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c;perl sci2web/bin/sci2web-genfiles /var/www/html/Sci2Web/apps/Diffusion/dev/sci2web/templates/Default.conf .
+=====================
+Successful generation
+=====================
+	Executing : rm -rf /tmp/*.9201
+================================================================================
+Command 4:
+    mv /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c
+Output:
+
+================================================================================
+Command 5:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | awk '{print }'
+Output:
+cf5652b48fa18522f270d80a584587c5
+================================================================================
+Command 6:
+    echo '#cf5652b48fa18522f270d80a584587c5' >> /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Output:
+
+================================================================================
+Command 7:
+    cat /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Output:
+run_app=Diffusion
+run_version=dev
+run_author=test@sci2web.org
+run_name=New Run
+run_code=mw2tl12n
+run_status=1
+run_pinfo=
+permissions=rw
+versions_id=1
+users_email=test@sci2web.org
+run_extra1=
+run_extra2=
+run_extra3=
+#cf5652b48fa18522f270d80a584587c5
+================================================================================
+Command 8:
+    tail -n 1 /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | cut -f 2 -d '#'
+Output:
+cf5652b48fa18522f270d80a584587c5
+================================================================================
+Command 9:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | awk '{print }'
+Output:
+cf5652b48fa18522f270d80a584587c5
+================================================================================
+Command 10:
+    echo '#cf5652b48fa18522f270d80a584587c5' >> /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Output:
+
+================================================================================
+Command 11:
+    md5sum /var/www/html/Sci2Web/tmp/phptmp-xKhBeP | awk '{print }'
+Output:
+67811232a802c1d29bd1964449abf3cc
+================================================================================
+Command 12:
+    ls /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/67811232a802c1d29bd1964449abf3cc
+Output:
+
+================================================================================
+Command 13:
+    cp -rf /var/www/html/Sci2Web/tmp/phptmp-xKhBeP /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/.app.conf
+Output:
+
+================================================================================
+Command 14:
+    cd /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c;bash sci2web/bin/s2w-action.sh cleanall
+Output:
+Executing action cleanall:
+Signal: clean
+Executing action clean:
+Signal: clean
+rm -rf *.dat *.png *~ *.err
+rm -rf *.o *.out
+Set clean
+Cleaned.
+================================================================================
+Command 16:
+    mv /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/67811232a802c1d29bd1964449abf3cc
+Output:
+

@@ -1,0 +1,13 @@
+Wed Nov 30 16:49:48 COT 2011
+SQL File:
+
+================================================================================
+SQL query 1:
+    select * from users where email='test@sci2web.org'
+Result size or errors:
+1
+================================================================================
+SQL query 2:
+    select username from users where email='test@sci2web.org'
+Result size or errors:
+1

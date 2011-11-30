@@ -1,0 +1,68 @@
+Wed Nov 30 17:23:13 COT 2011
+Error File:
+
+================================================================================
+Command 1:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/templates/Default.conf | awk '{print }'
+Error:
+================================================================================
+Command 2:
+    perl /var/www/html/Sci2Web/bin/sci2web-genrun /var/www/html/Sci2Web/apps/Diffusion dev Default /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c
+Error:
+================================================================================
+Command 3:
+    perl /var/www/html/Sci2Web/bin/sci2web-genfiles /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/templates/Default.conf /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c
+Error:
+================================================================================
+Command 4:
+    mv /var/www/html/Sci2Web/tmp/temprun/mw2tl12n-20c64ec2333222df6f44a46214f48d7c /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c
+Error:
+================================================================================
+Command 5:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | awk '{print }'
+Error:
+================================================================================
+Command 6:
+    echo '#cf5652b48fa18522f270d80a584587c5' >> /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Error:
+================================================================================
+Command 7:
+    cat /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Error:
+================================================================================
+Command 8:
+    tail -n 1 /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | cut -f 2 -d '#'
+Error:
+================================================================================
+Command 9:
+    md5sum /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info | awk '{print }'
+Error:
+================================================================================
+Command 10:
+    echo '#cf5652b48fa18522f270d80a584587c5' >> /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/run.info
+Error:
+================================================================================
+Command 11:
+    md5sum /var/www/html/Sci2Web/tmp/phptmp-xKhBeP | awk '{print }'
+Error:
+================================================================================
+Command 12:
+    ls /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/67811232a802c1d29bd1964449abf3cc
+Error:
+ls: cannot access /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/67811232a802c1d29bd1964449abf3cc: No such file or directory
+================================================================================
+Command 13:
+    cp -rf /var/www/html/Sci2Web/tmp/phptmp-xKhBeP /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/.app.conf
+Error:
+================================================================================
+Command 14:
+    cd /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c;bash sci2web/bin/s2w-action.sh cleanall
+Error:
+================================================================================
+Command 15:
+    perl /var/www/html/Sci2Web/bin/sci2web-genfiles /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c/.app.conf /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c
+Error:
+================================================================================
+Command 16:
+    mv /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/20c64ec2333222df6f44a46214f48d7c /var/www/html/Sci2Web/runs/test@sci2web.org/Diffusion/dev/67811232a802c1d29bd1964449abf3cc
+Error:

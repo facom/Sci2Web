@@ -1,0 +1,14 @@
+Wed Nov 30 15:51:31 COT 2011
+Output File:
+
+================================================================================
+Command 1:
+    MPLCONFIGDIR='/var/www/html/Sci2Web/tmp' python /var/www/html/Sci2Web/bin/sci2web-plot /var/www/html//./Sci2Web/runs/test@sci2web.org/Diffusion/dev/8fa10abb222704ccf57069b931897a02/path-300.ps2w
+Output:
+Plotting '/var/www/html//./Sci2Web/runs/test@sci2web.org/Diffusion/dev/8fa10abb222704ccf57069b931897a02/path-300.dat'...
+	8617 data found
+	Plotting 1 columns
+		Plotting column 2
+Automatic x-axis
+Automatic y-axis
+Saving plot in '/var/www/html//./Sci2Web/runs/test@sci2web.org/Diffusion/dev/8fa10abb222704ccf57069b931897a02/path-300.png'...
