@@ -370,9 +370,9 @@ Processed by unicode2rstsubs.py, part of Docutils:
 </div>
 <div class="section" id="install-sci2web-in-a-new-server">
 <h2>Install Sci2Web in a new server</h2>
-<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform is installed as a website in your server.  You
-will need to fullfill the following basic prerequisites before trying
-to configure and use the platform:</p>
+<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform will be installed as a website in your server.
+You will need to fullfill the following basic prerequisites before
+trying to configure and use the platform:</p>
 <ul class="simple">
 <li>Apache2 server (debian package, dp:<tt class="docutils literal">apache2</tt>)</li>
 <li>PHP and PHP+MySQL modules (dp: <tt class="docutils literal">php5</tt> , <tt class="docutils literal"><span class="pre">php5-mysql</span></tt> )</li>
@@ -380,91 +380,78 @@ to configure and use the platform:</p>
 <li>DBI and DBD-MySQL perl modules (dp: <tt class="docutils literal"><span class="pre">libdbi-perl</span></tt> , <tt class="docutils literal"><span class="pre">libdbd-mysql-perl</span></tt>)</li>
 <li>Python language</li>
 <li>Matplotlib library (dp: <tt class="docutils literal"><span class="pre">python-matplotlib</span></tt>)</li>
+<li>Delayed job execution and batch processing package, <tt class="docutils literal">at</tt> (dp:
+<tt class="docutils literal">at</tt>)</li>
 </ul>
 <p>For debian (e.g. ubuntu) users use the following command to install
 all the packages in your server:</p>
 <pre class="literal-block">
 apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
 </pre>
-<p>To install <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> in a new server follow the steps described below:</p>
-<ol class="arabic">
-<li><p class="first">Get the source code and decompress and untar in a proper server
-directory.  You have to track the directory where the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is
-installed.  Hereafter we will call it the <strong>PROJPATH</strong>.:</p>
-<pre class="literal-block">
-$ cd PROJPATH
-</pre>
-</li>
-<li><p class="first">Set the proper permissions for the directories in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
-directory:</p>
-<pre class="literal-block">
-$ chmod a+x tmp
-$ chown www-data.www-data runs
-$ chown www-data.www-data apps/templates/*.html
-</pre>
-<p>Here you have to replace <tt class="docutils literal"><span class="pre">www-datat</span></tt> for the appropiate user and
-group of your web server user.</p>
-</li>
-<li><p class="first">Create the user of the database.  Using any interface to your
-database server (<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is configured to use MySQL) create a
-particular user for the platform operations:</p>
-<p>mysql&gt; create user <a class="reference external" href="mailto:'sci2web'&#64;'localhost">'sci2web'&#64;'localhost</a>' identified by 'WebPoweredNDSA';
-mysql&gt; grant all privileges on sci2web.* to <a class="reference external" href="mailto:'sci2web'&#64;'localhost">'sci2web'&#64;'localhost</a>';
-mysql&gt; flush privileges;</p>
+<p>To start using the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform in your server follow the below
+procedure:</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
-<p class="last">You have to remember and safely store the password of
-the user database.</p>
-</div>
-</li>
-<li><p class="first">Create database and basic tables and populate them.  In the doc
-directory you will find text files, <tt class="docutils literal"><span class="pre">sci2web-create.sql</span></tt>,
-<tt class="docutils literal"><span class="pre">sci2web-populate.sql</span></tt> containing all the required sql commands
-to create the database and their basic tables.  Using mysql command
-line interface you can easily create the database executing:</p>
-<pre class="literal-block">
-$ mysql -u root -p &lt; sci2web-create.sql
-$ mysql -u root -p &lt; sci2web-populate.sql
-</pre>
-<p>By default the databases are created with an example application,
-<cite>Diffusion</cite> and its respective development version <cite>dev</cite> and a
-master user <cite>zuluagajorge&#64;gmail.com</cite>.</p>
-</li>
-<li><p class="first">Configure the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server website.  Edit the configuration file
-<tt class="docutils literal">lib/sci2web.cong</tt>.  Specially the following variables:</p>
-<ul>
-<li><p class="first"><tt class="docutils literal">PROJBASE</tt>: Base directory at the server where the project is
-installed.  Normally this is the name of the subdirectory in the
-web server (e.g. /var/www for linux apache2 servers) where the
-<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> directory is installed.</p>
-</li>
-<li><p class="first"><tt class="docutils literal">PROJNAME</tt>: Name of the subdirectory wher the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platworm
-was installed.</p>
-<p>The PROJBASE and PROJNAME variables togheter with the server URI
-form the base URL of the Sci2Web
-site::<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
-</li>
-<li><p class="first"><tt class="docutils literal">SCI2WEBSITE</tt>: This is the name of the server where <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is
-being served.  In principle many instances of the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
-platform could be installed around the world.  This variable
-individualizes them.</p>
-</li>
-<li><p class="first"><tt class="docutils literal">TITLE</tt>: Title of the project that will be presented in the web
-pages header.</p>
-</li>
-<li><p class="first">Database information.  <tt class="docutils literal">DBNAME</tt>, <tt class="docutils literal">DBSERVER</tt>, <tt class="docutils literal">DBUSER</tt> and
-<tt class="docutils literal">DBPASS</tt> are the variables controlling the access to the
-database.</p>
-</li>
+<p>Hereafter we will use the follwoing aliases when
+referring to important directories and files:</p>
+<ul class="last simple">
+<li><strong>PROJPATH</strong>: directory where the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site is placed at the
+server (e.g. /var/www/html/Sci2Web).</li>
+<li><strong>APACHE_USER</strong> and <strong>APACHE_GROUP</strong>.  User and group of the
+apache2 server.  Typically they are <tt class="docutils literal"><span class="pre">www-data</span></tt> and <tt class="docutils literal"><span class="pre">www-data</span></tt>.</li>
 </ul>
-<div class="important">
-<p class="first admonition-title">Important</p>
-<p class="last">It should be stressed that the access to this file
-should be maintained as restricted as possible since it contains
-critical information about the website.  If you want to protect
-the file change the owner and permissions of the file to make it
-readable only for the www-data user.</p>
 </div>
+<ol class="arabic">
+<li><p class="first"><strong>Edit the master configuration file</strong>.  You can set up the basic
+information about your server in the master configuration file
+<tt class="docutils literal">PROJPATH/lib/sci2web.conf</tt>.  The most important variables in
+this files are:</p>
+<ul class="simple">
+<li><strong>PROJBASE</strong> and <strong>PROJNAME</strong>: The URL of your project will be
+recognized as: <tt class="docutils literal"><span class="pre">http://server/PROJBASE/PROJNAME</span></tt>.  Configure
+properly these variables to properly configure the links in your
+website.</li>
+<li><strong>SCI2WEBSITE</strong>: This is the name of the <em>local server</em> where the
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform is installed.  This name will be used in
+different places of the platform to distinguish this instance
+from other ones found around the web.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Set permissions for critical directories</strong>.  Several directories
+in your website should have writing permission for the apache
+user:</p>
+<pre class="literal-block">
+$ chown -R APACHE_USER.APACHE_GROUP runs tmp
+$ chown -R APACHE_USER.APACHE_GROUP apps/*/*.html
+$ chown -R APACHE_USER.APACHE_GROUP pages/*/content/*.html
+$ chown -R APACHE_USER.APACHE_GROUP js/ckfinder/userfiles
+</pre>
+<p>You can use the script <tt class="docutils literal">PROJPATH/doc/install/setperms.sh</tt> to
+change automatically permissions.</p>
+</li>
+<li><p class="first"><strong>Set up the database server</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site uses systematically
+mysql databases to store information about applications, users,
+runs, etc.  In order to use the platform it is important to set up
+properly the mysql server to accept the creation and modification
+of the platform databases.  Before to start you have to create a
+user with the proper permissions to create and modify the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+database.  Login into the mysql server as <tt class="docutils literal">root</tt> and execute:</p>
+<pre class="literal-block">
+mysql&gt; create user 'sci2web'&#64;'localhost' identified by 'WebPoweredNDSA';
+mysql&gt; grant all privileges on sci2web.* to 'sci2web'&#64;'localhost';
+mysql&gt; flush privileges;
+</pre>
+<p>The information about the user (login and password) should be the
+same as that stored in the master configuration file.</p>
+</li>
+<li><p class="first"><strong>Create Sci2Web_ database and populate it with basic
+information</strong>.  You will find the proper sql commands to create and
+populate the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database at <tt class="docutils literal">doc/install</tt>.  To perform this
+actions just run:</p>
+<pre class="literal-block">
+$ mysql -u root -p &lt; doc/install/sci2web-create.sql
+$ mysql -u root -p &lt; doc/install/sci2web-populate.sql
+</pre>
 </li>
 <li><p class="first">Once this file has been properly set you can test the access to the
 site using the link:
@@ -490,6 +477,25 @@ can do this changing the symbolic link /bin/sh to /bin/bash</li>
 </ol>
 </li>
 </ol>
+</div>
+<div class="section" id="security-issues">
+<h2>Security issues</h2>
+<ul>
+<li><p class="first"><strong>Apache2 configuration</strong> Allows the overriding of the apache
+options to disable directory listings of your critical directories:</p>
+<pre class="literal-block">
+# vi /etc/apache2/apache2.conf
+
+&lt;Directory &quot;PROJPATH&quot;&gt;
+AllowOverride All
+&lt;/Directory&gt;
+</pre>
+</li>
+<li><p class="first"><strong>Batch system configuration</strong>.  Configure at.</p>
+</li>
+<li><p class="first"><strong>Configuration of shell script</strong>. Configure bash.</p>
+</li>
+</ul>
 </div>
 <div class="section" id="acronyms-and-glossary">
 <h2>Acronyms and Glossary</h2>

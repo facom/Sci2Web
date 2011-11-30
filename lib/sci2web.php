@@ -59,6 +59,10 @@ $PROJ["RUNSDIR"]="$PROJ[PROJDIR]/runs";
 $PROJ["RUNSPATH"]="$PROJ[PROJPATH]/runs";
 $PROJ["BINDIR"]="$PROJ[PROJDIR]/bin";
 $PROJ["BINPATH"]="$PROJ[PROJPATH]/bin";
+$PROJ["LIBDIR"]="$PROJ[PROJDIR]/lib";
+$PROJ["LIBPATH"]="$PROJ[PROJPATH]/lib";
+$PROJ["JSDIR"]="$PROJ[PROJDIR]/js";
+$PROJ["JSPATH"]="$PROJ[PROJPATH]/js";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //AUTHENTICATION

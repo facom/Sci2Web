@@ -20,20 +20,26 @@
 ###################################################
 #CREATE DATABASE AND GIVES PERMISSIONS
 ###################################################
-drop database if exists sci2webpp;
-create database sci2webpp;
-grant all privileges on sci2webpp.* to 'sci2webpp'@'localhost';
+drop database if exists sci2web;
+drop database if exists Diffusion_dev;
+create database sci2web;
+create database Diffusion_dev;
+grant all privileges on sci2web.* to 'sci2web'@'localhost';
+grant all privileges on Diffusion_dev.* to 'sci2web'@'localhost';
 
 ###################################################
 #CREATE TABLES
 ###################################################
-use sci2webpp;
+use sci2web;
 create table apps (
        app_code_name varchar(255) not null,
        app_complete_name varchar(255),
        brief_description text,
        creation_date date not null,
        primary key (app_code_name),
+       app_extra1 varchar(255),       
+       app_extra2 varchar(255),       
+       app_extra3 varchar(255),       
 
        #LINKS
        users_emails_author varchar(255) not null,
@@ -46,6 +52,9 @@ create table versions (
        release_date date not null,
        changes_log text,
        primary key (version_code,version_id),
+       version_extra1 varchar(255),       
+       version_extra2 varchar(255),       
+       version_extra3 varchar(255),       
        
        #LINKS
        users_emails_contributor varchar(255) not null,
@@ -58,6 +67,9 @@ create table users (
        password varchar(255) not null,
        activate tinyint(1) not null default 0,
        complete_information text,       
+       user_extra1 varchar(255),       
+       user_extra2 varchar(255),       
+       user_extra3 varchar(255),       
 
        primary key (email),
        
