@@ -23,7 +23,6 @@
 drop database if exists sci2web;
 drop database if exists Diffusion_dev;
 create database sci2web;
-create database Diffusion_dev;
 grant all privileges on sci2web.* to 'sci2web'@'localhost';
 grant all privileges on Diffusion_dev.* to 'sci2web'@'localhost';
 
@@ -94,4 +93,27 @@ create table runs (
        #LINKS
        versions_id int,
        users_email varchar(255)
+);
+
+create table Diffusion_dev (
+       dbrunhash char(32) not null,
+       dbauthor varchar(255),
+       dbdate datetime not null,
+       
+       PeriodOutput int(11),
+       BaseUnits float,
+       OutputBasename varchar(100),
+       PlotFile varchar(255),
+       MeanDispersions float,
+       Height float,
+       Width float,
+       NumberParticles int(11),
+       MeanFreePath float,
+       DelayTime float,
+       QuerySleep tinyint(1),
+       GeneralComments text,
+
+       primary key (dbrunhash),
+       #LINKS
+       runs_runcode char(8)
 );

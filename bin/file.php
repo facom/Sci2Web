@@ -76,8 +76,7 @@ if($Action=="Save"){
 $fdir="$Dir/$File";
 $fpath="$PHP[ROOTPATH]/$fdir";
 $ftype=filedType($fpath);
-$id="file"
-;
+$id="file";
 
 $ajax_file=<<<AJAX
 loadContent
@@ -152,13 +151,13 @@ CONTENT;
    $tmpdir="$PROJ[TMPDIR]/dir-$File-$PHP[SESSID]";
    $tmppath="$PROJ[TMPPATH]/dir-$File-$PHP[SESSID]";
    systemCmd("mkdir -p $tmppath");
+   systemCmd("mkdir -p $tmppath/.root");
    systemCmd("tar -zxvf $fpath -C $tmppath");
    $ftable=filesTable("$tmpdir");
 $fcontent.=<<<CONTENT
 <a href="$Dir/$File">Download tarball</a>
 $ftable
 CONTENT;
-   sleep(1);
    break;
  default:
 $fcontent.=<<<CONTENT

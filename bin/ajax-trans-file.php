@@ -229,13 +229,13 @@ if($Action=="GetList"){
   //LIST OF FILES
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   $files=listFiles($path,$criterium);
-  $nfiles=count($files);
-
   $result.="";
   $i=0;
   if(!file_exists("$path/.root")){
     array_unshift($files,"..");
   }
+  $nfiles=count($files);
+
   if($PHP["Start"]=="All"){
     $start=0;
     $end=count($files);

@@ -677,7 +677,11 @@ loadContent
    '$PROJ[BINDIR]/ajax-trans-run.php?RunCode=$runcode&Action=GetControls',
    'runcontrols',
    function(element,rtext){
-     element.innerHTML=rtext;
+     hash=$(element).attr('hash');
+     if(hash!=hex_md5(rtext)){
+       $(element).attr('hash',hex_md5(rtext));
+       element.innerHTML=rtext;
+     }
    },
    function(element,rtext){
    },

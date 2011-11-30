@@ -222,7 +222,16 @@ RESULT;
   //FINALIZE TABLE
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   $removeopt="";
-  if(!checkSuperUser()) $removeopt="disabled style='opacity:0.6";
+  if(checkSuperUser()){
+$removeopt=<<<REMOVE
+<button id="removebut" class="image" name="Button" value="RemoveResults"
+	onmouseover="setsValue('action_remove','RemoveResults');explainThis(this)"
+	explanation="Remove results" $removeopt>
+  $BUTTONS[Remove]
+</button>
+<input id="action_remove" type="hidden" name="Action_Submit" value="">
+REMOVE;
+}
 
 $result.=<<<RESULT
 </tbody>
@@ -231,18 +240,13 @@ $result.=<<<RESULT
 <td colspan="8" style="text-align:right">
   <div style="position:relative">
     <div style="float:right">
+      $removeopt
       <button id="downbut" class="image" name="Button" value="Download"
-	      onmouseover="setsValue('actioninp','Download');explainThis(this)"
+	      onmouseover="setsValue('action_down','Download');explainThis(this)"
 	      explanation="Download results">
 	$BUTTONS[Down]
       </button>
-
-      <button id="removebut" class="image" name="Button" value="RemoveResults"
-	      onmouseover="setsValue('actioninp','RemoveResults');explainThis(this)"
-	      explanation="Remove results" $removeopt>
-	$BUTTONS[Remove]
-      </button>
-      <input id="actioninp" type="hidden" name="Action_Submit" value="">
+      <input id="action_down" type="hidden" name="Action_Submit" value="">
     </div>
     <div id="down_wait" 
 	 style="border:solid black 0px;float:right;position:relative;top:15px;

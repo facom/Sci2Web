@@ -101,7 +101,8 @@ for $field (keys(%CONFIG)){
     $sql.="$field='".$CONFIG{"$field"}."',\n";
 }
 $sql=~s/,$//;
-$query=$DB->prepare($sql);
+print "Executing database command:\n$sql\n";
+$query=$DB->prepare($sql) or die("Error:".$query->errstr);
 $nres=$query->execute() or die("Error:".$query->errstr);
 
 #################################################################################

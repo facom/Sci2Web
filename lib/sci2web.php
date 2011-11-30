@@ -272,6 +272,7 @@ $head.=<<<HEAD
   <script type='text/javascript' src='$PROJ[PROJDIR]/js/domwindow//jquery.DOMWindow.js'></script>
   <script type='text/javascript' src='$PROJ[PROJDIR]/js/tabber/tabber.js'></script>
   <script type='text/javascript' src='$PROJ[PROJDIR]/js/sci2web.js'></script>
+  <script type='text/javascript' src='$PROJ[PROJDIR]/js/jshash/md5.js'></script>
   <script type='text/javascript' src='$PROJ[PROJDIR]/js/ckeditor/ckeditor.js'></script>
   <script type='text/javascript'>
   CKEDITOR.editorConfig=function(config)

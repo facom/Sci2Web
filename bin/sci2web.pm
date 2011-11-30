@@ -23,9 +23,9 @@ sub Exit{exitFunc(@_);}
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #DATABASE
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$DBNAME="sci2webpp";
+$DBNAME="sci2web";
 $DBSERVER="localhost";
-$DBUSER="sci2webpp";
+$DBUSER="sci2web";
 $DBPASS="WebPoweredNDSA";
 %CONFIG={};
 

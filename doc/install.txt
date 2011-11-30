@@ -101,6 +101,11 @@ procedure outlined below.
        open the page of version 'dev' (version id 1) of application
        'Diffusion' at the first tab (i.e. description of application)
 
+   .. Important: If you change the information about the database
+      (name of the database or the authorized user, password of the
+      user) you must also edit that information in the
+      ``bin/sci2web.pm`` file.
+
 #. **Set permissions for critical directories**.  Several directories
    in your website should have writing permission for the apache
    user::
