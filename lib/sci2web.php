@@ -281,7 +281,7 @@ HEAD;
   //========================================
   //LOAD CSS
   //========================================
-  require_once("$PROJ[PROJPATH]/css/sci2web.css");
+  require_once("$PROJ[PROJPATH]/lib/sci2web.css");
   $head.=$PROJ["STYLES"];
   return $head;
 }
