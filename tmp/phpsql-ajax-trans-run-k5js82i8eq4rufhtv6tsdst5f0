@@ -1,13 +1,13 @@
-Wed Nov 30 17:38:23 COT 2011
+Thu Dec  1 06:49:11 COT 2011
 SQL File:
 
 ================================================================================
 SQL query 1:
-    select * from runs where run_code='8a6us2ij'
+    select * from runs where run_code='qd52iru2'
 Result size or errors:
 1
 ================================================================================
 SQL query 2:
-    select * from runs where run_code='8a6us2ij'
+    delete from runs where run_code='qd52iru2'
 Result size or errors:
 1

@@ -1,11 +1,11 @@
 Input vars:
 
 POST:
-RunCode = 8a6us2ij
-Action = GetControls
+RunCode = qd52iru2
+Action = Remove
 GET:
-RunCode = 8a6us2ij
-Action = GetControls
+RunCode = qd52iru2
+Action = Remove
 SESSION:
 PROJDIR = /./Sci2Web
 User = test@sci2web.org
@@ -64,14 +64,14 @@ SYMBOLS = Array
     [35] => 0
 )
 
-RANDID = 5m2s1
+RANDID = bge6b
 ROOTPATH = /var/www/html
 SERVER = http://urania.udea.edu.co
 PAGENAME = ajax-trans-run.php
 PAGEDIR = /Sci2Web/bin
 PAGEBASENAME = ajax-trans-run
-REFERER = http://urania.udea.edu.co/Sci2Web/bin/configure.php?Action=New&Template=Default
-REFERERNAME = http://urania.udea.edu.co/Sci2Web/bin/configure.php
+REFERER = http://urania.udea.edu.co/Sci2Web/app.php?SetApp=true&App=Diffusion&VersionId=1&BugUser=test%40sci2web.org&BugUser_Submit=test%40sci2web.org&BugPage_Submit=3-applications.php&BugModule_Submit=ApplicationVersions_Diffusion_&BugSubject=No+version+display&BugSubject_Submit=No+version+display&BugReport=&BugReport_Submit=
+REFERERNAME = http://urania.udea.edu.co/Sci2Web/app.php
 SESPAGEPREFIX = ajax-trans-run-k5js82i8eq4rufhtv6tsdst5f0
 DBFILE = phpdb-ajax-trans-run-k5js82i8eq4rufhtv6tsdst5f0
 CMDERRFILE = phperr-ajax-trans-run-k5js82i8eq4rufhtv6tsdst5f0
@@ -80,23 +80,23 @@ SQLFILE = phpsql-ajax-trans-run-k5js82i8eq4rufhtv6tsdst5f0
 SQLCOUNTER = 1
 DBCOUNTER = 1
 FL = Resource id #7
-QSTRING = RunCode=8a6us2ij&Action=GetControls
-QSTRALL = RunCode=8a6us2ij&Action=GetControls&RunCode=8a6us2ij&Action=GetControls&RunCode=8a6us2ij&Action=GetControls
-RunCode = 8a6us2ij
-Action = GetControls
+QSTRING = RunCode=qd52iru2&Action=Remove
+QSTRALL = RunCode=qd52iru2&Action=Remove&RunCode=qd52iru2&Action=Remove&RunCode=qd52iru2&Action=Remove
+RunCode = qd52iru2
+Action = Remove
 DATE = Array
 (
-    [seconds] => 23
-    [minutes] => 38
-    [hours] => 17
-    [mday] => 30
-    [wday] => 3
-    [mon] => 11
+    [seconds] => 11
+    [minutes] => 49
+    [hours] => 6
+    [mday] => 1
+    [wday] => 4
+    [mon] => 12
     [year] => 2011
-    [yday] => 333
-    [weekday] => Wednesday
-    [month] => November
-    [0] => 1322692703
+    [yday] => 334
+    [weekday] => Thursday
+    [month] => December
+    [0] => 1322740151
 )
 
 DOCTYPE = <!doctype html public "-//W3C//DTD XHTML 1.0 Transitional//EN"
