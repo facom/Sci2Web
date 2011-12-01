@@ -18,6 +18,7 @@ use DBD::mysql;
 #OPERATORS
 sub vprint{vprintFunc(@_);}
 sub Exit{exitFunc(@_);}
+
 #USAGE
 $USAGE="Usage:
 

@@ -150,7 +150,7 @@ sub exitFunc
     }
 }
 
-sub readConfig($filename)
+sub readConfig
 {
     my $filename=shift;
     my @lines,$line,$field,@fields;
@@ -169,6 +169,15 @@ sub readConfig($filename)
 	next if($field!~/\w/);
         $CONFIG{"$field"}=join "=",@fields[1..$#fields];
     }
+}
+
+sub cleanConfig
+{
+    my $file=shift;
+    my $fname=`basename $file`;chop $fname;
+    sysCmd("cat lib/sci2web.conf | egrep -v '^#' | egrep -v '^<' | egrep -v '^/' | grep -v '^?' | grep -v '^*' | egrep -v '^\$' > /tmp/$fname.$$");
+    
+    return "/tmp/$fname.$$";
 }
 
 1;
