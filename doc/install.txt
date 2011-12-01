@@ -127,8 +127,6 @@ procedure outlined below.
    database.  Login into the mysql server as ``root`` and execute::
 
    	 mysql> create user 'sci2web'@'localhost' identified by 'WebPoweredNDSA';
-	 mysql> grant all privileges on sci2web.* to 'sci2web'@'localhost';
-	 mysql> flush privileges;
 
    The information about the user (login and password) should be the
    same as that stored in the master configuration file.
@@ -138,8 +136,7 @@ procedure outlined below.
    populate the Sci2Web_ database at ``doc/install``.  To perform this
    actions just run::
 
-         $ mysql -u root -p < doc/install/sci2web-create.sql
-   	 $ mysql -u root -p < doc/install/sci2web-populate.sql
+         $ mysql -u root -p < doc/install/sci2web.sql
  
 #. **Test the configuration**.  In order to test the configuration of
    the site open the page

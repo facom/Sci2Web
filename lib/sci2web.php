@@ -144,13 +144,38 @@ $PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Resume");
 //////////////////////////////////////////////////////////////////////////////////
 function checkAuthentication()
 {
-  global $PHP;
+  global $PROJ,$PHP;
 
   if(isset($PHP["UserOperation"])){
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    //CHANGE PASSWORD
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if($PHP["UserOperation"]=="ChangePass"){
+      $pass=mysqlGetField("select * from users where email='$_SESSION[User]'",0,"password");
+      $codepass=md5($PHP["OldPassword"]);
+      $newpass=md5($PHP["NewPassword"]);
+      if($pass==$codepass){
+	if($PHP["NewPassword"]==$PHP["ConfirmPassword"]){
+	  mysqlCmd("update users set password='$newpass',activate='0' where email='$_SESSION[User]'");
+	  systemCmd("rm -rf $PROJ[TMPPATH]/*$PHP[SESSID]*");
+	  session_unset();
+	  $onload=genOnLoad("notDiv('notlogin','Password changed<br/>You need to activate your account again')");
+	  echo "$onload";
+	}else{
+	  $onload=genOnLoad("notDiv('notlogin','Passwords does not match')");
+	  echo "$onload";
+	}
+      }else{
+	$onload=genOnLoad("notDiv('notlogin','Old password invalid')");
+	echo "$onload";
+      }
+    }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //LOGOUT
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if($PHP["UserOperation"]=="Logout"){
+      //REMOVE TEMPORAL FILES
+      systemCmd("rm -rf $PROJ[TMPPATH]/*$PHP[SESSID]*");
       session_unset();
       $onload=genOnLoad("notDiv('notlogin','¡Hasta la vista!')");
       echo "$onload";
@@ -159,16 +184,18 @@ function checkAuthentication()
     //ACTIVATE ACCOUNT
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if($PHP["UserOperation"]=="Activate"){
-      $_SESSION["User"]=$PHP["SignupEmail"];
-      $onload=genOnLoad("notDiv('notlogin','Account activated')");
-      echo "$onload";
-    }
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    //CHANGE PASSWORD
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if($PHP["UserOperation"]=="ChangePass"){
-      $onload=genOnLoad("notDiv('notlogin','Password changed')");
-      echo "$onload";
+      //CHECK ACTIVATION CODE
+      $actcode=mysqlGetField("select * from users where email='$PHP[SignupEmail]'",0,"actcode");
+      if($actcode==$PHP["ActivationCode"]){
+	mysqlCmd("update users set activate='1' where email='$PHP[SignupEmail]'");
+	$_SESSION["User"]=$PHP["SignupEmail"];
+	$onload=genOnLoad("notDiv('notlogin','Your account has been activated')");
+	echo "$onload";
+      }else{
+	$onload=genOnLoad("notDiv('notlogin','Invalid activation code')");
+	echo "$onload";
+      }
+      //$_SESSION["User"]=$PHP["SignupEmail"];
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //RECOVER PASS
@@ -188,16 +215,22 @@ function checkAuthentication()
     //LOGIN
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if($PHP["UserOperation"]=="Login"){
-      $pass=mysqlGetField("select * from users where email='$PHP[LoginEmail]'",0,"password");
-      $codepass=md5($PHP["LoginPassword"]);
-      if($codepass==$pass){
-	$_SESSION["User"]=$PHP["LoginEmail"];
-	$onload=genOnLoad("notDiv('notlogin','Welcome')");
-	echo "$onload";
+      $activate=mysqlGetField("select * from users where email='$PHP[LoginEmail]'",0,"activate");
+      if($activate){
+	$pass=mysqlGetField("select * from users where email='$PHP[LoginEmail]'",0,"password");
+	$codepass=md5($PHP["LoginPassword"]);
+	if($codepass==$pass){
+	  $_SESSION["User"]=$PHP["LoginEmail"];
+	  $onload=genOnLoad("notDiv('notlogin','Welcome')");
+	  echo "$onload";
+	}else{
+	  $onload=genOnLoad("notDiv('notlogin','Password invalid')");
+	  echo "$onload";
+	}
       }else{
-	$onload=genOnLoad("notDiv('notlogin','Password invalid')");
+	$onload=genOnLoad("notDiv('notlogin','Your account has not been activated.<br/>Check your e-mail')");
 	echo "$onload";
-      }
+      }	
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //SIGNUP
@@ -213,7 +246,31 @@ function checkAuthentication()
 	//==================================================
 	if($PHP["SignupPassword"]==$PHP["SignupConfirm"]){
 	  $codepass=md5($PHP["SignupPassword"]);
-	  mysqlCmd("insert into users (email,username,password,activate) values ('$PHP[SignupEmail]','$PHP[SignupName]','$codepass','1')");
+	  mysqlCmd("replace into users set email='$PHP[SignupEmail]',username='$PHP[SignupName]',password='$codepass',activate='0',actcode='$PHP[RANDID]'");
+	  //EMAIL
+	  $acturl="$PHP[SERVER]/$PROJ[PROJDIR]/main.php?UserOperation=Activate&SignupEmail=$PHP[SignupEmail]&ActivationCode=$PHP[RANDID]";
+	  if($PROJ["ENABLEMAIL"]){
+$text=<<<TEXT
+<p>Welcome to Sci2Web,</p>
+<p>
+Somebody has tried to sign-up using your
+e-mail <i>$PHP[SignupEmail]</i> in the <b>Sci2Web</b> platform at
+the <b>$PROJ[SCI2WEBSITE]</b>.  If you are who is trying to get an
+account use the following link to activate your account:
+</p>
+<a href="$acturl">Activation link</a>
+TEXT;
+	    blankFunc();
+	    $email=$PHP["SignupEmail"];
+	    $subject="[Sci2Web] Activate your account";
+	    $from=$replyto=$PROJ["ROOTEMAIL"];
+	    sendMail($email,$subject,$text,$from,$replyto);
+	  }else{
+	    $fl=fopen("$PHP[TMPPATH]/$PHP[SignupEmail]-activationurl","w");
+	    fwrite($fl,"$acturl\n");
+	    fclose($fl);
+	  }
+	  //NOTIFICATION
 	  $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
 	  echo "$onload";
 	}else{
@@ -371,7 +428,7 @@ User $name |
   <table>
   <tr><td>Old password:</td><td><input type="password" name="OldPassword"></td></tr>
   <tr><td>New password:</td><td><input type="password" name="NewPassword"></td></tr>
-  <tr><td>Confirm password:</td><td><input type="password" name="ConfirmPassw5Dord"></td></tr>
+  <tr><td>Confirm password:</td><td><input type="password" name="ConfirmPassword"></td></tr>
   <tr>
   <td colspan=10>
   <button name="UserOperation" value="ChangePass">Change password</button>
@@ -1348,5 +1405,4 @@ function checkSuperUser()
   return $condition;
 	      
 }
-
 ?>
