@@ -13,11 +13,12 @@
 $BASEDIR=`dirname $0`;chop $BASEDIR;
 $ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
 require "$BASEDIR/sci2web.pm";
-use DBI;
-use DBD::mysql;
 #OPERATORS
 sub vprint{vprintFunc(@_);}
 sub Exit{exitFunc(@_);}
+
+use DBI;
+use DBD::mysql;
 
 #USAGE
 $USAGE="Usage:
