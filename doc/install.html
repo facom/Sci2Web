@@ -429,6 +429,10 @@ open the page of version 'dev' (version id 1) of application
 </ul>
 </li>
 </ul>
+<!-- Important: If you change the information about the database
+(name of the database or the authorized user, password of the
+user) you must also edit that information in the
+``bin/sci2web.pm`` file. -->
 </li>
 <li><p class="first"><strong>Set permissions for critical directories</strong>.  Several directories
 in your website should have writing permission for the apache
@@ -451,8 +455,6 @@ user with the proper permissions to create and modify the <a class="reference ex
 database.  Login into the mysql server as <tt class="docutils literal">root</tt> and execute:</p>
 <pre class="literal-block">
 mysql&gt; create user 'sci2web'&#64;'localhost' identified by 'WebPoweredNDSA';
-mysql&gt; grant all privileges on sci2web.* to 'sci2web'&#64;'localhost';
-mysql&gt; flush privileges;
 </pre>
 <p>The information about the user (login and password) should be the
 same as that stored in the master configuration file.</p>
@@ -462,8 +464,7 @@ information</strong>.  You will find the proper sql commands to create and
 populate the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database at <tt class="docutils literal">doc/install</tt>.  To perform this
 actions just run:</p>
 <pre class="literal-block">
-$ mysql -u root -p &lt; doc/install/sci2web-create.sql
-$ mysql -u root -p &lt; doc/install/sci2web-populate.sql
+$ mysql -u root -p &lt; doc/install/sci2web.sql
 </pre>
 </li>
 <li><p class="first"><strong>Test the configuration</strong>.  In order to test the configuration of
@@ -477,6 +478,17 @@ configuration and reload the test script.</p>
 website by going to <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
 </li>
 </ol>
+<p>If you want to start using the example application coming with the
+platform creates an account and enjoy!</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">If you create an account with the e-mail
+<tt class="docutils literal">test&#64;sci2web.org</tt> you will be able to edit and perform other
+administrative operations under the example application.  It is
+recommended to create this account as soon as you complete the
+installation of your platform to avoid that an anonymous user gain
+access to this administrative powers on the example application.</p>
+</div>
 </div>
 <div class="section" id="security-issues">
 <h2>Security issues</h2>

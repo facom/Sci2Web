@@ -148,6 +148,16 @@ procedure outlined below.
 #. Once the test script has ran successfully check directly the
    website by going to ``http://SERVERURL/PROJBASE/PROJNAME``.
 
+If you want to start using the example application coming with the
+platform creates an account and enjoy!
+
+.. Important:: If you create an account with the e-mail
+   ``test@sci2web.org`` you will be able to edit and perform other
+   administrative operations under the example application.  It is
+   recommended to create this account as soon as you complete the
+   installation of your platform to avoid that an anonymous user gain
+   access to this administrative powers on the example application.
+
 Security issues
 ~~~~~~~~~~~~~~~
 
