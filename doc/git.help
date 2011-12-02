@@ -1,0 +1,71 @@
+Workig with git
+===============
+
+This is a simple guide to common git coomands.  This guide is intended
+for contributors and other developers related to this project.
+
+Common operation with git:
+
+- Get a user copy:
+
+      git clone git://github.com/facom/Sci2Web.git  
+
+- Get a contributor copy: clone
+  
+      $ ssh-keygen -t rsa -C "user@email"
+  
+  Copy your public key into the github site.
+
+      $ git config --global user.name "Your Name"
+      $ git config --global user.email "your@email"
+      $ git clone git@github.com:facom/Sci2Web.git
+
+- Commit changes
+
+      $ git commit -a -m "Log message"
+
+- Push changes
+
+      $ git push origin <branch>
+
+  Where <branch> could be master (by default) or any other registered
+  branch in your repo.
+  
+- Create a branch 
+
+      $ git branch <branch>
+
+- Show the list of available branches
+
+      $ git branch
+
+- Switch among branches
+
+      $ git checkout <branch>
+
+- Merge branches
+
+      $ git merge <branch1>/<branch2>  
+
+- Push a branch
+
+      $ git push origin <branch>
+  
+- Remove locally a branch
+
+      $ git branch -D <branch>
+
+- Remove branch in the central repository
+
+      $ git push origin --delet <branch>
+  
+- Files operations
+
+      $ git <cmd> <opts> file
+
+  <cmd>: rm (opts: -r, -f), mv
+
+- Check the status
+
+      $ git status
+
