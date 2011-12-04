@@ -1316,10 +1316,10 @@ STATUS;
 function genBugForm($module,$subject)
 {
   global $PHP,$PROJ,$BUTTONS;
-  $id=md5("$user$page$module$subject");
   $bugform="";
   $user="anonymous";
   $page=$PHP["PAGENAME"];
+  $id=md5("$user$page$module$subject");
   if(isset($_SESSION["User"])){
     $user=$_SESSION["User"];
 $ajax_bug=<<<AJAX

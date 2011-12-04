@@ -22,6 +22,54 @@ include_once("$RELATIVE/lib/sci2web.php");
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//COMMON VARS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$appname="$_SESSION[AppVersion]";
+$appdir="$PROJ[APPSDIR]/$appname";
+$apppath="$PROJ[APPSPATH]/$appname";
+$runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
+$runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
+$qselrun=false;
+$result="";
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//LIST OF RUNS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if(isset($PHP["RunMultiple"])){
+  $nruns=$PHP["RunNum"];
+  $runlist=$PHP["RunCodes"];
+  $runall=preg_split("/;/",$runlist);
+  $runcodes=array();
+  for($i=1;$i<=$nruns;$i++){
+    if(isset($PHP["Run$i"])){
+      if($PHP["Run$i"]=="on"){
+	$runcodes[]=$runall[$i-1];
+	$qselrun=true;
+      }
+    }
+  }
+  if(isset($PHP["RunAll"])){
+    if($PHP["RunAll"]=="on"){
+      $runcodes=$runall;
+    }else if(!$qselrun){
+      $runcodes=array();
+    }
+  }
+}else{
+  $runcodes=array($PHP["RunCode"]);
+}
+
+$nruns=count($runcodes);
+if($nruns<1){
+  $result.="No runs selected.";
+  goto end;
+}else{
+  $result.="$PHP[Action] on $nruns runs...";
+}
+
+foreach($runcodes as $runcode){
+if(isBlank($runcode)) continue;
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //BASIC INFORMATION
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $qerror=false;
@@ -29,18 +77,15 @@ $qerror=false;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET INFORMATION ABOUT THE RUN
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$runcode=$PHP["RunCode"];
 $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
 		       0,"run_hash");
+
+//$result.="Action $PHP[Action] on $runcode with hash $runhash<br/>";
+//continue;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //DIRECTORIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$appname="$_SESSION[AppVersion]";
-$appdir="$PROJ[APPSDIR]/$appname";
-$apppath="$PROJ[APPSPATH]/$appname";
-$runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
-$runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 $rundir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname/$runhash";
 $runpath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname/$runhash";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
@@ -61,10 +106,10 @@ if($PHP["Action"]=="Clean")
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh cleanall");
-  if($PHP["?"]){$qerror=true;$error="Failed script clean";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script clean for $runcode";goto end;}
   $status=$S2C["clean"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status clean";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status clean for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Compile")
@@ -73,26 +118,26 @@ if($PHP["Action"]=="Compile")
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh clean");
-  if($PHP["?"]){$qerror=true;$error="Failed script clean";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script clean for $runcode";goto end;}
   $status=$S2C["clean"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status clean";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status clean for $runcode";goto end;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //COMPILING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh compile");
-  if($PHP["?"]){$qerror=true;$error="Failed script compile";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script compile for $runcode";goto end;}
   $status=$S2C["compiled"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status compile";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status compile for $runcode";goto end;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //PREPARING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh pre");
-  if($PHP["?"]){$qerror=true;$error="Failed script preparing";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script preparing for $runcode";goto end;}
   $status=$S2C["ready"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status preparing";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status preparing for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Remove")
@@ -101,12 +146,12 @@ if($PHP["Action"]=="Remove")
   //REMOVING RUN DIRECTORY
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("rm -rf $runpath");
-  if($PHP["?"]){$qerror=true;$error="Failed remove";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed remove for $runcode";goto end;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //REMOVING DATABASE ENTRY
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   mysqlCmd("delete from runs where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status remove";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed status remove for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Run")
@@ -115,10 +160,10 @@ if($PHP["Action"]=="Run")
   //SUBMIT
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh submit");
-  if($PHP["?"]){$qerror=true;$error="Failed script submit";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script submit for $runcode";goto end;}
   $status=$S2C["submit"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status submit";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status submit for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Stop")
@@ -127,10 +172,10 @@ if($PHP["Action"]=="Stop")
   //STOPPING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh stop");
-  if($PHP["?"]){$qerror=true;$error="Failed script stop";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script stop for $runcode";goto end;}
   $status=$S2C["stop"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status stop";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status stop for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Pause")
@@ -139,10 +184,10 @@ if($PHP["Action"]=="Pause")
   //PAUSING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh pause");
-  if($PHP["?"]){$qerror=true;$error="Failed script pause";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script pause for $runcode";goto end;}
   $status=$S2C["pause"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status pause";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status pause for $runcode";goto end;}
 }
 
 if($PHP["Action"]=="Resume")
@@ -151,10 +196,10 @@ if($PHP["Action"]=="Resume")
   //RESUMING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh resume");
-  if($PHP["?"]){$qerror=true;$error="Failed script resume";goto end;}
+  if($PHP["?"]){$qerror=true;$error="Failed script resume for $runcode";goto end;}
   $status=$S2C["resume"];
-  mysqlCmd("update runs set run_status='$status' where run_code='$PHP[RunCode]'");
-  if($PHP["?"]){$qerror=true;$error="Failed status resume";goto end;}
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error="Failed status resume for $runcode";goto end;}
 }
 
 
@@ -169,7 +214,7 @@ if($PHP["Action"]=="BlockStatus")
     //==================================================
     //GET INFORMATION ABOUT THE RUN
     //==================================================
-    $resmat=mysqlCmd("select * from runs where run_code='$PHP[RunCode]'");
+    $resmat=mysqlCmd("select * from runs where run_code='$runcode'");
     $row=getRow($resmat,0);
     foreach(array_keys($DATABASE["Runs"]) as $runfield){
       $$runfield=$row["$runfield"];
@@ -205,7 +250,7 @@ if($PHP["Action"]=="GetControls")
   //==================================================
   //GET INFORMATION ABOUT THE RUN
   //==================================================
-  $resmat=mysqlCmd("select * from runs where run_code='$PHP[RunCode]'");
+  $resmat=mysqlCmd("select * from runs where run_code='$runcode'");
   $row=getRow($resmat,0);
   foreach(array_keys($DATABASE["Runs"]) as $runfield){
     $$runfield=$row["$runfield"];
@@ -236,7 +281,7 @@ if($PHP["Action"]=="GetStatus")
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //GET STATUS
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  $resmat=mysqlCmd("select * from runs where run_code='$PHP[RunCode]'");
+  $resmat=mysqlCmd("select * from runs where run_code='$runcode'");
   $row=getRow($resmat,0);
   foreach(array_keys($DATABASE["Runs"]) as $runfield){
     $$runfield=$row["$runfield"];
@@ -331,7 +376,7 @@ $endtime_info
 </table>
 STATUS;
 }//END STATUS
-
+}//END OF RUN CODES
 //////////////////////////////////////////////////////////////////////////////////
 //END
 //////////////////////////////////////////////////////////////////////////////////

@@ -63,36 +63,123 @@ $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
 
 //////////////////////////////////////////////////////////////////////////////////
+//LOAD ACTION
+//////////////////////////////////////////////////////////////////////////////////
+$ajax_runtable=<<<AJAX
+loadContent
+  (
+   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]',
+   'runs_table',
+   function(element,rtext){
+     $(element).html(rtext);
+     $('#DIVBLANKET').css('display','none');
+     $('#DIVOVER').css('display','none');
+   },
+   function(element,rtext){
+     $('#DIVBLANKET').css('display','block');
+     $('#DIVOVER').css('display','block');
+   },
+   function(element,rtext){
+   },
+   -1,
+   true
+   )
+AJAX;
+$onload_runtable=genOnLoad($ajax_runtable,'load');
+
+$ajax_action=<<<AJAX
+submitForm
+  ('formqueue',
+   '$PROJ[BINDIR]/ajax-trans-run.php?',
+   'notaction',
+   function(element,rtext){
+    elid=$(element).attr('id');
+    notDiv(elid,rtext);
+    $ajax_runtable;
+   },
+   function(element,rtext){
+    elid=$(element).attr('id');
+   },
+   function(element,rtext){
+     elid=$(element).attr('id');
+   }
+   )
+AJAX;
+
+//////////////////////////////////////////////////////////////////////////////////
 //GENERATE CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//COMMON ACTIONS
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $files=listFiles("$runspath/templates","*.conf");
 
-$header.="<tr><td colspan=10><div>";
+//==================================================
+//START HEADER
+//==================================================
+$header.=<<<HEADER
+<tr>
+<td colspan=10>
+<div style="position:relative">
+<div id="notaction"
+  style="position:absolute;
+	 width:20%;
+	 /*height:100%;
+	 text-height:100%;*/
+	 top:-10px;
+	 left:40%;
+	 background-color:$COLORS[clear];
+	 text-align:center;
+	 border:solid $COLORS[text] 1px;
+	 display:none;
+	 ">
+  Hola
+</div>
+<input id="actionspec" type="hidden" name="Action_Submit" value="None">
+<input type="hidden" name="RunMultiple_Submit" value="true">
+HEADER;
+
+//==================================================
+//CONTROL BUTTONS
+//==================================================
+$actions=$PROJ["Actions"];
+array_unshift($actions,"Remove");
+$links="";
+foreach($actions as $action){
+  $actionlink=$ajax_action;
+$links.=<<<LINKS
+<div class="actionbutton">
+<button class="image" id="Bt_$action" 
+	onclick="$('#actionspec').attr('value','$action');
+		 $ajax_action;
+		 " 
+	onmouseover="explainThis(this)" 
+	explanation="$action"
+	>
+$BUTTONS[$action]
+</button> 
+</div>
+LINKS;
+}
+$header.=<<<BUTTONS
+$links
+BUTTONS;
 
 //==================================================
 //GENERATE LINKS
 //==================================================
+$actionlink="Open('$conflinknew&Template=Default','Configure','$PROJ[SECWIN]')";
 $header.=<<<HEADER
-<a id="new" 
-  href="JavaScript:Open('$conflinknew&Template=Default','Configure','$PROJ[SECWIN]')" onmouseover="explainThis(this)" explanation="Add run">
-$BUTTONS[Add]
-</a>
+<div class="actionbutton">
 HEADER;
 
 //==================================================
-//GENERATE OPTIONS 
+//GENERATE LIST OF TEMPLATES
 //==================================================
 $bugbut=genBugForm("NewFromTemplate","Problems creating new from template");
 $header.=<<<HEADER
-New run from template : 
+Template: 
 <select name='newrun' 
   onchange="configureNew(this,'$conflinknew','$PROJ[SECWIN]')">
 HEADER;
@@ -105,18 +192,47 @@ foreach($files as $file){
 }
 $header.=<<<HEADER
 </select>
-$bugbut
 HEADER;
 
-$header.="</div></td></tr>";
+$header.=<<<HEADER
+</div>
+<div class="actionbutton">
+<button class="image" id="new" 
+	onclick=$actionlink;
+		 setTimeOut("$ajax_runtable",1000);
+	onmouseover="explainThis(this)" 
+	explanation="Add run">
+$BUTTONS[Add]
+</button>
+</div>
+HEADER;
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//UPDATE
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$header.=<<<HEADER
+<div class="actionbutton"
+     style="position:absolute;right:0px;top:0px;">
+  <button class="image" onclick="$ajax_runtable">
+    $BUTTONS[Update]
+  </button>
+</div>
+HEADER;
+
+$header.=<<<HEADER
+</div>
+</td></tr>
+HEADER;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FIELDS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $header.=<<<RUNS
 <tr class="header">
-  <td width="10%">
-  Actions
+  <td width="2%">
+  <input type="checkbox" name="RunAll" value="off"
+	 onclick="selectAll('formqueue',this)"
+	 onchange="popOutHidden(this)">
   </td>
   <td width="20%">
   Time $sdate</td>
@@ -129,32 +245,8 @@ $header.=<<<RUNS
   <td width="20%">
   Status$sstatus
   </td>
-  <td width="10%">
-  Control
-  </td>
 </tr>
 RUNS;
-
-//////////////////////////////////////////////////////////////////////////////////
-//LOAD ACTION
-//////////////////////////////////////////////////////////////////////////////////
-$ajax_runtable=<<<AJAX
-loadContent
-  (
-   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]',
-   'runs_table',
-   function(element,rtext){
-     $(element).html(rtext);
-   },
-   function(element,rtext){
-   },
-   function(element,rtext){
-   },
-   $timeout,
-   true
-   )
-AJAX;
-$onload_runtable=genOnLoad($ajax_runtable,'load');
 
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT
@@ -163,6 +255,10 @@ echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
 <h1>Application Queue</h1>
 $onload_runtable
+<div style="position:relative;padding:5px;border:dashed $COLORS[text] 2px">
+$PROJ[DIVBLANKET]
+$PROJ[DIVOVER]
+<form action="JavaScript:void(null)" id="formqueue">
 <table class="queue">
 <thead>
 $header
@@ -173,6 +269,8 @@ $header
 $footer
 </tfooter>
 </table>
+</form>
+</div>
 RUNS;
 end:
 echo $result;

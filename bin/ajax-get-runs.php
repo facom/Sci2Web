@@ -58,12 +58,14 @@ if(!is_array($runs)){
   goto end;
 }
 $i=1;
+$runcodes="";
 foreach($runs as $run){
 
   //==================================================
   //RECOVER INFORMATION
   //==================================================
   $run_code=$run["run_code"];
+  $runcodes.="$run_code;";
   $run_hash=$run["run_hash"];
   $run_name=$run["run_name"];
   $configuration_date=$run["configuration_date"];
@@ -101,63 +103,38 @@ foreach($runs as $run){
   $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code";
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
   $removelink=genRunLink($run_code,"Remove");
-
   if($status=="run" or $status=="pause"){
     $conflink="alert('You cannot configure a running instance.')";
     $removelink="alert('You cannot remove a running instance.')";
   }
-
-$action_buttons=<<<BUTTONS
-<a id="Bt_Remove" href="JavaScript:$removelink" 
-   style="$remdisp"
-   onmouseover="explainThis(this)"
-   explanation="Remove"
-   onclick="notDiv('notactions','Removing')">
-  $BUTTONS[Remove]
-</a> 
-<a href="JavaScript:$conflink"
-   onmouseover="explainThis(this)" explanation="Configure">
-  $BUTTONS[Configure]
-</a> 
-<a href="JavaScript:$reslink"
-   onmouseover="explainThis(this)" explanation="Results">
-  $BUTTONS[Results]
-</a>
-BUTTONS;
-
-  //==================================================
-  //CONTROL BUTTONS
-  //==================================================
-  $runcontrols=getControlButtons($run_code,$status,"run$i");
 
   //==================================================
   //TABLE ROW
   //==================================================
 echo <<<QUEUE
 <tr class="entry">
-  <td>$action_buttons</td>
+  <td>
+    <input type="checkbox" name="Run$i" value="$run_code"
+	   onchange="popOutHidden(this);">
+  </td>
   <td>$configuration_date</td>
   <td>
     <a href="JavaScript:$conflink" 
-       onmouseover="explainThis(this)" explanation="Configure $run_hash">
-      $run_name
+       onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
+  $run_name
     </a>
   </td>
   <td>$users_email</td>
   <td>$status_icon$bstatus</td>
-  <td>
-  <div style="position:relative">
-  <div class="controlbox">
-  $runcontrols
-  </div>
-  </div>
-  </td>
 </tr>
 QUEUE;
  $i++;
 }
 
-echo "<input type='hidden' name='NumberRuns' value='$i'>";
+echo<<<RUNS
+<input type="hidden" name="RunNum_Submit" value="$i">
+<input type="hidden" name="RunCodes_Submit" value="$runcodes">
+RUNS;
 end:
 return 0;
 ?>

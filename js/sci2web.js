@@ -49,16 +49,28 @@ function popOutHidden(field)
 {
     var sname=$(field).attr("name")+'_Submit';
     var hfield=$('input[name="'+sname+'"]');
+    newvalue=$(field).attr("value");
     if(hfield.length==0){
 	var newfield=$(field).clone();
 	$(newfield).
-	    attr("name",sname).
-	    attr("type","hidden");
+	  attr("name",sname).
+	  attr("type","hidden").
+	  attr("value",newvalue);
 	$(field).after(newfield);
-    }else{
-	//alert("Element "+$(hfield).attr("name")+" Changed to "+$(field).attr("value"));
-	hfield.attr("value",$(field).attr("value"));
     }
+    hfield=$('input[name="'+sname+'"]');
+    value=hfield.attr("value");
+    if($(field).attr("type")=="checkbox"){
+      if(field.checked){
+	newvalue="on";
+ 	$(field).attr("value","on"); 
+      }else{
+	newvalue="off";
+ 	$(field).attr("value","off"); 
+      }
+    }
+    //alert("Element "+$(hfield).attr("name")+" Changed from "+value+" to "+newvalue);
+    hfield.attr("value",newvalue);
 }
 
 /*
@@ -208,14 +220,16 @@ function submitForm(formid,script,
   i=0;
   qstring="";
   while(formel=form.elements[i]){
-      esname=$(formel).attr("name");
-      if(esname.search("_Submit")>=0){
-	  ename=esname.split("_")[0];
-	  qstring+=ename+"="+$(formel).attr("value")+"&";
+      if(esname=$(formel).attr("name")){
+	  if(esname.search("_Submit")>=0){
+	      ename=esname.split("_")[0];
+	      qstring+=ename+"="+$(formel).attr("value")+"&";
+	  }
       }
       i++;
   }
   script=script+"&"+qstring;
+  //alert(script);
 
   x.onreadystatechange=function(){
     rtext=x.responseText;
