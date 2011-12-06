@@ -27,6 +27,8 @@ if(!isset($PHP["Order"])){$PHP["Order"]="configuration_date";}
 //STRINGS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $remdisp="";
+$i=0;
+$runcodes="";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
@@ -98,9 +100,9 @@ foreach($runs as $run){
   //==================================================
   //ACTION BUTTONS
   //==================================================
-  $conflink="$PROJ[BINDIR]/configure.php?RunCode=$run_code";
+  $conflink="$PROJ[BINDIR]/configure.php?RunCode=$run_code&HeightWindow=68%";
   $conflink="Open('$conflink','Configure','$PROJ[SECWIN]')";
-  $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code";
+  $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code&HeightWindow=75%";
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
   $removelink=genRunLink($run_code,"Remove");
   if($status=="run" or $status=="pause"){
@@ -119,9 +121,18 @@ echo <<<QUEUE
   </td>
   <td>$configuration_date</td>
   <td>
+    $run_name
     <a href="JavaScript:$conflink" 
        onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
-  $run_name
+       $BUTTONS[Configure]
+    </a>
+    <a href="JavaScript:$reslink" 
+       onmouseover="explainThis(this)" explanation="Results for $run_code ($run_hash)">
+       $BUTTONS[Results]
+    </a>
+    <a href="JavaScript:$conflink" 
+       onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
+       $BUTTONS[ConfigureResults]
     </a>
   </td>
   <td>$users_email</td>
@@ -131,10 +142,10 @@ QUEUE;
  $i++;
 }
 
+end:
 echo<<<RUNS
 <input type="hidden" name="RunNum_Submit" value="$i">
 <input type="hidden" name="RunCodes_Submit" value="$runcodes">
 RUNS;
-end:
 return 0;
 ?>

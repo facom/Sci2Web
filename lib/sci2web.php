@@ -623,9 +623,10 @@ function readParamModel($varsconf)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //TABLE OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function filesTable($dir,$options=""){
+function filesTable($dir,$options="",$target="Blank"){
   global $PHP,$PROJ,$BUTTONS;
-  $id="file";
+  $dirhash=md5($dir);
+  $id="file_$dirhash";
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //TABLE HEADER
@@ -634,7 +635,7 @@ function filesTable($dir,$options=""){
 $ajax_filelist=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0',
+   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0&LinkTarget=$target',
    'listfiles',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -642,6 +643,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     element.innerHTML='Loading...';
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -750,12 +752,9 @@ $table.=<<<TABLE
 TABLE;
 
   //WRAP
-  divBlanketOver("$id");
 
 $table=<<<TABLE
 <div style="position:relative">
-$PROJ[DIVBLANKET]
-$PROJ[DIVOVER]
 $table
 </div>
 TABLE;
@@ -832,14 +831,19 @@ function filedType($file)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //OPEN FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function fileWebOpen($dir,$file,$mode)
+function fileWebOpen($dir,$file,$mode,$target="Blank")
 {
   global $PHP,$PROJ;
-  
+  $link="$PROJ[BINDIR]/file.php?Dir=$dir&File=$file&Mode=$mode";
+  if($target=="Blank"){
 $link=<<<LINK
-Open('$PROJ[BINDIR]/file.php?Dir=$dir&File=$file&Mode=$mode','File $file','$PROJ[SECWIN]')
+Open('$link','File $file','$PROJ[SECWIN]')
 LINK;
-  
+  }else{
+$link=<<<LINK
+location.href='$link'
+LINK;
+  }
   return $link;
 }
 
@@ -1243,7 +1247,9 @@ $icon=<<<ICON
 	    color:$status_color;
 	    border-radius:5px;
 	    text-align:center;
-	    background-color:$status_bg">
+	    background-color:$status_bg;
+	    padding:5px;
+	    ">
 <b>$status_text</b>
 </div>
 ICON;
@@ -1266,18 +1272,25 @@ function getControlButtons($run_code,$status,$id="")
     $actionlink=genRunLink($run_code,$action,$id);
     $actionextra="";
 $links.=<<<LINKS
-<button href="JavaScript:void(null)" 
-	class="image" id="Bt_$action" 
-	onclick="$actionlink" 
-	$display[$action]>
+<div class="actionbutton">
+<a href="JavaScript:void(null)" 
+   class="image" id="Bt_$action" 
+   onclick="$actionlink" 
+   onmouseover="explainThis(this)" explanation="$action"
+   $display[$action]>
 $BUTTONS[$action]
-</button> 
+</a> 
+</div>
 LINKS;
   }
+  $status_icon=statusIcon($status); 
 $controls=<<<CONTROLS
+  <div class="actionbutton" style="position:relative">
   $PROJ[DIVBLANKET]
   $PROJ[DIVOVER]
+  <div class="actionbutton">$status_icon</div>
   $links
+  </div>
 CONTROLS;
   return $controls;
 }

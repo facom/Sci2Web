@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 $RELATIVE="..";
 include_once("$RELATIVE/lib/sci2web.php");
-
+//echo "Start";
 //////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ $Action=$PHP["Action"];
 $Dir=$PHP["Dir"];
 if(isset($PHP["File"])) $File=$PHP["File"];
 else $File="";
+if(!isset($PHP["LinkTarget"])) $PHP["LinkTarget"]="Blank";
+$Target=$PHP["LinkTarget"];
 $result="";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,8 +320,8 @@ CONTROLS;
     //==================================================
     $date=date("Y-m-d H:i",filemtime($filepath));
     $size=round($size,1);
-    $flink_view=fileWebOpen($Dir,$file,'View');
-    $flink_edit=fileWebOpen($Dir,$file,'Edit');
+    $flink_view=fileWebOpen($Dir,$file,"View",$Target);
+    $flink_edit=fileWebOpen($Dir,$file,"Edit",$Target);
     $flink_plot="Open('$PROJ[BINDIR]/plot.php?Dir=$Dir&File=$file','Plot $file','$PROJ[PLOTWIN]')";
     //::::::::::::::::::::::::::::::::::::::::
     //CHECK
@@ -339,7 +341,8 @@ CHECK;
       //##############################
       //DIRECTORY
       //##############################
-      $id="file";
+      $dirhash=md5($Dir);
+      $id="file_$dirhash";
 $ajax_subdir=<<<AJAX
 loadContent
   (
@@ -479,10 +482,10 @@ CONTROLS;
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //RESULT
 //////////////////////////////////////////////////////////////////////////////////
 end:
+//echo "<textarea>$result</textarea>";
 echo $result;
 ?>

@@ -81,9 +81,10 @@ loadContent
    },
    function(element,rtext){
    },
-   -1,
+   60000,
    true
-   )
+   );
+$('input[name=RunAll]').attr('checked',false);
 AJAX;
 $onload_runtable=genOnLoad($ajax_runtable,'load');
 
@@ -98,6 +99,7 @@ submitForm
     $ajax_runtable;
    },
    function(element,rtext){
+    notDiv(elid,'Processing...');
     elid=$(element).attr('id');
    },
    function(element,rtext){
@@ -169,7 +171,8 @@ BUTTONS;
 //==================================================
 //GENERATE LINKS
 //==================================================
-$actionlink="Open('$conflinknew&Template=Default','Configure','$PROJ[SECWIN]')";
+//$actionlink="Open('$conflinknew&Template=Default','Configure','$PROJ[SECWIN]')";
+$actionlink=$ajax_action;
 $header.=<<<HEADER
 <div class="actionbutton">
 HEADER;
@@ -180,8 +183,7 @@ HEADER;
 $bugbut=genBugForm("NewFromTemplate","Problems creating new from template");
 $header.=<<<HEADER
 Template: 
-<select name='newrun' 
-  onchange="configureNew(this,'$conflinknew','$PROJ[SECWIN]')">
+<select name='Template' onchange='popOutHidden(this)'>
 HEADER;
 foreach($files as $file){
   preg_match("/(.+)\.conf/",$file,$matches);
@@ -192,14 +194,15 @@ foreach($files as $file){
 }
 $header.=<<<HEADER
 </select>
+<input type="hidden" name="Template_Submit" value="Default">
 HEADER;
 
 $header.=<<<HEADER
 </div>
 <div class="actionbutton">
 <button class="image" id="new" 
-	onclick=$actionlink;
-		 setTimeOut("$ajax_runtable",1000);
+	onclick="$('#actionspec').attr('value','New');
+		 $ajax_action;"
 	onmouseover="explainThis(this)" 
 	explanation="Add run">
 $BUTTONS[Add]

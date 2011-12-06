@@ -20,6 +20,7 @@ $PAGETITLE="File";
 include_once("$RELATIVE/lib/sci2web.php");
 if(!isset($PHP["TabId"])) $PHP["TabId"]=1;
 $PHP["TabId"]--;
+$TabNum=1;
 
 //////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
@@ -29,10 +30,9 @@ $PHP["TabId"]--;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $header="";
 $content="";
-$controls="";
 $errors="";
 $onload="";
-$notmsg="";
+$extrastyle="margin-left:10px;margin-right:10px;";
 $imgload=genLoadImg("animated/loader-circle.gif");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,31 +69,22 @@ readConfig2("$resfile");
 //////////////////////////////////////////////////////////////////////////////////
 //GENERATE CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//HEADER
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$header.=<<<HEADER
-<div id="notresults" class="notification" style="display:none"></div>
-HEADER;
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //TABS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 for($i=0;$i<$CONFIG["Tab"]["Num"];$i++){
   $tabtitle=$CONFIG["Tab"][$i];
   $tabcontent=$CONFIG["Content"][$i];
-  $tabload=$CONFIG["Load"][$i];
   $tabrefresh=$CONFIG["RefreshTime"][$i];
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //SCAN CONTENTS
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $tabcont=<<<TAB
-<div class="tabbertab sectab">
+<div class="tabbertab">
 <h2>$tabtitle</h2>
 TAB;
-
+  blankFunc();
   $tcont=split(";",$tabcontent);
   $j=0;
   foreach($tcont as $t){
@@ -110,23 +101,20 @@ TAB;
       //STATUS MODULE
       //::::::::::::::::::::::::::::::
       else if(preg_match("/^Status(.*)/",$module,$matches)){
+	
 $ajax_status=<<<AJAX
 loadContent
   ('$PROJ[BINDIR]/ajax-trans-run.php?Action=GetStatus&RunCode=$runcode',
    'runstatus',
    function(element,rtext){
      element.innerHTML=rtext;
-     $('#DIVBLANKET$id').css('display','none');
-     $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
-     $('#DIVBLANKET$id').css('display','block');
-     $('#DIVOVER$id').css('display','block');
    },
    function(element,rtext){
      element.innerHTML='ERROR';
    },
-   -1,
+   $tabrefresh,
    true
    )
 AJAX;
@@ -136,13 +124,14 @@ AJAX;
 $tabcont.=<<<STATUS
 $onloadstatus
 <div style="position:relative">
-$PROJ[DIVBLANKET]
-$PROJ[DIVOVER]
-<div id="runstatus" class="module"></div>
-<div class="update">
-<a href="JavaScript:void(null)" onclick="$ajax_status">
-$BUTTONS[Update]
-</div>
+  $PROJ[DIVBLANKET]
+  $PROJ[DIVOVER]
+  <div id="runstatus" class="module"></div>
+  <div class="update">
+    <a href="JavaScript:void(null)" onclick="$ajax_status">
+      $BUTTONS[Update]
+    </a>
+  </div>
 </div>
 STATUS;
       }
@@ -151,7 +140,7 @@ STATUS;
       //::::::::::::::::::::::::::::::
       else if(preg_match("/^ListFiles(.*)/",$module,$matches)){
 	$opts=preg_replace("/\?/","",$matches[1]);
-	$ftable=filesTable($rundir,$opts);
+	$ftable=filesTable($rundir,$opts,"Blank");
 $tabcont.=<<<TAB
 $ftable
 TAB;
@@ -162,8 +151,6 @@ TAB;
     //==================================================
     else if(preg_match("/^File:(.+)/",$t,$matches)){
       $file=$matches[1];
-      //print "Tab content file: $file";br();
-      blankFunc();
 $ajax_file=<<<AJAX
 loadContent
   (
@@ -180,10 +167,11 @@ loadContent
    },
    function(element,rtext){
    },
-   -1,
+   $tabrefresh,
    true
    )
 AJAX;
+
       blankFunc();
       $onloadfile=genOnLoad($ajax_file,'load$j');
       $flink=fileWebOpen($rundir,$file,'View');
@@ -191,21 +179,27 @@ AJAX;
       $fcontent="";
 $tabcont.=<<<FILE
 $onloadfile
-<div style="font-size:14px">
-  <a href="JavaScript:$flink">
-  $file
-  </a>
+<div style="position:relative;height:30px">
+  <div class="actionbutton">
+    <a href="JavaScript:$flink" style="font-size:12px">
+      $file
+    </a>
+  </div>
+  <div class="actionbutton"
+       style="position:absolute;right:0px;top:0px;">
+    <div class="actionbutton">
+      <a href="JavaScript:void(null)" onclick="$ajax_file">
+	$BUTTONS[Update]
+      </a>
+    </div>
+  </div>
 </div>
 <div style="position:relative">
-$PROJ[DIVBLANKET]
-$PROJ[DIVOVER]
-<div class="plainarea" id="fileout_${i}_${j}">
-$fcontent
-</div>
-<div class="update">
-<a href="JavaScript:void(null)" onclick="$ajax_file">
-$BUTTONS[Update]
-</div>
+  $PROJ[DIVBLANKET]
+  $PROJ[DIVOVER]
+  <div class="viewarea" id="fileout_${i}_${j}">
+    $fcontent
+  </div>
 </div>
 <p></p>
 FILE;
@@ -235,76 +229,74 @@ foreach($contabs as $tabcont){
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//CONTROLS
+//HEADER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$controls.= <<<CONF
-<div class="close">
-  <button class="image" onclick="window.close()">
-    $BUTTONS[Cancel]
-  </button>
+$header.=<<<HEADER
+<div class="actionbutton">
+<span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
 </div>
-CONF;
+<div class="actionbutton"
+     style="position:absolute;right:0px;top:10px;">
+  <div class="actionbutton">
+    <input id="TabId" type="hidden" name="TabId" value="$TabNum">
+    <input type="hidden" name="RunCode" value="$PHP[RunCode]">
+    <input type="hidden" name="HeightWindow" value="$PHP[HeightWindow]">
+    <!--onclick="window.location.reload()"-->
+    <button href="JavaScript:void(null)" class="image" 
+       onmouseover="explainThis(this)" explanation="Results">
+      $BUTTONS[Update]
+    </button>
+  </div>
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()">
+      $BUTTONS[Cancel]
+    </a>
+  </div>
+</div>
+HEADER;
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//RUN CONTROLS
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$ajax_controls=<<<AJAX
-loadContent
-  (
-   '$PROJ[BINDIR]/ajax-trans-run.php?RunCode=$runcode&Action=GetControls',
-   'runcontrols',
-   function(element,rtext){
-     hash=$(element).attr('hash');
-     if(hash!=hex_md5(rtext)){
-       $(element).attr('hash',hex_md5(rtext));
-       element.innerHTML=rtext;
-     }
-   },
-   function(element,rtext){
-   },
-   function(element,rtext){
-   },
-   2000,
-   true
-   )
-AJAX;
-$runcontrols=<<<CONTROL
-<div id="runcontrols" class="control"></div>
-CONTROL;
-$onloadruncontrols=genOnLoad($ajax_controls,'load');
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//WINDOW INFORMATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(!isset($PHP["HeightWindow"])){
+  $PHP["HeightWindow"]="70%";
+}
+$extrastyle.="height:$PHP[HeightWindow];";
 
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT DISPLAY
 //////////////////////////////////////////////////////////////////////////////////
 end:
-$notification=genOnLoad("notDiv('notconfigure','$notmsg')");
-$DEBUG=genDebug("bottom");
-$head="";
 $TabNum=$PHP["TabId"]+1;
+$head="";
 $head.=genHead("","");
-$bugbut=genBugForm("ResultsGeneral","General problems with results");
 
 echo<<<CONTENT
 <html>
-<head>
-$head
-</head>
+  <head>
+    $head
+  </head>
 
-<body>
-$PROJ[ELBLANKET]
-$PROJ[ELOVER]  
-$notification
-$header
-$onloadruncontrols
-$runcontrols
-
-<div class="tabber sectabber" id="$PHP[TabId]">
-$DEBUG
-<input type="hidden" name="RunCode" value="$runcode">
-$content
-</div>
-$controls
-<div class="close" style="right:50px;top:10px">$bugbut</div>
+  <body>
+    <form action="?" method="get">
+    <div style="position:relative">
+      <!-- -------------------------------------------------------- -->
+      <!-- HEADER AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative;padding:10px">
+	$header
+      </div>
+      <!-- -------------------------------------------------------- -->
+      <!-- TABS AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	<div class="tabber" id="$PHP[TabId]"
+	     style="$extrastyle">
+	  $content
+	</div>
+      </div>
+    </div>
+    </form>
 </body>
 </html>
 

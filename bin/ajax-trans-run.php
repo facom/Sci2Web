@@ -29,8 +29,12 @@ $appdir="$PROJ[APPSDIR]/$appname";
 $apppath="$PROJ[APPSPATH]/$appname";
 $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
 $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
+$savedbpath="$PROJ[RUNSPATH]/db/$appname";
+$srcpath="$PROJ[RUNSPATH]/src/$appname";
 $qselrun=false;
+$actionresult="";
 $result="";
+$error="";
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //LIST OF RUNS
@@ -58,15 +62,23 @@ if(isset($PHP["RunMultiple"])){
 }else{
   $runcodes=array($PHP["RunCode"]);
 }
+if($PHP["Action"]=="New"){
+  $runcodes=array("00000000");
+}
 
 $nruns=count($runcodes);
 if($nruns<1){
-  $result.="No runs selected.";
+  $result.="No runs selected for $PHP[Action].";
   goto end;
 }else{
-  $result.="$PHP[Action] on $nruns runs...";
+  $result.="$PHP[Action] on $nruns runs...<br/>";
 }
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//READ PARAMETRIZATION MODEL
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
+ 
 foreach($runcodes as $runcode){
 if(isBlank($runcode)) continue;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -74,32 +86,127 @@ if(isBlank($runcode)) continue;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $qerror=false;
 
+/*
+$result.="Action $PHP[Action] on $runcode with hash $runhash<br/>";
+continue;
+*/
+
+//////////////////////////////////////////////////////////////////////////////////
+//ACTION
+//////////////////////////////////////////////////////////////////////////////////
+if($PHP["Action"]=="New")
+{
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //NEW 
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //==================================================
+  //RUN VARIABLES
+  //==================================================
+  //GENERATE NEW RANDOM CODE
+  $PHP["RunCode"]=genRandom(8);
+  $runcode=$PHP["RunCode"];
+  //CHOOSE TEMPLATE
+  $runfile="$runspath/templates/$PHP[Template].conf";
+  //COMPUTE RUN HASH
+  $runhash=hashFile($runfile);
+  $runtmp="$PROJ[TMPPATH]/temprun/$runcode-$runhash";
+  $runpath="$runspath/$runhash";
+  //DEBUGGING
+  $actionresult.="<p>New run with template $PHP[Template]</p>";
+
+  //==================================================
+  //CREATE TEMPORAL RUN DIRECTORY AND FILES
+  //==================================================
+  $out=systemCmd("perl $PROJ[BINPATH]/sci2web-genrun $PROJ[APPSPATH]/$_SESSION[App] $_SESSION[Version] $PHP[Template] $runtmp");
+  if($PHP["?"]){$qerror=true;$error.="<p>Error generating run</p>";goto end;}
+  $out=systemCmd("perl $PROJ[BINPATH]/sci2web-genfiles $runfile $runtmp");
+  if($PHP["?"]){$qerror=true;$error.="<p>Error generating files</p>";goto end;}
+  $actionresult.="<p>File generated for new run...</p>";
+
+  //==================================================
+  //MOVE TEMPORAL TO FINAL DIRECTORY
+  //==================================================
+  if(is_dir($runpath)){
+    //OVERWRITE PREVIOUSLY DIRECTORIES WITH THE SAME NAME
+    $out=systemCmd("rm -rf $runpath");
+  }
+  $out=systemCmd("mv $runtmp $runpath");
+  if($PHP["?"]){$qerror=true;$error.="<p>Error moving run dir</p>";goto end;}
+  $actionresult.="<p>New run created...</p>";
+
+  //==================================================
+  //GENERATE DATABASE INFORMATION
+  //==================================================
+  $PHP["run_code"]="$runcode";
+  $PHP["run_hash"]="$runhash";
+  $PHP["run_name"]="New Run";
+  $PHP["configuration_date"]=
+    getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+  $PHP["run_status"]=$S2C["configured"];
+  $PHP["run_pinfo"]="";
+  $PHP["permissions"]="rw";
+  $PHP["versions_id"]=$_SESSION["VersionId"];
+  $PHP["users_email"]=$_SESSION["User"];
+  $PHP["run_extra1"]="";
+  $PHP["run_extra2"]="";
+  $PHP["run_extra3"]="";
+
+  //==================================================
+  //READ CONFIGURATION FROM TEMPLATE
+  //==================================================
+  $numvars=readConfig("$runfile");
+  foreach($tabs as $tab) foreach($groups[$tab] as $group) 
+    foreach($vars[$tab][$group] as $var){
+    list($var,$defval,$datatype,$varname,$vardesc)=split("::",$var);
+    $PHP["$var"]=$CONFIG["$var"];
+  }
+  $actionresult.="<p>Configuration file readed...</p>";
+
+  //==================================================
+  //GENERATING RUN INFO
+  //==================================================
+  $fl=fopen("$runpath/run.info","w");
+  fwrite($fl,"run_app=$_SESSION[App]\n");
+  fwrite($fl,"run_version=$_SESSION[Version]\n");
+  fwrite($fl,"run_author=$_SESSION[User]\n");
+  foreach(array_keys($DATABASE["Runs"]) as $runfield){
+    if($runfield=="configuration_date") continue;
+    if($runfield=="run_hash") continue;
+    fwrite($fl,"$runfield=$PHP[$runfield]\n");
+  }
+  fclose($fl);
+  $runconfhash=hashFile("$runpath/run.info");
+  systemCmd("echo '#$runconfhash' >> $runpath/run.info");
+  if($PHP["?"]){$qerror=true;$error.="<p>Error creating run.info</p>";goto end;}
+    
+  //==================================================
+  //SAVE IN DATABASE
+  //==================================================
+  $PHP["run_hash"]=$runhash;
+  $PHP["configuration_date"]=
+    getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+  $sqlcmd="replace into runs set ";
+  foreach(array_keys($DATABASE["Runs"]) as $runfield){
+    $sqlcmd.="$runfield='$PHP[$runfield]',";
+  }
+  $sqlcmd=rtrim($sqlcmd,",");
+  $resmat=mysqlCmd($sqlcmd);
+  if($PHP["?"]){$qerror=true;$error.="<p>Database could not be updated</p>";goto end;}
+  $result.="New run created...";
+}
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET INFORMATION ABOUT THE RUN
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
 		       0,"run_hash");
 
-//$result.="Action $PHP[Action] on $runcode with hash $runhash<br/>";
-//continue;
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //DIRECTORIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $rundir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname/$runhash";
 $runpath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname/$runhash";
-$savedbpath="$PROJ[RUNSPATH]/db/$appname";
-$srcpath="$PROJ[RUNSPATH]/src/$appname";
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//FORMS INFORMATION
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//READ PARAMETRIZATION MODEL
-list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
- 
-//////////////////////////////////////////////////////////////////////////////////
-//ACTION
-//////////////////////////////////////////////////////////////////////////////////
 if($PHP["Action"]=="Clean")
 {
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -296,6 +403,7 @@ if($PHP["Action"]=="GetStatus")
       $status=$matches[1];
     }
   }
+
   $status_icon=statusIcon($status); 
   $bstatus=systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh status")*100;
   if(file_exists("$runpath/time_start.oxt")){
@@ -306,6 +414,7 @@ $initime_info=<<<TIME
 TIME;
   }
   if(file_exists("$runpath/end.sig")){
+    $eltime=0;
     $endtime=systemCmd("cat $runpath/time_end.oxt");
     $endtime_date=date("r",$endtime);
     $exetime=$endtime-$initime;
@@ -343,11 +452,38 @@ TIME;
   }
 
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //COMPLETE BAR
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  if($status=="run" or $status=="pause"){
+$status_complete=<<<COMPLETE
+<div id="status_text" 
+     style="width:200px;
+	    text-align:center;
+	    border:solid black 1px">
+  <div id="status_bar" 
+       style="width:$bstatus%;
+	      text-align:right;
+	      background-color:$COLORS[text];
+	      padding:0px;
+	      color:$COLORS[dark]">
+    $bstatus%
+  </div>
+</div>
+COMPLETE;
+  }else{
+    $status_complete="";
+  }
+
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //OUTPUT
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  $reptime=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
 $result=<<<STATUS
 <h1>Status</h1>
 <table>
+<tr>
+<td>Time of Report:</td><td>$reptime</td>
+</tr>
 <tr>
 <td>Run:</td><td>$run_name</td>
 </tr>
@@ -358,17 +494,9 @@ $result=<<<STATUS
 <td>Hash:</td><td>$run_hash</td>
 </tr>
 <tr>
-<td>Status:</td><td>$status_icon</td>
-</tr>
-<tr>
-<td>Complete:</td><td>
-<div id="status_text" 
-  style="width:200px;text-align:center;border:solid black 1px">
-  <div id="status_bar" 
-  style="width:$bstatus%;text-align:right;background-color:$COLORS[text];padding:0px;color:$COLORS[dark]">
-  $bstatus%
-  </div>
-  </div>
+<td valign="top">Status:</td>
+<td>
+$status_icon $status_complete
 </td>
 </tr>
 $initime_info
@@ -383,7 +511,7 @@ STATUS;
 end:
 
 if($qerror){
-  echo "<i>An error has occurred:</i>$error";
+  echo "<i>An error has occurred:</i><br/>$error";
 }else{
   echo $result;
 }

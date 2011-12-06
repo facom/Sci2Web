@@ -28,6 +28,7 @@ $content="";
 $footer="";
 $notmsg="Load file...";
 $optfrm="style='opacity:0.6' disabled";
+$extrastyle="margin-left:10px;margin-right:10px;";
 $metadata="";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +77,8 @@ if($Action=="Save"){
 $fdir="$Dir/$File";
 $fpath="$PHP[ROOTPATH]/$fdir";
 $ftype=filedType($fpath);
-$id="file";
+$hashpath=md5($fpath);
+$id="file_$hashpath";
 
 $ajax_file=<<<AJAX
 loadContent
@@ -89,6 +91,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     element.innerHTML='Loading';
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -105,61 +108,88 @@ $onload_file=genOnLoad($ajax_file,'load');
 
 switch($ftype){
  case "DIRECTORY":
-   $ftable=filesTable("$Dir/$File");
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   //DIRECTORY
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   $ftable=filesTable("$Dir/$File","","Parent");
 $fcontent.=<<<CONTENT
 $ftable
 CONTENT;
    break;
+
  case "TEXT":
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   //TEXT FILE
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$fcontent.=<<<CONTENT
+<div class="actionbutton">
+  <a href="JavaScript:void(null)" onclick="$ajax_file">
+    $BUTTONS[Update]
+  </a>
+</div>
+<div class="actionbutton">
+  <a href="$Dir/$File">Download</a> 
+</div>
+CONTENT;
+
    if($Mode=="Edit"){
      $optfrm="";
 $fcontent.=<<<CONTENT
-<a href="$Dir/$File">Download</a> |
-<a href="?$PHP[QSTRING]&Mode=View">View</a>
+<div class="actionbutton">
+  <a href="?$PHP[QSTRING]&Mode=View">View</a>
+</div>
 <textarea id="filecontent" class="filearea" name="FileContent"></textarea>
 CONTENT;
    }else{
 $fcontent.=<<<CONTENT
-<a href="$Dir/$File">Download</a> |
-<a href="?$PHP[QSTRING]&Mode=Edit">Edit</a>
-<div id="filecontent"
-     class="plainarea">
+<div class="actionbutton">
+  <a href="?$PHP[QSTRING]&Mode=Edit">Edit</a>
 </div>
+<div id="filecontent" class="plainarea"></div>
 CONTENT;
    }
-$fcontent.=<<<CONTENT
-<div class="update" style="top:25px">
-  <a href="JavaScript:void(null)" onclick="$ajax_file">
-    $BUTTONS[Update]
-  </a>
-</div>
-CONTENT;
+
  break;
  case "IMAGE":
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   //IMAGE FILE
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $fcontent.=<<<CONTENT
-<a href="$Dir/$File">Download</a>
-<div id="filecontent" class="imgarea">
-</div>
-<div class="update" style="top:25px">
+<div class="actionbutton">
   <a href="JavaScript:void(null)" onclick="$ajax_file">
     $BUTTONS[Update]
   </a>
 </div>
+<div class="actionbutton">
+  <a href="$Dir/$File">Download</a> 
+</div>
+CONTENT;
+
+$fcontent.=<<<CONTENT
+<div id="filecontent" class="imgarea"></div>
 CONTENT;
  break;
+
  case "TGZ":
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   //TARBALL
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    $tmpdir="$PROJ[TMPDIR]/dir-$File-$PHP[SESSID]";
    $tmppath="$PROJ[TMPPATH]/dir-$File-$PHP[SESSID]";
    systemCmd("mkdir -p $tmppath");
    systemCmd("mkdir -p $tmppath/.root");
    systemCmd("tar -zxvf $fpath -C $tmppath");
-   $ftable=filesTable("$tmpdir");
+   $ftable=filesTable("$tmpdir","","Parent");
 $fcontent.=<<<CONTENT
 <a href="$Dir/$File">Download tarball</a>
 $ftable
 CONTENT;
    break;
+
  default:
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   //OTHER FILE
+   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $fcontent.=<<<CONTENT
 <a href="$Dir/$File">Download</a>
 <div id="filecontent"></div>
@@ -170,18 +200,13 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //GENERATE CONTENT
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//==================================================
-//HEADER
-//==================================================
-$header.=<<<HEADER
-<div id="notfile" class="notification" style="display:none"></div>
-HEADER;
 
 //==================================================
 //CONTENT
 //==================================================
 divBlanketOver($id);
-$cmd="cd $PHP[ROOTPATH]/$Dir;stat '$File'";
+//$cmd="cd $PHP[ROOTPATH]/$Dir;stat '$File'";
+$cmd="cd $PHP[ROOTPATH]/$Dir && ls -ld /tmp/a";
 $metadata=systemCmd($cmd,true);
 $content.=<<<CONTENT
 <div class="tabbertab sectab">
@@ -204,22 +229,56 @@ $content.=<<<CONTENT
   </div>
 </div>
 CONTENT;
+if(!isset($PHP["HeightWindow"])){
+  $PHP["HeightWindow"]="77%";
+}
+$extrastyle.="height:$PHP[HeightWindow];";
+$content.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'";
 
 //==================================================
 //FOOTER
 //==================================================
 $footer.=<<<FOOTER
-<div class="formbuttons" id="buttons">
-<button name="Action" value="Save" $optfrm>
-  $BUTTONS[Save]
-</button> 
-</div>
-<div class="close">
-  <button class="image" onclick="window.close()">
-    $BUTTONS[Cancel]
-  </button>
-</div>
 FOOTER;
+
+//==================================================
+//HEADER
+//==================================================
+$header.=<<<HEADER
+<!-- -------------------- RUN NAME -------------------- -->
+<div class="actionbutton">
+  <span style="font-size:18px">
+    <b>File</b>: 
+    <input type="ReName" value="$File" $optfrm>
+  </span>
+</div>
+<div class="actionbutton">
+  <button name="Action" value="Save" $optfrm>
+    $BUTTONS[Save]
+  </button> 
+</div>
+<div class="actionbutton"
+     style="position:absolute;right:0px;top:10px;">
+  <div class="actionbutton">
+    <a href="$PHP[REFERER]" class="image" 
+       onmouseover="explainThis(this)" explanation="Back">
+      $BUTTONS[Back]
+    </a>
+  </div>
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" 
+       onclick="window.location.reload()"
+       onmouseover="explainThis(this)" explanation="Reload">
+      $BUTTONS[Update]
+    </a>
+  </div>
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()">
+      $BUTTONS[Cancel]
+    </a>
+  </div>
+</div>
+HEADER;
 
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT DISPLAY
@@ -227,28 +286,52 @@ FOOTER;
 end:
 $notification=genOnLoad("notDiv('notfile','$notmsg')");
 $DEBUG=genDebug();
+
 $head="";
 $head.=genHead("","");
+
 $content=<<<CONTENT
 <html>
-<head>
-$head
-</head>
+  <head>
+    $head
+  </head>
 
-<body>
-<form action="?" method="get" enctype="multipart/form-data">
-<input type="hidden" name="Dir" value="$Dir">
-<input type="hidden" name="File" value="$File">
-<input type="hidden" name="Mode" value="$Mode">
-$notification
-$header
-
-<div class="tabber sectabber" id="0">
-$DEBUG
-$content
-</div>
-
-$footer
+  <body>
+    <form action="?" method="get" enctype="multipart/form-data">
+      <input type="hidden" name="Dir" value="$Dir">
+      <input type="hidden" name="File" value="$File">
+      <input type="hidden" name="Mode" value="$Mode">
+      <div style="position:relative">
+	<!-- -------------------------------------------------------- -->
+	<!-- NOTIFICATION AREA -->
+	<!-- -------------------------------------------------------- -->
+	<div style="position:relative">
+	  <div id="notfile" class="notification" style="display:none"></div>
+	  $PROJ[ELBLANKET]
+	  $PROJ[ELOVER]  
+	  $notification
+	</div>
+	<!-- -------------------------------------------------------- -->
+	<!-- HEADER AREA -->
+	<!-- -------------------------------------------------------- -->
+	<div style="position:relative;padding:10px">
+	  $header
+	</div>
+	<!-- -------------------------------------------------------- -->
+	<!-- TABS AREA -->
+	<!-- -------------------------------------------------------- -->
+	<div class="tabber" id="0"
+	     style="$extrastyle">
+	  $content
+	</div>
+	<!-- -------------------------------------------------------- -->
+	<!-- FOOTER AREA -->
+	<!-- -------------------------------------------------------- -->
+	<div style="position:relative">
+	  $DEBUG
+	  $footer
+	</div>
+      </div>
 </form>
 </body>
 </html>

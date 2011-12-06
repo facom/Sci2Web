@@ -27,13 +27,14 @@ $PHP["TabId"]--;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$title="";
 $header="";
 $content="";
 $footer="";
 $actionresult="";
 $errors="";
 $onload="";
-//BY DEFAULT MESSAGE
+$extrastyle="margin-left:10px;margin-right:10px;";
 $notmsg="Data loaded...";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +55,7 @@ $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
 $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//FORMS INFORMATION
+//MODEL PARAMETRIZARION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ARAMETRIZATION MODEL
 list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
@@ -67,114 +68,14 @@ list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info"
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 if(isset($PHP["Action"])){
-
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  //NEW
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  if($PHP["Action"]=="New"){
-
-    //==================================================
-    //RUN VARIABLES
-    //==================================================
-    //GENERATE NEW RANDOM CODE
-    $PHP["RunCode"]=genRandom(8);
-    $runcode=$PHP["RunCode"];
-    //CHOOSE TEMPLATE
-    $runfile="$runspath/templates/$PHP[Template].conf";
-    //COMPUTE RUN HASH
-    $runhash=hashFile($runfile);
-    $runtmp="$PROJ[TMPPATH]/temprun/$runcode-$runhash";
-    $runpath="$runspath/$runhash";
-    //DEBUGGING
-    $actionresult.="<p>New run with template $PHP[Template]</p>";
-
-    //==================================================
-    //CREATE TEMPORAL RUN DIRECTORY AND FILES
-    //==================================================
-    $out=systemCmd("perl $PROJ[BINPATH]/sci2web-genrun $PROJ[APPSPATH]/$_SESSION[App] $_SESSION[Version] $PHP[Template] $runtmp");
-    if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Error generating run</p>";goto error;}
-    $out=systemCmd("perl $PROJ[BINPATH]/sci2web-genfiles $runfile $runtmp");
-    if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Error generating files</p>";goto error;}
-    $actionresult.="<p>File generated for new run...</p>";
-
-    //==================================================
-    //MOVE TEMPORAL TO FINAL DIRECTORY
-    //==================================================
-    if(is_dir($runpath)){
-      //OVERWRITE PREVIOUSLY DIRECTORIES WITH THE SAME NAME
-      $out=systemCmd("rm -rf $runpath");
-    }
-    $out=systemCmd("mv $runtmp $runpath");
-    if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Error moving run dir</p>";goto end;}
-    $actionresult.="<p>New run created...</p>";
-
-    //==================================================
-    //GENERATE DATABASE INFORMATION
-    //==================================================
-    $PHP["run_code"]="$runcode";
-    $PHP["run_hash"]="$runhash";
-    $PHP["run_name"]="New Run";
-    $PHP["configuration_date"]=
-      getToday("%year-%mon-%mday %hours:%minutes:%seconds");
-    $PHP["run_status"]=$S2C["configured"];
-    $PHP["run_pinfo"]="";
-    $PHP["permissions"]="rw";
-    $PHP["versions_id"]=$_SESSION["VersionId"];
-    $PHP["users_email"]=$_SESSION["User"];
-    $PHP["run_extra1"]="";
-    $PHP["run_extra2"]="";
-    $PHP["run_extra3"]="";
-
-    //==================================================
-    //READ CONFIGURATION FROM TEMPLATE
-    //==================================================
-    $numvars=readConfig("$runfile");
-    foreach($tabs as $tab) foreach($groups[$tab] as $group) 
-      foreach($vars[$tab][$group] as $var){
-      list($var,$defval,$datatype,$varname,$vardesc)=split("::",$var);
-      $PHP["$var"]=$CONFIG["$var"];
-    }
-    $actionresult.="<p>Configuration file readed...</p>";
-
-    //==================================================
-    //GENERATING RUN INFO
-    //==================================================
-    $fl=fopen("$runpath/run.info","w");
-    fwrite($fl,"run_app=$_SESSION[App]\n");
-    fwrite($fl,"run_version=$_SESSION[Version]\n");
-    fwrite($fl,"run_author=$_SESSION[User]\n");
-    foreach(array_keys($DATABASE["Runs"]) as $runfield){
-      if($runfield=="configuration_date") continue;
-      if($runfield=="run_hash") continue;
-      fwrite($fl,"$runfield=$PHP[$runfield]\n");
-    }
-    fclose($fl);
-    $runconfhash=hashFile("$runpath/run.info");
-    systemCmd("echo '#$runconfhash' >> $runpath/run.info");
-    if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Error creating run.info</p>";goto end;}
-
-    //==================================================
-    //PASSING THE CONTROL TO THE SAVE PROCEDURE
-    //==================================================
-    $qnew=true;
-    $PHP["Action"]="Save";
-    $notmsg=$actionresult.="<p>New run created...</p>";
-  }
-
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //SAVE
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   if($PHP["Action"]=="Save"){
 
-    //==================================================
-    //GET OLD INFORMATION
-    //==================================================
-    if(!$qnew){
-      //GET HASH
-      $oldrunhash=mysqlGetField("select * from runs where run_code='$PHP[RunCode]'",0,"run_hash");
-      if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Run not found</p>";goto error;}
-    }else{$oldrunhash=$runhash;}
     //OLD DIRECTORY
+    $oldrunhash=mysqlGetField("select * from runs where run_code='$PHP[RunCode]'",0,"run_hash");
+    if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Run not found</p>";goto error;}
     $oldrunpath="$runspath/$oldrunhash";
 
     //==================================================
@@ -364,7 +265,7 @@ RESULT;
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   if($PROJ["DEBUG"]){
 $content.=<<<CONF
-<div class="tabbertab sectab">
+<div class="tabbertab">
 <h2>Actions</h2>
   <p><b>Action</b>: $PHP[Action]</p>
   <div id="actionresult">$actionresult</div>
@@ -417,25 +318,16 @@ $numconf=readConfig("$runfile");
 //BLOCK ACCORDING TO STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//HEADER
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$header.=<<<HEADER
-<div id="notconfigure" class="notification" style="display:none"></div>
-$onload
-HEADER;
-
 if($PROJ["DEBUG"]){
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //EXTRA TABS IN CASE OF DEBUGGING
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 //==================================================
 //FILES
 //==================================================
 $ftable=filesTable($rundir);
 $content.=<<<CONF
-<div class="tabbertab sectab">
+<div class="tabbertab">
 <h2>Files</h2>
 $ftable
 </div>
@@ -447,7 +339,6 @@ CONF;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //array_unshift($tabs,"General");
 $tabs[]="General";
-
 $groups["General"][]="Buttons";
 if(isset($PHP["template"])){
   $tempname=str_replace("_"," ",$PHP["template"]);
@@ -469,6 +360,8 @@ BUTTON;
 $groups["General"][]="Global";
 foreach(array_keys($DATABASE["Runs"]) as $runfield){
   $var=$runfield;
+  if($var=="run_name") continue;
+
   $val=$CONFIG["$runfield"];
   $varname=$DATABASE["Runs"]["$runfield"];
   $vartype="varchar";
@@ -642,33 +535,6 @@ CONF;
 }//END FOR TAB
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//WINDOW CONTROLS
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$bugbut=genBugForm("ConfigureGeneral","General problems with configuration");
-$controls.=<<<CONF
-</div>
-<div class="formbuttons" id="buttons">
-  <!-- -------------------- SAVE BUTTON -------------------- -->
-  <button id="savebutton" class="image" name="Action" value="Save"
-  onmouseover="explainThis(this)" explanation="Save">
-  $BUTTONS[Save]
-  </button> 
-  <!-- -------------------- RESULTS BUTTON -------------------- -->
-  <button class="image" name="Action" value="Results"
-  onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode','Results','$PROJ[SECWIN]')"
-  onmouseover="explainThis(this)" explanation="Results" style="">
-  $BUTTONS[Results]
-  </button>
-</div>
-
-<div class="close">
-  <button class="image" onclick="window.close()">
-    $BUTTONS[Cancel]
-  </button>
-</div>
-CONF;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //RUN CONTROLS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $ajaxcmd=<<<AJAX
@@ -691,23 +557,77 @@ loadContent
    true
    )
 AJAX;
-$runcontrols=<<<CONTROL
+$onload_controls=genOnLoad($ajaxcmd,'load');
 
-<div id="runcontrols" class="control"></div>
-CONTROL;
-$onload=genOnLoad($ajaxcmd,'load');
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//TITLE & HEADER
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$title.=<<<TITLE
+<div style="text-align:center;
+	    font-size:20px;
+	    font-weight:bold;
+	    border-bottom:solid $COLORS[dark] 2px
+	    ">
+Configuration Window
+</div>
+TITLE;
+
+$header.=<<<HEADER
+<!-- -------------------- RUN NAME -------------------- -->
+<div class="actionbutton">
+Run name:<input type="text" name="run_name" value="$CONFIG[run_name]">
+</div>
+<div class="actionbutton">
+<!-- -------------------- SAVE BUTTON -------------------- -->
+<button id="savebutton" class="image" name="Action" value="Save"
+	onmouseover="explainThis(this)" explanation="Save">
+  $BUTTONS[Save]
+</button> 
+</div>
+<div class="actionbutton"
+     style="position:absolute;right:0px;top:10px;">
+  <!-- -------------------- CONTROLS -------------------- -->
+  <div class="actionbutton" id="runcontrols"
+       style="border:dashed gray 0px">
+  </div>
+  <!-- -------------------- RESULTS BUTTON -------------------- -->
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
+       onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode','Results','$PROJ[SECWIN]')"
+       onmouseover="explainThis(this)" explanation="Results" style="">
+      $BUTTONS[Results]
+    </a>
+  </div>
+  <!-- -------------------- CLOSE BUTTON -------------------- -->
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()"
+	      onmouseover="explainThis(this)" explanation="Close">
+	$BUTTONS[Cancel]
+    </a>
+  </div>
+</div>
+HEADER;
+
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT DISPLAY
 //////////////////////////////////////////////////////////////////////////////////
 end:
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//WINDOWS INFORMATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(isset($PHP["HeightWindow"])){
+   $extrastyle.="height:$PHP[HeightWindow];";
+   $content.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'";
+}
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //LAST MINUTE ELEMENTS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $notification=genOnLoad("notDiv('notconfigure','$notmsg')");
+$TabNum=$PHP["TabId"]+1;
 $DEBUG=genDebug("bottom");
 $head="";
-$TabNum=$PHP["TabId"]+1;
 $head.=genHead("","");
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -715,28 +635,52 @@ $head.=genHead("","");
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 echo<<<CONTENT
 <html>
-<head>
-$head
-</head>
-
-<body>
-$PROJ[ELBLANKET]
-$PROJ[ELOVER]  
-$notification
-$header
-$onload
-
-<form method="post" action="?" enctype="multipart/form-data">
-<input id="TabId" type="hidden" name="TabId" value="$TabNum">
-<div class="tabber sectabber" id="$PHP[TabId]">
-$DEBUG
-<input type="hidden" name="RunCode" value="$runcode">
-$content
-</div>
-$controls
-</form>
-$runcontrols
-<div class="close" style="right:50px;top:10px">$bugbut</div>
+  <head>
+    $head
+  </head>
+  
+  <body>
+    <div style="position:relative">
+      <!-- -------------------------------------------------------- -->
+      <!-- NOTIFICATION AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	<div id="notconfigure" class="notification" style="display:none"></div>
+	$PROJ[ELBLANKET]
+	$PROJ[ELOVER]  
+	$notification
+	$onload_controls
+      </div>
+      <form method="get" action="$PHP[PAGENAME]" enctype="multipart/form-data">
+      <!-- -------------------------------------------------------- -->
+      <!-- HEADER AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	$title
+      </div>
+      <div style="position:relative;padding:10px">
+	$header
+      </div>
+      <!-- -------------------------------------------------------- -->
+      <!-- TABS AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	  <input id="TabId" type="hidden" name="TabId" value="$TabNum">
+	  <div class="tabber" id="$PHP[TabId]"
+	       style="$extrastyle">
+	    $content
+	  </div>
+	  <input type="hidden" name="RunCode" value="$runcode">
+      </div>
+      <!-- -------------------------------------------------------- -->
+      <!-- FOOTER AREA -->
+      <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	$DEBUG
+	$footer
+      </div>
+      </form>
+    </div>
 </body>
 </html>
 

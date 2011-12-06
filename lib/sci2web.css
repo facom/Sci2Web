@@ -45,6 +45,16 @@ $PROJ["STYLES"]=<<<STYLES
     margin-left:10px;
     font-style:italic;
     }
+    a.image{
+	padding:3px;
+	padding-bottom:7px;
+	background-color:white;
+	text-align:center;
+	vertical-align:center;
+	text-height:300px;
+	border:solid gray 1px;
+	border-radius:2px;
+    }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*IMG*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -94,13 +104,13 @@ $PROJ["STYLES"]=<<<STYLES
     padding:10px;
     }
     div.debug_top{
-    position:absolute;
-    top:0px;right:0px;
+    position:fixed;
+    top:0px;right:10px;
     z-index:1;
     }
     div.debug_bottom{
-    position:absolute;
-    bottom:-100px;right:0px;
+    position:fixed;
+    bottom:0px;right:10px;
     z-index:9001;
     }
     div.notification1{
@@ -149,19 +159,29 @@ $PROJ["STYLES"]=<<<STYLES
     }
     div.plainarea{
     width:100%-10px;
-    height:95%;
     white-space:pre-wrap;
-    padding-left:10px;
+    padding:10px;
+    height:92%;
     border-top:solid $COLORS[dark] 2px;
     background-color:$COLORS[clear];
     overflow:auto;
     font-family:courier;
-    font-size:120%;
+    font-size:12px;
+    }
+    div.viewarea{
+    width:100%-10px;
+    white-space:pre-wrap;
+    padding:10px;
+    border-top:solid $COLORS[dark] 2px;
+    background-color:$COLORS[clear];
+    overflow:auto;
+    font-family:courier;
+    font-size:14px;
     }
     div.imgarea{
     height:95%;
     width:100%;
-    border:dashed $COLORS[text] 2px;
+    border:dashed $COLORS[text] 0px;
     text-align:center;
     }
     .image{

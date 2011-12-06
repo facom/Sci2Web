@@ -302,28 +302,31 @@ function sendMail($email,$subject,$text,$from,$replyto)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function uploadFile($tgtpath)
 {
-  global $PHP,$PROJ;
-  
-  foreach(array_keys($_FILES) as $filename){
-    $file=$_FILES[$filename];
+  global $PHP;
+  if(count($_FILES)<1){
+    return true;
+  }else{
+    foreach(array_keys($_FILES) as $filename){
+      $file=$_FILES[$filename];
 
-    if(isBlank($file["name"])) break;
-    $PHP[$filename]=$file["name"];
-    //==================================================
-    //DO NOT ALLOW THE UPLOADING OF SUSPICIOUS FILES
-    //==================================================
-    foreach($PHP["SUSFILES"] as $susfile){
-      if(preg_match("/$susfile/",$file["type"])){
-	echo "<p>You are trying to upload suspicious files.</p>";
-	exit(1);
+      if(isBlank($file["name"])) break;
+      $PHP[$filename]=$file["name"];
+      //==================================================
+      //DO NOT ALLOW THE UPLOADING OF SUSPICIOUS FILES
+      //==================================================
+      foreach($PHP["SUSFILES"] as $susfile){
+	if(preg_match("/$susfile/",$file["type"])){
+	  echo "<p>You are trying to upload suspicious files.</p>";
+	  exit(1);
+	}
       }
+      //==================================================
+      //CHECK FILE
+      //==================================================
+      systemCmd("mv $file[tmp_name] $tgtpath/$file[name]");
     }
-    //==================================================
-    //CHECK FILE
-    //==================================================
-    systemCmd("mv $file[tmp_name] $tgtpath/$file[name]");
+    return $file["error"];
   }
-  return $file["error"];
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
