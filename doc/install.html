@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
-<title>Sci2Web</title>
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<title></title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -46,6 +46,10 @@ blockquote.epigraph {
 
 dl.docutils dd {
   margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
 
 /* Uncomment (and remove this text!) to get bold-faced definition list terms
 dl.docutils dt {
@@ -157,15 +161,21 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left, .figure.align-left{
+img.align-left, .figure.align-left, object.align-left {
   clear: left ;
   float: left ;
   margin-right: 1em }
 
-img.align-right, .figure.align-right {
+img.align-right, .figure.align-right, object.align-right {
   clear: right ;
   float: right ;
   margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .align-left {
   text-align: left }
@@ -179,7 +189,7 @@ img.align-right, .figure.align-right {
 
 /* reset inner alignment in figures */
 div.align-right {
-  text-align: left }
+  text-align: inherit }
 
 /* div.align-center * { */
 /*   text-align: left } */
@@ -239,7 +249,7 @@ pre.address {
   margin-top: 0 ;
   font: inherit }
 
-pre.literal-block, pre.doctest-block {
+pre.literal-block, pre.doctest-block, pre.math {
   margin-left: 2em ;
   margin-right: 2em }
 
@@ -304,9 +314,8 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="id1">
-<h1 class="title">Sci2Web</h1>
-<h2 class="subtitle" id="bringing-naturally-developed-scientific-applications-to-the-web">Bringing naturally developed scientific applications to the web</h2>
+<div class="document">
+
 
 <!-- .
 ////////////////////////////////////////////////////////////////////////
@@ -350,8 +359,9 @@ Processed by unicode2rstsubs.py, part of Docutils:
 .. include:: <isoamso.txt>
 .. include:: <isoamsr.txt>
 .. include:: <isogrk1.txt> -->
-<div class="section" id="plaform-installation">
-<h1>Plaform Installation</h1>
+<img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
+<div class="section" id="installation-of-the-server-site">
+<h1>Installation of the Server Site</h1>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -364,15 +374,53 @@ Processed by unicode2rstsubs.py, part of Docutils:
 </tr>
 </tbody>
 </table>
-<div class="section" id="presentation">
-<h2>Presentation</h2>
-<p>This is <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.</p>
+<div class="section" id="abstract">
+<h2>Abstract</h2>
+<p>This document explains how to install <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> in a web server.  The
+installation of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2web</a> is a simple process (as compared with the
+installation of similar web tools).  It is required to have superuser
+level permissions.</p>
+</div>
+<div class="section" id="presenting-sci2web">
+<h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a tool to provide graphical web interfaces to <em>Naturally
+Developed Scientific Applications</em> (NDSAs).  NDSAs is a generic name
+we use to call those programs developed or adapted by scientist and
+used in scientific research.  Although today you can find powerful
+scientific software providing advanced graphical and user interfaces
+(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
+depend on programs developed in low level programming languages (C,
+fortran).  Even although a growing number of scientist are using
+powerful and modern languajes (C++, Java, Python) their programs still
+have simplified user interfaces and most of them lack of a proper
+graphical interface (in most cases these interfaces are simply not
+required or not important in the scientific work).</p>
+<p>Most of the time scientists restrict their programs just for their
+personal use or share it only with close colleagues.  But from time to
+time a <em>good piece of code</em> arises having the potential to become a
+publickly available program.  The decision to share a program and
+allows other to use it is a wise decision that in some cases have a
+very positive impact on the visibility of the developer scientific
+work.  However the development of software intended for <em>final users</em>,
+even although they could be experts, could be a challenge even for a
+skillful scientific developer.  Many skills are required ranging from
+operating system programming to advanced graphical interfaces
+development.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a solution created for those scientist who desire to share
+the software they developed with a wider scientific community but to
+the lowest developing cost.  Imagine to have an <em>active web page</em> (a
+web page whose content changes according to the user input) able to
+configure and control the execution of your programs?  This is exactly
+what <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> provides you.  If you want to see a living example go
+now to the <a class="reference external" href="http://www.google.com">Diffusion application</a>.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is not a content or a version management software.  It simply
+provides the required tools to configure and run NDSA applications
+using the web.</p>
 </div>
 <div class="section" id="install-sci2web-in-a-new-server">
 <h2>Install Sci2Web in a new server</h2>
-<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform will be installed as a website in your server.
-You will need to have installed in your server the following
-dependences before trying to configure and use the platform:</p>
+<p>Before to proceed with the installation of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> check that the
+following dependencies are installed in your web server:</p>
 <ul class="simple">
 <li>Apache2 server (debian package, dp:<tt class="docutils literal">apache2</tt>)</li>
 <li>PHP and PHP+MySQL modules (dp: <tt class="docutils literal">php5</tt> , <tt class="docutils literal"><span class="pre">php5-mysql</span></tt> )</li>
@@ -383,17 +431,19 @@ dependences before trying to configure and use the platform:</p>
 <li>Delayed job execution and batch processing package, <tt class="docutils literal">at</tt> (dp:
 <tt class="docutils literal">at</tt>)</li>
 </ul>
-<p>For debian users (e.g. ubuntu) use the following command to install
-all the packages in your server:</p>
+<p>Ubuntu users, and in general Debian administrators, could find useful
+the following command to install all the required packages in your
+server:</p>
 <pre class="literal-block">
-apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
+% sudo apt-get install --yes --force-yes apache2 php5 php5-mysql perl python libdbi-perl libdbd-mysql-perl python-matplotlib
 </pre>
-<p>To start using the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform in your server follow the
-procedure outlined below.</p>
+<p>The symbol <tt class="docutils literal">%</tt> replaces the prompt and hereafter will be used to
+denote a command that should be executed in the linux console.</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>Hereafter we will use the follwoing aliases when
-referring to important directories and files:</p>
+referring to important directories, files or other global
+properties that could change from machine to machine:</p>
 <ul class="last simple">
 <li><strong>PROJPATH</strong>: directory where the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site is placed at the
 server (e.g. /var/www/html/Sci2Web).</li>
@@ -401,7 +451,22 @@ server (e.g. /var/www/html/Sci2Web).</li>
 apache2 server.  Typically they are <tt class="docutils literal"><span class="pre">www-data</span></tt> and <tt class="docutils literal"><span class="pre">www-data</span></tt>.</li>
 </ul>
 </div>
+<p>To install a <strong>Sci2Web_ server site</strong> in your machine follow these
+steps:</p>
 <ol class="arabic">
+<li><p class="first"><strong>Get a copy of the software</strong>.  The software can be download
+directly from github <a class="reference external" href="https://github.com/facom/Sci2Web">https://github.com/facom/Sci2Web</a>.  If you
+also want to obtain fresh updates of the tool directly in your
+local copy you can obtain a git clone of the project:</p>
+<pre class="literal-block">
+% git clone git://github.com/facom/Sci2Web.git
+</pre>
+<p>In this case <tt class="docutils literal">git</tt> must be installed in the server.  Every time
+you want to update your copy just execute:</p>
+<pre class="literal-block">
+% git pull
+</pre>
+</li>
 <li><p class="first"><strong>Edit the master configuration file</strong>.  You can set up the basic
 information about your server in the master configuration file
 <tt class="docutils literal">PROJPATH/lib/sci2web.conf</tt>.  The most important variables in

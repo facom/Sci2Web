@@ -23,6 +23,7 @@ include_once("phplib.php");
 //CONFIGURATION
 //////////////////////////////////////////////////////////////////////////////////
 if(!file_exists("$PHP[PROJPATH]/lib/sci2web.conf")){
+  echo "<img src='images/sci2web-mainlogo' height='100px'/>";
   echo "<p>Sci2Web configuration file not present</p>";
   echo "<p>Check <a href='doc/install.html'>installation guide</a></p>";
   exit(1);
