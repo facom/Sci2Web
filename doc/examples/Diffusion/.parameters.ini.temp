@@ -1,0 +1,3 @@
+[[NumberParticles::10000::int::Total number of particules]]
+[[MeanFreePath::0.1::float::Mean free path]]
+[[Width::3::float]] [[Heigh::5::float]]

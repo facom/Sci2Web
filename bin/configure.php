@@ -438,6 +438,10 @@ CONF;
      $extra="class='confinput' onmouseover='explainThis(this)' 
              explanation='$vardesc' $protected style='$inputstyle'";
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+     //SINGLE VALUE:SIMPLE INPUT
+     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+     $input="<input type='text' name='$varn' value='$val' $extra size='30%'>";
+     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //RANGE: SCROLLABLE
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      if(preg_match("/--/",$defval)){
@@ -453,7 +457,7 @@ CONF;
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //LIST:SELECT
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     else if(preg_match("/;;/",$defval)){
+     if(preg_match("/;;/",$defval)){
        list($list,$defval)=preg_split("/==/",$defval);
        $parts=preg_split("/;;/",$list);
        $input=genSelect($parts,"$varn",$val,$extra);
@@ -461,7 +465,7 @@ CONF;
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //BOOLEAN:CHECKBOX
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     else if($datatype=="boolean"){
+     if($datatype=="boolean"){
        $checked="";
        if(!isBlank($val)){
 	 $checked="checked";
@@ -476,13 +480,13 @@ CONF;
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //TEXT:TEXTAREA
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     else if($datatype=="text"){
+     if($datatype=="text"){
        $input="<textarea name='$varn' cols='50' rows='10' $extra>$val</textarea>";
      }
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //FILE:
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     else if($datatype=="file"){
+     if($datatype=="file"){
        $flink_edit=$flink_view="void(null)";
        $inputhidden="";
        if(!isBlank($val)){
@@ -505,12 +509,6 @@ $inputhidden
 <a href="JavaScript:$flink_edit">edit</a>
 )
 INPUT;
-     }
-     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     //SINGLE VALUE:SIMPLE INPUT
-     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     else{
-       $input="<input type='text' name='$varn' value='$val' $extra size='30%'>";
      }
      if(isBlank($val)){$val=$defval;}
 $content.= <<<CONF

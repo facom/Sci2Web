@@ -23,13 +23,20 @@ Installation of the Server Site
 :Version: Revision 1, Wed Nov 30 06:29:15 COT 2011
 :Copyright: This document has been placed in the public domain.
 
+.. contents:: Table of Contents
+   :backlinks: entry
+
 Abstract
 ~~~~~~~~
 
 This document explains how to install Sci2Web_ in a web server.  The
 installation of Sci2web_ is a simple process (as compared with the
-installation of similar web tools).  It is required to have superuser
-level permissions.
+installation of similar web tools) and it requires administrative
+permissions in your web server.  If you have already succesfully
+installed the tool in your web server and wnat to familiarize with the
+example application read instead the `user guide <user.html>`_.  If you5D
+are prepared to port an application to your server site read the
+`developer guide <developer.html>`_.
 
 Presenting Sci2Web_
 ~~~~~~~~~~~~~~~~~~~
@@ -111,7 +118,7 @@ denote a command that should be executed in the linux console.
    - **APACHE_USER** and **APACHE_GROUP**.  User and group of the
      apache2 server.  Typically they are ``www-data`` and ``www-data``.
 
-To install a **Sci2Web_ server site** in your machine follow these
+To install a Sci2Web_ **server site** in your web server follow these
 steps:
 
 #. **Get a copy of the software**.  The software can be download
@@ -126,7 +133,7 @@ steps:
 
    % git pull
 
-#. **Configure the tool**.  All the **Sci2Web_ server sites**
+#. **Configure the site**.  All the Sci2Web_ **server sites**
    installed around the globe are by default identical and assume
    default values for several key parameters.  In order to customize
    you server site you need to create and properly edit the
@@ -136,76 +143,96 @@ steps:
 
    % cp doc/install/sci2web.conf lib/
 
-   
-
-
-
-   You can set up the basic
-   information about your server in the master configuration file
-   .  The most important variables in
-   this file are:
+   Edit the file setting up the parameters specific to your website.
+   Among the parameters that you could set up in this files are:
 
    + **PROJBASE** and **PROJNAME**: The URL of your project will be
      recognized as: ``http://server/PROJBASE/PROJNAME``.  Configure
      properly these variables in order to have right links in your
      website.
 
-   + **SCI2WEBSITE**: This is the name of the *local server* where the
-     Sci2Web_ platform is installed.  This name will be used in
-     different places of the platform to distinguish this instance of
-     Sci2Web from other ones found around the web.  Here you can use
-     the name of your institution, research group and even your
-     personal name.
+   + **SCI2WEBSITE**: This is the name of the *local server site*
+     where the Sci2Web_ is installed.  This name will be used in
+     different places of the site to distinguish it from other server
+     sites found around the web.  You can use the name of your
+     institution, research group or even your personal name.
 
-   + **ENTRYPAGE**: The entry page is the page the site displays when
-     the above URL is enetered.  By default it is ``test.php``.  You
-     can change it according to your own interests.  Some useful entry pages are:
+   + **ENTRYPAGE**: The entry page is the webpage displayed by default
+     when the base URL is used. Some useful entry pages are:
      
-     * ``main.php`` , main page of the platform.
+     * ``main.php``, main page of the site.
 
-     * ``main.php?TabId=3`` , main page open in the fourth tab
+     * ``main.php?TabId=3``, open main page in the fourth tab
        (i.e. the tab where the list of applications are displayed).
 
      * ``app.php?SetApp=true&App=Diffusion&VersionId=1&TabId=1`` ,
        open the page of version 'dev' (version id 1) of application
-       'Diffusion' at the first tab (i.e. description of application)
+       'Diffusion' at the first tab (i.e. in the description of the
+       application)
 
-   .. Important: If you change the information about the database
-      (name of the database or the authorized user, password of the
-      user) you must also edit that information in the
-      ``bin/sci2web.pm`` file.
+   + **DBNAME**, **DBSERVER**, **DBUSER**, **DBPASS**: Properties of
+     the database.  Change only if you actually know what are you
+     doing.  This properties are used frequently in other components
+     of the site and it is recommended not to change them.  However
+     for security issues it is important to set up a different
+     password for the database user.  In this case be sure that you
+     use the same password in the rest of this procedure.
+
+   .. Important:: If you change the information about the database
+      (name of the database, user or password) you must also modify
+      the information in the ``bin/sci2web.pm`` file.
+
+   + **ENABLEMAIL**: enable the sending of e-mail from the website.
+     Several features of the website use e-mail to notify the users
+     about important actions.  The creation of user accounts,
+     notification about a new update of an application and even
+     notifications of the complete execution of a run are some of the
+     key processes requiring e-mail.  It is strongly recomended
+     configure e-mail to activate these features in your Sci2Web_
+     server site.
+
+     If your server definitively does not have the possibility to send
+     e-mail set this variable to ``false``.  In this case all the
+     messages generated by the website will be stored in the text file
+     ``PROJPATH/log/mail.log``. 
 
 #. **Set permissions for critical directories**.  Several directories
-   in your website should have writing permission for the apache
-   user::
+   in your website should have reading and writing permission for the
+   apache user.  Instead of simply change the permissions to allow an
+   unrestricted access to those directories we recommend to change
+   their ownership::
 
-   	  $ chown -R APACHE_USER.APACHE_GROUP runs tmp
-   	  $ chown -R APACHE_USER.APACHE_GROUP apps/*/*.html
-   	  $ chown -R APACHE_USER.APACHE_GROUP pages/*/content/*.html
-   	  $ chown -R APACHE_USER.APACHE_GROUP js/ckfinder/userfiles
+     % chown -R APACHE_USER.APACHE_GROUP runs tmp log
+     % chown -R APACHE_USER.APACHE_GROUP apps/*/*.html
+     % chown -R APACHE_USER.APACHE_GROUP pages/*/content/*.html
+     % chown -R APACHE_USER.APACHE_GROUP js/ckfinder/userfiles
 
    You can use the script ``PROJPATH/doc/install/setperms.sh`` to
-   change automatically permissions.
+   perform this task::
 
-#. **Set up the database server**.  Sci2Web_ site uses systematically
-   mysql databases to store information about applications, users,
-   runs, etc.  In order to use the platform it is important to set up
-   properly the mysql server to accept the creation and modification
-   of the platform databases.  Before to start you have to create a
+     % bash doc/install/setperms.sh
+
+#. **Create the database**.  Sci2Web_ site uses systematically mysql
+   databases to store information about applications, users, runs,
+   etc.  It is important to set up properly the mysql server to access
+   and modify those databases.  Before to start you have to create a
    user with the proper permissions to create and modify the Sci2Web_
    database.  Login into the mysql server as ``root`` and execute::
 
-   	 mysql> create user 'sci2web'@'localhost' identified by 'WebPoweredNDSA';
+    mysql> create user 'sci2web'@'localhost' identified by 'WebPoweredNDSA';
 
    The information about the user (login and password) should be the
    same as that stored in the master configuration file.
 
-#. **Create Sci2Web database and populate it with basic
-   information**.  You will find the proper sql commands to create and
-   populate the Sci2Web_ database at ``doc/install``.  To perform this
-   actions just run::
+   Now you can create the Sci2Web_ database, their basic tables and
+   populate them with basic information.  This is a non-trivial
+   process.  The sql commands to properly perform this task are found
+   in the text file ``doc/install/sci2web.sql``.  Be sure that the
+   information about the database and the user recently created to
+   modify it has been properly set up in this file.  Once you have
+   verified this information execute in the console::
 
-         $ mysql -u root -p < doc/install/sci2web.sql
+    $ mysql -u root -p < doc/install/sci2web.sql
  
 #. **Test the configuration**.  In order to test the configuration of
    the site open the page
@@ -214,18 +241,21 @@ steps:
    directories.  If an error is raised at this point check your
    configuration and reload the test script.
 
-#. Once the test script has ran successfully check directly the
-   website by going to ``http://SERVERURL/PROJBASE/PROJNAME``.
+#. **Load the server site**.  Once the test script has ran
+   successfully check directly the site server by going to
+   ``http://SERVERURL/PROJBASE/PROJNAME``.
 
-If you want to start using the example application coming with the
-platform creates an account and enjoy!
+#. **Create a user account**.  To start using the tool you have to
+   sign up for an account.  If you sign up for an account with the
+   e-mail ``test@sci2web.org`` you will be able to edit and perform
+   other administrative operations under the example application.  It
+   is recommended to create this account as soon as you complete the
+   installation to avoid that an anonymous user gain access to
+   administrative  permissions on the example application.
 
-.. Important:: If you create an account with the e-mail
-   ``test@sci2web.org`` you will be able to edit and perform other
-   administrative operations under the example application.  It is
-   recommended to create this account as soon as you complete the
-   installation of your platform to avoid that an anonymous user gain
-   access to this administrative powers on the example application.
+At this point you have a new Sci2Web_ **server site** and can start
+porting your NDSAs into it and sharing with the scientific community.
+Enjoy it!
 
 Security issues
 ~~~~~~~~~~~~~~~
@@ -266,3 +296,6 @@ avoid attacks to your server coming form the Sci2Web_ website.
   ``/bin/dash`` as ``/bin/sh``.  Change this default configuration in
   order to make ``sh`` point out to ``bash``.
 
+-----------------------
+
+Copyright (C) 2011 Jorge I. Zuluaga

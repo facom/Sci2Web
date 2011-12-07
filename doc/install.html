@@ -361,7 +361,7 @@ Processed by unicode2rstsubs.py, part of Docutils:
 .. include:: <isogrk1.txt> -->
 <img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
 <div class="section" id="installation-of-the-server-site">
-<h1>Installation of the Server Site</h1>
+<h1><a class="toc-backref" href="#id1">Installation of the Server Site</a></h1>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -374,12 +374,28 @@ Processed by unicode2rstsubs.py, part of Docutils:
 </tr>
 </tbody>
 </table>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#installation-of-the-server-site" id="id1">Installation of the Server Site</a><ul>
+<li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
+<li><a class="reference internal" href="#presenting-sci2web" id="id3">Presenting Sci2Web</a></li>
+<li><a class="reference internal" href="#install-sci2web-in-a-new-server" id="id4">Install Sci2Web in a new server</a></li>
+<li><a class="reference internal" href="#security-issues" id="id5">Security issues</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="abstract">
-<h2>Abstract</h2>
+<h2><a class="toc-backref" href="#id2">Abstract</a></h2>
 <p>This document explains how to install <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> in a web server.  The
 installation of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2web</a> is a simple process (as compared with the
-installation of similar web tools).  It is required to have superuser
-level permissions.</p>
+installation of similar web tools) and it requires administrative
+permissions in your web server.  If you have already succesfully
+installed the tool in your web server and wnat to familiarize with the
+example application read instead the <a class="reference external" href="user.html">user guide</a>.  If you5D
+are prepared to port an application to your server site read the
+<a class="reference external" href="developer.html">developer guide</a>.</p>
 </div>
 <div class="section" id="presenting-sci2web">
 <h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
@@ -418,7 +434,7 @@ provides the required tools to configure and run NDSA applications
 using the web.</p>
 </div>
 <div class="section" id="install-sci2web-in-a-new-server">
-<h2>Install Sci2Web in a new server</h2>
+<h2><a class="toc-backref" href="#id4">Install Sci2Web in a new server</a></h2>
 <p>Before to proceed with the installation of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> check that the
 following dependencies are installed in your web server:</p>
 <ul class="simple">
@@ -451,13 +467,13 @@ server (e.g. /var/www/html/Sci2Web).</li>
 apache2 server.  Typically they are <tt class="docutils literal"><span class="pre">www-data</span></tt> and <tt class="docutils literal"><span class="pre">www-data</span></tt>.</li>
 </ul>
 </div>
-<p>To install a <strong>Sci2Web_ server site</strong> in your machine follow these
+<p>To install a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> <strong>server site</strong> in your web server follow these
 steps:</p>
 <ol class="arabic">
 <li><p class="first"><strong>Get a copy of the software</strong>.  The software can be download
 directly from github <a class="reference external" href="https://github.com/facom/Sci2Web">https://github.com/facom/Sci2Web</a>.  If you
 also want to obtain fresh updates of the tool directly in your
-local copy you can obtain a git clone of the project:</p>
+local copy you can obtain an anonymous clone of the project:</p>
 <pre class="literal-block">
 % git clone git://github.com/facom/Sci2Web.git
 </pre>
@@ -467,55 +483,90 @@ you want to update your copy just execute:</p>
 % git pull
 </pre>
 </li>
-<li><p class="first"><strong>Edit the master configuration file</strong>.  You can set up the basic
-information about your server in the master configuration file
-<tt class="docutils literal">PROJPATH/lib/sci2web.conf</tt>.  The most important variables in
-this file are:</p>
+<li><p class="first"><strong>Configure the site</strong>.  All the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> <strong>server sites</strong>
+installed around the globe are by default identical and assume
+default values for several key parameters.  In order to customize
+you server site you need to create and properly edit the
+configuration file <tt class="docutils literal">PROJPATH/lib/sci2web.conf</tt>.  A generic
+template could be obtained from the <tt class="docutils literal">PROJPATH/doc/install</tt>
+directory:</p>
+<pre class="literal-block">
+% cp doc/install/sci2web.conf lib/
+</pre>
+<p>Edit the file setting up the parameters specific to your website.
+Among the parameters that you could set up in this files are:</p>
 <ul class="simple">
 <li><strong>PROJBASE</strong> and <strong>PROJNAME</strong>: The URL of your project will be
 recognized as: <tt class="docutils literal"><span class="pre">http://server/PROJBASE/PROJNAME</span></tt>.  Configure
 properly these variables in order to have right links in your
 website.</li>
-<li><strong>SCI2WEBSITE</strong>: This is the name of the <em>local server</em> where the
-<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> platform is installed.  This name will be used in
-different places of the platform to distinguish this instance of
-Sci2Web from other ones found around the web.  Here you can use
-the name of your institution, research group and even your
-personal name.</li>
-<li><strong>ENTRYPAGE</strong>: The entry page is the page the site displays when
-the above URL is enetered.  By default it is <tt class="docutils literal">test.php</tt>.  You
-can change it according to your own interests.  Some useful entry pages are:<ul>
-<li><tt class="docutils literal">main.php</tt> , main page of the platform.</li>
-<li><tt class="docutils literal"><span class="pre">main.php?TabId=3</span></tt> , main page open in the fourth tab
+<li><strong>SCI2WEBSITE</strong>: This is the name of the <em>local server site</em>
+where the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is installed.  This name will be used in
+different places of the site to distinguish it from other server
+sites found around the web.  You can use the name of your
+institution, research group or even your personal name.</li>
+<li><strong>ENTRYPAGE</strong>: The entry page is the webpage displayed by default
+when the base URL is used. Some useful entry pages are:<ul>
+<li><tt class="docutils literal">main.php</tt>, main page of the site.</li>
+<li><tt class="docutils literal"><span class="pre">main.php?TabId=3</span></tt>, open main page in the fourth tab
 (i.e. the tab where the list of applications are displayed).</li>
 <li><tt class="docutils literal"><span class="pre">app.php?SetApp=true&amp;App=Diffusion&amp;VersionId=1&amp;TabId=1</span></tt> ,
 open the page of version 'dev' (version id 1) of application
-'Diffusion' at the first tab (i.e. description of application)</li>
+'Diffusion' at the first tab (i.e. in the description of the
+application)</li>
 </ul>
 </li>
+<li><strong>DBNAME</strong>, <strong>DBSERVER</strong>, <strong>DBUSER</strong>, <strong>DBPASS</strong>: Properties of
+the database.  Change only if you actually know what are you
+doing.  This properties are used frequently in other components
+of the site and it is recommended not to change them.  However
+for security issues it is important to set up a different
+password for the database user.  In this case be sure that you
+use the same password in the rest of this procedure.</li>
 </ul>
-<!-- Important: If you change the information about the database
-(name of the database or the authorized user, password of the
-user) you must also edit that information in the
-``bin/sci2web.pm`` file. -->
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">If you change the information about the database
+(name of the database, user or password) you must also modify
+the information in the <tt class="docutils literal">bin/sci2web.pm</tt> file.</p>
+</div>
+<ul>
+<li><p class="first"><strong>ENABLEMAIL</strong>: enable the sending of e-mail from the website.
+Several features of the website use e-mail to notify the users
+about important actions.  The creation of user accounts,
+notification about a new update of an application and even
+notifications of the complete execution of a run are some of the
+key processes requiring e-mail.  It is strongly recomended
+configure e-mail to activate these features in your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+server site.</p>
+<p>If your server definitively does not have the possibility to send
+e-mail set this variable to <tt class="docutils literal">false</tt>.  In this case all the
+messages generated by the website will be stored in the text file
+<tt class="docutils literal">PROJPATH/log/mail.log</tt>.</p>
+</li>
+</ul>
 </li>
 <li><p class="first"><strong>Set permissions for critical directories</strong>.  Several directories
-in your website should have writing permission for the apache
-user:</p>
+in your website should have reading and writing permission for the
+apache user.  Instead of simply change the permissions to allow an
+unrestricted access to those directories we recommend to change
+their ownership:</p>
 <pre class="literal-block">
-$ chown -R APACHE_USER.APACHE_GROUP runs tmp
-$ chown -R APACHE_USER.APACHE_GROUP apps/*/*.html
-$ chown -R APACHE_USER.APACHE_GROUP pages/*/content/*.html
-$ chown -R APACHE_USER.APACHE_GROUP js/ckfinder/userfiles
+% chown -R APACHE_USER.APACHE_GROUP runs tmp log
+% chown -R APACHE_USER.APACHE_GROUP apps/*/*.html
+% chown -R APACHE_USER.APACHE_GROUP pages/*/content/*.html
+% chown -R APACHE_USER.APACHE_GROUP js/ckfinder/userfiles
 </pre>
 <p>You can use the script <tt class="docutils literal">PROJPATH/doc/install/setperms.sh</tt> to
-change automatically permissions.</p>
+perform this task:</p>
+<pre class="literal-block">
+% bash doc/install/setperms.sh
+</pre>
 </li>
-<li><p class="first"><strong>Set up the database server</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site uses systematically
-mysql databases to store information about applications, users,
-runs, etc.  In order to use the platform it is important to set up
-properly the mysql server to accept the creation and modification
-of the platform databases.  Before to start you have to create a
+<li><p class="first"><strong>Create the database</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site uses systematically mysql
+databases to store information about applications, users, runs,
+etc.  It is important to set up properly the mysql server to access
+and modify those databases.  Before to start you have to create a
 user with the proper permissions to create and modify the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
 database.  Login into the mysql server as <tt class="docutils literal">root</tt> and execute:</p>
 <pre class="literal-block">
@@ -523,11 +574,13 @@ mysql&gt; create user 'sci2web'&#64;'localhost' identified by 'WebPoweredNDSA';
 </pre>
 <p>The information about the user (login and password) should be the
 same as that stored in the master configuration file.</p>
-</li>
-<li><p class="first"><strong>Create Sci2Web database and populate it with basic
-information</strong>.  You will find the proper sql commands to create and
-populate the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database at <tt class="docutils literal">doc/install</tt>.  To perform this
-actions just run:</p>
+<p>Now you can create the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database, their basic tables and
+populate them with basic information.  This is a non-trivial
+process.  The sql commands to properly perform this task are found
+in the text file <tt class="docutils literal">doc/install/sci2web.sql</tt>.  Be sure that the
+information about the database and the user recently created to
+modify it has been properly set up in this file.  Once you have
+verified this information execute in the console:</p>
 <pre class="literal-block">
 $ mysql -u root -p &lt; doc/install/sci2web.sql
 </pre>
@@ -539,24 +592,25 @@ test the access to the database and several key files and
 directories.  If an error is raised at this point check your
 configuration and reload the test script.</p>
 </li>
-<li><p class="first">Once the test script has ran successfully check directly the
-website by going to <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
+<li><p class="first"><strong>Load the server site</strong>.  Once the test script has ran
+successfully check directly the site server by going to
+<tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
+</li>
+<li><p class="first"><strong>Create a user account</strong>.  To start using the tool you have to
+sign up for an account.  If you sign up for an account with the
+e-mail <tt class="docutils literal">test&#64;sci2web.org</tt> you will be able to edit and perform
+other administrative operations under the example application.  It
+is recommended to create this account as soon as you complete the
+installation to avoid that an anonymous user gain access to
+administrative  permissions on the example application.</p>
 </li>
 </ol>
-<p>If you want to start using the example application coming with the
-platform creates an account and enjoy!</p>
-<div class="important">
-<p class="first admonition-title">Important</p>
-<p class="last">If you create an account with the e-mail
-<tt class="docutils literal">test&#64;sci2web.org</tt> you will be able to edit and perform other
-administrative operations under the example application.  It is
-recommended to create this account as soon as you complete the
-installation of your platform to avoid that an anonymous user gain
-access to this administrative powers on the example application.</p>
-</div>
+<p>At this point you have a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> <strong>server site</strong> and can start
+porting your NDSAs into it and sharing with the scientific community.
+Enjoy it!</p>
 </div>
 <div class="section" id="security-issues">
-<h2>Security issues</h2>
+<h2><a class="toc-backref" href="#id5">Security issues</a></h2>
 <p>Security is an important concern when working in the web.  In order to
 use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should be sure that several aspects of the server
 configuration has been ste up on one hand to allow the use of the
@@ -594,6 +648,8 @@ Normally this is performed by creating a symbolic link to
 order to make <tt class="docutils literal">sh</tt> point out to <tt class="docutils literal">bash</tt>.</p>
 </li>
 </ul>
+<hr class="docutils" />
+<p>Copyright (C) 2011 Jorge I. Zuluaga</p>
 </div>
 </div>
 </div>

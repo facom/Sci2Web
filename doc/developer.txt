@@ -1,0 +1,366 @@
+.. .
+   ////////////////////////////////////////////////////////////////////////
+   //           _ ___               _					 //
+   //          (_)__ \             | |					 //
+   //  ___  ___ _   ) |_      _____| |					 //
+   // / __|/ __| | / /\ \ /\ / / _ \ '_ \				 //
+   // \__ \ (__| |/ /_ \ V  V /  __/ |_) |				 //
+   // |___/\___|_|____| \_/\_/ \___|_.__/				 //
+   // 		     	    						 //
+   // Bringing naturally developed scientific applications to the web	 //
+   // Jorge Zuluaga (2011)	   	      		      	  	 //
+   ////////////////////////////////////////////////////////////////////////
+   .
+.. include:: util.txt
+
+.. image:: ../images/sci2web-mainlogo.jpg 
+   :height: 100px
+
+Developer Guide
+***************
+
+:Author: Jorge Zuluaga
+:Version: Revision 1, Wed Nov 30 06:29:15 COT 2011
+:Copyright: This document has been placed in the public domain.
+
+.. contents:: Table of Contents
+   :backlinks: entry
+
+Abstract
+~~~~~~~~
+
+This document explains how to port an application to a Sci2Web_ server
+site.  The process of porting a *Naturally Developed Scientific
+Application (NDSA)* starts by copying the source files of the
+application into the Sci2Web_ directory structure.  if the application
+depends on third party software (libraries, languages, external
+packages, etc.) they could be installed in the web server or simply
+copied among the application files.  Minor modifications should be
+done on the application source files (if available) and no web or
+graphical programming is required at all.  Many properties of the web
+interface and the mechanisms used by Sci2Web_ to control the
+preparation and running of the application can be configured and
+customized.  If you have already ported an application and want to
+test it read the `Sci2Web user guide <user.txt>`_.
+
+Presenting Sci2Web_
+~~~~~~~~~~~~~~~~~~~
+
+Sci2Web_ is a tool to provide graphical web interfaces to *Naturally
+Developed Scientific Applications* (NDSAs).  NDSAs is a generic name
+we use to call those programs developed or adapted by scientist and
+used in scientific research.  Although today you can find powerful
+scientific software providing advanced graphical and user interfaces
+(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
+depend on programs developed in low level programming languages (C,
+fortran).  Even although a growing number of scientist are using
+powerful and modern languajes (C++, Java, Python) their programs still
+have simplified user interfaces and most of them lack of a proper
+graphical interface (in most cases these interfaces are simply not
+required or not important in the scientific work).  
+
+Most of the time scientists restrict their programs just for their
+personal use or share it only with close colleagues.  But from time to
+time a *good piece of code* arises having the potential to become a
+publickly available program.  The decision to share a program and
+allows other to use it is a wise decision that in some cases have a
+very positive impact on the visibility of the developer scientific
+work.  However the development of software intended for *final users*,
+even although they could be experts, could be a challenge even for a
+skillful scientific developer.  Many skills are required ranging from
+operating system programming to advanced graphical interfaces
+development. 
+
+Sci2Web_ is a solution created for those scientist who desire to share
+the software they developed with a wider scientific community but to
+the lowest developing cost.  Imagine to have an *active web page* (a
+web page whose content changes according to the user input) able to
+configure and control the execution of your programs?  This is exactly
+what Sci2Web_ provides you.  If you want to see a living example go
+now to the `Diffusion application <http://www.google.com>`_.
+
+Sci2Web_ is not a content or a version management software.  It simply
+provides the required tools to configure and run NDSA applications
+using the web.
+
+Testing your application in the command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The scenario: you have just finished to debug a piece of sofware you
+have been using in your research.  The software seems interesting
+enough for other scientists working in your field and you finally
+decided to share it with colleagues.
+
+Your software is a bunch of source files written probably in different
+languages, data files, scripts and third party tools (binaries,
+libraries, header files, etc.) included or not among your files.  
+
+The user interacts with your program in different ways.  It is
+probably that your software uses specially formatted input files to
+set up the program and takes other input data, on which probably the
+action occurs, from other data files.  It is also possible that some
+information enters to your programs and scripts through the command
+line.  More strange is that your software depends on some input given
+from the keyboard.  In that case and as a general rule of thumb we
+recommend to avoid any interactive input since it will make harder to
+run the program in batch mode (unsupervised runs).
+
+The output of the program can be also diverse ranging from data going
+to the standard output and standard error, new data files and why not
+a figure or a plot produced by some plotting program (e.g. gnuplot).
+Again we recommend that all plots produced by your software be
+redirected to an image file eliminating any dependence of an available
+X connection.
+
+If you are organized enough your application includes also a simple
+documentation prepared in some kind of readable format (text or html
+files).
+
+All these features are typical of most of the applications developed
+by scientist as part of their research.  We are calling here this type
+of software *Naturally Developed Scientific Applications, NDSA*.  A
+pictorial model of the structure and interface of a generic NDSA is
+depicted in figure 1.
+
+.. image:: images/NDSA-interface-model.jpg
+
+The first condition you have to meet in order to configure and control
+your application with Sci2Web_ is that the application compiles and
+run properly from the command line.  You should perform this test in
+order to check if all the third party software (inlcuding compilers
+and libraries) are installed.  Another reason to make this first test
+is to see if the program at run time is able to load *share libraries*
+an issue not always easy to solve.
+
+Preparing the application
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is time to configure your application in order to use Sci2Web_ as
+the web interface to control it.  In the following we will call this
+procedure *application porting*.  To illustrate how to port an
+application to Sci2Web_ we will work with the sample application
+already installed in the Sci2Web_ server site you have installed.  A
+fresh copy of the example application is found at ``doc/examples``.  
+
+Try to follow the procedure described below using your own
+application.
+
+Our sample application has been copied and tested in a directory
+called ``Diffusion``.  This directory could be placed anywhere in your
+server.
+
+Our example application has the following components:
+
+- Source files: diffusion.c, diffusion.h, Makefile.
+
+- Input files: parameters.ini
+
+- Third party software: C compiler (external), gsl library (external)
+  and gsl header files (included among the files of the application).
+
+- Extra: an empty directory called ``scratch`` where temporal data
+  files are stored in running time.
+
+In order to run the application we should compile it::
+
+   % make diffusion.out
+
+and run it passing the name of the output file through the command
+line::
+	
+   % ./diffusion.out salida.txt
+
+The application computes the trajectory in a random walk of a given
+number of *dust* particles (by default 10000) inside a twi dimensional
+rectangular box.  The purpose is to compute several statistical
+properties of the system such as the average number of dispersions and
+the final distribution of dust particles in the box walls.
+
+When the program is ran, it shows in the screen (standard output) the
+last position of a selected number of particles (by default 1 each
+100).  Additionally, for the particles whose position is shown in the
+screen the program stores all the points in its random trajectory.
+The trajectory is stored in the directory ``scratch`` in files called
+``path-<i>.dat`` where ``<i>`` is the number of the particle.
+
+Initialize your application as a Sci2Web application
+====================================================
+
+The next steps require some help of a set of special scripts developed
+for Sci2Web_ called the **Sci2Web utility scripts**.  The scripts are
+located in the directory ``SCI2WEB_PROJPATH/bin`` where
+``SCI2WEB_PROJPATH`` is the directory where Sci2Web_ was installed in
+your server (e.g. ``/var/www/Sci2Web``).  You may want to include this
+directory in your path to simplify the following steps.  In other case
+you will have to invoque the scripts using the complete path.
+
+All the Sci2Web_ configuration information about your application is
+stored in specially formatted files that should be copied and edited
+in the directory of your application.  You can initialize all those
+files with a single command using the perl *utility script*
+``sci2web.pl``::
+	
+  % perl SCI2WEB_PROJPATH/sci2web.pl init <ApplicationName> <VersionName>
+
+where ``<ApplicationName>`` is the name of your application and
+``<VersionName>`` is the name of the version you are presently
+configuring.  Applications in Sci2Web should have proper names that
+will be used to identify them not only in the database, the filesystem
+or in all the programs of the tool, but also in the server site. We
+strongly recommend to choose properly the names of you applications.
+Avoid the use of *cryptic* names or very short or encoded names.
+Please **DO NOT** use spaces or special symbols in the names of your
+application.  
+
+Each Application could have multiple versions.  This is a very
+important feature of Sci2Web_.  Since scientific application evolve
+sometimes very fast but it is hard to ask users to follow any change
+you make in your application, versions will be the way as the
+developer takes *snapshot* of its work and release static versions of
+his work.  If new changes must be done on a given version is better to
+create a new version instead of change an existing one.  To reduce the
+burden of create versions for any change you make on your applications
+(actually not all changes will require the creation of completely new
+versions, the most critical changes involve the control variables
+defined in the next section) we recommend the creation of an initial
+version of any application called the ``dev`` version intended to be
+continuously modified.  Final users will not be able to see that
+version.
+
+To initialize our sample application the command will be::
+
+  % perl SCI2WEB_PROJPATH/sci2web.pl init TestDiffusion dev
+
+Please notice that we are using the name ``TestDiffusion`` instead of
+``Diffusion`` simply because an application with that name has been
+already installed with the initial files of the server site.  
+
+Select the *control variables*
+==============================
+
+In order to port our application to Sci2Web_ the first step is to
+select the variables that could be controlled by the user.  We will
+call them the *control variables*.  The value of the control
+parameters will be passed by the user using a web form in Sci2Web_.
+
+The most natural source of control variables are the input files.  In
+our sample application case the ``parameters.ini`` file::
+
+   10000
+   0.1
+   3 5
+
+The first value in this file is the total number of particles.  The
+second one is the mean free path in program units (see below).  The
+fourth and fifth parameters are the width and height of the box.  
+
+Create a copy of this file with the name ``.parameters.ini.temp``
+(*template file*) and substitute the values of the variables by::
+
+   [[NumberParticles::10000::int::Total number of particules]]
+   [[MeanFreePath::0.1::float::Mean free path]]
+   [[Width::3::float]] [[Heigh::5::float]]
+
+The code between double square brackets is called *substitution rules*
+and have two functions: 1) o *tag* the place on a file where a control
+parameter should be replaced by the value given by the user and 2)
+provide complete information to Sci2Web_ about the control variables
+itself as required in multiple places of the web interface.
+
+The general syntax of a substitution rule is::
+    
+   [[VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly]]
+
+Where:
+
+* **VariableName**: the name of the variable at the programming
+  level.  It should obeys the typical rules of variable names (e.g. no
+  blank or special characters)
+
+* **DefaultValue**: default value of the variable and type of input in
+  the web interface.  There are different ways to specify the default
+  value of a control variable.  Each way determines which input
+  element is used in the web form:
+     
+  - *Single value* (e.g. 3): the input is a simple text box.
+
+  - *Range of values* (e.g. 0--10==5): double dash separated range of
+    values plus the default value assumed in that range.  In this case
+    the input is performed using a simple text box plus a scroll bar.
+    This method is strongly recommended when certain values of a
+    variable should be avoided.
+
+  - *List of values* (e.g. Yes;;No==Yes): double comma separated set
+    of values plus the default selected one.  Input is performed using
+    a selection tool.
+
+  Another type of input methods are used according to the variable type:
+
+  - *Boolean values* (e.g. 1 or 0): value is indicated as 1 or 0.
+    Input is performed using a checkbox.
+
+  - *Files*: Input is performed using an upload button.
+
+  - *Text*: Input is performed with a textarea element.
+
+  .. important:: Variable type kind of input overrides the
+     DefaultValue specification, i.e. if you create a variable with
+     Default value ``Yes;;No==Yes`` of type ``text`` the input will be
+     through a textarea element instead of a select element as
+     expected from the default value specification.
+
+* **Type of variable**: data types follows the mysql convention
+  without modifiers (e.g. int instead of int(8)):
+  float,int,varchar,text,bool,file.  Data types bool and file are
+  specific of Sci2Web_.  If the variable is a file the input is
+  performed using a "choose file" element.
+
+* **Complete name of the variable**
+
+* **Tab**: variables are input in a tabbed form.  Here you indicate in
+  which tab the variable should be placed.  The input form could have
+  a single tab.
+
+* **Group**: in each tab variables are organized by input groups.
+  Here you indicate to which group the variable belongs.  Each tab of
+  the input form could have a single group.
+
+* **ReadOnly**: this property is used to enable or disable the
+  possibility to change the control parameter through the web form.
+  Left blank if you want to enable the input of the parameter and use
+  ``readonly`` to disable the input.
+
+If you have a control variable in more than one file you should create
+a template version of those files and place there the respective
+substitution rules.  For example in our sample application the file
+``plot-out.pl`` contains the number of particles as part of the figure
+title.  In that case create a template copy ``.plot-out.pl.temp`` and
+put the substitution rule for the control vairable
+``NumberParticles``::
+
+  name="salida"
+  set title "Diffusion of [[NumberParticles]] particles"
+  set term png
+  set output name.'.png'
+  plot name.'.txt' u 2:3 w p
+
+Please notice that you do not need to use the complete substitution
+rule in the second template file. 
+
+It is interesting to notice that control variables are not only
+*values* in your source files.  Actually they can substitute complete
+parts of your files regardless the content of the file or the role of
+the substituted part.  In the ``parameters.ini`` example the control
+variable substitute a single numeric value but in the ``plot-out.pl``
+example substitute parte of a string.
+
+Once you have selected the control variables and have created the
+templates from the files where those variables appear you are ready to
+test the generation of source files for your runs from those
+templates.  This a critical step in the generation of new instances of
+the application.
+
+
+-----------------------
+
+Copyright (C) 2011 Jorge I. Zuluaga

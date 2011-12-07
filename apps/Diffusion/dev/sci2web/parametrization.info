@@ -18,6 +18,6 @@ NumberParticles::10000::int::Number of Particles::::::variables.info,parameters.
 MeanFreePath::0.1::float::Mean free path::Base mean free path::::variables.info,parameters.ini,
 #TAB:System
 #GROUP:General
-DelayTime::0.0;;1.0;;2.0==0.0::float::Delay Time::Time of delay between the start of another particle::::variables.info,diffusion.h,
+DelayTime::0.0;;1.0;;2.0==0.0::text::Delay Time::Time of delay between the start of another particle::::variables.info,diffusion.h,
 QuerySleep::1::boolean::Do you want to introudce a delay::Introduce a delay between the display of results::::variables.info,diffusion.h,
 GeneralComments::This is a commentary about the parameters file::text::General Comments::Place here a comment::::variables.info,parameters.ini,

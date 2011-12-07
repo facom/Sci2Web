@@ -10,24 +10,31 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # PACKAGE
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#################################################################################
-#EXTERNAL PACKAGES
-#################################################################################
-use Digest::MD5 qw(md5_hex);
-use DBI;
-use DBD::mysql;
-#OPERATORS
-sub vprint{vprintFunc(@_);}
-sub Exit{exitFunc(@_);}
-
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#DATABASE
+#DATABASE INFORMATION
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $DBNAME="sci2web";
 $DBSERVER="localhost";
 $DBUSER="sci2web";
 $DBPASS="WebPoweredNDSA";
 %CONFIG={};
+
+#################################################################################
+#EXTERNAL PACKAGES
+#################################################################################
+use Digest::MD5 qw(md5_hex);
+use DBI;
+use DBD::mysql;
+use Getopt::Long;
+use Pod::Usage;
+use Switch;
+Getopt::Long::Configure("bundling");
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#OPERATORS
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CONNECT TO DATABASE
@@ -40,7 +47,7 @@ $DB=DBI->connect("DBI:mysql:$DBNAME:$DBSERVER","$DBUSER","$DBPASS");
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #BEHAVIOR
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$VERBOSE=1;
+$VERBOSE=0;
 $EXITCODE=0;
 $BACKUP=0;
 
@@ -60,6 +67,14 @@ $RUNSDIR="$ROOTDIR/runs";
 #################################################################################
 #USEFUL ROUTINES
 #################################################################################
+sub error
+{
+    my $msg=shift;
+    print stderr "Error:\n\t$msg\n";
+    pod2usage(2);
+    Exit(1)
+}
+
 sub unique
 {
     my @list=@_;

@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<title></title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document">
+
+
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//ROLES
+//////////////////////////////////////////////////////////////////////
+. -->
+<style>.red{color:red}</style><!-- See more at: http://docutils.sourceforge.net/docs/ref/rst/definitions.html -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Derived from the Unicode character mappings available from
+<http://www.w3.org/2003/entities/xml/>.
+Processed by unicode2rstsubs.py, part of Docutils:
+<http://docutils.sourceforge.net>. -->
+<!-- .. include:: <isoamsb.txt>
+.. include:: <isoamsc.txt>
+.. include:: <isoamso.txt>
+.. include:: <isoamsr.txt>
+.. include:: <isogrk1.txt> -->
+<img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
+<div class="section" id="developer-guide">
+<h1><a class="toc-backref" href="#id1">Developer Guide</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Author:</th><td class="field-body">Jorge Zuluaga</td>
+</tr>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">Revision 1, Wed Nov 30 06:29:15 COT 2011</td>
+</tr>
+<tr class="field"><th class="field-name">Copyright:</th><td class="field-body">This document has been placed in the public domain.</td>
+</tr>
+</tbody>
+</table>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#developer-guide" id="id1">Developer Guide</a><ul>
+<li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
+<li><a class="reference internal" href="#presenting-sci2web" id="id3">Presenting Sci2Web</a></li>
+<li><a class="reference internal" href="#testing-your-application-in-the-command-line" id="id4">Testing your application in the command line</a></li>
+<li><a class="reference internal" href="#preparing-the-application" id="id5">Preparing the application</a><ul>
+<li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id6">Initialize your application as a Sci2Web application</a></li>
+<li><a class="reference internal" href="#select-the-control-variables" id="id7">Select the <em>control variables</em></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="abstract">
+<h2><a class="toc-backref" href="#id2">Abstract</a></h2>
+<p>This document explains how to port an application to a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server
+site.  The process of porting a <em>Naturally Developed Scientific
+Application (NDSA)</em> starts by copying the source files of the
+application into the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> directory structure.  if the application
+depends on third party software (libraries, languages, external
+packages, etc.) they could be installed in the web server or simply
+copied among the application files.  Minor modifications should be
+done on the application source files (if available) and no web or
+graphical programming is required at all.  Many properties of the web
+interface and the mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the
+preparation and running of the application can be configured and
+customized.  If you have already ported an application and want to
+test it read the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
+</div>
+<div class="section" id="presenting-sci2web">
+<h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a tool to provide graphical web interfaces to <em>Naturally
+Developed Scientific Applications</em> (NDSAs).  NDSAs is a generic name
+we use to call those programs developed or adapted by scientist and
+used in scientific research.  Although today you can find powerful
+scientific software providing advanced graphical and user interfaces
+(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
+depend on programs developed in low level programming languages (C,
+fortran).  Even although a growing number of scientist are using
+powerful and modern languajes (C++, Java, Python) their programs still
+have simplified user interfaces and most of them lack of a proper
+graphical interface (in most cases these interfaces are simply not
+required or not important in the scientific work).</p>
+<p>Most of the time scientists restrict their programs just for their
+personal use or share it only with close colleagues.  But from time to
+time a <em>good piece of code</em> arises having the potential to become a
+publickly available program.  The decision to share a program and
+allows other to use it is a wise decision that in some cases have a
+very positive impact on the visibility of the developer scientific
+work.  However the development of software intended for <em>final users</em>,
+even although they could be experts, could be a challenge even for a
+skillful scientific developer.  Many skills are required ranging from
+operating system programming to advanced graphical interfaces
+development.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a solution created for those scientist who desire to share
+the software they developed with a wider scientific community but to
+the lowest developing cost.  Imagine to have an <em>active web page</em> (a
+web page whose content changes according to the user input) able to
+configure and control the execution of your programs?  This is exactly
+what <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> provides you.  If you want to see a living example go
+now to the <a class="reference external" href="http://www.google.com">Diffusion application</a>.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is not a content or a version management software.  It simply
+provides the required tools to configure and run NDSA applications
+using the web.</p>
+</div>
+<div class="section" id="testing-your-application-in-the-command-line">
+<h2><a class="toc-backref" href="#id4">Testing your application in the command line</a></h2>
+<p>The scenario: you have just finished to debug a piece of sofware you
+have been using in your research.  The software seems interesting
+enough for other scientists working in your field and you finally
+decided to share it with colleagues.</p>
+<p>Your software is a bunch of source files written probably in different
+languages, data files, scripts and third party tools (binaries,
+libraries, header files, etc.) included or not among your files.</p>
+<p>The user interacts with your program in different ways.  It is
+probably that your software uses specially formatted input files to
+set up the program and takes other input data, on which probably the
+action occurs, from other data files.  It is also possible that some
+information enters to your programs and scripts through the command
+line.  More strange is that your software depends on some input given
+from the keyboard.  In that case and as a general rule of thumb we
+recommend to avoid any interactive input since it will make harder to
+run the program in batch mode (unsupervised runs).</p>
+<p>The output of the program can be also diverse ranging from data going
+to the standard output and standard error, new data files and why not
+a figure or a plot produced by some plotting program (e.g. gnuplot).
+Again we recommend that all plots produced by your software be
+redirected to an image file eliminating any dependence of an available
+X connection.</p>
+<p>If you are organized enough your application includes also a simple
+documentation prepared in some kind of readable format (text or html
+files).</p>
+<p>All these features are typical of most of the applications developed
+by scientist as part of their research.  We are calling here this type
+of software <em>Naturally Developed Scientific Applications, NDSA</em>.  A
+pictorial model of the structure and interface of a generic NDSA is
+depicted in figure 1.</p>
+<img alt="images/NDSA-interface-model.jpg" src="images/NDSA-interface-model.jpg" />
+<p>The first condition you have to meet in order to configure and control
+your application with <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is that the application compiles and
+run properly from the command line.  You should perform this test in
+order to check if all the third party software (inlcuding compilers
+and libraries) are installed.  Another reason to make this first test
+is to see if the program at run time is able to load <em>share libraries</em>
+an issue not always easy to solve.</p>
+</div>
+<div class="section" id="preparing-the-application">
+<h2><a class="toc-backref" href="#id5">Preparing the application</a></h2>
+<p>It is time to configure your application in order to use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> as
+the web interface to control it.  In the following we will call this
+procedure <em>application porting</em>.  To illustrate how to port an
+application to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> we will work with the sample application
+already installed in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site you have installed.  A
+fresh copy of the example application is found at <tt class="docutils literal">doc/examples</tt>.</p>
+<p>Try to follow the procedure described below using your own
+application.</p>
+<p>Our sample application has been copied and tested in a directory
+called <tt class="docutils literal">Diffusion</tt>.  This directory could be placed anywhere in your
+server.</p>
+<p>Our example application has the following components:</p>
+<ul class="simple">
+<li>Source files: diffusion.c, diffusion.h, Makefile.</li>
+<li>Input files: parameters.ini</li>
+<li>Third party software: C compiler (external), gsl library (external)
+and gsl header files (included among the files of the application).</li>
+<li>Extra: an empty directory called <tt class="docutils literal">scratch</tt> where temporal data
+files are stored in running time.</li>
+</ul>
+<p>In order to run the application we should compile it:</p>
+<pre class="literal-block">
+% make diffusion.out
+</pre>
+<p>and run it passing the name of the output file through the command
+line:</p>
+<pre class="literal-block">
+% ./diffusion.out salida.txt
+</pre>
+<p>The application computes the trajectory in a random walk of a given
+number of <em>dust</em> particles (by default 10000) inside a twi dimensional
+rectangular box.  The purpose is to compute several statistical
+properties of the system such as the average number of dispersions and
+the final distribution of dust particles in the box walls.</p>
+<p>When the program is ran, it shows in the screen (standard output) the
+last position of a selected number of particles (by default 1 each
+100).  Additionally, for the particles whose position is shown in the
+screen the program stores all the points in its random trajectory.
+The trajectory is stored in the directory <tt class="docutils literal">scratch</tt> in files called
+<tt class="docutils literal"><span class="pre">path-&lt;i&gt;.dat</span></tt> where <tt class="docutils literal">&lt;i&gt;</tt> is the number of the particle.</p>
+<div class="section" id="initialize-your-application-as-a-sci2web-application">
+<h3><a class="toc-backref" href="#id6">Initialize your application as a Sci2Web application</a></h3>
+<p>The next steps require some help of a set of special scripts developed
+for <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> called the <strong>Sci2Web utility scripts</strong>.  The scripts are
+located in the directory <tt class="docutils literal">SCI2WEB_PROJPATH/bin</tt> where
+<tt class="docutils literal">SCI2WEB_PROJPATH</tt> is the directory where <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> was installed in
+your server (e.g. <tt class="docutils literal">/var/www/Sci2Web</tt>).  You may want to include this
+directory in your path to simplify the following steps.  In other case
+you will have to invoque the scripts using the complete path.</p>
+<p>All the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> configuration information about your application is
+stored in specially formatted files that should be copied and edited
+in the directory of your application.  You can initialize all those
+files with a single command using the perl <em>utility script</em>
+<tt class="docutils literal">sci2web.pl</tt>:</p>
+<pre class="literal-block">
+% perl SCI2WEB_PROJPATH/sci2web.pl init &lt;ApplicationName&gt; &lt;VersionName&gt;
+</pre>
+<p>where <tt class="docutils literal">&lt;ApplicationName&gt;</tt> is the name of your application and
+<tt class="docutils literal">&lt;VersionName&gt;</tt> is the name of the version you are presently
+configuring.  Applications in Sci2Web should have proper names that
+will be used to identify them not only in the database, the filesystem
+or in all the programs of the tool, but also in the server site. We
+strongly recommend to choose properly the names of you applications.
+Avoid the use of <em>cryptic</em> names or very short or encoded names.
+Please <strong>DO NOT</strong> use spaces or special symbols in the names of your
+application.</p>
+<p>Each Application could have multiple versions.  This is a very
+important feature of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  Since scientific application evolve
+sometimes very fast but it is hard to ask users to follow any change
+you make in your application, versions will be the way as the
+developer takes <em>snapshot</em> of its work and release static versions of
+his work.  If new changes must be done on a given version is better to
+create a new version instead of change an existing one.  To reduce the
+burden of create versions for any change you make on your applications
+(actually not all changes will require the creation of completely new
+versions, the most critical changes involve the control variables
+defined in the next section) we recommend the creation of an initial
+version of any application called the <tt class="docutils literal">dev</tt> version intended to be
+continuously modified.  Final users will not be able to see that
+version.</p>
+</div>
+<div class="section" id="select-the-control-variables">
+<h3><a class="toc-backref" href="#id7">Select the <em>control variables</em></a></h3>
+<p>In order to port our application to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> the first step is to
+select the variables that could be controlled by the user.  We will
+call them the <em>control variables</em>.  The value of the control
+parameters will be passed by the user using a web form in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.</p>
+<p>The most natural source of control variables are the input files.  In
+our sample application case the <tt class="docutils literal">parameters.ini</tt> file:</p>
+<pre class="literal-block">
+10000
+0.1
+3 5
+</pre>
+<p>The first value in this file is the total number of particles.  The
+second one is the mean free path in program units (see below).  The
+fourth and fifth parameters are the width and height of the box.</p>
+<p>Create a copy of this file with the name <tt class="docutils literal">.parameters.ini.temp</tt>
+(<em>template file</em>) and substitute the values of the variables by:</p>
+<pre class="literal-block">
+[[NumberParticles::10000::int::Total number of particules]]
+[[MeanFreePath::0.1::float::Mean free path]]
+[[Width::3::float]] [[Heigh::5::float]]
+</pre>
+<p>The code between double square brackets is called <em>substitution rules</em>
+and have two functions: 1) o <em>tag</em> the place on a file where a control
+parameter should be replaced by the value given by the user and 2)
+provide complete information to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> about the control variables
+itself as required in multiple places of the web interface.</p>
+<p>The general syntax of a substitution rule is:</p>
+<pre class="literal-block">
+[[VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly]]
+</pre>
+<p>Where:</p>
+<ul>
+<li><p class="first"><strong>VariableName</strong>: the name of the variable at the programming
+level.  It should obeys the typical rules of variable names (e.g. no
+blank or special characters)</p>
+</li>
+<li><p class="first"><strong>DefaultValue</strong>: default value of the variable and type of input in
+the web interface.  There are different ways to specify the default
+value of a control variable.  Each way determines which input
+element is used in the web form:</p>
+<ul class="simple">
+<li><em>Single value</em> (e.g. 3): the input is a simple text box.</li>
+<li><em>Range of values</em> (e.g. 0--10==5): double dash separated range of
+values plus the default value assumed in that range.  In this case
+the input is performed using a simple text box plus a scroll bar.
+This method is strongly recommended when certain values of a
+variable should be avoided.</li>
+<li><em>List of values</em> (e.g. Yes;;No==Yes): double comma separated set
+of values plus the default selected one.  Input is performed using
+a selection tool.</li>
+</ul>
+<p>Another type of input methods are used according to the variable type:</p>
+<ul class="simple">
+<li><em>Boolean values</em> (e.g. 1 or 0): value is indicated as 1 or 0.
+Input is performed using a checkbox.</li>
+<li><em>Files</em>: Input is performed using an upload button.</li>
+<li><em>Text</em>: Input is performed with a textarea element.</li>
+</ul>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">Variable type kind of input overrides the
+DefaultValue specification, i.e. if you create a variable with
+Default value <tt class="docutils literal"><span class="pre">Yes;;No==Yes</span></tt> of type <tt class="docutils literal">text</tt> the input will be
+through a textarea element instead of a select element as
+expected from the default value specification.</p>
+</div>
+</li>
+<li><p class="first"><strong>Type of variable</strong>: data types follows the mysql convention
+without modifiers (e.g. int instead of int(8)):
+float,int,varchar,text,bool,file.  Data types bool and file are
+specific of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  If the variable is a file the input is
+performed using a &quot;choose file&quot; element.</p>
+</li>
+<li><p class="first"><strong>Complete name of the variable</strong></p>
+</li>
+<li><p class="first"><strong>Tab</strong>: variables are input in a tabbed form.  Here you indicate in
+which tab the variable should be placed.  The input form could have
+a single tab.</p>
+</li>
+<li><p class="first"><strong>Group</strong>: in each tab variables are organized by input groups.
+Here you indicate to which group the variable belongs.  Each tab of
+the input form could have a single group.</p>
+</li>
+<li><p class="first"><strong>ReadOnly</strong>: this property is used to enable or disable the
+possibility to change the control parameter through the web form.
+Left blank if you want to enable the input of the parameter and use
+<tt class="docutils literal">readonly</tt> to disable the input.</p>
+</li>
+</ul>
+<p>If you have a control variable in more than one file you should create
+a template version of those files and place there the respective
+substitution rules.  For example in our sample application the file
+<tt class="docutils literal"><span class="pre">plot-out.pl</span></tt> contains the number of particles as part of the figure
+title.  In that case create a template copy <tt class="docutils literal"><span class="pre">.plot-out.pl.temp</span></tt> and
+put the substitution rule for the control vairable
+<tt class="docutils literal">NumberParticles</tt>:</p>
+<pre class="literal-block">
+name=&quot;salida&quot;
+set title &quot;Diffusion of [[NumberParticles]] particles&quot;
+set term png
+set output name.'.png'
+plot name.'.txt' u 2:3 w p
+</pre>
+<p>Please notice that you do not need to use the complete substitution
+rule in the second template file.</p>
+<p>It is interesting to notice that control variables are not only
+<em>values</em> in your source files.  Actually they can substitute complete
+parts of your files regardless the content of the file or the role of
+the substituted part.  In the <tt class="docutils literal">parameters.ini</tt> example the control
+variable substitute a single numeric value but in the <tt class="docutils literal"><span class="pre">plot-out.pl</span></tt>
+example substitute parte of a string.</p>
+<p>Once you have selected the control variables and have created the
+templates from the files where those variables appear you are ready to
+test the generation of source files for your runs from those
+templates.  This a critical step in the generation of new instances of
+the application.</p>
+<hr class="docutils" />
+<p>Copyright (C) 2011 Jorge I. Zuluaga</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
