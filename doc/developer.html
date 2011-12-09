@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title></title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -46,10 +46,6 @@ blockquote.epigraph {
 
 dl.docutils dd {
   margin-bottom: 0.5em }
-
-object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
-  overflow: hidden;
-}
 
 /* Uncomment (and remove this text!) to get bold-faced definition list terms
 dl.docutils dt {
@@ -161,21 +157,15 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left, .figure.align-left, object.align-left {
+img.align-left, .figure.align-left{
   clear: left ;
   float: left ;
   margin-right: 1em }
 
-img.align-right, .figure.align-right, object.align-right {
+img.align-right, .figure.align-right {
   clear: right ;
   float: right ;
   margin-left: 1em }
-
-img.align-center, .figure.align-center, object.align-center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .align-left {
   text-align: left }
@@ -189,7 +179,7 @@ img.align-center, .figure.align-center, object.align-center {
 
 /* reset inner alignment in figures */
 div.align-right {
-  text-align: inherit }
+  text-align: left }
 
 /* div.align-center * { */
 /*   text-align: left } */
@@ -249,7 +239,7 @@ pre.address {
   margin-top: 0 ;
   font: inherit }
 
-pre.literal-block, pre.doctest-block, pre.math {
+pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
   margin-right: 2em }
 
@@ -384,8 +374,10 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <li><a class="reference internal" href="#preparing-the-application" id="id5">Preparing the application</a><ul>
 <li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id6">Initialize your application as a Sci2Web application</a></li>
 <li><a class="reference internal" href="#select-the-control-variables" id="id7">Select the <em>control variables</em></a></li>
+<li><a class="reference internal" href="#configure-your-application" id="id8">Configure your application</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#installing-your-application-in-your-sci2web-server-site" id="id9">Installing your application in your Sci2Web server site</a></li>
 </ul>
 </li>
 </ul>
@@ -394,17 +386,21 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <h2><a class="toc-backref" href="#id2">Abstract</a></h2>
 <p>This document explains how to port an application to a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server
 site.  The process of porting a <em>Naturally Developed Scientific
-Application (NDSA)</em> starts by copying the source files of the
-application into the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> directory structure.  if the application
+Application (NDSA)</em> starts by testing your application at the web
+server where it will be installed.  You need to be sure that your
+application runs properly from the command line before trying to
+configure and control it from a web interface.  If the application
 depends on third party software (libraries, languages, external
 packages, etc.) they could be installed in the web server or simply
-copied among the application files.  Minor modifications should be
-done on the application source files (if available) and no web or
-graphical programming is required at all.  Many properties of the web
-interface and the mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the
+copied among the application files.  By porting an application to
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> minor modifications should be done on the application source
+files (if available) and no web or graphical programming is required
+at all.  This is the most important advantage of using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to
+create a friendly interface to your applications.  Many properties of
+the web interface and the mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the
 preparation and running of the application can be configured and
-customized.  If you have already ported an application and want to
-test it read the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
+customized as will be explained here.  If you have already ported an
+application and want to test it read the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
 </div>
 <div class="section" id="presenting-sci2web">
 <h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
@@ -525,64 +521,87 @@ last position of a selected number of particles (by default 1 each
 screen the program stores all the points in its random trajectory.
 The trajectory is stored in the directory <tt class="docutils literal">scratch</tt> in files called
 <tt class="docutils literal"><span class="pre">path-&lt;i&gt;.dat</span></tt> where <tt class="docutils literal">&lt;i&gt;</tt> is the number of the particle.</p>
+<p>The next steps require some help of a set of special scripts called
+the <strong>Sci2Web utility scripts</strong>.  The scripts are located in the
+directory <tt class="docutils literal">SCI2WEB_PROJPATH/bin</tt> where <tt class="docutils literal">SCI2WEB_PROJPATH</tt> is the
+directory where <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> was installed in your server
+(e.g. <tt class="docutils literal">/var/www/Sci2Web</tt>).  You may want to include this directory
+in your path to simplify the following steps.  In other case you will
+have to invoque the scripts using the complete path.</p>
 <div class="section" id="initialize-your-application-as-a-sci2web-application">
 <h3><a class="toc-backref" href="#id6">Initialize your application as a Sci2Web application</a></h3>
-<p>The next steps require some help of a set of special scripts developed
-for <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> called the <strong>Sci2Web utility scripts</strong>.  The scripts are
-located in the directory <tt class="docutils literal">SCI2WEB_PROJPATH/bin</tt> where
-<tt class="docutils literal">SCI2WEB_PROJPATH</tt> is the directory where <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> was installed in
-your server (e.g. <tt class="docutils literal">/var/www/Sci2Web</tt>).  You may want to include this
-directory in your path to simplify the following steps.  In other case
-you will have to invoque the scripts using the complete path.</p>
 <p>All the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> configuration information about your application is
 stored in specially formatted files that should be copied and edited
 in the directory of your application.  You can initialize all those
 files with a single command using the perl <em>utility script</em>
 <tt class="docutils literal">sci2web.pl</tt>:</p>
 <pre class="literal-block">
-% perl SCI2WEB_PROJPATH/sci2web.pl init &lt;ApplicationName&gt; &lt;VersionName&gt;
+% perl SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt;
 </pre>
 <p>where <tt class="docutils literal">&lt;ApplicationName&gt;</tt> is the name of your application and
 <tt class="docutils literal">&lt;VersionName&gt;</tt> is the name of the version you are presently
-configuring.  Applications in Sci2Web should have proper names that
-will be used to identify them not only in the database, the filesystem
-or in all the programs of the tool, but also in the server site. We
-strongly recommend to choose properly the names of you applications.
-Avoid the use of <em>cryptic</em> names or very short or encoded names.
-Please <strong>DO NOT</strong> use spaces or special symbols in the names of your
+configuring.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>Applications in Sci2Web should have proper names that
+will be used to identify them not only in the database, the
+filesystem or in all the programs of the tool, but also in the web
+pages of the server site. We strongly recommend to choose properly
+the names of you applications.  For example avoid the use of
+<em>cryptic</em> names or very short or encoded names and please <strong>DO
+NOT</strong> use spaces or special symbols in the names of your
 application.</p>
-<p>Each Application could have multiple versions.  This is a very
+<p class="last">Each Application could have multiple versions.  This is a very
 important feature of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  Since scientific application evolve
-sometimes very fast but it is hard to ask users to follow any change
-you make in your application, versions will be the way as the
-developer takes <em>snapshot</em> of its work and release static versions of
-his work.  If new changes must be done on a given version is better to
-create a new version instead of change an existing one.  To reduce the
-burden of create versions for any change you make on your applications
-(actually not all changes will require the creation of completely new
-versions, the most critical changes involve the control variables
-defined in the next section) we recommend the creation of an initial
-version of any application called the <tt class="docutils literal">dev</tt> version intended to be
+sometimes very fastly and it is hard to ask users to follow any
+change you make in your application, versions will be the way as
+the developer takes <em>snapshot</em> of its work and release static
+versions of the application.  If new changes must be done on a
+given version of your application is better to create a new version
+instead of change an existing one.  To reduce the burden of create
+versions for any change you make on your applications (actually not
+all changes will require the creation of completely new versions,
+the most critical changes involve the control variables defined in
+the next section) we recommend the creation of an initial version
+of any application called the <tt class="docutils literal">dev</tt> version intended to be
 continuously modified.  Final users will not be able to see that
 version.</p>
 </div>
+<p>To initialize our sample application the command will be:</p>
+<pre class="literal-block">
+% perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev
+</pre>
+<p>Please notice that we are using the name <tt class="docutils literal">TestDiffusion</tt> instead of
+<tt class="docutils literal">Diffusion</tt> simply because an application with that name has been
+already installed with the initial files of the server site.</p>
+<p>As has been said before the initialization step creates all the
+configuration files required to set up a Sci2Web application and
+gather them in a single subdirectory named <tt class="docutils literal">sci2web</tt>.  Do not move
+or change the name of this subdirectory.</p>
+<p>Once your application has been initialized you have to fill out the
+configuration files.  Several files are automatically filled using the
+utility scripts by other ones should be eidted manually.</p>
+</div>
 <div class="section" id="select-the-control-variables">
 <h3><a class="toc-backref" href="#id7">Select the <em>control variables</em></a></h3>
-<p>In order to port our application to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> the first step is to
+<p>The first step to configure a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> ported application, is to
 select the variables that could be controlled by the user.  We will
-call them the <em>control variables</em>.  The value of the control
-parameters will be passed by the user using a web form in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.</p>
+call them the <em>control variables</em>.  The value of the control variables
+will be passed by the user using a web form in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> interface.</p>
 <p>The most natural source of control variables are the input files.  In
-our sample application case the <tt class="docutils literal">parameters.ini</tt> file:</p>
+our sample application case this role is played by the
+<tt class="docutils literal">parameters.ini</tt> file:</p>
 <pre class="literal-block">
 10000
 0.1
 3 5
 </pre>
-<p>The first value in this file is the total number of particles.  The
-second one is the mean free path in program units (see below).  The
-fourth and fifth parameters are the width and height of the box.</p>
-<p>Create a copy of this file with the name <tt class="docutils literal">.parameters.ini.temp</tt>
+<p>The first value in this file is the total number of particles that
+will be used in the simulation.  The second one is the mean free path
+in program units (see below).  The fourth and fifth parameters are the
+width and height of the box also in the units of the program.</p>
+<p>If you want that the user controls the value of all this variables
+create a copy of this file with the name <tt class="docutils literal">.parameters.ini.temp</tt>
 (<em>template file</em>) and substitute the values of the variables by:</p>
 <pre class="literal-block">
 [[NumberParticles::10000::int::Total number of particules]]
@@ -590,10 +609,12 @@ fourth and fifth parameters are the width and height of the box.</p>
 [[Width::3::float]] [[Heigh::5::float]]
 </pre>
 <p>The code between double square brackets is called <em>substitution rules</em>
-and have two functions: 1) o <em>tag</em> the place on a file where a control
-parameter should be replaced by the value given by the user and 2)
+and have two functions: 1) <em>tag</em> the place in a file where a control
+variable should be replaced by the value given by the user and 2)
 provide complete information to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> about the control variables
-itself as required in multiple places of the web interface.</p>
+itself, such as the internal name of the variable, the <em>numeric</em> type
+and even the help text that will appear close to the input element in
+the web form (see below).</p>
 <p>The general syntax of a substitution rule is:</p>
 <pre class="literal-block">
 [[VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly]]
@@ -607,7 +628,7 @@ blank or special characters)</p>
 <li><p class="first"><strong>DefaultValue</strong>: default value of the variable and type of input in
 the web interface.  There are different ways to specify the default
 value of a control variable.  Each way determines which input
-element is used in the web form:</p>
+element will be used in the web form:</p>
 <ul class="simple">
 <li><em>Single value</em> (e.g. 3): the input is a simple text box.</li>
 <li><em>Range of values</em> (e.g. 0--10==5): double dash separated range of
@@ -619,7 +640,8 @@ variable should be avoided.</li>
 of values plus the default selected one.  Input is performed using
 a selection tool.</li>
 </ul>
-<p>Another type of input methods are used according to the variable type:</p>
+<p>Another type of input methods are used according to the variable
+type (see next item):</p>
 <ul class="simple">
 <li><em>Boolean values</em> (e.g. 1 or 0): value is indicated as 1 or 0.
 Input is performed using a checkbox.</li>
@@ -628,65 +650,455 @@ Input is performed using a checkbox.</li>
 </ul>
 <div class="important">
 <p class="first admonition-title">Important</p>
-<p class="last">Variable type kind of input overrides the
-DefaultValue specification, i.e. if you create a variable with
-Default value <tt class="docutils literal"><span class="pre">Yes;;No==Yes</span></tt> of type <tt class="docutils literal">text</tt> the input will be
-through a textarea element instead of a select element as
-expected from the default value specification.</p>
+<p class="last">The input method determined by the variable type
+overrides the DefaultValue specification.  For example if you
+create a variable with Default value <tt class="docutils literal"><span class="pre">Yes;;No==Yes</span></tt> of type
+<tt class="docutils literal">text</tt> the input will be through a textarea element instead of
+a select element as expected from the default value
+specification.</p>
 </div>
 </li>
-<li><p class="first"><strong>Type of variable</strong>: data types follows the mysql convention
-without modifiers (e.g. int instead of int(8)):
-float,int,varchar,text,bool,file.  Data types bool and file are
-specific of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  If the variable is a file the input is
-performed using a &quot;choose file&quot; element.</p>
+<li><p class="first"><strong>Type of variable</strong>: most of the types follows the mysql convention
+without modifiers (e.g. int instead of int(8)).  Other types are
+specific to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> (text,bool,file).  Valida datatypes are: int,
+float, varchar, bool, file and text.</p>
 </li>
-<li><p class="first"><strong>Complete name of the variable</strong></p>
+<li><p class="first"><strong>Complete name of the variable</strong>.  This name will be used as the
+text before the input element in the web form.</p>
 </li>
-<li><p class="first"><strong>Tab</strong>: variables are input in a tabbed form.  Here you indicate in
-which tab the variable should be placed.  The input form could have
-a single tab.</p>
+<li><p class="first"><strong>Tab</strong>: the configuration window used to input the application
+control variables is divided in tabs.  Tabs allows you to create
+group of control variables having different effects on the
+applications.  For example you can distinguish among variables with
+the value of physical properties of your applications and variables
+controlling numerical attributes.  The Tab field in the substitution
+rule allows you to classify you control variables.  Variables
+without a Tab attribute will be classified in a <tt class="docutils literal">Control
+Variables</tt> default tab.</p>
 </li>
-<li><p class="first"><strong>Group</strong>: in each tab variables are organized by input groups.
-Here you indicate to which group the variable belongs.  Each tab of
-the input form could have a single group.</p>
+<li><p class="first"><strong>Group</strong>: in each tab variables are organized by groups.  This a
+second level of organization introduced specially to be used with
+very complex applications.  Variables without a Group attribute will
+be classified in a <tt class="docutils literal">General</tt> default group.</p>
 </li>
 <li><p class="first"><strong>ReadOnly</strong>: this property is used to enable or disable the
-possibility to change the control parameter through the web form.
-Left blank if you want to enable the input of the parameter and use
+possibility to change the control variable through the web form.
+Left blank if you want to enable the input of the variable and use
 <tt class="docutils literal">readonly</tt> to disable the input.</p>
 </li>
 </ul>
 <p>If you have a control variable in more than one file you should create
-a template version of those files and place there the respective
-substitution rules.  For example in our sample application the file
-<tt class="docutils literal"><span class="pre">plot-out.pl</span></tt> contains the number of particles as part of the figure
-title.  In that case create a template copy <tt class="docutils literal"><span class="pre">.plot-out.pl.temp</span></tt> and
+a template version of those files and place therein the respective
+substitution rules.  In our sample application the file
+<tt class="docutils literal"><span class="pre">plot-out.gpl</span></tt> contains the number of particles as part of the figure
+title.  In that case create a template copy <tt class="docutils literal"><span class="pre">.plot-out.gpl.temp</span></tt> and
 put the substitution rule for the control vairable
 <tt class="docutils literal">NumberParticles</tt>:</p>
 <pre class="literal-block">
-name=&quot;salida&quot;
+name=&quot;[[OutputFile::salida::varchar::Name of the output file]]&quot;
 set title &quot;Diffusion of [[NumberParticles]] particles&quot;
 set term png
 set output name.'.png'
 plot name.'.txt' u 2:3 w p
 </pre>
 <p>Please notice that you do not need to use the complete substitution
-rule in the second template file.</p>
+rule in the second template file.  This behavior will save a lot of
+work when parametrizing your application.</p>
 <p>It is interesting to notice that control variables are not only
-<em>values</em> in your source files.  Actually they can substitute complete
-parts of your files regardless the content of the file or the role of
-the substituted part.  In the <tt class="docutils literal">parameters.ini</tt> example the control
-variable substitute a single numeric value but in the <tt class="docutils literal"><span class="pre">plot-out.pl</span></tt>
-example substitute parte of a string.</p>
-<p>Once you have selected the control variables and have created the
-templates from the files where those variables appear you are ready to
-test the generation of source files for your runs from those
-templates.  This a critical step in the generation of new instances of
-the application.</p>
+associated to <em>values</em> of real programming variables in your source
+files.  Actually they can substitute complete parts of your files
+regardless the content of the file or the role of the substituted
+part.  In the <tt class="docutils literal">parameters.ini</tt> example the control variable
+substitute a single numeric value but in the <tt class="docutils literal"><span class="pre">plot-out.gpl</span></tt> example
+substitute part of a string.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>to simplify the parametrization of complex applications
+we recommend to create a master template file
+<tt class="docutils literal">.defaultvalues.conf.temp</tt> containing the full substitution rules
+for all the control variables in your application.  Using this file
+you will avoid to fill your application template files with long
+substitution rules that will be made those file probably prune to
+errors.  In our sample application this master template file could
+be have the following lines:</p>
+<pre class="literal-block">
+NumberParticles=[[NumberParticles::10000::int::Total number of particules]]
+MeanFreePath=[[MeanFreePath::0.1::float::Mean free path]]
+Width=[[Width::3::float]]
+Height=[[Heigh::5::float]]
+OutputFile=[[OutputFile::salida::varchar::Name of the output file]]
+</pre>
+<p>Once this file is created the application template files
+<tt class="docutils literal">.parameters.ini.temp</tt> and <tt class="docutils literal">.plot.gpl.temp</tt> will just contain
+simplified versions of the substitution rules.  For example the
+<tt class="docutils literal">.parameters.ini.temp</tt> will now look much readable:</p>
+<pre class="last literal-block">
+[[NumberParticles]]
+[[MeanFreePath]]
+[[Width]] [[Heigh]]
+</pre>
+</div>
+<p>There are finally a set of very important variables that should be set
+up to complete the <em>parametrization</em> of your application. They are
+called the <em>results variables</em>.  These variables are set up using an
+already created template file <tt class="docutils literal"><span class="pre">sci2web/.results.info.temp</span></tt>.  Copy
+this file to the main directory of the application and edit it to add
+the results variables associated to your application.  For our example
+application we define a result variable called <tt class="docutils literal">MeanDispersions</tt>
+that will be set after the execution of the application with the
+average number of dispersions suffered by the dust particles:</p>
+<pre class="literal-block">
+sci2web/.results.info.temp:
+
+MeanDispersions=[[MeanDispersions::0::float::Average number of dispersions::Results::General::This is a result variable::readonly]]
+
+% cp sci2web/.results.info.temp .
+</pre>
+<p>The <tt class="docutils literal">tab</tt> and <tt class="docutils literal">group</tt> for the results variables should not be
+modified.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>In order to use properly the results variable feature
+of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should configure your application to write down the
+value of these variables after the execution of a running instance.
+For our example application it could be done for example changing
+the master source file including the following lines:</p>
+<p>Original code:</p>
+<pre class="literal-block">
+for(i=ini;i&lt;=N;i++){
+  condition=((i%per)==0 || i==ini);
+  [...]
+  j=0;
+  do{
+    d=-lambda*log(drand48())*CUSTOM_UNITS;
+    theta=2*M_PI*drand48();
+    x=x+d*cos(theta);
+    y=y+d*sin(theta);
+    if(condition) fprintf(fp,&quot;%d %e %e\n&quot;,j,x,y);
+    j++;
+  }while(x*(x-l)&lt;=0 &amp;&amp; y*(y-h)&lt;=0);
+  fprintf(fl,&quot;%d\t%e\t%e\n&quot;,i,x,y);
+  if(condition){
+    fprintf(stdout,&quot;i = %d, (x,y) = (%.2e,%.2e)\n&quot;,i,x,y);
+    sleep((int)SLEEP);
+  }
+}
+</pre>
+<p>New code:</p>
+<pre class="literal-block">
+nidsp=0;
+for(i=ini;i&lt;=N;i++){
+  condition=((i%per)==0 || i==ini);
+  [...]
+  j=0;
+  do{
+    d=-lambda*log(drand48())*CUSTOM_UNITS;
+    theta=2*M_PI*drand48();
+    x=x+d*cos(theta);
+    y=y+d*sin(theta);
+    if(condition) fprintf(fp,&quot;%d %e %e\n&quot;,j,x,y);
+    j++;
+  }while(x*(x-l)&lt;=0 &amp;&amp; y*(y-h)&lt;=0);
+  ndisp+=j;
+
+  fprintf(fl,&quot;%d\t%e\t%e\n&quot;,i,x,y);
+  if(condition){
+    fprintf(stdout,&quot;i = %d, (x,y) = (%.2e,%.2e)\n&quot;,i,x,y);
+    sleep((int)SLEEP);
+  }
+}
+ndisp=ndisp/N;
+FILE *fr;
+fr=fopen(&quot;results.info&quot;,&quot;w&quot;);
+fprintf(fr,&quot;MeanDispersions=%lf\n&quot;,ndisp);
+fclose(fr);
+</pre>
+<p class="last">If you cannot change your source file or simply does not want to do
+it we recommend to use external scripts able to extract the results
+from any output of the program (standard or standard error, output
+files, etc.)</p>
+</div>
+<p>Once you have selected the control and results variables and have
+created the templates from the files where those variables appear you
+are ready to test the generation of source files for your runs from
+those templates.  This a critical step in the generation of new
+instances of the application.  To perform this important step run:</p>
+<pre class="literal-block">
+% perl sci2web/bin/sci2web.pl contvars --appdir .
+</pre>
+<p>Here we are using the symbolic link to the utility script binary
+directory created in the sci2web subdirectory already installed after
+the initialization of the application.</p>
+<p>This command create three files in the <tt class="docutils literal">sci2web</tt> subdirectory:
+<tt class="docutils literal">controlvars.info</tt>, <tt class="docutils literal">controlvars.sql</tt> and
+<tt class="docutils literal">templates/Default.conf</tt>.  The first one is the list of the control
+variables classified by tabs and groups and properly formatted to be
+used by the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> tool.  The second one is a sql file that will be
+used in the installation step to create a table associated to the
+particular version of the application where the values of the control
+variables and other results are stored by each run created by the
+community using the application. It is strongly recommended to avoid
+the edition of this file.  The third and last file, <tt class="docutils literal">Default.conf</tt>
+is a sample <em>run configuration file</em> containing the value of the
+control variables that will be used to generate the files for a given
+run.  In this case the values are the default ones defined when the
+control variables were described using the substitution rule.</p>
+<p>At this point you can try to generate the files for your application
+using the template files and the default <em>run configuration file</em>
+(<tt class="docutils literal">sci2web/templates/Default.conf</tt>) just created.  To perform this
+run:</p>
+<pre class="literal-block">
+% perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+</pre>
+<p>This command will create the run files corresponding to each template
+you have previously created.  In our sample they correspond to the
+<tt class="docutils literal">parameters.ini</tt> and <tt class="docutils literal"><span class="pre">plot-out.gpl</span></tt> files.  Please check these
+files and verify that they have the proper content.  Another file is
+created <tt class="docutils literal">run.conf</tt>.  This is a copy of the run configuration file
+and can be used to know what are the values of the control variables
+used in a particular run.</p>
+<p>You can play around modifying <tt class="docutils literal">run.conf</tt> and generating again the
+run files:</p>
+<pre class="literal-block">
+% perl sci2web/bin/sci2web.pl genfiles --runconf run.conf --rundir .
+</pre>
+<p>This exercise will give you an idea if your template files and control
+variable configuration files are properly prepared.</p>
+<p>The ultimate test is to generate test run files using a particular set
+of values properly set up in your <tt class="docutils literal">run.conf</tt> and see if your
+application compiles and run as expected.</p>
+<p>Be sure that you have test it your newly configured application before
+to proceed with the following steps.</p>
+</div>
+<div class="section" id="configure-your-application">
+<h3><a class="toc-backref" href="#id8">Configure your application</a></h3>
+<p>Control variables are the most important component of a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+ported applications.  At this point you have initialized your
+application and configured how a running instance will be parametrized
+and generated through the control variables you have just defined.</p>
+<p>There are other important aspects of your application that need to be
+configured before to install it at the Sci2Web server site.  Please
+follow carefully the next procedure to complete your configuration:</p>
+<ol class="arabic">
+<li><p class="first"><strong>The running pipeline</strong>.  In real life every NDSA is normally ran
+following a fixed set of system commands, a.k.a. the <em>running
+pipeline</em>.  For example you could start by cleaning the run
+directory, then you compile your source files, run your
+application, perform several post-run actions and check your
+results.</p>
+<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> control scripts run every ported application following
+a fixed pipeline that should be configured using the
+<tt class="docutils literal">sci2web/runpipeline.conf</tt> file.  You can provide there the
+explicit commands (<tt class="docutils literal">&lt;ACTION&gt;CMD</tt>, where <tt class="docutils literal">&lt;ACTION&gt;</tt> could be
+<tt class="docutils literal">CLEAN</tt>, <tt class="docutils literal">COMPLIE</tt>, <tt class="docutils literal">SUBMIT</tt>, etc., see below) or the name of
+specially prepared scripts (<tt class="docutils literal">&lt;ACTION&gt;SCR</tt>) that should be
+executed at each step of the running pipeline.</p>
+<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> pipeline recognize the following set of actions:</p>
+<ul class="simple">
+<li><em>Clean</em>.  Clean of the run directory.  This action should be
+configured if the run directory must be cleaned before to run the
+application.</li>
+<li><em>Compile</em>.  Compile the source files of the application.  This
+action should be configured if your application requires some
+kind of compilation.  It should not be configured if you are
+using already compiled programs or not compiling languages
+(e.g. perl, bash, python).</li>
+<li><em>Preparation</em>.  Prepare the run directory to run the application.
+Configure this action if your application require some previous
+preparation before to run it.</li>
+<li><em>Submit</em>. Run the application.  Here you should say the system
+what is the particular command used to run your application.</li>
+<li><em>Pause</em>.  Pause a running application.  Configure this step only
+if your application could be paused.  Pausing is a special
+feature of an application that allows you to temporally suspend a
+running instance and resume it exactly where the computation be
+when the instance was interrupted.  Not all the applications
+could be paused but if you can program this feature in your
+source files it could be a very useful property.  Leave blanck
+both <tt class="docutils literal">PAUSESCR</tt> and <tt class="docutils literal">PAUSECMD</tt> variables if the application
+is not <em>pausable</em>.  In this case the action <em>Pause</em> will trigger
+the <em>Kill</em> action on the application.</li>
+<li><em>Stop</em>. Stop a running application.  Here applies the same
+recommendations given for the <em>Pause</em> step.</li>
+<li><em>Post</em>.  Commands to be executed after the running instance of
+the application has finished.</li>
+<li><em>Status</em>.  Check the status of the run.  The commands configure
+here should be able to return a number between 0 and 1 with the
+degree of advance of your run.  If you are not able to check this
+return a -1 value as the running status.</li>
+</ul>
+<p>The <tt class="docutils literal">runpipeline.conf</tt> file for our example application will look
+like:</p>
+<pre class="literal-block">
+#######################################################################
+#RUN PIPELINE
+#######################################################################
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM CLEAN COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLEANSCR=&quot;&quot;
+CLEANCMD=&quot;make cleanall&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM COMPILE COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMPILESCR=&quot;&quot;
+COMPILECMD=&quot;make diffusion.out&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM PRE COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PRESCR=&quot;&quot;
+PRECMD=&quot;make clean&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM SUBMIT COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SUBMITSCR=&quot;&quot;
+SUBMITCMD=&quot;./diffusion.out salida.txt&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM PAUSE COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PAUSESCR=&quot;&quot;
+PAUSECMD=&quot;echo Pausing...&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM RESUME COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RESUMESCR=&quot;&quot;
+RESUMECMD=&quot;echo Resuming...&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM STOP COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+STOPSCR=&quot;&quot;
+STOPCMD=&quot;echo Stopping...&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM POST RUN COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+POSTSCR=&quot;&quot;
+POSTCMD=&quot;gnuplot plot-out.gpl&quot;
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#CUSTOM STATUS COMMAND OR SCRIPT
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+STATUSSCR=&quot;stat.sh&quot;
+STATUSCMD=&quot;echo -1&quot;
+</pre>
+<p>It should be mentioned that the <tt class="docutils literal">&lt;ACTION&gt;SCR</tt> value overrides the
+<tt class="docutils literal">&lt;ACTION&gt;CMD</tt> command.  Thus for example in the last part of the
+previous example file the <tt class="docutils literal">STATUSSCR</tt> is executed beside the fact
+that a <tt class="docutils literal">STATUSCMD</tt> has been also provided.</p>
+<p>It is strongly recommended to test the running pipeline
+configuration by trying to use the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> utility script
+<tt class="docutils literal">sci2web.sh</tt>.  This is the script that the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> web tools
+will use when trying to control your application.  Test it by
+running:</p>
+<pre class="literal-block">
+% bash sci2web/bin/sci2web.sh clean
+</pre>
+<p>If it works as expected, executing the Clean command or script you
+have configured in the <tt class="docutils literal">runpipeline.conf</tt> file try to run other
+and more complex actions:</p>
+<blockquote>
+<p>% bash sci2web/bin/sci2web.sh compile
+% bash sci2web/bin/sci2web.sh pre</p>
+</blockquote>
+<p>The most critical action is the <em>Submit</em> one.  Verify that it works
+as expected:</p>
+<pre class="literal-block">
+% bash sci2web/bin/sci2web.sh submit
+Executing action submit:
+Signal: submit
+Set submit
+warning: commands will be executed using /bin/sh
+job 457 at Fri Dec  9 10:56:00 2011
+</pre>
+<p>If it works properly not only you will notice that the expected
+output files of your application will start to appear but also a
+set of <tt class="docutils literal">.oxt</tt> files are generated: <tt class="docutils literal">jobid</tt>,
+<tt class="docutils literal">pid</tt>,``time_start``, <tt class="docutils literal">time_end</tt>, <tt class="docutils literal">stdout</tt>, <tt class="docutils literal">stderr</tt> among
+others.  These files contain critical information about the running
+instance used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to display information related to your
+run.</p>
+<p>If any problem is detected please check the <tt class="docutils literal">runpipeline.conf</tt>
+configuration file and other scripts you are using to run your
+application.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> uses by default the batch execution system
+<tt class="docutils literal">at</tt>.  It will try to execute all the running instances on the
+local web server despite the fact that the processor is very
+busy. This is not a recommended configuration and should be used
+only if you are using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> for personal purposes.</p>
+<p>If you want to work with a different batch execution system the
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> site server manager should change the <tt class="docutils literal">sci2web.sh</tt>
+script to prepare the job submission accordingly.</p>
+<p>For example if you want to change <tt class="docutils literal">at</tt> for <tt class="docutils literal">batch</tt> (which
+launches proccesses only if the server load is low enough) you
+should replace the <tt class="docutils literal">at now</tt> command for the <tt class="docutils literal">bacth</tt> command
+in the following part of the <tt class="docutils literal">sci2web.sh</tt> script:</p>
+<pre class="last literal-block">
+#&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;
+#THESE LINES CAN BE CHANGED ACCORDING TO YOUR QUEUE SYSTEM
+#&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;
+if ! at now &lt; /tmp/apprun.$$ &amp;&gt; /tmp/jobinfo.$$;then
+    echo &quot;Error submitting your job:&quot;
+    cat /tmp/jobinfo.$$
+    rm -rf /tmp/*.$$
+    exit 1
+fi
+cat /tmp/jobinfo.$$
+jobid=$(tail -n 1 /tmp/jobinfo.$$ | cut -f 2 -d ' ')
+echo $jobid &gt; jobid.oxt
+#&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;
+#&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;
+</pre>
+</div>
+<p>The utility script <tt class="docutils literal">sci2web.sh</tt> includes another actions that
+could be useful for other purposes: <strong>cleanall</strong>, cleans all the
+run directory including files generated by the control script;
+<strong>test</strong>, performs a complete test on the running instance
+including pause, stop and resume commands; <strong>kill</strong>, kills the
+presently running instance; <strong>status</strong> check the status of the
+running instance.  You can run several action in tandem:</p>
+<pre class="literal-block">
+% bash sci2web/bin/sci2web.sh cleanall compile pre submit
+</pre>
+<p>This is the recommended way to test the running pipeline.</p>
+</li>
+<li><p class="first"><strong>Select common files</strong>.  When <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> creates a new instance of
+an application many files could be duplicated what compromises the
+storage capacity of tou web server.  Many of those duplicated files
+could be shared among different running instances reducing the
+space required to have an active <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application.  You can
+list the files that will be shared using the
+<tt class="docutils literal">sci2web/sharedfiles.info</tt> file.  One object should be listed per
+line in this file.  For our example application if you want to
+share the files <tt class="docutils literal">Makefile</tt> and all the files having the name
+diffussion, and the directory <tt class="docutils literal">gsl</tt> the
+<tt class="docutils literal">sci2web/sharedfiles.info</tt> will look like:</p>
+<pre class="literal-block">
+Makefile
+diffusion.*
+gsl
+</pre>
+</li>
+<li><p class="first"><strong>Select output files</strong>.</p>
+</li>
+<li><p class="first"><strong>Result window</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="installing-your-application-in-your-sci2web-server-site">
+<h2>Installing your application in your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site</h2>
+<p>Now</p>
 <hr class="docutils" />
 <p>Copyright (C) 2011 Jorge I. Zuluaga</p>
-</div>
 </div>
 </div>
 </div>

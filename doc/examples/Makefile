@@ -6,7 +6,7 @@ diffusion.out:diffusion.o
 	$(CC) $^ $(LFLAGS) -o $@
 
 clean:
-	rm -rf *.dat *.png *~ *.err
+	rm -rf *.dat *.png *~ *.err scratch/*.dat
 
 cleanall:clean
 	rm -rf *.o *.out

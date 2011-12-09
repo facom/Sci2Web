@@ -33,6 +33,7 @@ Getopt::Long::Configure("bundling");
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #OPERATORS
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sub rprint{rprintFunc(@_);}
 sub vprint{vprintFunc(@_);}
 sub Exit{exitFunc(@_);}
 
@@ -61,6 +62,7 @@ $BACKUP=0;
 #DIRECTORIES
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $BINDIR="$ROOTDIR/bin";
+$INSTALLDIR="$ROOTDIR/doc/install";
 $APPSDIR="$ROOTDIR/apps";
 $RUNSDIR="$ROOTDIR/runs";
 
@@ -91,20 +93,28 @@ sub bar
     for($i=0;$i<$n;$i++){$str.="$char";}
     return $str;
 }
-sub marquee
-{
-    my $msg=shift;
-    my $char=shift;
-    my $len=length($msg);
-    my $bar=bar($char,$len);
-    my $str="$bar\n$msg\n$bar\n";
-    return $str;
-}
 sub vprintFunc
 {
     print @_ if($VERBOSE);
     return 0;
 }
+
+sub rprintFunc
+{
+    my $msg=shift;
+    my $char=shift;
+    my $str;
+    if(length($char)>0){
+	my $len=length($msg);
+	my $bar=bar($char,$len);
+	$str="$bar\n$msg\n$bar\n";
+    }else{
+	$str="$msg\n";
+    }
+    print $str;
+    return 0;
+}
+
 sub readLines
 {
     my $file=shift;
@@ -193,6 +203,26 @@ sub cleanConfig
     sysCmd("cat lib/sci2web.conf | egrep -v '^#' | egrep -v '^<' | egrep -v '^/' | grep -v '^?' | grep -v '^*' | egrep -v '^\$' > /tmp/$fname.$$");
     
     return "/tmp/$fname.$$";
+}
+
+sub readConfig {
+    my $envfile=shift;
+    my %CONFIG;
+
+    Error "File: $envfile does not exist." if(!-e $envfile);
+
+    open(fl,"$envfile");
+    my @lines=<fl>;
+    chomp @lines;
+    foreach $line (@lines){
+	next if($line=~/^\#/ or
+		$line=~/^$/);
+	($var,$val)=split(/\s*=\s*/,$line);
+	#vprint "VAR: $var\nVAL: $val\n";
+	$CONFIG{"$var"}=$val;
+    }
+    close($fl);
+    return %CONFIG;
 }
 
 1;
