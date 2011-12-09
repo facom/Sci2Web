@@ -370,14 +370,16 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <li><a class="reference internal" href="#developer-guide" id="id1">Developer Guide</a><ul>
 <li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
 <li><a class="reference internal" href="#presenting-sci2web" id="id3">Presenting Sci2Web</a></li>
-<li><a class="reference internal" href="#testing-your-application-in-the-command-line" id="id4">Testing your application in the command line</a></li>
-<li><a class="reference internal" href="#preparing-the-application" id="id5">Preparing the application</a><ul>
-<li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id6">Initialize your application as a Sci2Web application</a></li>
-<li><a class="reference internal" href="#select-the-control-variables" id="id7">Select the <em>control variables</em></a></li>
-<li><a class="reference internal" href="#configure-your-application" id="id8">Configure your application</a></li>
+<li><a class="reference internal" href="#quick-start-summary" id="id4">Quick start (Summary)</a></li>
+<li><a class="reference internal" href="#testing-your-application-in-the-command-line" id="id5">Testing your application in the command line</a></li>
+<li><a class="reference internal" href="#preparing-the-application" id="id6">Preparing the application</a><ul>
+<li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id7">Initialize your application as a Sci2Web application</a></li>
+<li><a class="reference internal" href="#select-the-control-variables" id="id8">Select the <em>control variables</em></a></li>
+<li><a class="reference internal" href="#configure-your-application" id="id9">Configure your application</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#installing-your-application-in-your-sci2web-server-site" id="id9">Installing your application in your Sci2Web server site</a></li>
+<li><a class="reference internal" href="#installing-your-application-in-your-sci2web-server-site" id="id10">Installing your application in your Sci2Web server site</a></li>
+<li><a class="reference internal" href="#testing-your-newly-ported-application" id="id11">Testing your newly ported application</a></li>
 </ul>
 </li>
 </ul>
@@ -438,8 +440,19 @@ now to the <a class="reference external" href="http://www.google.com">Diffusion 
 provides the required tools to configure and run NDSA applications
 using the web.</p>
 </div>
+<div class="section" id="quick-start-summary">
+<h2><a class="toc-backref" href="#id4">Quick start (Summary)</a></h2>
+<p>If you are not patience enough to read the rest of this document and
+thing that you can <em>interpolate</em> many of the details regarding the
+configuration of a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application go directly through the
+follow steps and have an usable web interfaced NDSA in a couple of
+minutes:</p>
+<ol class="arabic simple">
+<li></li>
+</ol>
+</div>
 <div class="section" id="testing-your-application-in-the-command-line">
-<h2><a class="toc-backref" href="#id4">Testing your application in the command line</a></h2>
+<h2><a class="toc-backref" href="#id5">Testing your application in the command line</a></h2>
 <p>The scenario: you have just finished to debug a piece of sofware you
 have been using in your research.  The software seems interesting
 enough for other scientists working in your field and you finally
@@ -480,7 +493,7 @@ is to see if the program at run time is able to load <em>share libraries</em>
 an issue not always easy to solve.</p>
 </div>
 <div class="section" id="preparing-the-application">
-<h2><a class="toc-backref" href="#id5">Preparing the application</a></h2>
+<h2><a class="toc-backref" href="#id6">Preparing the application</a></h2>
 <p>It is time to configure your application in order to use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> as
 the web interface to control it.  In the following we will call this
 procedure <em>application porting</em>.  To illustrate how to port an
@@ -529,7 +542,7 @@ directory where <a class="reference external" href="http://localhost/user/Sci2We
 in your path to simplify the following steps.  In other case you will
 have to invoque the scripts using the complete path.</p>
 <div class="section" id="initialize-your-application-as-a-sci2web-application">
-<h3><a class="toc-backref" href="#id6">Initialize your application as a Sci2Web application</a></h3>
+<h3><a class="toc-backref" href="#id7">Initialize your application as a Sci2Web application</a></h3>
 <p>All the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> configuration information about your application is
 stored in specially formatted files that should be copied and edited
 in the directory of your application.  You can initialize all those
@@ -583,7 +596,7 @@ configuration files.  Several files are automatically filled using the
 utility scripts by other ones should be eidted manually.</p>
 </div>
 <div class="section" id="select-the-control-variables">
-<h3><a class="toc-backref" href="#id7">Select the <em>control variables</em></a></h3>
+<h3><a class="toc-backref" href="#id8">Select the <em>control variables</em></a></h3>
 <p>The first step to configure a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> ported application, is to
 select the variables that could be controlled by the user.  We will
 call them the <em>control variables</em>.  The value of the control variables
@@ -871,7 +884,7 @@ application compiles and run as expected.</p>
 to proceed with the following steps.</p>
 </div>
 <div class="section" id="configure-your-application">
-<h3><a class="toc-backref" href="#id8">Configure your application</a></h3>
+<h3><a class="toc-backref" href="#id9">Configure your application</a></h3>
 <p>Control variables are the most important component of a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
 ported applications.  At this point you have initialized your
 application and configured how a running instance will be parametrized
@@ -1087,16 +1100,222 @@ diffusion.*
 gsl
 </pre>
 </li>
-<li><p class="first"><strong>Select output files</strong>.</p>
+<li><p class="first"><strong>Select output files</strong>.  When an instance of an application is
+finished <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> stores by default all the results produced by the
+application in a results database.  It is obvious that many files
+involved in your application should not be stored since they are
+repeated among instances or they do not contain useful information.
+You can use the <tt class="docutils literal">sci2web/outfiles.info</tt> to list, with a similar
+syntax as that used for the shared files, the most interesting
+files to be saved as results of your running instance.  For our
+example application this file could look like:</p>
+<pre class="literal-block">
+*.dat
+*.png
+scratch
+</pre>
+<p>All the <tt class="docutils literal">.oxt</tt> and the <tt class="docutils literal">.conf</tt> files, created and used by
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> will be stored by default.</p>
 </li>
-<li><p class="first"><strong>Result window</strong>.</p>
+<li><p class="first"><strong>Web interface configuration</strong>.  The web interface of your
+application have the following components:</p>
+<ul>
+<li><p class="first"><em>The information web pages</em>.  This is a set of editable web pages
+containing information about your application.  The pages could
+be freely edit by the creator of the application and the
+crontibutors of the respective version.  These are the pages that
+any visitor will be first see when openning the page of your
+application.  It is strongly recommended to include in the web
+pages information as complete as possible about your applications
+including links to possible documentation (that could be also
+stored in the server site), download options (if applicable) or
+links to the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> documentation (specially to the user
+guide).</p>
+<p>You can disable the information web pages by including in the
+<tt class="docutils literal">sci2web/version.info</tt> the variable <tt class="docutils literal">InfoPages = false</tt> and
+turn this feature on changing the value of this variable to
+<tt class="docutils literal">true</tt> when desired.</p>
+</li>
+<li><p class="first"><em>The queue system</em>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> manages the execution of running
+instances of the mutiple applications installed in a server site
+in a similar fashion that a <em>job queue system</em>.  This feature is
+particularly useful when the installed applications normally
+takes a long time to be executed.  The queue system component of
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a specially designed page where a list of the running
+or already ran applications are displayed.  Using this page you
+will be able to create a new instance (run your application),
+remove existent instances or control the execution of already
+created instances.</p>
+<p>If your application is too simple and does not require a complete
+queue system you can switch to a simpler interface called the
+<tt class="docutils literal">RunHistory</tt> mode.  Again the <tt class="docutils literal">sci2web/version.info</tt> file
+should be use to modify this behavior:</p>
+<pre class="literal-block">
+QueueMode = RunHistory
+</pre>
+<p>You can turn back to the queue system changing the name of the
+variable to <tt class="docutils literal">QueueList</tt> (default choice).</p>
+<blockquote>
+<p>QueueMode = QueueList</p>
+</blockquote>
+</li>
+<li><p class="first"><em>The results database</em>.  All the run instances succesfully
+executed with your applications and their result files will be by
+default stored in a big result database.  This is a very useful
+feature of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> that could allow a community to access
+already computed results that in other case will be very
+expensive to recompute.</p>
+<p>Imagine this scenario: your application is able to compute the
+dynamical evolution of a two planets system changing the initial
+conditions of the biggest planet.  You could vary in a huge
+parameter space the initial properties of the big planet and
+every configuration is a single result.  After performing a
+complete parameter space exploration an user could store results
+that will be useful for others desiring to explore the same or an
+overlapping region of the parameter space.  With the results
+database all they have to do is search for the results already
+computed for that part of the parameter space and compute only
+new results in the unexplored region.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> provide to any application with a special designed page
+to search for results stored in the database.</p>
+<p>If your application is very simple or you do not want to store a
+big amount of data coming from all the results computed with your
+application disable this feature using the variable
+<tt class="docutils literal">ResultsDatabase</tt> in the <tt class="docutils literal">sci2web/version.conf</tt> file:</p>
+<pre class="literal-block">
+ResultsDatabase = false
+</pre>
+<p>You can turn in this feature in any moment by setting the value
+of this variable to <tt class="docutils literal">true</tt>.</p>
+</li>
+<li><p class="first"><em>The configuration form window</em>. Probably the most important
+component of the hole web interface is the configuration window.
+This component allows the final user to input the value of the
+control variables, modify other properties of the running
+instance being configured and finally control the execution of
+your application.  There are several attributes of the
+configuration window that can be customized:</p>
+<blockquote>
+<ul class="simple">
+<li>TabHeight (value given in <tt class="docutils literal">px</tt> or <tt class="docutils literal">%</tt>, default 80%):
+Height of the configuration tabs used to display the input
+forms for the control variables.</li>
+<li>RunTab (boolean, default <tt class="docutils literal">true</tt>): Determines if a special
+tab is included to input potential editable information about
+the run.</li>
+<li>FilesTab (boolean, default <tt class="docutils literal">true</tt>): Determines if a tab with
+the list of files associated to the run are displayed or not.</li>
+<li>ControlButtons (boolean, default <tt class="docutils literal">true</tt>): Determines if the
+configuration window should have the buttons used to control
+the application.</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first"><em>The results window</em>.  The result window is an important
+component of the interface intended to display customizable
+information about the results of the running instance.  A
+separate configuration file <tt class="docutils literal">sci2web/resultswindow.conf</tt> for
+this component is included and should be edited to change the
+default behavior:</p>
+<pre class="literal-block">
+###################################################
+#RESULTS WINDOW CONFIGURATION FILE
+#Use this file to describe your results window
+###################################################
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#STATUS AND CONTROL TAB
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tab=Status
+Content=Module:Status
+RefreshTime=5000
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#STANDARD OUTPUT AND STANDARD ERROR
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tab=Output
+Content=File:stdout.oxt;File:stderr.oxt
+RefreshTime=1000
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#FILES TAB
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tab=Files
+Content=Module:ListFiles?SubDir=.&amp;Filter=*
+RefreshTime=-1
+</pre>
+</li>
+</ul>
+<blockquote>
+<p>As you can see there is an entry for every tab you want to include
+in the results window.  Every entry has three properties: <tt class="docutils literal">Tab</tt>
+(name of the tab), <tt class="docutils literal">Content</tt> (content of the tab) and
+<tt class="docutils literal">RefreshTimes</tt> (time to refresh the content of the tab).</p>
+<p>The content of a tab could be selected among these options:</p>
+<ul>
+<li><p class="first"><strong>File</strong>: the content of the tab will the content of the file
+indicated after ':'.  The default file path is the run
+directory.</p>
+</li>
+<li><p class="first"><strong>Module</strong>: a particular module programmed into the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+tools.  Available modules are:</p>
+<ul class="simple">
+<li><em>Status</em>: show the status of the run.  No parameters are
+required.</li>
+<li><em>ListFiles</em>: list of files of a given subdirectory in the run
+directory.  Parameters: <tt class="docutils literal">SubDir</tt>, <tt class="docutils literal">Filter</tt>.</li>
+</ul>
+<p>Parameters are given to modules using the same syntax as <tt class="docutils literal">php</tt>
+scripts using an initial <tt class="docutils literal">?</tt> and <tt class="docutils literal">&amp;</tt> to separate different
+module parameters.</p>
+</li>
+</ul>
+<p>The <tt class="docutils literal">RefreshTime</tt> is given in milliseconds.  You should be
+carefull to not set a very small refresh time for your tabs
+because it could load your web server with apache2 zombie
+processes.</p>
+</blockquote>
 </li>
 </ol>
 </div>
 </div>
 <div class="section" id="installing-your-application-in-your-sci2web-server-site">
 <h2>Installing your application in your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site</h2>
-<p>Now</p>
+<p>The last steps in order to have your application succesfully installed
+in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site is to copy the application files in the
+server directory and register your application in the master database.
+These steps could be executed with a single command:</p>
+<pre class="literal-block">
+% perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+</pre>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>Notice that you should call the utility script
+<tt class="docutils literal">sci2web.pl</tt> using the absolute path instead of using the
+symbolic link to the <tt class="docutils literal">bin</tt> directory, i.e. this command will fail
+to install your application:</p>
+<pre class="last literal-block">
+% perl sci2web/bin/sci2web.pl install --appdir .
+</pre>
+</div>
+</div>
+<div class="section" id="testing-your-newly-ported-application">
+<h2><a class="toc-backref" href="#id11">Testing your newly ported application</a></h2>
+<p>If everything has been ran smoothly up to this point you are ready to
+start using your application with a brand new web interface!</p>
+<p>But, wait a minute! Your work has not ended here.  Probably it has
+just started.  As every programming task you do not end until you have
+ran and test your application in its final form.  So go to the
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site URL, sign up or sign in into an account and start
+testing your application.  Seeing your application in action will give
+you hints to modify the configuration you have just completed.  The
+process will finish only when you are completely satisfied with the
+result.  And even thens you will still have to wait for the bug reports
+the user community using your application will start to send you.</p>
+<p>From now on, start to work directly in the application directory at
+your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site.  Only the changes performed there will be
+reflected in the running instances created from the web interface.</p>
+<p>Good luck!</p>
 <hr class="docutils" />
 <p>Copyright (C) 2011 Jorge I. Zuluaga</p>
 </div>

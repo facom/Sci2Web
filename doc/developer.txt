@@ -88,7 +88,16 @@ Sci2Web_ is not a content or a version management software.  It simply
 provides the required tools to configure and run NDSA applications
 using the web.
 
+Quick start (Summary)
+~~~~~~~~~~~~~~~~~~~~~
 
+If you are not patience enough to read the rest of this document and
+thing that you can *interpolate* many of the details regarding the
+configuration of a new Sci2Web_ application go directly through the
+follow steps and have an usable web interfaced NDSA in a couple of
+minutes:
+
+#. 
 
 Testing your application in the command line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -794,14 +803,207 @@ follow carefully the next procedure to complete your configuration:
      *.png
      scratch
     
-   All the ``.oxt`` and the ``.conf`` files will be stored by default.
+   All the ``.oxt`` and the ``.conf`` files, created and used by
+   Sci2Web_ will be stored by default.
 
-#. **Result window**. 
+#. **Web interface configuration**.  The web interface of your
+   application have the following components:
+
+   * *The information web pages*.  This is a set of editable web pages
+     containing information about your application.  The pages could
+     be freely edit by the creator of the application and the
+     crontibutors of the respective version.  These are the pages that
+     any visitor will be first see when openning the page of your
+     application.  It is strongly recommended to include in the web
+     pages information as complete as possible about your applications
+     including links to possible documentation (that could be also
+     stored in the server site), download options (if applicable) or
+     links to the Sci2Web_ documentation (specially to the user
+     guide). 
+
+     You can disable the information web pages by including in the
+     ``sci2web/version.info`` the variable ``InfoPages = false`` and
+     turn this feature on changing the value of this variable to
+     ``true`` when desired.  
+
+   * *The queue system*.  Sci2Web_ manages the execution of running
+     instances of the mutiple applications installed in a server site
+     in a similar fashion that a *job queue system*.  This feature is
+     particularly useful when the installed applications normally
+     takes a long time to be executed.  The queue system component of
+     Sci2Web_ is a specially designed page where a list of the running
+     or already ran applications are displayed.  Using this page you
+     will be able to create a new instance (run your application),
+     remove existent instances or control the execution of already
+     created instances.  
+
+     If your application is too simple and does not require a complete
+     queue system you can switch to a simpler interface called the
+     ``RunHistory`` mode.  Again the ``sci2web/version.info`` file
+     should be use to modify this behavior::
+     
+       QueueMode = RunHistory
+
+     You can turn back to the queue system changing the name of the
+     variable to ``QueueList`` (default choice).
+
+       QueueMode = QueueList
+
+   * *The results database*.  All the run instances succesfully
+     executed with your applications and their result files will be by
+     default stored in a big result database.  This is a very useful
+     feature of Sci2Web_ that could allow a community to access
+     already computed results that in other case will be very
+     expensive to recompute.  
+
+     Imagine this scenario: your application is able to compute the
+     dynamical evolution of a two planets system changing the initial
+     conditions of the biggest planet.  You could vary in a huge
+     parameter space the initial properties of the big planet and
+     every configuration is a single result.  After performing a
+     complete parameter space exploration an user could store results
+     that will be useful for others desiring to explore the same or an
+     overlapping region of the parameter space.  With the results
+     database all they have to do is search for the results already
+     computed for that part of the parameter space and compute only
+     new results in the unexplored region.
+
+     Sci2Web_ provide to any application with a special designed page
+     to search for results stored in the database.
+
+     If your application is very simple or you do not want to store a
+     big amount of data coming from all the results computed with your
+     application disable this feature using the variable
+     ``ResultsDatabase`` in the ``sci2web/version.conf`` file::
+
+       ResultsDatabase = false
+
+     You can turn in this feature in any moment by setting the value
+     of this variable to ``true``.
+
+   * *The configuration form window*. Probably the most important
+     component of the hole web interface is the configuration window.
+     This component allows the final user to input the value of the
+     control variables, modify other properties of the running
+     instance being configured and finally control the execution of
+     your application.  There are several attributes of the
+     configuration window that can be customized:
+
+      - TabHeight (value given in ``px`` or ``%``, default 80%):
+        Height of the configuration tabs used to display the input
+        forms for the control variables.
+	
+      - RunTab (boolean, default ``true``): Determines if a special
+        tab is included to input potential editable information about
+        the run.
+
+      - FilesTab (boolean, default ``true``): Determines if a tab with
+        the list of files associated to the run are displayed or not.
+
+      - ControlButtons (boolean, default ``true``): Determines if the
+        configuration window should have the buttons used to control
+        the application.
+
+   * *The results window*.  The result window is an important
+     component of the interface intended to display customizable
+     information about the results of the running instance.  A
+     separate configuration file ``sci2web/resultswindow.conf`` for
+     this component is included and should be edited to change the
+     default behavior::
+
+       ###################################################
+       #RESULTS WINDOW CONFIGURATION FILE
+       #Use this file to describe your results window
+       ###################################################
+
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       #STATUS AND CONTROL TAB
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       Tab=Status
+       Content=Module:Status
+       RefreshTime=5000
+
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       #STANDARD OUTPUT AND STANDARD ERROR
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       Tab=Output
+       Content=File:stdout.oxt;File:stderr.oxt
+       RefreshTime=1000
+
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       #FILES TAB
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       Tab=Files
+       Content=Module:ListFiles?SubDir=.&Filter=*
+       RefreshTime=-1
+
+    As you can see there is an entry for every tab you want to include
+    in the results window.  Every entry has three properties: ``Tab``
+    (name of the tab), ``Content`` (content of the tab) and
+    ``RefreshTimes`` (time to refresh the content of the tab).  
+
+    The content of a tab could be selected among these options:
+
+    - **File**: the content of the tab will the content of the file
+      indicated after ':'.  The default file path is the run
+      directory.
+    
+    - **Module**: a particular module programmed into the Sci2Web_
+      tools.  Available modules are:
+
+      + *Status*: show the status of the run.  No parameters are
+        required.
+
+      + *ListFiles*: list of files of a given subdirectory in the run
+        directory.  Parameters: ``SubDir``, ``Filter``.
+
+      Parameters are given to modules using the same syntax as ``php``
+      scripts using an initial ``?`` and ``&`` to separate different
+      module parameters.
+
+    The ``RefreshTime`` is given in milliseconds.  You should be
+    carefull to not set a very small refresh time for your tabs
+    because it could load your web server with apache2 zombie
+    processes.
 
 Installing your application in your Sci2Web_ server site
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now
+The last steps in order to have your application succesfully installed
+in the Sci2Web_ server site is to copy the application files in the
+server directory and register your application in the master database.
+These steps could be executed with a single command::
+
+   % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+
+.. Important:: Notice that you should call the utility script
+   ``sci2web.pl`` using the absolute path instead of using the
+   symbolic link to the ``bin`` directory, i.e. this command will fail
+   to install your application::
+
+     % perl sci2web/bin/sci2web.pl install --appdir .
+
+Testing your newly ported application
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If everything has been ran smoothly up to this point you are ready to
+start using your application with a brand new web interface!
+
+But, wait a minute! Your work has not ended here.  Probably it has
+just started.  As every programming task you do not end until you have
+ran and test your application in its final form.  So go to the
+Sci2Web_ server site URL, sign up or sign in into an account and start
+testing your application.  Seeing your application in action will give
+you hints to modify the configuration you have just completed.  The
+process will finish only when you are completely satisfied with the
+result.  And even thens you will still have to wait for the bug reports
+the user community using your application will start to send you.
+
+From now on, start to work directly in the application directory at
+your Sci2Web_ server site.  Only the changes performed there will be
+reflected in the running instances created from the web interface.  
+
+Good luck!
 
 -----------------------
 

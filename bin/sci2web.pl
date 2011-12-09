@@ -36,6 +36,7 @@ Error "You should provide an action" if($Action=~/-/ or $Action!~/\w/);
 switch($Action){
     case "init" {
 	push(@cmdopt,("appname|a=s","vername|v=s"));
+	push(@cmdopt,("emails|e=s","changeslog|c=s"));
     }
     case "contvars" {
 	push(@cmdopt,("appdir|d=s"));
@@ -68,6 +69,16 @@ switch($Action){
 	$vername=$options{vername};
 	Error "A version name should be provided." if($vername!~/\w/);
 
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK ADDITIONAL INFORMATION
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$emails=$options{emails};
+	Error "The contributors emails (separated by ';') should be provided"
+	    if($emails!~/\w/);
+	$changeslog=$options{changeslog};
+	Error "A changeslog summary hould be provided"
+	    if($changeslog!~/\w/);
+
 	rprint "Initializing directory as application '$appname' and version '$vername'","=";
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#COPYING SCI2WEB CONFIGURATION DIRECTORY
@@ -87,6 +98,16 @@ switch($Action){
 	open(fl,">sci2web/version.conf");
 	print fl "Application = $appname\n";
 	print fl "Version = $vername\n";
+	print fl "EmailsContributors = $emails\n";
+	print fl "ChangesLog = $changeslog\n";
+	print fl "InfoPages = true\n";
+	print fl "QueueMode = QueueList\n";
+	print fl "ResultsDatabase = true\n";
+	print fl "#CONFIGURATION WINDOW CONFIGURATION\n";
+	print fl "TabHeight = 80%\n";
+	print fl "RunTab = true\n";
+	print fl "FilesTab = true\n";
+	print fl "ControlButtons = true\n";
 	close(fl);
 
 	rprint "Directory initialized.","=";
