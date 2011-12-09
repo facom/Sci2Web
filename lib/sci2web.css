@@ -46,18 +46,21 @@ $PROJ["STYLES"]=<<<STYLES
     font-style:italic;
     }
     a.image{
-	padding:3px;
-	padding-bottom:7px;
-	background-color:white;
-	text-align:center;
-	vertical-align:center;
-	text-height:300px;
-	border:solid gray 1px;
-	border-radius:2px;
+    padding:3px;
+    padding-bottom:7px;
+    background-color:white;
+    text-align:center;
+    vertical-align:center;
+    text-height:300px;
+    border:solid gray 1px;
+    border-radius:2px;
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*IMG*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+    img {
+    border: 0px;
+    }
     img.mainlogo{
     height:$PROJ[LOGOHEIGHT]px;
     }
@@ -140,14 +143,21 @@ $PROJ["STYLES"]=<<<STYLES
     top:10px;right:10px;
     }
     div.actionbutton{
-	display:inline-block;
-	vertical-align:middle;
-	border:solid black 0px;
-	padding:2px;
+    display:inline-block;
+    vertical-align:middle;
+    border:solid black 0px;
+    padding:2px;
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*FORMS*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+    form.inline{
+    position:relative;
+    display:inline-block;
+    height:20px;
+    border:solid black 0px;
+    text-height:20px;
+    }
     textarea.filearea{
     width:100%;
     height:90%;

@@ -71,6 +71,8 @@ $PROJ["LIBDIR"]="$PROJ[PROJDIR]/lib";
 $PROJ["LIBPATH"]="$PROJ[PROJPATH]/lib";
 $PROJ["JSDIR"]="$PROJ[PROJDIR]/js";
 $PROJ["JSPATH"]="$PROJ[PROJPATH]/js";
+$PROJ["LOGDIR"]="$PROJ[PROJDIR]/log";
+$PROJ["LOGPATH"]="$PROJ[PROJPATH]/log";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //AUTHENTICATION
@@ -257,27 +259,21 @@ function checkAuthentication()
 	  mysqlCmd("replace into users set email='$PHP[SignupEmail]',username='$PHP[SignupName]',password='$codepass',activate='0',actcode='$PHP[RANDID]'");
 	  //EMAIL
 	  $acturl="$PHP[SERVER]/$PROJ[PROJDIR]/main.php?UserOperation=Activate&SignupEmail=$PHP[SignupEmail]&ActivationCode=$PHP[RANDID]";
-	  if($PROJ["ENABLEMAIL"]){
 $text=<<<TEXT
 <p>Welcome to Sci2Web,</p>
 <p>
 Somebody has tried to sign-up using your
 e-mail <i>$PHP[SignupEmail]</i> in the <b>Sci2Web</b> platform at
 the <b>$PROJ[SCI2WEBSITE]</b>.  If you are who is trying to get an
-account use the following link to activate your account:
+account use the following link to activate it:
 </p>
 <a href="$acturl">Activation link</a>
 TEXT;
-	    blankFunc();
-	    $email=$PHP["SignupEmail"];
-	    $subject="[Sci2Web] Activate your account";
-	    $from=$replyto=$PROJ["ROOTEMAIL"];
-	    sendMail($email,$subject,$text,$from,$replyto);
-	  }else{
-	    $fl=fopen("$PHP[TMPPATH]/$PHP[SignupEmail]-activationurl","w");
-	    fwrite($fl,"$acturl\n");
-	    fclose($fl);
-	  }
+          blankFunc();
+	  $email=$PHP["SignupEmail"];
+	  $subject="[Sci2Web] Activate your account";
+	  $from=$replyto=$PROJ["ROOTEMAIL"];
+	  sendMail($email,$subject,$text,$from,$replyto);
 	  //NOTIFICATION
 	  $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
 	  echo "$onload";
@@ -376,12 +372,12 @@ HEADER;
   //==================================================
   //IF USER HAS BEEN AUTHENTICATED
   //==================================================
-  $header.="<form method='get' action='?' enctype='multipart/form-data'>";
+  $header.="<form method='get' class='inline' action='?' enctype='multipart/form-data'>";
 
   if(!isset($_SESSION["User"])){
 $header.=<<<HEADER
   <!-- BASIC LINKS -->
-  <a href="$PROJ[PROJDIR]">Home</a> 
+  <a href="$PROJ[PROJDIR]">Server Home</a> 
   | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('signup')">
@@ -424,14 +420,13 @@ HEADER;
     $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
 
 $header.=<<<HEADER
-User $name | 
+User <i><b>$name</b></i> | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('changepass')">
   Your account
   </a>
   </div>
   <div id="changepass" class="userbox">
-  <form>
   User e-mail: $_SESSION[User]
   <table>
   <tr><td>Old password:</td><td><input type="password" name="OldPassword"></td></tr>
@@ -445,9 +440,9 @@ User $name |
   </table>
   </div>
 | 
-<a href="$PROJ[PROJDIR]">Home</a> 
+<a href="$PROJ[PROJDIR]">Server Home</a> 
 | 
-<a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a>
+<a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a> | 
 HEADER;
   }    
 
@@ -461,7 +456,7 @@ HEADER;
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $header.=<<<HEADER
   </form>
-  $bugbut
+  <div style="position:relative;display:inline-block">$bugbut</div>
   </div>
   <div class="header_content logo" >
   <!-- LOGO -->
@@ -1354,7 +1349,14 @@ submitForm
 AJAX;
 
 $bugform=<<<BUG
-  <a href="JavaScript:void(null)" onclick="toggleElement('$id')">$BUTTONS[Bug]</a>
+  <a href="JavaScript:void(null)" onclick="toggleElement('$id')"
+     style="position:relative;
+	    display:inline-block;
+	    border:solid black 0px;
+	    vertical-align:middle;
+	    height:20px">
+    $BUTTONS[Bug]
+  </a>
   <div id="casa" style="position:fixed;
 			bottom:10px;
 			right:10px;
@@ -1426,4 +1428,37 @@ function checkSuperUser()
   return $condition;
 	      
 }
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//SEND EMAIL
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function sendMail($email,$subject,$text,$from,$replyto)
+{
+  global $PHP,$PROJ;
+
+  $headers ="From: $from\r\n";
+  $headers.="Reply-to: $replyto\r\n";
+  $headers.="MIME-Version: 1.0\r\n";
+  $headers.="Content-type: text/html\r\n";
+  
+  if($PROJ["ENABLEMAIL"]){
+    $status=mail($email,$subject,$text,$headers);
+  }else{
+    $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+$msg=<<<MSG
+Date: $now
+${headers}To: $email
+Subject: $subject
+
+$text
+================================================================================
+
+
+MSG;
+    $fl=fopen("$PROJ[LOGPATH]/mail.log","a");
+    fwrite($fl,"$msg");
+    fclose($fl);
+  }
+}
+
 ?>

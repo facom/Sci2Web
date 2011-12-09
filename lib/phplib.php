@@ -280,24 +280,6 @@ function genSelect($array,$name,$selected,$actions="",$style="")
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//SEND EMAIL
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function sendMail($email,$subject,$text,$from,$replyto)
-{
-  global $PHP;
-
-  $headers ="From: $from\r\n";
-  $headers.="Reply-to: $replyto\r\n";
-  $headers.="MIME-Version: 1.0\r\n";
-  $headers.="Content-type: text/html\r\n";
-  
-  $status=mail($email,$subject,$text,$headers);
-  $fl=fopen("$PHP[TMPPATH]/email-$PHP[SESSID]","w");
-  fwrite($fl,"mail($email,$subject,$text,$headers)");
-  fclose($fl);
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //UPLOAD FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function uploadFile($tgtpath)
