@@ -34,6 +34,9 @@ Error "You should provide an action" if($Action=~/-/ or $Action!~/\w/);
 ################################################################################
 @cmdopt=("help|?","verbose|V","man|m");
 switch($Action){
+    case "clean" {
+	push(@cmdopt,("tmp|t","runs|r","db|d","log|l","all|a","results|R"));
+    }
     case "init" {
 	push(@cmdopt,("appname|a=s","vername|v=s"));
 	push(@cmdopt,("emails|e=s","changeslog|c=s"));
@@ -57,6 +60,70 @@ $VERBOSE=1 if($options{verbose});
 #ACTIONS
 ################################################################################
 switch($Action){
+    #======================================================================
+    #CLEAN ALL THE SCI2WEB SITE
+    #======================================================================
+    case "clean" {
+	rprint "Cleaning Sci2Web server site","=";
+	$qclean=0;
+	$ans="n";
+	if($options{db} or $options{all}){
+	    rprint "Resetting databases...";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		print "Enter the mysql root password:\n\t";
+		`mysql -u root -p < $ROOTDIR/doc/install/sci2web.sql`;
+		die("Failed authentication") if($?);
+		$qclean=1;
+	    }
+	}
+	if($options{tmp} or $options{all}){
+	    rprint "Cleaning tmp directory...";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		sysCmd("rm -rf $ROOTDIR/tmp/[^.]*");
+		$qclean=1;
+	    }
+	}
+	if($options{log} or $options{all}){
+	    rprint "Cleaning log directory...";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		sysCmd("rm -rf $ROOTDIR/log/[^.]*");
+		$qclean=1;
+	    }
+	}
+	if($options{runs} or $options{all}){
+	    rprint "Cleaning runs directory...";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		sysCmd("rm -rf $ROOTDIR/runs/[^db.]*");
+		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		#REMOVING RUN ENTRIES FROM DATABASE
+		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		print "Removing runs entries from database...\n";
+		sysCmd("echo 'truncate table runs;' > /tmp/db.$$");
+		print "Enter the mysql root password:\n\t";
+		`mysql -u root -p $DBNAME < /tmp/db.$$`;
+		die("Failed authentication") if($?);
+		$qclean=1;
+	    }
+	}
+	if($options{results} or $options{all}){
+	    rprint "Cleaning results directory...";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		sysCmd("rm -rf $ROOTDIR/runs/db/[^.]*");
+		$qclean=1;
+	    }
+	}
+	if($qclean){
+	    rprint "Site cleaned","=";
+	}
+	else{
+	    rprint "No clean action performed.";
+	}
+    }
     #======================================================================
     #INITIALIZE APPLICATION DIRECTORY
     #======================================================================
@@ -401,6 +468,11 @@ SQL
 	rprint "Run files generated.","=";
     }
 }
+
+################################################################################
+#FINALIZE
+################################################################################
+Exit 0;
 
 ################################################################################
 #PLAIN OLD DOCUMENTATION (POD) USAGE 

@@ -51,6 +51,7 @@ else{$PROJ["PAGETITLE"]=$PAGETITLE;}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(!isset($RELATIVE)){$RELATIVE=".";}
 $PROJ["PROJDIR"]="/$PROJ[PROJBASE]/$PROJ[PROJNAME]";
+$PROJ["PROJURL"]="$PHP[SERVER]/$PROJ[PROJDIR]";
 if(!isset($_SESSION["PROJDIR"]))
    $_SESSION["PROJDIR"]=$PROJ["PROJDIR"];
 $PROJ["PROJPATH"]=rtrim(shell_exec("cd $RELATIVE;pwd"));
@@ -372,7 +373,7 @@ HEADER;
   //==================================================
   //IF USER HAS BEEN AUTHENTICATED
   //==================================================
-  $header.="<form method='get' class='inline' action='?' enctype='multipart/form-data'>";
+  $header.="<form method='post' class='inline' action='?' enctype='multipart/form-data'>";
 
   if(!isset($_SESSION["User"])){
 $header.=<<<HEADER
@@ -449,7 +450,7 @@ HEADER;
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //BUG REPORT
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $bugbut=genBugForm("UserOperation","Logout");
+  $bugbut=genBugForm("UserOperation","User operations");
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //CLOSE HEADER
@@ -460,7 +461,9 @@ $header.=<<<HEADER
   </div>
   <div class="header_content logo" >
   <!-- LOGO -->
+  <a href="$PROJ[PROJDIR]">
   <img src="$logo" class="mainlogo"/>
+  </a>
   </div>
   <div class="header_content" style="height:50px">
   <!-- MENUS -->
@@ -481,7 +484,9 @@ function genFooter()
 $footer=<<<FOOTER
   <div class="footer_container">
   <div class="footer_contain">
-  Version <b>$PROJ[VERSION]</b><br/>
+  <a href="http://sci2web.org">
+  Sci2Web Central Site
+  </a><br/>
   Developed by Jorge Zuluaga, 
   <i style="color:$COLORS[dark];font-decoration:underline">
   zuluagajorge at gmail dot com
@@ -1322,12 +1327,14 @@ STATUS;
    return $bstatus;
 }
 
-function genBugForm($module,$subject)
+function genBugForm($module,$subject,$recipient="sci2web@gmail.com")
 {
   global $PHP,$PROJ,$BUTTONS;
   $bugform="";
+
   $user="anonymous";
   $page=$PHP["PAGENAME"];
+
   $id=md5("$user$page$module$subject");
   if(isset($_SESSION["User"])){
     $user=$_SESSION["User"];
@@ -1335,9 +1342,9 @@ $ajax_bug=<<<AJAX
 submitForm
   ('bugreport',
    '$PROJ[BINDIR]/ajax-bug-report.php?',
-   'casa',
+   'bugres',
    function(element,rtext){
-     element.innerHTML='';
+     element.innerHTML=rtext;
    },
    function(element,rtext){
      element.innerHTML='Reporting bug...';
@@ -1357,15 +1364,21 @@ $bugform=<<<BUG
 	    height:20px">
     $BUTTONS[Bug]
   </a>
-  <div id="casa" style="position:fixed;
-			bottom:10px;
-			right:10px;
-			z-index:10000">
+  <div id="bugres" style="position:fixed;
+                        bottom:10px;
+                        right:10px;
+                        z-index:10000">
   </div>
   <div style="position:relative;">
     <div id="$id" class="bugbox">
       <form id="bugreport" action="JavaScript:void(null)" method="get" 
 	    enctype="multipart/form-data">
+	<div>
+	  <a href="JavaScript:void(null)" 
+	     onclick="toggleElement('$id');$('#bugres').html('')">
+	  $BUTTONS[Cancel]
+	  </a>
+	</div>
       <table>
 	<tr>
 	</tr><tr>
@@ -1375,6 +1388,12 @@ $bugform=<<<BUG
 	  <td>
 	    <input type="text" name="BugUser" value="$user" onchange="popOutHidden(this)">
 	    <input type="hidden" name="BugUser_Submit" value="$user">
+	  </td>
+	</tr><tr>
+	  <td>To:</td>
+	  <td>
+	    <input type="text" name="BugRecipient" value="$recipient" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugRecipient_Submit" value="$recipient">
 	  </td>
 	</tr><tr>
 	  <td>Page:</td>
@@ -1406,7 +1425,6 @@ $bugform=<<<BUG
 		    onclick="$ajax_bug">
 	      Report
 	    </button>
-	    <br/><i>Use the same bug link to close this window</i><br/>
 	  </td>
 	</tr><tr>
 	</tr>

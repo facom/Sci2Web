@@ -225,4 +225,16 @@ sub readConfig {
     return %CONFIG;
 }
 
+sub promptAns
+{
+    my $question=shift;
+    my $defval=shift;
+    print "$question [$defval]:";
+    my $ans=<STDIN>;
+    if($ans!~/\w/){
+	$ans=$defval;
+    }
+    return $ans;
+}
+
 1;
