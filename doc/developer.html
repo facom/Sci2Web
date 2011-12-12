@@ -442,13 +442,75 @@ using the web.</p>
 </div>
 <div class="section" id="quick-start-summary">
 <h2><a class="toc-backref" href="#id4">Quick start (Summary)</a></h2>
-<p>If you are not patience enough to read the rest of this document and
-thing that you can <em>interpolate</em> many of the details regarding the
-configuration of a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application go directly through the
-follow steps and have an usable web interfaced NDSA in a couple of
-minutes:</p>
-<ol class="arabic simple">
-<li></li>
+<p>If you have not enough patience to read the rest of this document and
+think that you can <em>interpolate</em> many of the details regarding the
+configuration of a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application, follow the next steps and
+get an usable web interface to your NDSA in a couple of minutes:</p>
+<ol class="arabic">
+<li><p class="first">Place all your application files and any other third party files in
+a single directory.</p>
+</li>
+<li><p class="first">Test your application in the command line and be sure it runs
+properly solving all the potential dependencies.</p>
+</li>
+<li><p class="first">Initialize your application as a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application:</p>
+<pre class="literal-block">
+% perl SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorEmails&gt; --changeslog &lt;ShortDescription&gt;
+</pre>
+</li>
+<li><p class="first">Identify those files containing the <em>control variables</em> (variables
+the final user could change using the web interface), create
+templates for each of them and replace the variable for a
+substitution rule:</p>
+<pre class="literal-block">
+% cp parameters.ini .parameters.ini.temp
+</pre>
+<p>Original content:</p>
+<pre class="literal-block">
+10000
+0.1
+3 5
+</pre>
+<p>New content:</p>
+<pre class="literal-block">
+[[NumberParticles::10000::int::Total number of particules]]
+[[MeanFreePath::0.1::float::Mean free path]]
+[[Width::3::float]] [[Heigh::5::float]]
+</pre>
+</li>
+<li><p class="first">Identify the results variables and describe it using substitution
+rules in the file <tt class="docutils literal">.results.info.temp</tt> (a copy of this file could
+be found in the <tt class="docutils literal">sci2web</tt> directory but it is recommended to copy
+it into the root directory of the application.</p>
+</li>
+<li><p class="first">(optative) Modify the code to allow pausing, stopping and resuming
+actions.  Also include code to check the status of the execution.</p>
+</li>
+<li><p class="first">Compile the control and result variables and fill automatically
+other configuration files for the application:</p>
+<pre class="literal-block">
+% perl sci2web/bin/sci2web.pl contvars --appdir .
+</pre>
+</li>
+<li><p class="first">Check the generation of source files from template files using the
+default value of control variables:</p>
+<pre class="literal-block">
+% perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+</pre>
+</li>
+<li><p class="first">Configure your application.  To perform this task edit the
+following files following the instructions outlined in their
+templates (we assume that all the files are in the <tt class="docutils literal">sci2web</tt>
+subdirectory): <tt class="docutils literal">version.info</tt>, <tt class="docutils literal">runpipeline.conf</tt>,
+<tt class="docutils literal">resultswindows.conf</tt>, <tt class="docutils literal">sharedfiles.info</tt>, <tt class="docutils literal">outfiles.info</tt></p>
+</li>
+<li><p class="first">Install your application version in a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site:</p>
+<pre class="literal-block">
+% perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+</pre>
+</li>
+<li><p class="first">Test it!</p>
+</li>
 </ol>
 </div>
 <div class="section" id="testing-your-application-in-the-command-line">
@@ -549,11 +611,16 @@ in the directory of your application.  You can initialize all those
 files with a single command using the perl <em>utility script</em>
 <tt class="docutils literal">sci2web.pl</tt>:</p>
 <pre class="literal-block">
-% perl SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt;
+% perl SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorsEmails&gt; --changeslog &lt;ShortDescription&gt;
 </pre>
 <p>where <tt class="docutils literal">&lt;ApplicationName&gt;</tt> is the name of your application and
 <tt class="docutils literal">&lt;VersionName&gt;</tt> is the name of the version you are presently
-configuring.</p>
+configuring.  <tt class="docutils literal">&lt;ContributorsEmails&gt;</tt> is a list of the <tt class="docutils literal">;</tt>
+separated e-mails of the contributors of this version of the
+application.  The contributors emails will be used to identify which
+users has super user grants on the version webpage.
+<tt class="docutils literal">&lt;ShortDescription&gt;</tt> is a short description of this version and how
+it is different from previous ones.</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>Applications in Sci2Web should have proper names that
@@ -582,7 +649,7 @@ version.</p>
 </div>
 <p>To initialize our sample application the command will be:</p>
 <pre class="literal-block">
-% perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev
+% perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev --emails test&#64;sci2web.org --changeslog &quot;Development version&quot;
 </pre>
 <p>Please notice that we are using the name <tt class="docutils literal">TestDiffusion</tt> instead of
 <tt class="docutils literal">Diffusion</tt> simply because an application with that name has been

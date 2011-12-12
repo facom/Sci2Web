@@ -1,0 +1,215 @@
+#GET THE RIGHT PATH
+BIN=$(stat -c %N sci2web/bin | awk -F' -> ' '{print $2}'  | sed -e "s/['\`]//g")
+
+function NOW
+{
+    date +%s.%N
+}
+
+#Signals:clean,compile,pre,submit,run,start,fail,end,pause,resume,stop,post
+function checkSig
+{
+    signal=$1
+    
+    echo "Signal: $signal"
+    case $signal in
+	"clean")
+	    if [ -e "start.sig" ];then
+		if [ ! -e "fail.sig" -a ! -e "end.sig" -a ! -e "stop.sig" ];then
+		    echo "$signal:application is running"
+		    exit 1
+		fi
+	    fi
+	    ;;
+	"compile")
+	    if [ ! -e "clean.sig" ];then
+		echo "$signal:application not cleaned"
+		exit 1
+	    fi
+	    ;;
+	"pre")
+	    if [ ! -e "compile.sig" ];then
+		echo "$signal:application not compiled"
+		exit 1
+	    fi
+	    ;;
+	"submit")
+	    if [ ! -e "pre.sig" ];then 
+		echo "$signal:application not prepared"
+		exit 1
+	    fi
+	    if [ -e "pause.sig" ];then 
+		echo "$signal:application is paused"
+		exit 1
+	    fi
+	    if [ -e "start.sig" ];then
+		if [ ! -e "fail.sig" -a ! -e "end.sig" -a ! -e "stop.sig" ];then
+		    echo "$signal:application is running"
+		    exit 1
+		fi
+	    fi
+	    if [ -e "submit.sig" ];then
+		echo "$signal:application has been submit but not ran"
+		exit 1
+	    fi
+	    if [ -e "stop.sig" ];then
+		echo "$signal:application has been stopped.  Restart."
+		exit 1
+	    fi
+	    ;;
+	"run")
+	    if [ ! -e "pre.sig" ];then 
+		echo "$signal:application not prepared"
+		exit 1
+	    fi
+	    if [ ! -e "submit.sig" ];then 
+		echo "$signal:application not submit"
+		exit 1
+	    fi
+            if [ -e "time_end.oxt" ];then
+                rm -rf time_pause.oxt time_resume.oxt time_end.oxt time_start.oxt
+            fi
+ 	    ;;
+	"start");;	
+	"fail");;
+	"end");;
+	"kill")
+	    if [ ! -e "start.sig" ];then 
+		echo "$signal:application not started"
+		exit 1
+	    fi
+	    if [ -e "end.sig" ];then 
+		echo "$signal:application is executed"
+		exit 1
+	    fi
+	    ;;
+	"pause")
+	    if [ -e "pause.sig" ];then
+		echo "$signal:application already paused"
+		exit 1
+	    fi
+	    if [ ! -e "start.sig" ];then 
+		echo "$signal:application not started"
+		exit 1
+	    fi
+	    if [ -e "end.sig" ];then 
+		echo "$signal:application is executed"
+		exit 1
+	    fi
+	    ;;
+	"checkrun")
+	    if [ -e "end.sig" -o -e "pause.sig" -o -e "fail.sig" -o -e "stop.sig" -o -e "post.sig" ]
+	    then 
+		echo "$signal:application is not checkeable"
+		exit 1
+	    fi
+	    if [ ! -e "start.sig" ];then 
+		echo "$signal:application not started"
+		exit 1
+	    fi
+	    ;;
+	"resume")
+	    if [ ! -e "start.sig" ];then 
+		echo "$signal:application not started"
+		exit 1
+	    fi
+	    if [ ! -e "pause.sig" ];then 
+		echo "$signal:application not paused"
+		exit 1
+	    fi
+	    if [ -e "end.sig" ];then 
+		echo "$signal:application is ended"
+		exit 1
+	    fi
+	    ;;
+	"stop")
+	    if [ ! -e "start.sig" ];then 
+		echo "$signal:application not started"
+		exit 1
+	    fi
+	    if [ -e "end.sig" ];then 
+		echo "$signal:application is ended"
+		exit 1
+	    fi
+	    ;;
+	"post")
+	    if [ -e "fail.sig" -o -e "stop.sig" ];then 
+		echo "$signal:application is failed"
+		exit 1
+	    fi
+	    if [ ! -e "end.sig" ];then 
+		echo "$signal:application is not ended"
+		exit 1
+	    fi
+	    ;;
+    esac
+}
+
+function setSig
+{
+    signal=$1
+      
+    echo "Set $signal"
+    rm -rf *.sig
+    case $signal in
+	"run")
+	    echo $(NOW) > pre.sig
+	    echo $(NOW) > start.sig
+	    ;;
+	"clean")
+	    ;;
+	"compile")
+	    echo $(NOW) > pre.sig
+	    ;;
+	"pre")
+	    echo $(NOW) > pre.sig
+	    ;;
+	"submit")
+	    echo $(NOW) > pre.sig
+	    ;;
+	"run")
+	    echo $(NOW) > pre.sig
+	    ;;
+	"start")
+	    if [ ! -e time_start.oxt ];then 
+		echo $(NOW) > time_start.oxt
+	    fi
+	    echo $(NOW) > pre.sig
+	    ;;	
+	"fail")
+	    echo $(NOW) > pre.sig
+	    ;;
+	"end")
+	    echo $(NOW) > time_end.oxt
+	    echo $(NOW) > pre.sig
+	    ;;
+	"pause")
+	    echo $(NOW) >> time_pause.oxt
+	    echo $(NOW) > pre.sig
+	    echo $(NOW) > start.sig
+	    ;;
+	"resume")
+	    echo $(NOW) >> time_resume.oxt
+	    echo $(NOW) > pre.sig
+	    ;;
+	"stop")
+	    echo $(NOW) > pre.sig
+	    echo $(NOW) > start.sig
+	    ;;
+	"kill")
+	    echo $(NOW) > pre.sig
+	    echo $(NOW) > start.sig
+	    echo $(NOW) > fail.sig
+	    ;;
+	"post")
+	    echo $(NOW) > pre.sig
+	    echo $(NOW) > end.sig
+	    ;;
+    esac
+    echo $(NOW) > $signal.sig
+}
+
+function notBlank
+{
+  test "x$1" != "x"
+}

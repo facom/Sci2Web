@@ -13,30 +13,26 @@ $PROJ["STYLES"]=<<<STYLES
     /*GENERAL*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     html body{
-    background-color:$COLORS[text];
-    padding:0px;
-    margin:0px;
-    font:14px Arial;
+	background-color:$COLORS[text];
+	padding:0px;
+	margin:0px;
+	font:14px Arial;
     }
     /*TEXT*/
     p,li{
-    font:18px Arial;
+	font:18px Arial;
     }
     /*LINKS*/
     a:link{
-    color:$COLORS[dark];
-    text-decoration:none;
+	color:blue;
+	text-decoration:none;
     }
     a:visited{
-    color:$COLORS[dark];
+	color:blue;
     }
     a:hover{
-    /*
-    background-color:$COLORS[dark];
-    color:$COLORS[back];
-    text-decoration:underline;
-    */
-    font-weight:bold;
+	color:blue;
+	text-decoration:underline;
     }
     a.sci2web{
     font-weight:bold;
@@ -202,9 +198,9 @@ $PROJ["STYLES"]=<<<STYLES
     top:35px;right:5px
     }
     div.editlink{
-    background-color:$COLORS[text];
-    padding:2px;
-    text-align:right;
+	padding:2px;
+	text-align:right;
+	border-bottom:dashed $COLORS[text] 2px;
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*TABLES*/

@@ -23,7 +23,7 @@ include_once("phplib.php");
 //CONFIGURATION
 //////////////////////////////////////////////////////////////////////////////////
 if(!file_exists("$PHP[PROJPATH]/lib/sci2web.conf")){
-  echo "<img src='images/sci2web-mainlogo' height='100px'/>";
+  echo "<img src='images/sci2web-mainlogo.jpg' height='100px'/>";
   echo "<p>Sci2Web configuration file not present</p>";
   echo "<p>Check <a href='doc/install.html'>installation guide</a></p>";
   exit(1);
@@ -79,7 +79,7 @@ $PROJ["LOGPATH"]="$PROJ[PROJPATH]/log";
 //AUTHENTICATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $PROJ["LOGIN"]=true;
-$PROJ["ROOTEMAIL"]="sci2web@gmail.com";
+$PROJ["ROOTEMAIL"]=$PROJ["WEBMASTER"];
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //COMMON ELEMENTS
@@ -359,6 +359,7 @@ HEAD;
 function genHeader($logo,$style="")
 {
   global $PROJ,$PHP,$COLORS,$BUTTONS;
+
   $header="";
   
   //==================================================
@@ -378,7 +379,7 @@ HEADER;
   if(!isset($_SESSION["User"])){
 $header.=<<<HEADER
   <!-- BASIC LINKS -->
-  <a href="$PROJ[PROJDIR]">Server Home</a> 
+  <a href="$PROJ[PROJDIR]">Home</a> 
   | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('signup')">
@@ -441,7 +442,7 @@ User <i><b>$name</b></i> |
   </table>
   </div>
 | 
-<a href="$PROJ[PROJDIR]">Server Home</a> 
+<a href="$PROJ[PROJDIR]">Home</a> 
 | 
 <a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a> | 
 HEADER;
@@ -485,14 +486,18 @@ $footer=<<<FOOTER
   <div class="footer_container">
   <div class="footer_contain">
   <a href="http://sci2web.org">
-  Sci2Web Central Site
+  Sci2Web.org
   </a><br/>
   Developed by Jorge Zuluaga, 
   <i style="color:$COLORS[dark];font-decoration:underline">
   zuluagajorge at gmail dot com
   </i><br/>
   Powered by 
-  <a href="http://php3.de"><img src="$PROJ[IMGDIR]/php.gif" height="30px" align="center"></a><br/>
+  <a href="http://php3.de">
+    <img src="$PROJ[IMGDIR]/php.gif" height="30px" align="center">
+  </a>
+  <img src="$PROJ[IMGDIR]/ajax.jpg" height="40px" align="center">
+  <br/>
   </div>
   </div>
 
@@ -1019,7 +1024,7 @@ $replconf=<<<REPLACE
   {
   /*toolbar:'Basic',*/
   uiColor:'$COLORS[text]',
- filebrowserBrowseUrl : '$ckfinder/ckfinder.html',
+  filebrowserBrowseUrl : '$ckfinder/ckfinder.html',
   filebrowserImageBrowseUrl:'$ckfinder/ckfinder.html?Type=Images',
   filebrowserFlashBrowseUrl:'$ckfinder/ckfinder.html?Type=Flash',
   filebrowserUploadUrl:'$ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
@@ -1361,7 +1366,10 @@ $bugform=<<<BUG
 	    display:inline-block;
 	    border:solid black 0px;
 	    vertical-align:middle;
-	    height:20px">
+	    height:20px"
+     onmouseover="explainThis(this)"
+     explanation="Report a bug"
+     >
     $BUTTONS[Bug]
   </a>
   <div id="bugres" style="position:fixed;

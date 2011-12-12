@@ -16,7 +16,7 @@
 //LOAD PACKAGE
 //////////////////////////////////////////////////////////////////////////////////
 $RELATIVE=".";
-$PAGETITLE="Sci2Web Main page";
+$PAGETITLE="Sci2Web Server Site";
 include("$RELATIVE/lib/sci2web.php");
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ $head.=genHead("","");
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$header=genHeader($PAGELOGO);
+$header=genHeader("$PROJ[IMGDIR]/$PROJ[MAINLOGO]");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //BODY DECLARATION
@@ -94,16 +94,8 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //GET LIST OF FILES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$files=listFiles($cpath,"*.php");
+$files=preg_split("/;/",$PROJ["MAINTABS"]);
 
-if(count($files)==0){
-echo<<<CONTENT
-  <div class="tabbertab" id="maintab">
-  <h2>Blank</h2>
-  </div>
-
-CONTENT;
-}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DISPLAY THE CONTENT OF EACH FILE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,17 +105,16 @@ foreach($files as $file)
   if(isBlank($file)) continue;
 
   //GET INDEX VALUE
+  list($fname,$fid)=preg_split("/:/",$file);
+  $file="$fname.php";
   $fcontent=systemCmd("head -n 1 $cpath/$file");
-  preg_match("/<!--\s*(.+)\s*-->/",$fcontent,$matches);
-  $fid=$matches[1];
-  if(isBlank($fid)) $fid="tab$i";
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$cdir/$file?$PHP[QSTRING]',
+   '$cdir/$file?$PHP[QSTRING]&TabNum=$i',
    '$fid',
    function(element,rtext){
      $(element).html(rtext);

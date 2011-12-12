@@ -1,10 +1,10 @@
-<!--Documentation-->
+<!--Institution-->
 <?
 session_start();
 //////////////////////////////////////////////////////////////////////////////////
 //FILE WITH CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-$FILE="documentation.html";
+$FILE="institution.html";
 //////////////////////////////////////////////////////////////////////////////////
 ?>
 
@@ -23,6 +23,7 @@ $FHASH=md5($FILE);
 $LINK="";
 $RID=$PHP["RANDID"];
 $RESULT="";
+$bugbut="";
 
 //////////////////////////////////////////////////////////////////////////////////
 //CHECK PERMISSIONS
@@ -30,21 +31,22 @@ $RESULT="";
 if(isset($_SESSION["User"]) and 
    strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]")
    ){
+  $bugbut=genBugForm("PageEdition","Editing page content");
 $LINK=<<<LINK
 <div id="editlink_$RID" class="editlink">
   <a href="JavaScript:void(null)"
-  onclick="toggleToEdition('content_$RID','edition_$RID','editlink_$RID','$COLORS[text]','$PROJ[PROJDIR]/lib/ckfinder')">
-  Edit
+     onclick="toggleToEdition('content_$RID','edition_$RID','editlink_$RID','$COLORS[text]','$PROJ[PROJDIR]/lib/ckfinder')">
+    Edit
   </a>
 </div>
 LINK;
-
+ 
    blankFunc();
-
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    //SAVE
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    if(isset($PHP["SaveContent"])){
+     //echo "Saving:$PHP[CONTENT_$FHASH]";br();
      if(!isBlank($PHP["CONTENT_$FHASH"])){
        $fl=fileOpen("$PATH/$FILE","w");
        fwrite($fl,$PHP["CONTENT_$FHASH"]);
@@ -57,9 +59,10 @@ LINK;
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 $CONTENT=shell_exec("cat $PATH/$FILE");
-$TabNum=2;
+$TabNum=$PHP["TabNum"];
 echo<<<CONTENT
 <!--EDIT LINK-->
+$bugbut
 <form action="?" method="get" enctype="multipart/form-data">
 $LINK
 <!--NORMAL CONTENT-->

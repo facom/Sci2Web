@@ -16,8 +16,8 @@
 .. image:: ../images/sci2web-mainlogo.jpg 
    :height: 100px
 
-User Guide
-**********
+Search in the Results Database
+******************************
 
 :Author: Jorge Zuluaga
 :Version: Revision 1, Wed Nov 30 06:29:15 COT 2011

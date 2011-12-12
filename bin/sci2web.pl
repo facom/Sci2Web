@@ -71,7 +71,7 @@ switch($Action){
 	    rprint "Resetting databases...";
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
-		print "Enter the mysql root password:\n\t";
+		print "Provide the MySQL root password:\n\t";
 		`mysql -u root -p < $ROOTDIR/doc/install/sci2web.sql`;
 		die("Failed authentication") if($?);
 		$qclean=1;
@@ -99,12 +99,11 @@ switch($Action){
 	    if($ans=~/[ya]/i){
 		sysCmd("rm -rf $ROOTDIR/runs/[^db.]*");
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-		#REMOVING RUN ENTRIES FROM DATABASE
+		#CLEANING RUNS TABLE
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		print "Removing runs entries from database...\n";
 		sysCmd("echo 'truncate table runs;' > /tmp/db.$$");
-		print "Enter the mysql root password:\n\t";
-		`mysql -u root -p $DBNAME < /tmp/db.$$`;
+		`mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/db.$$`;
 		die("Failed authentication") if($?);
 		$qclean=1;
 	    }
@@ -114,6 +113,21 @@ switch($Action){
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
 		sysCmd("rm -rf $ROOTDIR/runs/db/[^.]*");
+		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		#CLEANING APPLICATION TABLES
+		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		$apps=sysCmd("ls $ROOTDIR/apps | grep -v template");
+		foreach $app (split /\s+/,$apps){
+		    $vers=sysCmd("ls -d $ROOTDIR/apps/$app/*/sci2web");
+		    foreach $verdir (split /\s+/,$vers){
+			$ver=sysCmd("basename \$(dirname $verdir)");
+			$tbname="${app}_${ver}";
+			print "Removing entries in table $tbname...\n";
+			sysCmd("echo 'truncate table $tbname;' > /tmp/db.$$");
+			`mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/db.$$`;
+			die("Failed authentication") if($?);
+		    }
+		}
 		$qclean=1;
 	    }
 	}

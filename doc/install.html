@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title></title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -46,10 +46,6 @@ blockquote.epigraph {
 
 dl.docutils dd {
   margin-bottom: 0.5em }
-
-object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
-  overflow: hidden;
-}
 
 /* Uncomment (and remove this text!) to get bold-faced definition list terms
 dl.docutils dt {
@@ -161,21 +157,15 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left, .figure.align-left, object.align-left {
+img.align-left, .figure.align-left{
   clear: left ;
   float: left ;
   margin-right: 1em }
 
-img.align-right, .figure.align-right, object.align-right {
+img.align-right, .figure.align-right {
   clear: right ;
   float: right ;
   margin-left: 1em }
-
-img.align-center, .figure.align-center, object.align-center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .align-left {
   text-align: left }
@@ -189,7 +179,7 @@ img.align-center, .figure.align-center, object.align-center {
 
 /* reset inner alignment in figures */
 div.align-right {
-  text-align: inherit }
+  text-align: left }
 
 /* div.align-center * { */
 /*   text-align: left } */
@@ -249,7 +239,7 @@ pre.address {
   margin-top: 0 ;
   font: inherit }
 
-pre.literal-block, pre.doctest-block, pre.math {
+pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
   margin-right: 2em }
 
@@ -516,6 +506,27 @@ open the page of version 'dev' (version id 1) of application
 application)</li>
 </ul>
 </li>
+<li><strong>WEBMASTER</strong>: E-mail of the person working as the web master of
+the server site.  Please sign up for an account as soon as you
+have installed your server site.  The user registered with this
+e-mail will have <em>super user</em> permissions on the site including
+rights to edit the main page contents and to manipulate all the
+web pages of the served applications.</li>
+<li><strong>MAINLOGO</strong>: Name of the image containing the logo appearing in
+the header of the server site webpage.  By default all the server
+sites use the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> main logo.  The main logo should be placed
+at the <tt class="docutils literal">images</tt> directory.  We recommend to use a main logo
+including the image of your institution or group and the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+logo.  An example logo <tt class="docutils literal"><span class="pre">testserver-mainlogo.jpg</span></tt> is provided.
+You can edit your logo using the <em>Open Office Draw</em> file
+<tt class="docutils literal"><span class="pre">images/sci2web-design.odg</span></tt>.</li>
+<li><strong>MAINTABS</strong>: You can customize the server site main page by
+choosing which tabs and in which order they will be rendered.
+The <tt class="docutils literal">MAINTABS</tt> configuration variable controls this property.
+There are four available tabs: <tt class="docutils literal">presentation</tt>,
+<tt class="docutils literal">documentation</tt>, <tt class="docutils literal">instituion</tt> and <tt class="docutils literal">applications</tt>.  The
+content of the first three are fully editable by the <em>Super User</em>
+(<a class="reference external" href="mailto:sci2web&#64;gmail.com">sci2web&#64;gmail.com</a>)</li>
 <li><strong>DBNAME</strong>, <strong>DBSERVER</strong>, <strong>DBUSER</strong>, <strong>DBPASS</strong>: Properties of
 the database.  Change only if you actually know what are you
 doing.  This properties are used frequently in other components
@@ -596,13 +607,13 @@ configuration and reload the test script.</p>
 successfully check directly the site server by going to
 <tt class="docutils literal"><span class="pre">http://SERVERURL/PROJBASE/PROJNAME</span></tt>.</p>
 </li>
-<li><p class="first"><strong>Create a user account</strong>.  To start using the tool you have to
+<li><p class="first"><strong>Create an user account</strong>.  To start using the tool you have to
 sign up for an account.  If you sign up for an account with the
 e-mail <tt class="docutils literal">test&#64;sci2web.org</tt> you will be able to edit and perform
 other administrative operations under the example application.  It
 is recommended to create this account as soon as you complete the
 installation to avoid that an anonymous user gain access to
-administrative  permissions on the example application.</p>
+administrative permissions on the example application.</p>
 </li>
 </ol>
 <p>At this point you have a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> <strong>server site</strong> and can start
@@ -627,6 +638,24 @@ the following section:</p>
 &lt;Directory &quot;PROJPATH&quot;&gt;
 AllowOverride All
 &lt;/Directory&gt;
+</pre>
+<p>Among the critical files protected with this measure is the
+<tt class="docutils literal">lib/sci2web.conf</tt> file which contains private and critical
+security information about your site.  If apache is properly
+configured no one will be able to hack your configuration file.  Be
+sure that this works by trying to retrieve the content of the
+configuration file using the browser and the URL
+<tt class="docutils literal"><span class="pre">http://server/PROJBASE/PROJNAME/lib/sci2web.cong</span></tt>.  If the
+content of your configuration file is displayed check again the
+configuration of the apache server.</p>
+<p>An additional measure to protect your file against indiscriminate
+attempts to read it, is to change the owner and access permissions
+to the file.  The following commands will be enough to prevent that
+a regular user of your web server be able to retrieve the content of
+the configuration file using console commands:</p>
+<pre class="literal-block">
+% chown APACHE_USER.APACHE_GROUP lib/sci2web.conf
+% chmod og-rwx lib/sci2web.conf
 </pre>
 </li>
 <li><p class="first"><strong>Allow the use of the batch processing package</strong>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> uses by

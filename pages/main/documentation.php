@@ -1,10 +1,10 @@
-<!--Presentation-->
+<!--Documentation-->
 <?
 session_start();
 //////////////////////////////////////////////////////////////////////////////////
 //FILE WITH CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-$FILE="presentation.html";
+$FILE="documentation.html";
 //////////////////////////////////////////////////////////////////////////////////
 ?>
 
@@ -23,6 +23,7 @@ $FHASH=md5($FILE);
 $LINK="";
 $RID=$PHP["RANDID"];
 $RESULT="";
+$bugbut="";
 
 //////////////////////////////////////////////////////////////////////////////////
 //CHECK PERMISSIONS
@@ -30,6 +31,7 @@ $RESULT="";
 if(isset($_SESSION["User"]) and 
    strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]")
    ){
+   $bugbut=genBugForm("PageEdition","Editing page content");
 $LINK=<<<LINK
 <div id="editlink_$RID" class="editlink">
   <a href="JavaScript:void(null)"
@@ -38,13 +40,14 @@ $LINK=<<<LINK
   </a>
 </div>
 LINK;
- 
+
    blankFunc();
+
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    //SAVE
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    if(isset($PHP["SaveContent"])){
-     if(!isBlank($PHP["CONTENT_$FHASH"])){
+     if(isset($PHP["CONTENT_$FHASH"])){
        $fl=fileOpen("$PATH/$FILE","w");
        fwrite($fl,$PHP["CONTENT_$FHASH"]);
        fclose($fl);
@@ -56,9 +59,10 @@ LINK;
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 $CONTENT=shell_exec("cat $PATH/$FILE");
-$TabNum=1;
+$TabNum=$PHP["TabNum"];
 echo<<<CONTENT
 <!--EDIT LINK-->
+$bugbut
 <form action="?" method="get" enctype="multipart/form-data">
 $LINK
 <!--NORMAL CONTENT-->

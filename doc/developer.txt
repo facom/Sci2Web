@@ -91,13 +91,69 @@ using the web.
 Quick start (Summary)
 ~~~~~~~~~~~~~~~~~~~~~
 
-If you are not patience enough to read the rest of this document and
-thing that you can *interpolate* many of the details regarding the
-configuration of a new Sci2Web_ application go directly through the
-follow steps and have an usable web interfaced NDSA in a couple of
-minutes:
+If you have not enough patience to read the rest of this document and
+think that you can *interpolate* many of the details regarding the
+configuration of a new Sci2Web_ application, follow the next steps and
+get an usable web interface to your NDSA in a couple of minutes:
 
-#. 
+#. Place all your application files and any other third party files in
+   a single directory.
+
+#. Test your application in the command line and be sure it runs
+   properly solving all the potential dependencies.
+
+#. Initialize your application as a Sci2Web_ application::
+
+   % perl SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorEmails> --changeslog <ShortDescription>
+
+#. Identify those files containing the *control variables* (variables
+   the final user could change using the web interface), create
+   templates for each of them and replace the variable for a
+   substitution rule::
+
+      % cp parameters.ini .parameters.ini.temp
+
+   Original content::
+
+      10000
+      0.1
+      3 5
+
+   New content::
+
+       [[NumberParticles::10000::int::Total number of particules]]
+       [[MeanFreePath::0.1::float::Mean free path]]
+       [[Width::3::float]] [[Heigh::5::float]]
+   
+#. Identify the results variables and describe it using substitution
+   rules in the file ``.results.info.temp`` (a copy of this file could
+   be found in the ``sci2web`` directory but it is recommended to copy
+   it into the root directory of the application.
+
+#. (optative) Modify the code to allow pausing, stopping and resuming
+   actions.  Also include code to check the status of the execution.
+
+#. Compile the control and result variables and fill automatically
+   other configuration files for the application::
+   
+       % perl sci2web/bin/sci2web.pl contvars --appdir .
+
+#. Check the generation of source files from template files using the
+   default value of control variables::
+
+       % perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+
+#. Configure your application.  To perform this task edit the
+   following files following the instructions outlined in their
+   templates (we assume that all the files are in the ``sci2web``
+   subdirectory): ``version.info``, ``runpipeline.conf``,
+   ``resultswindows.conf``, ``sharedfiles.info``, ``outfiles.info``
+
+#. Install your application version in a Sci2Web_ server site::
+
+      % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+
+#. Test it!   
 
 Testing your application in the command line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,11 +272,16 @@ in the directory of your application.  You can initialize all those
 files with a single command using the perl *utility script*
 ``sci2web.pl``::
 	
-  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName>  
+  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorsEmails> --changeslog <ShortDescription>
 
 where ``<ApplicationName>`` is the name of your application and
 ``<VersionName>`` is the name of the version you are presently
-configuring.  
+configuring.  ``<ContributorsEmails>`` is a list of the ``;``
+separated e-mails of the contributors of this version of the
+application.  The contributors emails will be used to identify which
+users has super user grants on the version webpage.
+``<ShortDescription>`` is a short description of this version and how
+it is different from previous ones.
 
 .. Important:: Applications in Sci2Web should have proper names that
    will be used to identify them not only in the database, the
@@ -249,7 +310,7 @@ configuring.
 
 To initialize our sample application the command will be::
 
-  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev 
+  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
 
 Please notice that we are using the name ``TestDiffusion`` instead of
 ``Diffusion`` simply because an application with that name has been

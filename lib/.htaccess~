@@ -1,0 +1,4 @@
+<files sci2web.conf>
+order allow,deny
+deny from all
+</files>

@@ -282,7 +282,7 @@ function explainThis(object)
 	positionLeft:boxleft,
 	borderSize:1,
 	loader:0,
-	windowBGColor:"#F3B06C",
+	windowBGColor:"lightgray",
 	windowPadding:2
 	}
     );

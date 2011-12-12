@@ -28,6 +28,7 @@ use DBD::mysql;
 use Getopt::Long;
 use Pod::Usage;
 use Switch;
+use Term::ReadKey;
 Getopt::Long::Configure("bundling");
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
