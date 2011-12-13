@@ -33,38 +33,46 @@ $content.=<<<APPS
 <form method="get" action="app.php" enctype="multipar/form-data" target="_blank">
 <input type="hidden" name="SetApp" value="true">
 <table class="apps">
+<tr>
+<td width="10%"></td><td width="40%"></td>
+<td width="10%"></td><td width="40%"></td>
 APPS;
 
 $apptable=mysqlCmd("select * from apps");
 
-$i=1;
+$i=0;
 foreach($apptable as $approw){
-  $appcode=$approw["app_code_name"];
-  $appname=$approw["app_complete_name"];
-  $appdesc=$approw["brief_description"];
+  $appcode=$approw["app_code"];
   $appdate=$approw["creation_date"];
   $appauthor=$approw["users_emails_author"];
 
   $appdir="$PROJ[APPSDIR]/$appcode";
   $apppath="$PROJ[APPSPATH]/$appcode";
-  
-  $appvers=$approw["versions_ids"];
+
+  readConfig("$apppath/app.conf");
+  $appname=$CONFIG["Application"];
+  $appcomplete=$CONFIG["AppCompleteName"];
+  $appdesc=$CONFIG["AppBrief"];
+
+  $appvers=$approw["versions_codes"];
+  if(!preg_match("/[\w\d]/",$appvers)) continue;
   $vers=preg_split("/;/",$appvers);
   $verstr="";
   foreach($vers as $ver){
     if(isBlank($ver)) continue;
-    $version=getRow(mysqlCmd("select * from versions where version_id='$ver' order by release_date"),0);
+    $version=getRow(mysqlCmd("select * from versions where version_code='$ver' and apps_code='$appcode' order by release_date"),0);
     $opsel="";
     if($version["version_code"]=="dev") $opsel="selected";
-    $verstr.="<option $opsel value='$version[version_id]'>Version $version[version_code] ($version[release_date])";
+    $verstr.="<option $opsel value='$version[version_code]'>Version $version[version_code] ($version[release_date])";
   }
-    //$bugbut=genBugForm("ApplicationVersions_${appcode}_${ver}","No version display");
+  if(($i%2)==0){
+    $content.="</tr><tr>";
+  }
 $content.=<<<APPS
 <!-- ------------------------------------------------------------ -->
 <!-- $appcode APP						  -->
 <!-- ------------------------------------------------------------ -->
-<tr>
-<td class="button">
+<td class="button" valign="top">
 <button class="image" name="App" value="$appcode"
 onmouseover="this.style.border='solid $COLORS[dark] 2px';explainThis(this)"
 onmouseout="this.style.border='solid $COLORS[dark] 0px'"
@@ -76,7 +84,10 @@ explanation="Open application web page"
 <td class="description">
 <a href="JavaScript:Open('$appdir/$appcode-desc.html','Application description','$PROJ[SECWIN]')">
 <b onmouseover="explainThis(this)"
-   explanation="See a brief of the application">$appname</b></a><br/>
+   explanation="See a brief of the application">$appname</b>
+</a><br/>
+$appcomplete
+<br/>
 <b>Author</b>: $appauthor<br/>
 <b>Date</b>: $appdate<br/>
 <b>Brief description</b>:<br/>
@@ -91,10 +102,11 @@ $verstr
 $bugbut
 </td>
 APPS;
-
+ $i++;
 }
 
 $content.=<<<APPS
+</tr>
 </table>
 </form>
 APPS;

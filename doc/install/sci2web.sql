@@ -30,33 +30,29 @@ grant all privileges on sci2web.* to 'sci2web'@'localhost';
 ###################################################
 use sci2web;
 create table apps (
-       app_code_name varchar(255) not null,
-       app_complete_name varchar(255),
-       brief_description text,
+       app_code varchar(255) not null,
        creation_date date not null,
-       primary key (app_code_name),
+       primary key (app_code),
        app_extra1 varchar(255),       
        app_extra2 varchar(255),       
        app_extra3 varchar(255),       
 
        #LINKS
        users_emails_author varchar(255) not null,
-       versions_ids varchar(255)       
+       versions_codes varchar(255)       
 );     
 
 create table versions (
-       version_id int auto_increment,
        version_code varchar(255),
        release_date date not null,
-       changes_log text,
-       primary key (version_code,version_id),
+       primary key (version_code,apps_code),
        version_extra1 varchar(255),       
        version_extra2 varchar(255),       
        version_extra3 varchar(255),       
        
        #LINKS
        users_emails_contributor varchar(255) not null,
-       apps_code_name varchar(255)
+       apps_code varchar(255)
 );
 
 create table users (
@@ -73,7 +69,7 @@ create table users (
        primary key (email),
        
        #LINKS
-       versions_ids int
+       versions_codes varchar(255)
 );
 
 create table runs (
@@ -128,17 +124,12 @@ insert into users
 	'75cdf1233f0c840d49178f55cfe397d2','1','Sci2Web Organization');
 
 insert into apps 
-       (app_code_name,app_complete_name,
-       users_emails_author,brief_description,creation_date,versions_ids)
+       (app_code,users_emails_author,creation_date,versions_codes)
        values
-       ('Diffusion','Monte Carlo Diffusion',
-       'test@sci2web.org;',
-       'Simulate the diffusion of dust particles in rectangular box',
-       date(now()),'1;');
+       ('Diffusion','test@sci2web.org;',date(now()),'dev;');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
-       changes_log,apps_code_name)
+	apps_code)
        values
-       ('dev',date(now()),'test@sci2web.org;',
-       'New version','Diffusion');
+       ('dev',date(now()),'test@sci2web.org;','Diffusion');

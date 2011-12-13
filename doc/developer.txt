@@ -149,6 +149,10 @@ get an usable web interface to your NDSA in a couple of minutes:
    subdirectory): ``version.info``, ``runpipeline.conf``,
    ``resultswindows.conf``, ``sharedfiles.info``, ``outfiles.info``
 
+#. Test the run pipe line.
+
+      % bash sci2web/bin/sci2web.sh test
+
 #. Install your application version in a Sci2Web_ server site::
 
       % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .

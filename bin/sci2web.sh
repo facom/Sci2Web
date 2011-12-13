@@ -64,9 +64,13 @@ echo "Executing action $action:"
     checkSig $action
     if notBlank ${!SCR};then . ${!SCR};else ${!CMD};fi
     #STORE RESULTS IN RESULTS DATABASE
-    perl $BIN/sci2web.pl saveresult --appdir .
+    echo $LOGNAME
+    if [ $LOGNAME = "www-data" ];then
+	perl $BIN/sci2web.pl saveresult --appdir .
+    fi
     setSig $action
 } &> post.oxt
+cat post.oxt
 ;;
 #############################################################
 #pause|stop
@@ -167,6 +171,8 @@ else
 	if [ -e "fail.sig" ]
 	then
 	    echo "--fail--"
+	else
+	    echo "No run status"
 	fi
     fi
 fi
@@ -188,7 +194,10 @@ setSig $action
 "status")
 if notBlank ${!SCR};then . ${!SCR};else ${!CMD};fi
 ;;
-
+*)
+echo "Action $action not recognized"
+exit 1
+;;
 #############################################################
 #FINALIZE
 #############################################################

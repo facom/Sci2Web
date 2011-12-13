@@ -66,6 +66,8 @@ $BINDIR="$ROOTDIR/bin";
 $INSTALLDIR="$ROOTDIR/doc/install";
 $APPSDIR="$ROOTDIR/apps";
 $RUNSDIR="$ROOTDIR/runs";
+$TMPDIR="$ROOTDIR/tmp";
+$TRASHDIR="$ROOTDIR/tmp";
 
 #################################################################################
 #USEFUL ROUTINES
@@ -236,6 +238,34 @@ sub promptAns
 	$ans=$defval;
     }
     return $ans;
+}
+
+sub mysqlCmd
+{
+    my $sql=shift;
+    vprint "\tSQL:\n\t\t$sql\n";
+
+    my $query=$DB->prepare($sql);
+    my $nres=$query->execute or die("Database query failed.");
+    vprint "\tNRES:\n\t\t$nres\n";
+
+    my @result=(),@data=();
+    while(@data=$query->fetchrow_array()){
+	push(@result,@data);
+    }
+    vprint "\tRESULTS:\n\t\t@result\n";
+    $query->finish();
+    return @result;
+}
+
+sub mysqlDo
+{
+    my $sql=shift;
+    vprint "\tSQL:\n\t\t$sql\n";
+    my $query=$DB->prepare($sql);
+    my $nres=$query->execute or die("Database query failed.");
+    vprint "\tNRES:\n\t\t$nres\n";
+    return 0;
 }
 
 1;
