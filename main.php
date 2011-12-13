@@ -107,7 +107,6 @@ foreach($files as $file)
   //GET INDEX VALUE
   list($fname,$fid)=preg_split("/:/",$file);
   $file="$fname.php";
-  $fcontent=systemCmd("head -n 1 $cpath/$file");
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");

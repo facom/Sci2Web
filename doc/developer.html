@@ -501,8 +501,13 @@ default value of control variables:</p>
 <li><p class="first">Configure your application.  To perform this task edit the
 following files following the instructions outlined in their
 templates (we assume that all the files are in the <tt class="docutils literal">sci2web</tt>
-subdirectory): <tt class="docutils literal">version.info</tt>, <tt class="docutils literal">runpipeline.conf</tt>,
+subdirectory): <tt class="docutils literal">version.conf</tt>, <tt class="docutils literal">runpipeline.conf</tt>,
 <tt class="docutils literal">resultswindows.conf</tt>, <tt class="docutils literal">sharedfiles.info</tt>, <tt class="docutils literal">outfiles.info</tt></p>
+</li>
+<li><p class="first">Test the run pipe line.</p>
+<blockquote>
+<p>% bash sci2web/bin/sci2web.sh test</p>
+</blockquote>
 </li>
 <li><p class="first">Install your application version in a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site:</p>
 <pre class="literal-block">
@@ -1188,20 +1193,26 @@ scratch
 application have the following components:</p>
 <ul>
 <li><p class="first"><em>The information web pages</em>.  This is a set of editable web pages
-containing information about your application.  The pages could
+containing information about your application.  These pages could
 be freely edit by the creator of the application and the
 crontibutors of the respective version.  These are the pages that
 any visitor will be first see when openning the page of your
 application.  It is strongly recommended to include in the web
-pages information as complete as possible about your applications
+pages information as ecomplete as possible about your application
 including links to possible documentation (that could be also
 stored in the server site), download options (if applicable) or
 links to the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> documentation (specially to the user
 guide).</p>
-<p>You can disable the information web pages by including in the
-<tt class="docutils literal">sci2web/version.info</tt> the variable <tt class="docutils literal">InfoPages = false</tt> and
-turn this feature on changing the value of this variable to
-<tt class="docutils literal">true</tt> when desired.</p>
+<p>You can disable the information web pages by editing the
+configuration file <tt class="docutils literal">sci2web/version.conf</tt> and changing the
+variable <tt class="docutils literal">VerTabs</tt>.  This variable controls what tabs and in
+which order will be displayed in the application web page.  There
+are five fixed tabs: <tt class="docutils literal">description</tt>, <tt class="docutils literal">documentation</tt>,
+<tt class="docutils literal">downloads</tt>, <tt class="docutils literal">runs</tt>, <tt class="docutils literal">database</tt>.  To disable the
+information pages the version tabs variable should be:</p>
+<pre class="literal-block">
+VerTabs = runs:Runs;database:Database
+</pre>
 </li>
 <li><p class="first"><em>The queue system</em>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> manages the execution of running
 instances of the mutiple applications installed in a server site
@@ -1215,7 +1226,7 @@ remove existent instances or control the execution of already
 created instances.</p>
 <p>If your application is too simple and does not require a complete
 queue system you can switch to a simpler interface called the
-<tt class="docutils literal">RunHistory</tt> mode.  Again the <tt class="docutils literal">sci2web/version.info</tt> file
+<tt class="docutils literal">RunHistory</tt> mode.  Again the <tt class="docutils literal">sci2web/version.conf</tt> file
 should be use to modify this behavior:</p>
 <pre class="literal-block">
 QueueMode = RunHistory
@@ -1256,12 +1267,12 @@ ResultsDatabase = false
 of this variable to <tt class="docutils literal">true</tt>.</p>
 </li>
 <li><p class="first"><em>The configuration form window</em>. Probably the most important
-component of the hole web interface is the configuration window.
+component of the whole web interface is the configuration window.
 This component allows the final user to input the value of the
 control variables, modify other properties of the running
-instance being configured and finally control the execution of
-your application.  There are several attributes of the
-configuration window that can be customized:</p>
+instance and control the execution of your application.  There
+are several attributes of the configuration window that can be
+customized:</p>
 <blockquote>
 <ul class="simple">
 <li>TabHeight (value given in <tt class="docutils literal">px</tt> or <tt class="docutils literal">%</tt>, default 80%):
@@ -1277,6 +1288,8 @@ configuration window should have the buttons used to control
 the application.</li>
 </ul>
 </blockquote>
+<p>All these properties can be set up in the
+<tt class="docutils literal">sci2web/version.conf</tt> file.</p>
 </li>
 <li><p class="first"><em>The results window</em>.  The result window is an important
 component of the interface intended to display customizable
@@ -1359,8 +1372,8 @@ These steps could be executed with a single command:</p>
 <p class="first admonition-title">Important</p>
 <p>Notice that you should call the utility script
 <tt class="docutils literal">sci2web.pl</tt> using the absolute path instead of using the
-symbolic link to the <tt class="docutils literal">bin</tt> directory, i.e. this command will fail
-to install your application:</p>
+symbolic link to the <tt class="docutils literal">bin</tt> directory.  This command will fail to
+install your application:</p>
 <pre class="last literal-block">
 % perl sci2web/bin/sci2web.pl install --appdir .
 </pre>

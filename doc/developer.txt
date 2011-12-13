@@ -875,21 +875,26 @@ follow carefully the next procedure to complete your configuration:
    application have the following components:
 
    * *The information web pages*.  This is a set of editable web pages
-     containing information about your application.  The pages could
+     containing information about your application.  These pages could
      be freely edit by the creator of the application and the
      crontibutors of the respective version.  These are the pages that
      any visitor will be first see when openning the page of your
      application.  It is strongly recommended to include in the web
-     pages information as complete as possible about your applications
+     pages information as ecomplete as possible about your application
      including links to possible documentation (that could be also
      stored in the server site), download options (if applicable) or
      links to the Sci2Web_ documentation (specially to the user
-     guide). 
+     guide).
 
-     You can disable the information web pages by including in the
-     ``sci2web/version.conf`` the variable ``InfoPages = false`` and
-     turn this feature on changing the value of this variable to
-     ``true`` when desired.  
+     You can disable the information web pages by editing the
+     configuration file ``sci2web/version.conf`` and changing the
+     variable ``VerTabs``.  This variable controls what tabs and in
+     which order will be displayed in the application web page.  There
+     are five fixed tabs: ``description``, ``documentation``,
+     ``downloads``, ``runs``, ``database``.  To disable the
+     information pages the version tabs variable should be::
+
+       VerTabs = runs:Runs;database:Database
 
    * *The queue system*.  Sci2Web_ manages the execution of running
      instances of the mutiple applications installed in a server site

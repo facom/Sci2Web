@@ -192,7 +192,7 @@ switch($Action){
 	print fl "Version = $vername\n";
 	print fl "EmailsContributors = $emails\n";
 	print fl "ChangesLog = $changeslog\n";
-	print fl "InfoPages = true\n";
+	print fl "VerTabs = description:Description;documentation:Documentation;downloads:Downloads;runs:Runs;database:Database\n";
 	print fl "QueueMode = QueueList\n";
 	print fl "ResultsDatabase = true\n";
 	print fl bar("#",50)."\n";

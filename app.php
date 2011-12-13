@@ -106,23 +106,24 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DISPLAY THE CONTENT OF EACH FILE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+readConfig("$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[VersionId]/sci2web/version.conf");
+$files=preg_split("/;/",$CONFIG["VerTabs"]);
+
 $i=1;
 foreach($files as $file)
 {
   if(isBlank($file)) continue;
 
   //GET INDEX VALUE
-  $fcontent=systemCmd("head -n 1 $cpath/$file");
-  preg_match("/<!--\s*(.+)\s*-->/",$fcontent,$matches);
-  $fid=$matches[1];
-  if(isBlank($fid)) $fid="tab$i";
+  list($fname,$fid)=preg_split("/:/",$file);
+  $file="$fname.php";
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$cdir/$file?$PHP[QSTRING]',
+   '$cdir/$file?$PHP[QSTRING]&TabNum=$i',
    '$fid',
    function(element,rtext){
      $(element).html(rtext);
