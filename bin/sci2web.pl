@@ -605,7 +605,7 @@ apps_code='$appname'
 	    #COPY FILES INTO VERSION DIR
             #========================================
 	    rprint "Copying files into version dir...";
-	    sysCmd("tar cf - * | tar xf - -C $verdir");
+	    sysCmd("tar cf - * .[a-zA-Z]* | tar xf - -C $verdir");
 	}else{
 	    Error "Version '$appver' already exists...";
 	}
