@@ -6,25 +6,25 @@
 #CUSTOM CLEAN COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLEANSCR=""
-CLEANCMD="echo Cleaning..."
+CLEANCMD="make cleanall"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM COMPILE COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMPILESCR=""
-COMPILECMD="echo Compiling..."
+COMPILECMD="make"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM PRE COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PRESCR=""
-PRECMD="echo Preparing..."
+PRECMD="make clean"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM SUBMIT COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SUBMITSCR=""
-SUBMITCMD="echo Running..."
+SUBMITCMD="./diffusion.out [[OutputFile]].txt"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM PAUSE COMMAND OR SCRIPT
@@ -48,11 +48,11 @@ STOPCMD="echo Stopping..."
 #CUSTOM POST RUN COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 POSTSCR=""
-POSTCMD="echo Post executing..."
+POSTCMD="gnuplot plot-out.gpl"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM STATUS COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-STATUSSCR=""
+STATUSSCR="stat.sh"
 STATUSCMD="echo -1"
 

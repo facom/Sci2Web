@@ -47,7 +47,7 @@ main(int argc,char *argv[])
       //////////////////////////////////////////
       //PAUSE
       //////////////////////////////////////////
-      if(1){
+      if([[Pausable]]){
 	if((ft=fopen("pause.sig","r"))!=NULL){
 	  printf("Pausing at %d\n",i);
 	  exit(0);

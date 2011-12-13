@@ -1,0 +1,22 @@
+###################################################
+#SIMULATION VARIABLES
+###################################################
+[[NumberParticles::0<<1E100==10000::int::Number of Particles::Simulation::::Number of particles to be simulated]]
+[[BoxHeight::0<<==3::float::Box Height::Simulation::::Hight of the two dimensional box]]
+[[BoxWidth::0<<==5::float::Box Width::Simulation::::Width of the two dimensional box]]
+[[MeanFreePath::0<<==0.1::float::Mean free path::Simulation::::Mean free path of the dust particles in program units]]
+
+###################################################
+#CONFIGURATION VARIABLES
+###################################################
+#INPUT OUTPUT
+[[OutputFile::output::varchar::Name of the output file::Configuration::Input/Output]]
+[[PlotStyle::set grid::text::Plot additional commands::Configuration::Input/Output::Enter additional plot commands (gnuplot syntax)]]
+
+#GENERAL
+[[CustomUnits::0--1--1000==0.2::float::Custom units::Configuration::General::Units of the program in meters]]
+
+#BEHAVIOR
+[[Pausable::1::boolean::Coul this run be paused::Configuration::Behavior::Check if you want to be able to pause this run]]
+[[IdleTime::0;;1;;2;;3==0::int::Idle time::Configuration::Behavior::Idle time between particles]]
+

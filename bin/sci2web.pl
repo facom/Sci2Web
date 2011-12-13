@@ -163,7 +163,7 @@ switch($Action){
 	Error "The contributors emails (separated by ';') should be provided"
 	    if($emails!~/\w/);
 	$changeslog=$options{changeslog};
-	Error "A changeslog summary hould be provided"
+	Error "A changeslog summary should be provided"
 	    if($changeslog!~/\w/);
 
 	rprint "Initializing directory as application '$appname' and version '$vername'","=";
@@ -172,7 +172,8 @@ switch($Action){
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	if(!-d "sci2web"){
 	    rprint "Copying sci2web templates...";
-	    sysCmd("cp -rf $INSTALLDIR/sci2web .");
+	    sysCmd("cp -rf $APPSDIR/template/sci2web .");
+	    sysCmd("echo '<p>$changeslog</p>' >> sci2web/changeslog.html");
 	    sysCmd("ln -s $BINDIR sci2web/bin");
 	}else{
 	    rprint "Directory already initialized...";
@@ -518,7 +519,7 @@ SQL
 	    #COPY TEMPLATE FILES
             #========================================
 	    $tempdir="$APPSDIR/template";
-	    $files=sysCmd("cd $tempdir;find . -type f -o -type l");
+	    $files=sysCmd("cd $tempdir;find . -type f -o -type l | grep -v sci2web");
 	    foreach $file (split /\s+/,$files){
 		$tgtfile=$file;
 		$tgtfile=~s/application-/$appname-/gi;
