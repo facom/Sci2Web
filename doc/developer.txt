@@ -146,7 +146,7 @@ get an usable web interface to your NDSA in a couple of minutes:
 #. Configure your application.  To perform this task edit the
    following files following the instructions outlined in their
    templates (we assume that all the files are in the ``sci2web``
-   subdirectory): ``version.info``, ``runpipeline.conf``,
+   subdirectory): ``version.conf``, ``runpipeline.conf``,
    ``resultswindows.conf``, ``sharedfiles.info``, ``outfiles.info``
 
 #. Test the run pipe line.
@@ -887,7 +887,7 @@ follow carefully the next procedure to complete your configuration:
      guide). 
 
      You can disable the information web pages by including in the
-     ``sci2web/version.info`` the variable ``InfoPages = false`` and
+     ``sci2web/version.conf`` the variable ``InfoPages = false`` and
      turn this feature on changing the value of this variable to
      ``true`` when desired.  
 
@@ -904,7 +904,7 @@ follow carefully the next procedure to complete your configuration:
 
      If your application is too simple and does not require a complete
      queue system you can switch to a simpler interface called the
-     ``RunHistory`` mode.  Again the ``sci2web/version.info`` file
+     ``RunHistory`` mode.  Again the ``sci2web/version.conf`` file
      should be use to modify this behavior::
      
        QueueMode = RunHistory
@@ -947,12 +947,12 @@ follow carefully the next procedure to complete your configuration:
      of this variable to ``true``.
 
    * *The configuration form window*. Probably the most important
-     component of the hole web interface is the configuration window.
+     component of the whole web interface is the configuration window.
      This component allows the final user to input the value of the
      control variables, modify other properties of the running
-     instance being configured and finally control the execution of
-     your application.  There are several attributes of the
-     configuration window that can be customized:
+     instance and control the execution of your application.  There
+     are several attributes of the configuration window that can be
+     customized:
 
       - TabHeight (value given in ``px`` or ``%``, default 80%):
         Height of the configuration tabs used to display the input
@@ -968,6 +968,9 @@ follow carefully the next procedure to complete your configuration:
       - ControlButtons (boolean, default ``true``): Determines if the
         configuration window should have the buttons used to control
         the application.
+
+     All these properties can be set up in the
+     ``sci2web/version.conf`` file.
 
    * *The results window*.  The result window is an important
      component of the interface intended to display customizable
@@ -1043,8 +1046,8 @@ These steps could be executed with a single command::
 
 .. Important:: Notice that you should call the utility script
    ``sci2web.pl`` using the absolute path instead of using the
-   symbolic link to the ``bin`` directory, i.e. this command will fail
-   to install your application::
+   symbolic link to the ``bin`` directory.  This command will fail to
+   install your application::
 
      % perl sci2web/bin/sci2web.pl install --appdir .
 

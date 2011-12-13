@@ -574,6 +574,7 @@ users_emails_author='$appauthor;'
 	    #========================================
 	    #SAVE VERSION DATABASE
             #========================================
+	    $verdbname="${appname}_${appver}";
 	    $vercont=$CONFIG{EmailsContributors};
 	    $vercode="${appver}";
 	    $verchlog=$CONFIG{ChangesLog};
@@ -601,6 +602,36 @@ apps_code='$appname'
 		$query=$DB->prepare($sql);
 		$query->execute();
 	    }
+	    #========================================
+	    #CREATING RESULT DATABASE
+            #========================================
+$sql=<<SQL;
+drop table if exists `$verdbname`;
+create table `$verdbname` (
+dbrunhash char(32) not null,
+dbauthor varchar(255),
+dbdate datetime not null,
+SQL
+	    open(fl,"<sci2web/controlvars.info");
+	    @lines=<fl>;chomp @lines;
+	    close(fl);
+	    for $line (@lines){
+		next if($line=~/^#/ or $line!~/\w/);
+		@parts=split /::/,$line;
+		$vartype=$parts[2];
+		$vartype=~s/varchar/varchar\(255\)/;
+		$vartype=~s/boolean/tinyint\(1\)/;
+		$vartype=~s/file/varchar\(255\)/;
+		$sql.="$parts[0] $vartype,\n";
+	    }
+$sql.=<<SQL;
+primary key (dbrunhash),
+runs_runcode char(8));
+SQL
+	    open(fl,">/tmp/sql.$$");
+	    print fl $sql;
+	    close(fl);
+	    `mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/sql.$$`;
 	    #========================================
 	    #COPY FILES INTO VERSION DIR
             #========================================
@@ -679,8 +710,8 @@ apps_code='$appname'
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    #REMOVE DATABASE OF RESULTS
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	    rprint "Removing database of results...";
-	    mysqlDo("drop table if exists $verdbname");
+	    rprint "Removing database of results '$verdbname'...";
+	    mysqlDo("drop table if exists `$verdbname`");
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    #FINALIZE
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -699,7 +730,7 @@ apps_code='$appname'
 	    rprint "Removing application from database...";
 	    mysqlDo("delete from apps where app_code='$appname'");
 	}
-	rprint "Application components removed successfully";
+	rprint "Application components removed successfully","=";
     }
 }
 
@@ -727,9 +758,29 @@ Valid actions are:
 
 =over 8
 
+=item I<clean> 
+
+    Clean the directory of the Sci2Web server site.
+
 =item I<init> 
 
     Initialize a directory containing the version of a given application.
+
+=item I<contvars> 
+
+    Extract the control variable information from the template files.
+
+=item I<genfiles> 
+
+    Generate run files from templates using a given configuration file.
+
+=item I<install> 
+
+    Install and application in the Sci2Web server site.
+
+=item I<remove> 
+
+    Remove a version or a complete application from the Sci2Web server site.
 
 =back 
 
@@ -748,6 +799,18 @@ Valid actions are:
 =head1 ACTION OPTIONS
 
 =over 8
+
+=item I<claen>
+
+=item B<--tmp | -t>: Remove the temporal directory content
+
+=item B<--runs | -r>: Remove the content of the runs directory
+
+=item B<--db | -d>: Reset the Sci2Web database
+
+=item B<--log | -l>: Remove the content of the log directory 
+
+=item B<--results | -R>: Remove the content of the results directory and database
 
 =item I<init>
 

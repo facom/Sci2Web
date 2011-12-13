@@ -48,7 +48,19 @@ foreach($apptable as $approw){
 
   $appdir="$PROJ[APPSDIR]/$appcode";
   $apppath="$PROJ[APPSPATH]/$appcode";
-
+  
+  if(($i%2)==0){
+    $content.="</tr><tr>";
+  }
+  if(!file_exists("$apppath/app.conf")){
+$content.=<<<CONTENT
+<td colspan="2" style="font-size:18px;background-color:pink">
+  <i>Application "$appcode" has not been properly installed: no application directory found.</i>
+</td>
+CONTENT;
+ $i++;
+ continue;
+  }
   readConfig("$apppath/app.conf");
   $appname=$CONFIG["Application"];
   $appcomplete=$CONFIG["AppCompleteName"];
@@ -64,9 +76,6 @@ foreach($apptable as $approw){
     $opsel="";
     if($version["version_code"]=="dev") $opsel="selected";
     $verstr.="<option $opsel value='$version[version_code]'>Version $version[version_code] ($version[release_date])";
-  }
-  if(($i%2)==0){
-    $content.="</tr><tr>";
   }
 $content.=<<<APPS
 <!-- ------------------------------------------------------------ -->
@@ -91,10 +100,9 @@ $appcomplete
 <b>Author</b>: $appauthor<br/>
 <b>Date</b>: $appdate<br/>
 <b>Brief description</b>:<br/>
-<text class="quote">
+<div class="quote">
 $appdesc
-</text>
-<br/>
+</div>
 <b>Version</b>:
 <select name="VersionId">
 $verstr
@@ -105,6 +113,14 @@ APPS;
  $i++;
 }
 
+if($i==0){
+$content.=<<<CONTENT
+</tr>
+<tr><td colspan="4" style="font-size:18px;background-color:$COLORS[clear]">
+<i>No apps served yet.</i>
+</td>
+CONTENT;
+}
 $content.=<<<APPS
 </tr>
 </table>

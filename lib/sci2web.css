@@ -37,7 +37,7 @@ $PROJ["STYLES"]=<<<STYLES
     a.sci2web{
     font-weight:bold;
     }
-    text.quote{
+    div.quote{
     margin-left:10px;
     font-style:italic;
     }

@@ -263,7 +263,7 @@ sub mysqlDo
     my $sql=shift;
     vprint "\tSQL:\n\t\t$sql\n";
     my $query=$DB->prepare($sql);
-    my $nres=$query->execute or die("Database query failed.");
+    my $nres=$query->execute or die("Database query failed:".$query->errstr);
     vprint "\tNRES:\n\t\t$nres\n";
     return 0;
 }
