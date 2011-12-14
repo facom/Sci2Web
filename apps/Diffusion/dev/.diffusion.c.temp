@@ -51,7 +51,7 @@ main(int argc,char *argv[])
 	printf("Pausing at %d\n",i);
 	exit(0);
       }
-      sprintf(fname,"path-%d.dat",i);
+      sprintf(fname,"scratch/path-%d.dat",i);
       fp=fopen(fname,"w");
       fprintf(fs,"%d %d\n",i,N);
       fflush(fs);

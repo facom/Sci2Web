@@ -10,11 +10,11 @@ do
     ((i++))
 done
 meandisp=$(perl -e "print $num/$i")
-echo "MeanDispersions = $meandisp" > results.conf
+echo "MeanDispersions = $meandisp" > sci2web/results.info
 #############################################################
 #PLOTTING
 #############################################################
-gnuplot plot-out.pl
+gnuplot plot-out.gpl
 #############################################################
 #PYTHON PLOTTING
 #############################################################
