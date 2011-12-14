@@ -80,7 +80,7 @@ foreach($runs as $run){
   //CHECK STATUS
   //==================================================
   if($status=="submit" or $status=="resume"){
-    $cstatus=systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh check");
+    $cstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh check");
     //IF THERE IS RUN STATUS, CHANGE STATUS
     if(preg_match("/--(\w+)--/",$cstatus,$matches)){
       $status=$matches[1];
@@ -93,7 +93,7 @@ foreach($runs as $run){
   //==================================================
   $bstatus="";
   if($status=="run" or $status=="pause"){
-    $bstatus=systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh status")*100;
+    $bstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh status")*100;
     $bstatus=getStatusBar($bstatus);
   }
 

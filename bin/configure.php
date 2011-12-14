@@ -58,7 +58,7 @@ $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 //MODEL PARAMETRIZARION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ARAMETRIZATION MODEL
-list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
+list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/controlvars.info");
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -189,11 +189,11 @@ if(isset($PHP["Action"])){
       //CLEAN AND GENERATE NEW FILES
       //==================================================
       //CLEAN
-      $out=systemCmd("cd $oldrunpath;bash sci2web/bin/s2w-action.sh cleanall");
+      $out=systemCmd("cd $oldrunpath;bash sci2web/bin/sci2web.sh cleanall");
       if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Clean failed.</p>";goto error;}
 
       //GENERATE FILES ACCORDING TO NEW CONFIGURATION FILE
-      $out=systemCmd("perl $PROJ[BINPATH]/sci2web-genfiles $oldrunpath/.app.conf $oldrunpath");
+      $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genfiles --runconf $oldrunpath/.app.conf --rundir $oldrunpath");
       if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>File generation failed.</p>";goto error;}
 
       //==================================================
@@ -230,7 +230,6 @@ if(isset($PHP["Action"])){
   //CREATE TEMPLATE
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   if($PHP["Action"]=="Template"){
-
     //==================================================
     //CREATE A NEW TEMPLATE
     //==================================================
@@ -242,10 +241,10 @@ if(isset($PHP["Action"])){
       $notmsg=$errors="<p>A template with this name already exist.</p>";
       goto error;
     }else{
-      genConfig("$apppath/sci2web/parametrization.info",
+      genConfig("$apppath/sci2web/controlvars.info",
 		"$tempdir/$template.conf",
 		"#T:$PHP[NewTemplate]");
-      $notmsg=$actionresult.="<p>Template '$PHP[NewTemplate]' created...</p>";
+      $notmsg="<p>Template $PHP[NewTemplate] created...</p>";
     }
   }
 
@@ -304,7 +303,7 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $rundir="$runsdir/$runhash";
 $runpath="$runspath/$runhash";
-$runfile="$runpath/app.conf";
+$runfile="$runpath/run.conf";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //PARAMETRIZATION INFORMATION
@@ -349,8 +348,12 @@ if(isset($PHP["template"])){
 //ADD INPUT AND BUTTON FOR A NEW TEMPLATE
 //==================================================
 $vars["General"]["Buttons"][]=<<<BUTTON
+<div class="actionbutton">
 New template:<input type="text" name="NewTemplate" value="$tempname">
+</div>
+<div class="actionbutton">
 <button class="image" name='Action' value='Template'>$BUTTONS[Add]</button>
+</div>
 <br/>
 BUTTON;
 
@@ -412,14 +415,18 @@ CONF;
     //==================================================
     //HEADER OF THE GROUP
     //==================================================
+    $dgroup="";
+    if($group!="General"){
+      $dgroup=$group;
 $content.= <<<CONF
 <tr>
 <td class="group" colspan=5>
-$group
+$dgroup
 </td>
 </tr>
 CONF;
-   foreach($vars[$tab][$group] as $var){
+    }
+    foreach($vars[$tab][$group] as $var){
      //==================================================
      //GET INFORMATION FROM PARAMETRIZATION
      //==================================================
@@ -434,7 +441,8 @@ CONF;
      if($protected=="readonly"){
        $inputstyle="background-color:lightgray;";
      }    					
-     
+
+     if(isBlank($vardesc)) $vardesc="$varname";
      $extra="class='confinput' onmouseover='explainThis(this)' 
              explanation='$vardesc' $protected style='$inputstyle'";
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

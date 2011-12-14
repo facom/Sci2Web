@@ -160,6 +160,7 @@ sub sysCmd
     my $out=`$cmd`;
     $EXITCODE="$?";
     chop $out;
+    vprint "\tOut:$out\n";
     return $out;
 }
 sub randInt
@@ -175,27 +176,6 @@ sub exitFunc
 	exit(1);
     }else{
 	exit(0);
-    }
-}
-
-sub readConfig
-{
-    my $filename=shift;
-    my @lines,$line,$field,@fields;
-    if(!-e $filename){
-	print "File '$filename' does not exist\n";
-	return;
-    }
-    open(fl,"<$filename");
-    @lines=<fl>;chomp @lines;
-    close(fl);
-    foreach $line (@lines)
-    {
-	next if($line=~/^#/ or $line!~/[^\s]/);
-	@fields=split /\s*=\s*/,$line;
-	$field=$fields[0];
-	next if($field!~/\w/);
-        $CONFIG{"$field"}=join "=",@fields[1..$#fields];
     }
 }
 
@@ -266,6 +246,15 @@ sub mysqlDo
     my $nres=$query->execute or die("Database query failed:".$query->errstr);
     vprint "\tNRES:\n\t\t$nres\n";
     return 0;
+}
+
+sub noBlank
+{
+    my $var=shift;
+    my $name=shift;
+    $name="Variables" if($name!~/\w/);
+    Error "$name must be not null" if(length($var)<1);
+    return $var;
 }
 
 1;

@@ -64,7 +64,7 @@ LINK;
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 $CONTENT=shell_exec("cat $PATH/$FILE");
-$TabNum=$PHP[TabNum];
+$TabNum=$PHP["TabNum"];
 echo<<<CONTENT
 <!--EDIT LINK-->
 <form action="?" method="get" enctype="multipart/form-data">

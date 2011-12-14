@@ -53,6 +53,12 @@ switch($Action){
     case "remove" {
 	push(@cmdopt,("appname|a=s","vername|v=s"));
     }
+    case "genrun" {
+	push(@cmdopt,("appdir|a=s","template|t=s","rundir|r=s","local|l"));
+    }
+    case "saveresult" {
+	push(@cmdopt,("rundir|r=s"));
+    }
     else {
     	Error "Action '$Action' not recognized";
     }
@@ -499,6 +505,9 @@ SQL
 	rprint "Run files generated.","=";
     }
 
+    #======================================================================
+    #INSTALL APPLICATION
+    #======================================================================
     case "install" {
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#READ VERSION CONFIGURATION
@@ -648,6 +657,9 @@ SQL
 	rprint "Application/Version installed","=";
     }
 
+    #======================================================================
+    #REMOVE APPLICATION
+    #======================================================================
     case "remove" {
 	rprint "Removing application components","=";
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -732,6 +744,140 @@ SQL
 	    mysqlDo("delete from apps where app_code='$appname'");
 	}
 	rprint "Application components removed successfully","=";
+    }
+    #======================================================================
+    #REMOVE APPLICATION
+    #======================================================================
+    case "genrun" {
+	rprint "Generating a new run instance","=";
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK INPUT
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$root=$ROOTDIR if($options{local});
+	rprint "Root directory $root...";
+
+	$appdir=noBlank($options{appdir},"Appdir");
+	Error "Application directory not valid" 
+	    if(!-d "$root/$appdir/sci2web");
+
+	$template=noBlank($options{template},"Template");
+	Error "Template '$template' not found" 
+	    if(!-e "$root/$appdir/sci2web/templates/$template.conf");
+
+	$rundir=noBlank($options{rundir},"Run directory");
+	Error "Directory '$rundir' already exist" 
+	    if(-d "$root/$rundir");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CREATE RUN DIRECTORY
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Creating Run Directory...";
+	sysCmd("mkdir -p $root/$rundir");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#COPY APPLICATION FILES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Copying files...";
+	$links=sysCmd("cat $root/$appdir/sci2web/sharedfiles.info");
+	@list_links=split /\n/,$links;
+	$exclude.=" --exclude='$_' " foreach ("sci2web",".gitignore");
+	$exclude.=" --exclude='$_' " foreach (@list_links);
+	$out=sysCmd("((cd $root/$appdir;tar cvf - $exclude * .[a-zA-Z]*)| tar xf - -C $root/$rundir) &> /tmp/src.$$");
+	$files=sysCmd("cat /tmp/src.$$");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        #CREATE SYMBOLIC LINKS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Linking files...";
+	for $link (@list_links){
+	    sysCmd("ln -s $root/$appdir/$link $root/$rundir/$link");
+	}
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#COPY SCI2WEB FILES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Creating and populating sci2web directory...";
+	$out=sysCmd("mkdir -p $rundir/sci2web");
+	$out=sysCmd("cd $root/$appdir/sci2web;cp -rf *.info *.conf .*.temp $root/$rundir/sci2web");
+	$out=sysCmd("ln -s $ROOTDIR/bin $rundir/sci2web/bin");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#SAVING LIST OF FILES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Saving list of files...";
+	open(fl,">$root/$rundir/sci2web/srcfiles.info");
+	for $file (split /\n/,$files){
+	    next if($file=~/^\..+\.temp$/ or $file!~/\w/);
+	    print fl "$file\n";
+	}
+	close(fl);
+	
+	rprint "Run instance created","=";
+    }
+    #======================================================================
+    #REMOVE APPLICATION
+    #======================================================================
+    case "saveresult" {
+	rprint "Save result","=";
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK INPUT
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$rundir=noBlank($options{rundir},"Rundir");
+	Error "Run directory not valid" 
+	    if(!-d "$rundir/sci2web");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#READ RUN PROPERTIES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Reading configuration files...";
+	%conf_app=readConfig("$rundir/sci2web/version.conf");
+	$appname=$conf_app{"Application"};
+	$vername=$conf_app{"Version"};
+	%conf_conf=readConfig("$rundir/run.conf");
+	%conf_run=readConfig("$rundir/run.info");
+	%conf_results=readConfig("$rundir/sci2web/results.info");
+	$tbname=$conf_run{"run_app"}."_".$conf_run{"run_version"};
+	$runcode=$conf_run{"run_code"};
+	$author=$conf_run{"run_author"};
+	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
+	
+$sql=<<SQL;
+replace into $tbname set
+dbrunhash='$runhash',
+runs_runcode='$runcode',
+dbauthor='$author',
+dbdate=date(now()),
+SQL
+
+        for $field (keys(%conf_conf)){
+	    next if($conf_conf{"$field"}!~/\w/);
+	    $sql.="$field='".$conf_conf{"$field"}."',\n";
+        }
+        for $field (keys(%conf_results)){
+	    next if($conf_results{"$field"}!~/\w/);
+	    $sql.="$field='".$conf_results{"$field"}."',\n";
+        }
+	$sql=~s/,$//;
+	rprint "Storing result in database...";
+	mysqlDo($sql);
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#READ RUN PROPERTIES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Storing results files...";
+	$dbdir="$RUNSDIR/db/$appname/$vername";
+	if(-d $dbdir){
+	    sysCmd("mkdir -p $dbdir/$runhash");
+	    sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $dbdir/$runhash");
+	    sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $dbdir/$runhash");
+	    sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");
+	    sysCmd("rm -rf $dbdir/$runhash");
+	}else{
+	    rprint "Database directory $dbdir not found.";
+	}
+
+	rprint "Result $runhash saved","=";
     }
 }
 

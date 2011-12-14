@@ -149,7 +149,7 @@ get an usable web interface to your NDSA in a couple of minutes:
    subdirectory): ``version.conf``, ``runpipeline.conf``,
    ``resultswindows.conf``, ``sharedfiles.info``, ``outfiles.info``
 
-#. Test the run pipe line.
+#. Test the *run pipeline*::
 
       % bash sci2web/bin/sci2web.sh test
 

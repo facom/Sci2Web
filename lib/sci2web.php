@@ -107,7 +107,8 @@ $DATABASE["Runs"]=
 	"run_status"=>"Run Status",
 	"run_pinfo"=>"Run process information",
 	"permissions"=>"Permissions",
-	"versions_id"=>"Version ID",
+	"versions_code"=>"Version Code",
+	"apps_code"=>"App Code",
 	"users_email"=>"User e-mail",
 	"run_extra1"=>"Extra field 1",
 	"run_extra2"=>"Extra field 2",
@@ -422,7 +423,7 @@ HEADER;
     $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
 
 $header.=<<<HEADER
-User <i><b>$name</b></i> | 
+$PHP[SESSID] | User <i><b>$name</b></i> | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('changepass')">
   Your account
@@ -1381,7 +1382,7 @@ $bugform=<<<BUG
     <div id="$id" class="bugbox">
       <form id="bugreport" action="JavaScript:void(null)" method="get" 
 	    enctype="multipart/form-data">
-	<div>
+	<div style="position:absolute;top:5px;right:5px">
 	  <a href="JavaScript:void(null)" 
 	     onclick="toggleElement('$id');$('#bugres').html('')">
 	  $BUTTONS[Cancel]

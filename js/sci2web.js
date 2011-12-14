@@ -469,7 +469,6 @@ function queryResultsDatabase(form,resultsid,script)
     results=document.getElementById(resultsid);
     querytxt=form.elements[0].value;
     scripturl=script+"Query="+querytxt;
-
     loadContent(scripturl,resultsid,
 		function(element,rtext){
 		    element.innerHTML=rtext;

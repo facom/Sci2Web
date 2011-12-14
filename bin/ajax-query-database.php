@@ -28,7 +28,7 @@ $appdir="$PROJ[APPSDIR]/$appname";
 $apppath="$PROJ[APPSPATH]/$appname";
 $savedbdir="$PROJ[RUNSDIR]/db/$appname";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
-list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
+list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/controlvars.info");
 
 //////////////////////////////////////////////////////////////////////////////////
 //BUILD QUERY
@@ -36,7 +36,7 @@ list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info"
 if(isBlank($PHP["Query"])){
   $PHP["Query"]="dbdate";
 }
-$dbname="$_SESSION[App]_$_SESSION[Version]";
+$dbname="${_SESSION[App]}_${_SESSION[Version]}";
 $query="select * from $dbname where $PHP[Query]";
 
 //////////////////////////////////////////////////////////////////////////////////

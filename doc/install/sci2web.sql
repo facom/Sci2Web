@@ -87,7 +87,8 @@ create table runs (
        primary key(run_code),
 
        #LINKS
-       versions_id int,
+       versions_code varchar(255),
+       apps_code varchar(255),
        users_email varchar(255)
 );
 

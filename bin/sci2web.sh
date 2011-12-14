@@ -64,10 +64,7 @@ echo "Executing action $action:"
     checkSig $action
     if notBlank ${!SCR};then . ${!SCR};else ${!CMD};fi
     #STORE RESULTS IN RESULTS DATABASE
-    echo $LOGNAME
-    if [ $LOGNAME = "www-data" ];then
-	perl $BIN/sci2web.pl saveresult --appdir .
-    fi
+    perl $BIN/sci2web.pl saveresult --rundir .
     setSig $action
 } &> post.oxt
 cat post.oxt

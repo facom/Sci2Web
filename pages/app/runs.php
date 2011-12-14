@@ -80,7 +80,7 @@ loadContent
    },
    function(element,rtext){
    },
-   60000,
+   -1,
    true
    );
 $('input[name=RunAll]').attr('checked',false);

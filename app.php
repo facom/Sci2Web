@@ -32,9 +32,6 @@ $cdir="$PROJ[PAGESDIR]/$PHP[PAGEBASENAME]";
 require_once("$cpath/page.conf");
 if(!isset($PHP["TabId"])) $PHP["TabId"]=$DEFTAB-1;
 else $PHP["TabId"]--;
-if(!isset($_SESSION["User"])){
-  $PHP["TabId"]=0;
-}
 
 //////////////////////////////////////////////////////////////////////////////////
 //COMPONENTS

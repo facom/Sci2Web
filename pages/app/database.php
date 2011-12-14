@@ -86,7 +86,7 @@ HEADER;
 //////////////////////////////////////////////////////////////////////////////////
 //DB SPECS
 //////////////////////////////////////////////////////////////////////////////////
-list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
+list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/controlvars.info");
 $dbvars="";
 foreach($tabs as $tab){
   foreach($groups[$tab] as $group){
@@ -96,7 +96,7 @@ foreach($tabs as $tab){
 $dbvars.=<<<DB
 <tr>
   <td class="term">$var:</td>
-<td class="definition">$varname ($datatype)</td>
+  <td class="definition">$varname ($datatype)</td>
 </tr>
 DB;
     }
@@ -110,50 +110,70 @@ $bugbut=genBugForm("SubmitDatabase","Submission problems");
 echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
 <h1>Database of Results</h1>
-<p>
-Here you can get information about results obtained by the application
-community.  Use SQL commands to get information from the database.
-</p>
+<p>$SCI2WEB creates a database with the results computed by all the users
+using this application.  You can search in this database and recover
+already computed results.</p>
 
-<table>
-<tr><td valign="top"><b>SQL Query</b>:</td>
-<td>
+<p>
+Use the following form to perform <i>select-type</i> queries.  See the
+Database specification to know the available search variables.
+</p>
+<div style="position:relative">
 <form action="JavaScript:void(null)" 
       onsubmit="queryResultsDatabase(this,'sqlresults','$PROJ[BINDIR]/ajax-query-database.php?')">
-<span style="font-family:courier">
-select * from $_SESSION[App]_$_SESSION[Version] where
-</span>
-<br/>
-<textarea name="sqlquery" cols="100" rows="5"></textarea>
-<br/>
-<a href="JavaScript:void(null)" onclick="toggleElement('dbspecs')">
-<div style="position:relative">
-  Database specification
-</a>
-<div id="dbspecs" class="displayable" style="display:none">
-  <table class="description">
-    <tr>
-      <td class="term">Application:</td><td class="definition">$_SESSION[App]</td>
-    </tr>
-    <tr>
-      <td class="term">Version:</td><td class="definition">$_SESSION[Version]</td>
-    </tr>
-    <tr><td class="term" colspan=2>Variables</td></tr>
-    $dbvars
-  </table>
-</div>
-</div>
-<br/>
-Example: 
-<span style="font-family:courier">Field1>0 and Field2<20</span>
-</td>
+<table>
+  <tr>
+    <td valign="top"><b>SQL Query</b>:</td>
+    <td>
+      <span style="font-family:courier">
+	select * from ${_SESSION["App"]}_${_SESSION["VersionId"]} where
+      </span>
+      <br/>
+      <textarea name="sqlquery" cols="100" rows="5"></textarea>
+      <br/>
+      <a href="JavaScript:void(null)" onclick="toggleElement('dbspecs')">
+	<div style="position:relative">
+	  Database specification
+      </a>
+      <div id="dbspecs" class="displayable" style="display:none">
+	<table class="description">
+	  <tr>
+	    <td class="term">Application:</td><td class="definition">$_SESSION[App]</td>
+	  </tr>
+	  <tr>
+	    <td class="term">Version:</td><td class="definition">$_SESSION[Version]</td>
+	  </tr>
+	  <tr>
+	    <td class="term" style="text-align:center;border-bottom:solid $COLORS[dark] 1px" 
+		colspan="2">
+	      Variables
+	    </td>
+	  </tr>
+	  $dbvars
+	</table>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      Example: 
+      <span style="font-family:courier">
+	Field1>0 and Field2<10
+      </span>
+    </td>
+  </tr>
+<tr>
+  <td colspan="3">
+    <button name="Action">Submit</button>
+  </td>
 </tr>
-<tr><td colspan=2>
-<button name="Action">Submit</button>
-</form>
-$bugbut
-</td></tr>
 </table>
+</form>
+<div style="position:absolute;top:0px;right:0px">
+$bugbut
+</div>
+</div>
 
 <p>SQL Results:</p>
 
@@ -166,6 +186,7 @@ $bugbut
 	    border:dashed $COLORS[dark] 2px">
   $PROJ[DIVBLANKET]
   $PROJ[DIVOVER]
+  <big>No results</big>
 </div>
 
 RUNS;
