@@ -66,12 +66,16 @@ if($PHP["Action"]=="New"){
   $runcodes=array("00000000");
 }
 
-$nruns=count($runcodes);
+$nruns=0;
+foreach($runcodes as $runcode){
+  if(isBlank($runcode)) continue;
+  $nruns++;
+}
 if($nruns<1){
   $result.="No runs selected for $PHP[Action].";
   goto end;
 }else{
-  $result.="$PHP[Action] on $nruns runs...<br/>";
+  $result.="Action *$PHP[Action]* in $nruns runs...<br/>";
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -106,7 +110,8 @@ if($PHP["Action"]=="New")
   $PHP["RunCode"]=genRandom(8);
   $runcode=$PHP["RunCode"];
   //CHOOSE TEMPLATE
-  $runfile="$runspath/templates/$PHP[Template].conf";
+  systemCmd("(cat $runspath/templates/$PHP[Template].conf;echo '#$runcode')>$PROJ[TMPPATH]/run.conf.$PHP[RANDID]");
+  $runfile="$PROJ[TMPPATH]/run.conf.$PHP[RANDID]";
   //COMPUTE RUN HASH
   $runhash=hashFile($runfile);
   $runtmp="$PROJ[TMPPATH]/temprun/$runcode-$runhash";

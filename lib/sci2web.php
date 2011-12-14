@@ -1250,13 +1250,14 @@ function statusIcon($status)
   }
 
 $icon=<<<ICON
-<div style="float:center;
-	    color:$status_color;
-	    border-radius:5px;
-	    text-align:center;
-	    background-color:$status_bg;
-	    padding:5px;
-	    ">
+<div id="statusicon" style="float:center;
+			    color:$status_color;
+			    border-radius:5px;
+			    text-align:center;
+			    background-color:$status_bg;
+			    padding:5px;
+			    "
+     status="$status_text">
 <b>$status_text</b>
 </div>
 ICON;

@@ -1,0 +1,54 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+#          _ ___               _						 #
+#         (_)__ \             | |    						 #
+# ___  ___ _   ) |_      _____| |__  						 #
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 						 #
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |						 #
+#|___/\___|_|____| \_/\_/ \___|_.__/ 						 #
+#JORGE ZULUAGA (C) 2011  							 #
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To Do:
+
+- Change user permissions for info pages of new applications
+
+- Create Configure/Result interface
+
+- Allow to open the configuration window when running
+
+- Remove results
+
+- Select all / Unselect all in database results and in tarball view
+
+- Plot using a preexistent ps2w file
+
+- Show runs satisfying a criterium (search runs):
+  + Show runs by all users
+
+- Sort runs by date
+
+- Show submit status and allow to see how is in the queue system
+
+- Toggle between a history list and a control list
+
+- Configure files edition permissions
+
+- Edition button 
+
+- Show details about errors in a bottom notification area
+
+- Eliminate metadata tab in file view window 
+
+- Create page to get information about remote "Sci2Web server sites"
+
+- When a session has expired close pages or return to home page
+
+Dreams:
+
+- Configure multiple queue system
+
+- Account page:
+  + Allow to see the list of all runs of a given user 
+
+Completed:
+

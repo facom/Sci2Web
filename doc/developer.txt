@@ -580,6 +580,13 @@ Here we are using the symbolic link to the utility script binary
 directory created in the sci2web subdirectory already installed after
 the initialization of the application.  
 
+.. important:: If you perform any changes in your control variables
+   and want to update the templates for all the application instances
+   already created in Sci2Web_ you should use the absolute path of the
+   utility script::
+
+     % perl SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
+
 This command create three files in the ``sci2web`` subdirectory:
 ``controlvars.info``, ``controlvars.sql`` and
 ``templates/Default.conf``.  The first one is the list of the control

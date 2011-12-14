@@ -47,8 +47,8 @@ STOPCMD="echo Stopping..."
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM POST RUN COMMAND OR SCRIPT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-POSTSCR=""
-POSTCMD="gnuplot plot-out.gpl"
+POSTSCR="post.sh"
+POSTCMD="echo Post operations..."
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CUSTOM STATUS COMMAND OR SCRIPT

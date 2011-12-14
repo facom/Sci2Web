@@ -628,8 +628,8 @@ $PROJ["STYLES"]=<<<STYLES
     float:left;
     position:fixed;
     top:0px;
-    width:20%;
-    left:40%;
+    width:40%;
+    left:30%;
     text-align:center;
     box-shadow:2px 2px 2px $COLORS[text];
     -moz-box-shadow: 2px 2px 2px $COLORS[text];

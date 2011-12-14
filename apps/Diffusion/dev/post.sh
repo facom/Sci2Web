@@ -3,7 +3,7 @@
 #############################################################
 num=0
 i=0
-for file in path*.dat
+for file in scratch/path*.dat
 do
     lines=$(wc -l $file | cut -f 1 -d ' ')
     ((num=num+lines))

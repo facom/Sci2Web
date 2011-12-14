@@ -36,6 +36,7 @@ $errors="";
 $onload="";
 $extrastyle="margin-left:10px;margin-right:10px;";
 $notmsg="Data loaded...";
+divBlanketOver("conf");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //SWITCHES
@@ -127,38 +128,47 @@ if(isset($PHP["Action"])){
     $runhash=hashFile($ftname);
     $actionresult.="<p><b>Old Run hash</b>: $oldrunhash</p>";
     $actionresult.="<p><b>New Run hash</b>: $runhash</p>";
-    $runpath="$runspath/$runhash";
-    $out=systemCmd("ls $runpath");
-
     /*INCOMPLETE*/
 
     //==================================================
     //CHECK CHANGES
     //==================================================
     //RUN INFO CHANGE & RUN CONF. CHANGE
-    if($runconfhash!=$oldrunconfhash and $PHP["?"]){
+    if($runconfhash!=$oldrunconfhash and $runhash!=$oldrunhash){
       $actionresult.="<p>Run.Info.change, Run.Conf.change</p>";
       $qsave=true;
       $qmove=true;
     }
     //RUN INFO NOT CHANGE & RUN CONF. CHANGE
-    if($runconfhash==$oldrunconfhash and $PHP["?"]){
+    if($runconfhash==$oldrunconfhash and $runhash!=$oldrunhash){
       $actionresult.="<p>Run.Info.not change, Run.Conf.change</p>";
       $qsave=true;
       $qmove=true;
     }
     //RUN INFO CHANGE & RUN CONF. NOT CHANGE
-    if($runconfhash!=$oldrunconfhash and !$PHP["?"]){
+    if($runconfhash!=$oldrunconfhash and $runhash==$oldrunhash){
       $actionresult.="<p>Run.Info.change, Run.Conf.not change</p>";
       $qsave=true;
       $qmove=false;
     }
     //RUN INFO NOT CHANGE & RUN CONF. NOT CHANGE
-    if($runconfhash==$oldrunconfhash and !$PHP["?"]){
+    if($runconfhash==$oldrunconfhash and $runhash==$oldrunhash){
       $actionresult.="<p>Run.Info.not change, Run.Conf.not change</p>";
       $qsave=false;
       $qmove=false;
     }
+    $runpath="$runspath/$runhash";
+    $out=systemCmd("ls -d $runpath");
+    $actionresult.="<p>Directory:$out</p>";
+    if($qmove==true && !$PHP["?"]){
+      $actionresult.="<p>Run.Conf.Change but Another instance with same configuration already exists</p>";
+      $runsame=systemCmd("grep run_code $runpath/run.info | cut -f 2 -d '='");
+      $runname=systemCmd("grep run_name $runpath/run.info | cut -f 2 -d '='");
+      $notmsg="Same configuration already exists in run *$runname*($runsame)...";
+      $qerror=true;
+      goto error;
+    }
+
     if(!$uperror){
       $qsave=true;
     }
@@ -554,6 +564,13 @@ loadContent
        $(element).attr('hash',hex_md5(rtext));
        element.innerHTML=rtext;
      }
+     if($('#statusicon').attr('status')=='Running'){
+       $('#ELBLANKET').css('display','block');
+       $('.ELOVER').css('display','block');
+     }else{
+       $('#ELBLANKET').css('display','none');
+       $('.ELOVER').css('display','none');
+     }
    },
    function(element,rtext){
    },
@@ -591,7 +608,7 @@ Run name:<input type="text" name="run_name" value="$CONFIG[run_name]">
 </button> 
 </div>
 <div class="actionbutton"
-     style="position:absolute;right:0px;top:10px;">
+     style="position:absolute;right:0px;top:10px;z-index:10000">
   <!-- -------------------- CONTROLS -------------------- -->
   <div class="actionbutton" id="runcontrols"
        style="border:dashed gray 0px">
@@ -646,14 +663,14 @@ echo<<<CONTENT
   </head>
   
   <body>
+    $PROJ[ELBLANKET]
+    $PROJ[ELOVER]
     <div style="position:relative">
       <!-- -------------------------------------------------------- -->
       <!-- NOTIFICATION AREA -->
       <!-- -------------------------------------------------------- -->
       <div style="position:relative">
 	<div id="notconfigure" class="notification" style="display:none"></div>
-	$PROJ[ELBLANKET]
-	$PROJ[ELOVER]  
 	$notification
 	$onload_controls
       </div>

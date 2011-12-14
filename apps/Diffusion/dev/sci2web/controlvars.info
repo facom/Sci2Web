@@ -5,9 +5,6 @@ PeriodOutput::50--200--50==100::int::Period of Output::Period to display informa
 BaseUnits::2.0E-1::float::Unit Factor::Mean free path is multiplied by this factor::::variables.info,diffusion.h,
 #GROUP:Results
 PlotFile::plot.ps2w::file::Plot File::File to plot after execution::::variables.info,
-#TAB:Results
-#GROUP:General
-MeanDispersions::0::float::Average number of dispersions::This is a result variable::readonly::results.info,
 #TAB:Simulation
 #GROUP:Geometry
 Height::3::float::Height::Height of the box::::variables.info,parameters.ini,

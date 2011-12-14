@@ -49,7 +49,7 @@ if(!is_dir("$savedbpath")) systemCmd("mkdir -p $savedbpath");
 //GET DATABASE INFORMATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $runs=mysqlCmd("select * from runs 
-where users_email='$_SESSION[User]' 
+where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]'
 order by $PHP[Order]");
 
 //////////////////////////////////////////////////////////////////////////////////

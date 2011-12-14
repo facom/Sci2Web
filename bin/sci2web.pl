@@ -277,6 +277,8 @@ switch($Action){
 			vprint "Variable $nvar:\n";
 			foreach $compvar (@VARSCOMP){
 			    if($VARS{$nvar,"$compvar"}!~/\w/){
+				$comps[$i]="All" if($compvar eq "vartab" and $comps[$i]!~/\w/);
+				$comps[$i]="General" if($compvar eq "vargroup" and $comps[$i]!~/\w/);
 				$VARS{$nvar,"$compvar"}=$comps[$i];
 			    }
 			    $i++;
@@ -300,9 +302,9 @@ switch($Action){
 	for($j=0;$j<$numvars;$j++){
 	    vprint "Var $j ".$VARS{$j,"var"}.":";
 	    $vartab=$VARS{$j,"vartab"};
-	    $vartab="All" if($vartab!~/\w/);
+	    #$vartab="All" if($vartab!~/\w/);
 	    $vargroup=$VARS{$j,"vargroup"};
-	    $vargroup="General" if($vargroup!~/\w/);
+	    #$vargroup="General" if($vargroup!~/\w/);
 	    vprint "$vartab,$vargroup\n";
 	    $vtgroups="${vartab}_gs";
 	    $vtivars="${vartab}_${vargroup}_ivar";
@@ -361,6 +363,7 @@ Consider to create a new version of the application.
 	print fa "#T:Default template\n";
 	print fa "#$b1\n#DEFAULT CONFIGURATION FILE\n#$b1\n";
 	foreach $vartab (@vartabs){
+	    next if($vartab eq "Results");
 	    print "\tTab: $vartab\n";
 	    print fa "#$b2\n#TAB $vartab\n#$b2\n";
 	    print fv "#TAB:$vartab\n";
@@ -395,41 +398,47 @@ Consider to create a new version of the application.
 	close(fv);
 
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#COPY DEFAULT CONF FILE TO RUNS DIRS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	sysCmd("find $RUNSDIR -name $appname -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
+	
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CREATE THE SQL DATABASE TABLE SCRIPT
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Creating SQL script file...";
-	$sql="drop table if exists ${appname}_${vername};\n";
-	$query=$DB->prepare($sql);
-	$nres=$query->execute();
+	$sql="drop table if exists `${appname}_${vername}`;\n";
 $sql.=<<SQL;
-create table ${appname}_${vername} (
+create table `${appname}_${vername}` (
 dbrunhash char(32) not null,
 dbauthor varchar(255),
 dbdate datetime not null,
 SQL
-	    foreach $vartab (@vartabs){
-		$vtgroups="${vartab}_groups";
-		foreach $vargroup (@{$vtgroups}){
-		    $vtivars="${vartab}_${vargroup}_ivar";
-		    foreach $j (@{$vtivars}){
-			$varname=$VARS{$j,"var"};
-			$vartype=$VARS{$j,"datatype"};
-			$vartype=~s/boolean/tinyint\(1\)/;
-			$vartype=~s/file/varchar\(255\)/;
-			$sql.="$varname $vartype,\n";
-		    }
+        foreach $vartab (@vartabs){
+	    rprint "\tTab $vartab:";
+	    $vtgroups="${vartab}_groups";
+	    foreach $vargroup (@{$vtgroups}){
+		rprint "\t\tGroup $vargroup:";
+		$vtivars="${vartab}_${vargroup}_ivar";
+		foreach $j (@{$vtivars}){
+		    $varname=$VARS{$j,"var"};
+		    $vartype=$VARS{$j,"datatype"};
+		    $vartype=~s/varchar/varchar\(255\)/;
+		    $vartype=~s/boolean/tinyint\(1\)/;
+		    $vartype=~s/file/varchar\(255\)/;
+		    rprint "\t\t\tInserting variable $varname of type $vartype";
+		    $sql.="$varname $vartype,\n";
 		}
 	    }
+        }
 $sql.=<<SQL;
 primary key (dbrunhash),
-#LINKS
 runs_runcode char(8)
 );
 SQL
         open(fl,">$basedir/sci2web/controlvars.sql");
 	print fl "$sql";
 	close(fl);
-	
+
 	rprint "Control variables information has been succesfully gathered.","=";
     }
 
@@ -641,7 +650,7 @@ SQL
 	    open(fl,">/tmp/sql.$$");
 	    print fl $sql;
 	    close(fl);
-	    `mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/sql.$$`;
+	    `mysql -u $DBUSER --password=$DBPASS $DBNAME < sci2web/controlvars.sql`;
 	    #========================================
 	    #COPY FILES INTO VERSION DIR
             #========================================
@@ -726,6 +735,11 @@ SQL
 	    rprint "Removing database of results '$verdbname'...";
 	    mysqlDo("drop table if exists `$verdbname`");
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    #REMOVE RUNS AND STORED RESULTS
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    mysqlDo("delete from runs where apps_code='$appname' and versions_code='$vername'");
+	    sysCmd("rm -rf $RUNSDIR/*/$appname/$vername");
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    #FINALIZE
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    rprint "Version '$appname'/'$vername' removed succesfully";
@@ -742,6 +756,10 @@ SQL
 	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    rprint "Removing application from database...";
 	    mysqlDo("delete from apps where app_code='$appname'");
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    #REMOVE RUNS AND STORED RESULTS
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    sysCmd("rm -rf $RUNSDIR/*/$appname");
 	}
 	rprint "Application components removed successfully","=";
     }

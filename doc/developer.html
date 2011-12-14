@@ -914,6 +914,16 @@ instances of the application.  To perform this important step run:</p>
 <p>Here we are using the symbolic link to the utility script binary
 directory created in the sci2web subdirectory already installed after
 the initialization of the application.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>If you perform any changes in your control variables
+and want to update the templates for all the application instances
+already created in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should use the absolute path of the
+utility script:</p>
+<pre class="last literal-block">
+% perl PROJPATH/sci2web/bin/sci2web.pl contvars --appdir .
+</pre>
+</div>
 <p>This command create three files in the <tt class="docutils literal">sci2web</tt> subdirectory:
 <tt class="docutils literal">controlvars.info</tt>, <tt class="docutils literal">controlvars.sql</tt> and
 <tt class="docutils literal">templates/Default.conf</tt>.  The first one is the list of the control
