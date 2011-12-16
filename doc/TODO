@@ -39,6 +39,9 @@ To Do:
   PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT
   WINDOWS DETECT A EXPIRED SESSION IT CLOSES AUTOMATICALLY.
 
+- Attention to changes in sci2web.conf.  Update changes in the
+  doc/install template file.
+
 Dreams:
 
 - Configure multiple queue system: sge, torque/pbs
