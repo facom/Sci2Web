@@ -74,7 +74,7 @@ function checkSig
 	"fail");;
 	"end");;
 	"kill")
-	    if [ ! -e "start.sig" ];then 
+	    if [ ! -e "start.sig" -a ! -e "submit.sig" ];then 
 		echo "$signal:application not started"
 		exit 1
 	    fi
@@ -198,8 +198,6 @@ function setSig
 	    ;;
 	"kill")
 	    echo $(NOW) > pre.sig
-	    echo $(NOW) > start.sig
-	    echo $(NOW) > fail.sig
 	    ;;
 	"post")
 	    echo $(NOW) > pre.sig

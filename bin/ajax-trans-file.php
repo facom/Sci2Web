@@ -21,6 +21,8 @@ include_once("$RELATIVE/lib/sci2web.php");
 //////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
+$explanation="";
+$extraaction="";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,25 +70,68 @@ $dpath="$PHP[ROOTPATH]/$Dir";
 $flink="$Dir/$File";
 $fpath="$PHP[ROOTPATH]/$flink";
 
+/*
+printArray($_GET,"GET");
+goto end;
+//*/
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
 //////////////////////////////////////////////////////////////////////////////////
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //DOWNLOAD FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
+if($Action=="DownloadFiles"){
+  $dirpath="$PHP[ROOTPATH]/$PHP[DownloadDir]";
+  $objs=array();
+  $nobjs=$PHP["NumFiles"];
+  for($i=0;$i<$nobjs;$i++){
+    if($PHP["obj$i"]=="on"){
+      $objs[]=$PHP["objfile$i"];
     }
   }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
+  $nobjs=count($objs);
+  /*
+  printArray($objs,"OBJ");
+  print "OBJS:$nobjs";br();
+  print "DPATH:$dirpath";br();
+  //goto end;
+  //*/
+  if($nobjs>0){
+    $tarhash=md5(join(",",$objs));  
     $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
     $tardir="$PROJ[TMPDIR]/$tarfile";
     $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
+    $objslist=join(" ",$objs);
+    systemCmd("cd $dirpath;tar zcf $tarpath $objslist");
+    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
+$result=<<<RESULT
+Packed $nobjs objects. 
+<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
+RESULT;
+  }else{
+    $result.="<i>No files selected</i>";
+  }
+  goto end;
+}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//DOWNLOAD RESULTS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($Action=="DownloadResults"){
+  $results=array();
+  $nresults=$PHP["NumResults"];
+  for($i=0;$i<$nresults;$i++){
+    if($PHP["result$i"]=="on"){
+      $results[]=$PHP["reshash$i"].".tar.gz";
+    }
+  }
+  $nresults=count($results);
+  if($nresults>0){
+    $tarhash=md5(join(",",$results));  
+    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
+    $tardir="$PROJ[TMPDIR]/$tarfile";
+    $tarpath="$PROJ[TMPPATH]/$tarfile";
+    $resultslist=join(" ",$results);
+    systemCmd("cd $dpath;tar zcf $tarpath $resultslist");
     $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
 $result=<<<RESULT
 <a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
@@ -97,39 +142,14 @@ RESULT;
   goto end;
 }
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//DOWNLOAD FILES
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
-    }
-  }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
-    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
-    $tardir="$PROJ[TMPDIR]/$tarfile";
-    $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
-    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
-$result=<<<RESULT
-<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
-RESULT;
-  }else{
-    $result.="<i>No files selected</i>";
-  }
-  goto end;
-}
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//DOWNLOAD FILES
+//REMOVE RESULTS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 if($Action=="RemoveResults"){
   $results=array();
-  foreach($_GET as $result){
-    if(preg_match("/ObjDown:(.+)/",$result,$res)){
-      $reshash=preg_replace("/\.tar\.gz/","",$res[1]);
-      $results[]="$reshash";
+  $nresults=$PHP["NumResults"];
+  for($i=0;$i<$nresults;$i++){
+    if($PHP["result$i"]=="on"){
+      $results[]=$PHP["reshash$i"];
     }
   }
   $nresults=count($results);
@@ -145,31 +165,9 @@ if($Action=="RemoveResults"){
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       systemCmd("rm -rf $dpath/$runhash.tar.gz");
     }
-    $result.="<i>$nresults results removed, please update results.</i>";
+    $result.="<i>$nresults results removed, please resubmit your search.</i>";
   }else{
-    $result.="<i>No files selected</i>";
-  }
-  goto end;
-}
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
-    }
-  }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
-    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
-    $tardir="$PROJ[TMPDIR]/$tarfile";
-    $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
-    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
-$result=<<<RESULT
-<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
-RESULT;
-  }else{
-    $result.="<i>No files selected</i>";
+    $result.="<i>No results selected</i>";
   }
   goto end;
 }
@@ -286,7 +284,7 @@ $result.=<<<CONTROLS
 </td>
 </tr>
 CONTROLS;
-
+  $seli=0;
   foreach($files as $file){
     if(($i<$start or $i>=$end) and $file!=".."){
       $i++;
@@ -327,9 +325,10 @@ CONTROLS;
     //CHECK
     //::::::::::::::::::::::::::::::::::::::::
 $checkcol=<<<CHECK
-<input type="checkbox" name="obj$i" value="ObjDown:$file"
-       onchange="popOutHidden(this)"><!--$i-->
-<input type="hidden" name="obj${i}_Submit" value="off">
+<input type="checkbox" name="obj$seli"
+       onchange="popOutHidden(this)" onclick="deselectAll('objall')">
+<input type="hidden" name="obj${seli}_Submit" value="off">
+<input type="hidden" name="objfile${seli}_Submit" value="$file">
 CHECK;
     blankFunc();
     if($file=="..") $checkcol="";
@@ -343,6 +342,7 @@ CHECK;
       //##############################
       $dirhash=md5($Dir);
       $id="file_$dirhash";
+      $imgload=genLoadImg("animated/loader-circle.gif");
 $ajax_subdir=<<<AJAX
 loadContent
   (
@@ -354,6 +354,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -365,6 +366,7 @@ loadContent
 AJAX;
       blankFunc();
       $flink="JavaScript:$ajax_subdir";
+      $extraaction="onclick=$('input[name=DownloadDir_Submit]').attr('value','$Dir/$file')";
       break;
     case "TEXT":case "SCRIPT":
       //##############################
@@ -451,7 +453,7 @@ $checkcol
 <!-- FILE NAME     							    -->
 <!-- ---------------------------------------------------------------------- -->
 <td>
-  $iconimg<a href="$flink" $explanation>$fileshort<!--($ftype)--></a>
+  $iconimg<a href="$flink" $explanation $extraaction>$fileshort<!--($ftype)--></a>
 </td>
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE METADATA 							    -->
@@ -467,9 +469,10 @@ $actions
 </td>
 </tr>
 TABLE;
- 
+     $seli++;
   }//END FOR FILES
-  
+  $nselfiles=$seli;  
+  $result.="<input type='hidden' name='NumFiles_Submit' value='$nselfiles'/>";
   if($end<$nfiles){
 $result.=<<<CONTROLS
 <tr style="background-color:$COLORS[text];text-align:center">

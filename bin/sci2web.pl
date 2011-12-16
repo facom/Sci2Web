@@ -202,9 +202,8 @@ switch($Action){
 	print fl "QueueMode = QueueList\n";
 	print fl "ResultsDatabase = true\n";
 	print fl bar("#",50)."\n";
-	print fl "TabHeight = 80%\n";
 	print fl "RunTab = true\n";
-	print fl "FilesTab = true\n";
+	print fl "FilesTab = false\n";
 	print fl "ControlButtons = true\n";
 	close(fl);
 
@@ -562,6 +561,10 @@ SQL
 		    print "\t\tSkipping file $tgtfile...\n";
 		}
 	    }
+	    #============================================
+	    #SETTING USER PERMISSIONS FOR EDITABLE FILES
+            #============================================
+	    sysCmd("find $appdir -name '*.html' -exec chown $APACHEUSER.$APACHEGROUP {} \\;");
 	    #========================================
 	    #SAVE CONFIGURATION
             #========================================

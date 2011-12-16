@@ -65,6 +65,12 @@ if(isset($PHP["RunMultiple"])){
 if($PHP["Action"]=="New"){
   $runcodes=array("00000000");
 }
+/*
+echo "Multiple:$PHP[RunMultiple]";br();
+echo "RUNS: $PHP[RunCodes]";br();
+printArray($runcodes,"RUNS");
+goto end;
+*/
 
 $nruns=0;
 foreach($runcodes as $runcode){
@@ -123,9 +129,9 @@ if($PHP["Action"]=="New")
   //CREATE TEMPORAL RUN DIRECTORY AND FILES
   //==================================================
   $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genrun --appdir $PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version] --template $PHP[Template] --rundir $runtmp");
-  if($PHP["?"]){$qerror=true;$error.="<p>Error generating run</p>";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="<p>Error generating run</p>";goto next;}
   $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genfiles --runconf $runfile --rundir $runtmp");
-  if($PHP["?"]){$qerror=true;$error.="<p>Error generating files</p>";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="<p>Error generating files</p>";goto next;}
   $actionresult.="<p>File generated for new run...</p>";
 
   //==================================================
@@ -136,7 +142,7 @@ if($PHP["Action"]=="New")
     $out=systemCmd("rm -rf $runpath");
   }
   $out=systemCmd("mv $runtmp $runpath");
-  if($PHP["?"]){$qerror=true;$error.="<p>Error moving run dir</p>";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="<p>Error moving run dir</p>";goto next;}
   $actionresult.="<p>New run created...</p>";
 
   //==================================================
@@ -183,7 +189,7 @@ if($PHP["Action"]=="New")
   fclose($fl);
   $runconfhash=hashFile("$runpath/run.info");
   systemCmd("echo '#$runconfhash' >> $runpath/run.info");
-  if($PHP["?"]){$qerror=true;$error.="<p>Error creating run.info</p>";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="<p>Error creating run.info</p>";goto next;}
     
   //==================================================
   //SAVE IN DATABASE
@@ -197,7 +203,7 @@ if($PHP["Action"]=="New")
   }
   $sqlcmd=rtrim($sqlcmd,",");
   $resmat=mysqlCmd($sqlcmd);
-  if($PHP["?"]){$qerror=true;$error.="<p>Database could not be updated</p>";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="<p>Database could not be updated</p>";goto next;}
   $result.="New run created...";
 }
 
@@ -219,10 +225,10 @@ if($PHP["Action"]=="Clean")
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh cleanall");
-  if($PHP["?"]){$qerror=true;$error="Failed script clean for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not cleaned.";goto next;}
   $status=$S2C["clean"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status clean for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status clean for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Compile")
@@ -231,26 +237,26 @@ if($PHP["Action"]=="Compile")
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh clean");
-  if($PHP["?"]){$qerror=true;$error="Failed script clean for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not cleaned.";goto next;}
   $status=$S2C["clean"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status clean for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status clean for $runcode";goto next;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //COMPILING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh compile");
-  if($PHP["?"]){$qerror=true;$error="Failed script compile for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not compiled.";goto next;}
   $status=$S2C["compiled"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status compile for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status compile for $runcode";goto next;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //PREPARING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh pre");
-  if($PHP["?"]){$qerror=true;$error="Failed script preparing for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not prepared.";goto next;}
   $status=$S2C["ready"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status preparing for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status preparing for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Remove")
@@ -259,12 +265,12 @@ if($PHP["Action"]=="Remove")
   //REMOVING RUN DIRECTORY
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("rm -rf $runpath");
-  if($PHP["?"]){$qerror=true;$error="Failed remove for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not removed.";goto next;}
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //REMOVING DATABASE ENTRY
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   mysqlCmd("delete from runs where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status remove for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status remove for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Run")
@@ -273,10 +279,10 @@ if($PHP["Action"]=="Run")
   //SUBMIT
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh submit");
-  if($PHP["?"]){$qerror=true;$error="Failed script submit for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not submited.";goto next;}
   $status=$S2C["submit"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status submit for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status submit for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Stop")
@@ -285,10 +291,22 @@ if($PHP["Action"]=="Stop")
   //STOPPING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh stop");
-  if($PHP["?"]){$qerror=true;$error="Failed script stop for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not stopped.";goto next;}
   $status=$S2C["stop"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status stop for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status stop for $runcode";goto next;}
+}
+
+if($PHP["Action"]=="Kill")
+{
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //STOPPING
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh kill");
+  if($PHP["?"]){$qerror=true;$error.="$runcode not killed.";goto next;}
+  $status=$S2C["kill"];
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error.="Failed status kill for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Pause")
@@ -297,10 +315,10 @@ if($PHP["Action"]=="Pause")
   //PAUSING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh pause");
-  if($PHP["?"]){$qerror=true;$error="Failed script pause for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not paused.";goto next;}
   $status=$S2C["pause"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status pause for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status pause for $runcode";goto next;}
 }
 
 if($PHP["Action"]=="Resume")
@@ -309,10 +327,10 @@ if($PHP["Action"]=="Resume")
   //RESUMING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh resume");
-  if($PHP["?"]){$qerror=true;$error="Failed script resume for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="$runcode not resumed.";goto next;}
   $status=$S2C["resume"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
-  if($PHP["?"]){$qerror=true;$error="Failed status resume for $runcode";goto end;}
+  if($PHP["?"]){$qerror=true;$error.="Failed status resume for $runcode";goto next;}
 }
 
 
@@ -510,6 +528,7 @@ $endtime_info
 </table>
 STATUS;
 }//END STATUS
+next:
 }//END OF RUN CODES
 //////////////////////////////////////////////////////////////////////////////////
 //END

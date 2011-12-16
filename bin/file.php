@@ -26,6 +26,8 @@ $header="";
 $fcontent="";
 $content="";
 $footer="";
+$iniform="";
+$endform="";
 $notmsg="Load file...";
 $optfrm="style='opacity:0.6' disabled";
 $extrastyle="margin-left:10px;margin-right:10px;";
@@ -133,6 +135,9 @@ $fcontent.=<<<CONTENT
 CONTENT;
 
    if($Mode=="Edit"){
+     $iniform="<form action='?' method='get' enctype='multipart/form-data'>";
+     $endform="";
+
      $optfrm="";
 $fcontent.=<<<CONTENT
 <div class="actionbutton">
@@ -181,7 +186,6 @@ CONTENT;
    systemCmd("tar -zxvf $fpath -C $tmppath");
    $ftable=filesTable("$tmpdir","","Parent");
 $fcontent.=<<<CONTENT
-<a href="$Dir/$File">Download tarball</a>
 $ftable
 CONTENT;
    break;
@@ -205,9 +209,11 @@ CONTENT;
 //CONTENT
 //==================================================
 divBlanketOver($id);
-//$cmd="cd $PHP[ROOTPATH]/$Dir;stat '$File'";
+/*
+$cmd="cd $PHP[ROOTPATH]/$Dir;stat '$File'";
 $cmd="cd $PHP[ROOTPATH]/$Dir && ls -ld /tmp/a";
 $metadata=systemCmd($cmd,true);
+*/
 $content.=<<<CONTENT
 <div class="tabbertab sectab">
   <h2>$Fileshort</h2>
@@ -221,6 +227,7 @@ $content.=<<<CONTENT
     $fcontent
   </div>
 </div>
+<!--
 <div class="tabbertab sectab">
   <h2>Metadata</h2>
   Stat
@@ -228,6 +235,7 @@ $content.=<<<CONTENT
   $metadata
   </div>
 </div>
+-->
 CONTENT;
 if(!isset($PHP["HeightWindow"])){
   $PHP["HeightWindow"]="77%";
@@ -256,6 +264,12 @@ $header.=<<<HEADER
   <button name="Action" value="Save" $optfrm>
     $BUTTONS[Save]
   </button> 
+</div>
+<div class="actionbutton">
+  <a href="$PHP[Dir]/$PHP[File]" class="image" 
+     onmouseover="explainThis(this)" explanation="Download">
+    $BUTTONS[Down]
+  </a>
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">
@@ -297,7 +311,7 @@ $content=<<<CONTENT
   </head>
 
   <body>
-    <form action="?" method="get" enctype="multipart/form-data">
+    $iniform
       <input type="hidden" name="Dir" value="$Dir">
       <input type="hidden" name="File" value="$File">
       <input type="hidden" name="Mode" value="$Mode">
@@ -332,8 +346,8 @@ $content=<<<CONTENT
 	  $footer
 	</div>
       </div>
-</form>
-</body>
+    $endform
+  </body>
 </html>
 
 CONTENT;

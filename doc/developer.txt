@@ -1017,6 +1017,12 @@ follow carefully the next procedure to complete your configuration:
        Content=Module:ListFiles?SubDir=.&Filter=*
        RefreshTime=-1
 
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       #PROPER	TIES OF THE CONFIGURE AND RESULTS WINDOW
+       #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       Stacking=cols
+       Sizes=40%,60%
+
     As you can see there is an entry for every tab you want to include
     in the results window.  Every entry has three properties: ``Tab``
     (name of the tab), ``Content`` (content of the tab) and
@@ -1045,6 +1051,16 @@ follow carefully the next procedure to complete your configuration:
     carefull to not set a very small refresh time for your tabs
     because it could load your web server with apache2 zombie
     processes.
+
+    At the end of this configuration file you will be able to set up
+    the properties of a framed version of the configuration and
+    results windows.  For small applications it is more comfortable to
+    have a single window where the configuration form and the results
+    are displayed together.  This is the function of this tabbed
+    window.  You can select here if you want to stack the
+    configuration and results frames stacked horizontally (``cols``,
+    this is the default) or vertically (``rows``).  You can also
+    modify the relative sizes of the frames.
 
 Installing your application in your Sci2Web_ server site
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

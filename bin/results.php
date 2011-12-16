@@ -34,6 +34,9 @@ $errors="";
 $onload="";
 $extrastyle="margin-left:10px;margin-right:10px;";
 $imgload=genLoadImg("animated/loader-circle.gif");
+$hidvars="";
+$closebutton="";
+$qclosable=true;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
@@ -44,6 +47,21 @@ $apppath="$PROJ[APPSPATH]/$appname";
 $contabs=array();
 $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
 $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//WINDOW PARAMETERS
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(isset($PHP["Closable"])){
+  if($PHP["Closable"]=="false"){
+    $hidvars.="<input type='hidden' name='Closable' value='$PHP[Closable]'>";
+    $qclosable=false;
+  }
+}
+if(!isset($PHP["HeightWindow"])){
+  $PHP["HeightWindow"]="70%";
+}
+$hidvars.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'>";
+$extrastyle.="height:$PHP[HeightWindow];";
 
 //////////////////////////////////////////////////////////////////////////////////
 //LOAD INFORMATION
@@ -63,7 +81,7 @@ $runpath="$runspath/$run_hash";
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET TAB DESCRIPTION
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$resfile="$runpath/sci2web/results-window.conf";
+$resfile="$runpath/sci2web/resultswindow.conf";
 readConfig2("$resfile");
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -231,6 +249,17 @@ foreach($contabs as $tabcont){
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //HEADER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($qclosable){
+$closebutton=<<<CLOSE
+  <!-- -------------------- CLOSE BUTTON -------------------- -->
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()"
+       onmouseover="explainThis(this)" explanation="Close">
+      $BUTTONS[Cancel]
+    </a>
+  </div>
+CLOSE;
+}
 $header.=<<<HEADER
 <div class="actionbutton">
 <span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
@@ -240,28 +269,16 @@ $header.=<<<HEADER
   <div class="actionbutton">
     <input id="TabId" type="hidden" name="TabId" value="$TabNum">
     <input type="hidden" name="RunCode" value="$PHP[RunCode]">
-    <input type="hidden" name="HeightWindow" value="$PHP[HeightWindow]">
+    $hidvars
     <!--onclick="window.location.reload()"-->
     <button href="JavaScript:void(null)" class="image" 
        onmouseover="explainThis(this)" explanation="Results">
       $BUTTONS[Update]
     </button>
   </div>
-  <div class="actionbutton">
-    <a href="JavaScript:void(null)" class="image" onclick="window.close()">
-      $BUTTONS[Cancel]
-    </a>
-  </div>
+  $closebutton
 </div>
 HEADER;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//WINDOW INFORMATION
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if(!isset($PHP["HeightWindow"])){
-  $PHP["HeightWindow"]="70%";
-}
-$extrastyle.="height:$PHP[HeightWindow];";
 
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT DISPLAY

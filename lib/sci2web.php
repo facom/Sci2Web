@@ -125,7 +125,7 @@ $PS2W=array("ImageFile","DataFiles","XCols","YCols",
 //STATUS DICTIONARY
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $C2S=array("error","configured","clean","compiled","ready","submit",
-	   "run","pause","resume","stop","fail","end","finish");
+	   "run","pause","resume","stop","fail","end","finish","kill");
 $S2C=invertHash($C2S);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,7 @@ listButtons();
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ACTIONS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Resume");
+$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Kill","Resume");
 
 //////////////////////////////////////////////////////////////////////////////////
 //AUTHENTICATION
@@ -685,9 +685,8 @@ AJAX;
 
 $table=<<<TABLE
 $onload
-<form id="formfiles" action="JavaScript:void(null)" method="get"
-      enctype="multipart/form-data"
-      onsubmit="$ajax_down">
+<form id="formfiles" action="JavaScript:void(null)" 
+      method="get" enctype="multipart/form-data">
 <table class="files">
 <!-- ---------------------------------------------------------------------- -->
 <!-- BUTTON HEADER							    -->
@@ -700,12 +699,14 @@ $onload
 	  <a href="JavaScript:$ajax_filelist">$BUTTONS[Update]</a>
 	</div>
 	<div style="position:relative;float:left;top:0px;left:0px;">
-	  <button id="downbut" class="image" name="Action" value="Download"
+	  <button id="downbut" class="image" name="Action"
 		  onmouseover="explainThis(this)"
-		  explanation="Download">
+		  explanation="Download"
+		  onclick="$('#action').attr('value','DownloadFiles');$ajax_down">
 	    $BUTTONS[Down]
 	  </button>
-	  <input type="hidden" name="Action_Submit" value="Download">
+	  <input id="action" type="hidden" name="Action_Submit" value="None">
+	  <input id="action" type="hidden" name="DownloadDir_Submit" value="$dir">
 	</div>
 	<div id="down_wait" 
 	     style="prosition:absolute;float:left;bottom:0px;display:none;">
@@ -721,15 +722,14 @@ $onload
 <!-- COMMON HEADER							    -->
 <!-- ---------------------------------------------------------------------- -->
 <tr class="head">
-<td class="check">
+<td class="check" width="10%">
 <input type="checkbox" 
        name="objall" 
        value="all"
        onchange="popOutHidden(this)" 
        onclick="selectAll('formfiles',this)">
-<!--<input type="hidden" name="objall_Submit" value="off">-->
 </td>
-<td>
+<td >
 Filename
 </td>
 <td>
@@ -921,7 +921,8 @@ function toggleButtons($status)
 		 "Stop"=>$none,
 		 "Resume"=>$none,
 		 "Remove"=>$none,
-		 "Configure"=>$none
+		 "Configure"=>$none,
+		 "Kill"=>$none
 		 );
   if($status=="clean"){
     $display["Compile"]=$disp;
@@ -943,20 +944,25 @@ function toggleButtons($status)
     $display["Stop"]=$disp;
     $display["Resume"]=$disp;
     $display["Remove"]=$disp;
+    $display["Kill"]=$disp;
   }
-  if($status=="submit" or
-     $status=="run"){
+  if($status=="run"){
     $display["Pause"]=$disp;
     $display["Stop"]=$disp;
-    $display["Stop"]=$disp;
+    $display["Kill"]=$disp;
+  }
+  if($status=="submit"){
+    $display["Kill"]=$disp;
   }
   if($status=="end" or
      $status=="fail" or
-     $status=="stop"){
+     $status=="stop" or
+     $status=="kill"){
     $display["Clean"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
+    $display["Kill"]=$disp;
   }
   return $display;
 }
@@ -972,7 +978,8 @@ function toggleButtons2($status)
 		 "Stop"=>$none,
 		 "Resume"=>$none,
 		 "Remove"=>$none,
-		 "Configure"=>$none
+		 "Configure"=>$none,
+		 "Kill"=>$none
 		 );
   if($status=="clean"){
     $display["Compile"]=$disp;
@@ -994,16 +1001,21 @@ function toggleButtons2($status)
     $display["Stop"]=$disp;
     $display["Resume"]=$disp;
     $display["Remove"]=$disp;
+    $display["Kill"]=$disp;
   }
-  if($status=="submit" or
-     $status=="run"){
+  if($status=="run"){
     $display["Pause"]=$disp;
     $display["Stop"]=$disp;
     $display["Stop"]=$disp;
+    $display["Kill"]=$disp;
+  }
+  if($status=="submit"){
+    $display["Kill"]=$disp;
   }
   if($status=="end" or
      $status=="fail" or
-     $status=="stop"){
+     $status=="stop" or
+     $status=="kill"){
     $display["Clean"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
@@ -1209,8 +1221,9 @@ INPUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function statusIcon($status)
 {
+  global $PHP,$PROJ,$BUTTONS;
+
   $icon="";
-  //$status="end";
   switch($status){
   case "configured":
     $status_text="Configured";
@@ -1227,6 +1240,12 @@ function statusIcon($status)
     $status_color="white";
     $status_bg="green";
     break;
+  case "submit":
+    $status_link="";
+    $status_text="Submitted";
+    $status_color="white";
+    $status_bg="blue";
+    break;
   case "run":
     $status_text="Running";
     $status_color="white";
@@ -1237,16 +1256,31 @@ function statusIcon($status)
     $status_color="red";
     $status_bg="yellow";
     break;
+  case "resume":
+    $status_text="Resumed";
+    $status_color="white";
+    $status_bg="blue";
+    break;
   case "stop":
     $status_text="Stopped";
     $status_color="black";
     $status_bg="lightgray";
+    break;
+  case "kill":
+    $status_text="Killed";
+    $status_color="white";
+    $status_bg="black";
     break;
   case "end":
     $status_text="Ended";
     $status_color="white";
     $status_bg="blue";
     break;
+  }
+  if(isset($status_link)){
+$status_text=<<<STATUS
+$status_text <a href="$status_link" target="_blank">$BUTTONS[Open]</a>
+STATUS;
   }
 
 $icon=<<<ICON
@@ -1257,7 +1291,7 @@ $icon=<<<ICON
 			    background-color:$status_bg;
 			    padding:5px;
 			    "
-     status="$status_text">
+     status="$status">
 <b>$status_text</b>
 </div>
 ICON;

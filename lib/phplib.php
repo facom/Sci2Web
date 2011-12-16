@@ -63,8 +63,7 @@ $PHP["REFERERNAME"]=$PHP["REFERERNAME"][0];
 //FILES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $PHP["SESPAGEPREFIX"]="$PHP[PAGEBASENAME]-$PHP[SESSID]";
-$PHP["DBFILE"]="phpdb-$PHP[SESPAGEPREFIX]";
-$PHP["CMDERRFILE"]="phperr-$PHP[SESPAGEPREFIX]";
+$PHP["DBFILE"]="phpserver-$PHP[SESPAGEPREFIX]";
 $PHP["CMDOUTFILE"]="phpout-$PHP[SESPAGEPREFIX]";
 $PHP["SQLFILE"]="phpsql-$PHP[SESPAGEPREFIX]";
 
@@ -74,7 +73,6 @@ $PHP["SQLFILE"]="phpsql-$PHP[SESPAGEPREFIX]";
 if($PHP["DEBUG"]){
   $PHP["DBCOUNTER"]=$PHP["SQLCOUNTER"]=1;
   $PHP["FL"]=fopen("$PHP[TMPPATH]/$PHP[DBFILE]","w");
-  shell_exec("(date;echo -e 'Error File:\n') > $PHP[TMPPATH]/$PHP[CMDERRFILE]");
   shell_exec("(date;echo -e 'Output File:\n') > $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
   shell_exec("(date;echo -e 'SQL File:\n') > $PHP[TMPPATH]/$PHP[SQLFILE]");
 }
@@ -162,15 +160,15 @@ function systemCmd($cmd,$preserve=false)
   $PHP["?"]=0;
 
   if($PHP["DEBUG"]){
-$dberr=<<<DBERR
+$dbout=<<<DBOUT
 ================================================================================
 Command $PHP[DBCOUNTER]:
     $ocmd
-Error:
-DBERR;
+Output:
+DBOUT;
     blankFunc();
-    shell_exec("echo \"$dberr\" >> $PHP[TMPPATH]/$PHP[CMDERRFILE]");
-    $cmd="($cmd) 2>> $PHP[TMPPATH]/$PHP[CMDERRFILE]";
+    shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
+    $cmd="($cmd) 2>> $PHP[TMPPATH]/$PHP[CMDOUTFILE]";
   }
 
   //========================================
@@ -192,9 +190,6 @@ DBERR;
   if($PHP["DEBUG"]){
     $eout=implode("\n",$outs);
 $dbout=<<<DBOUT
-================================================================================
-Command $PHP[DBCOUNTER]:
-    $ocmd
 Output:
 $eout
 DBOUT;

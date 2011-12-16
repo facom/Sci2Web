@@ -84,9 +84,12 @@ loadContent
    true
    );
 $('input[name=RunAll]').attr('checked',false);
+$('input[name=RunAll_Submit]').attr('checked',false);
+$('input[name=RunAll_Submit]').attr('value','off');
 AJAX;
 $onload_runtable=genOnLoad($ajax_runtable,'load');
 
+$errfile="$PHP[TMPDIR]/phpout-ajax-trans-run-$PHP[SESSID]";
 $ajax_action=<<<AJAX
 submitForm
   ('formqueue',
@@ -94,12 +97,21 @@ submitForm
    'notaction',
    function(element,rtext){
     elid=$(element).attr('id');
-    notDiv(elid,rtext);
+    eliderr=elid+'_error';
+    $('#'+eliderr).css('display','none');
+    if(rtext.search(/error/i)>=0){
+      $('#'+eliderr).
+	html(rtext+'<br/><a href=$errfile target=_blank>See detailed errors</a>');
+      $('#'+eliderr).css('display','block');
+    }else{
+      notDiv(eliderr,rtext);
+    }
     $ajax_runtable;
    },
    function(element,rtext){
-    notDiv(elid,'Processing...');
     elid=$(element).attr('id');
+    eliderr=elid+'_error';
+    /*notDiv(elid,'Processing...');*/
    },
    function(element,rtext){
      elid=$(element).attr('id');
@@ -123,20 +135,7 @@ $header.=<<<HEADER
 <tr>
 <td colspan=10>
 <div style="position:relative">
-<div id="notaction"
-  style="position:absolute;
-	 width:20%;
-	 /*height:100%;
-	 text-height:100%;*/
-	 top:-10px;
-	 left:40%;
-	 background-color:$COLORS[clear];
-	 text-align:center;
-	 border:solid $COLORS[text] 1px;
-	 display:none;
-	 ">
-  Hola
-</div>
+<div id="notaction" class="subnotification" style="display:none"></div>
 <input id="actionspec" type="hidden" name="Action_Submit" value="None">
 <input type="hidden" name="RunMultiple_Submit" value="true">
 HEADER;
@@ -232,9 +231,10 @@ HEADER;
 $header.=<<<RUNS
 <tr class="header">
   <td width="2%">
-  <input type="checkbox" name="RunAll" value="off"
+  <input type="checkbox" name="RunAll" checked="false"
 	 onclick="selectAll('formqueue',this)"
 	 onchange="popOutHidden(this)">
+  <input id="runall" type="hidden" name="RunAll_Submit" checked="false">
   </td>
   <td width="20%">
   Time $sdate</td>
@@ -257,7 +257,7 @@ echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
 <h1>Application Queue</h1>
 $onload_runtable
-<div style="position:relative;padding:5px;border:dashed $COLORS[text] 2px">
+<div style="position:relative;padding:5px;border:dashed $COLORS[text] 0px">
 $PROJ[DIVBLANKET]
 $PROJ[DIVOVER]
 <form action="JavaScript:void(null)" id="formqueue">
@@ -272,6 +272,7 @@ $footer
 </tfooter>
 </table>
 </form>
+<div id="notaction_error" class="suberror" style="display:none"></div>
 </div>
 RUNS;
 end:

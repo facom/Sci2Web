@@ -34,9 +34,12 @@ $footer="";
 $actionresult="";
 $errors="";
 $onload="";
+$hidvars="";
 $extrastyle="margin-left:10px;margin-right:10px;";
 $notmsg="Data loaded...";
+$closebutton="";
 divBlanketOver("conf");
+$qclosable=true;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //SWITCHES
@@ -60,6 +63,17 @@ $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ARAMETRIZATION MODEL
 list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/controlvars.info");
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//WINDOW PARAMETERS
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(isset($PHP["Closable"])){
+  if($PHP["Closable"]=="false"){
+    $hidvars.="<input type='hidden' name='Closable' value='$PHP[Closable]'>";
+    $qclosable=false;
+  }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -305,7 +319,7 @@ $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
 $resmat=mysqlCmd("select * from runs where run_code='$PHP[RunCode]'");
 $row=getRow($resmat,0);
 foreach(array_keys($DATABASE["Runs"]) as $runfield){
-  $CONFIG["$runfield"]=$row["$runfield"];
+  $RUNCONFIG["$runfield"]=$row["$runfield"];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,9 +330,17 @@ $runpath="$runspath/$runhash";
 $runfile="$runpath/run.conf";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//VERSION CONFIGURATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+readConfig("$runpath/sci2web/version.conf");
+$VERSION=$CONFIG;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //PARAMETRIZATION INFORMATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$CONFIG=array();
 $numconf=readConfig("$runfile");
+$RUNCONFIG=array_merge($RUNCONFIG,$CONFIG);
 
 //////////////////////////////////////////////////////////////////////////////////
 //GENERATE CONTENT
@@ -326,23 +348,7 @@ $numconf=readConfig("$runfile");
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //BLOCK ACCORDING TO STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
-if($PROJ["DEBUG"]){
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//EXTRA TABS IN CASE OF DEBUGGING
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//==================================================
-//FILES
-//==================================================
-$ftable=filesTable($rundir);
-$content.=<<<CONF
-<div class="tabbertab">
-<h2>Files</h2>
-$ftable
-</div>
-CONF;
-}
-
+if($VERSION["RunTab"]=="true"){
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GNERAL PROPERTIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -352,7 +358,7 @@ $groups["General"][]="Buttons";
 if(isset($PHP["template"])){
   $tempname=str_replace("_"," ",$PHP["template"]);
   $tempname=str_replace(".conf","",$tempname);
-}else{$tempname="$CONFIG[run_name]";}
+}else{$tempname="$RUNCONFIG[run_name]";}
 
 //==================================================
 //ADD INPUT AND BUTTON FOR A NEW TEMPLATE
@@ -375,7 +381,7 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
   $var=$runfield;
   if($var=="run_name") continue;
 
-  $val=$CONFIG["$runfield"];
+  $val=$RUNCONFIG["$runfield"];
   $varname=$DATABASE["Runs"]["$runfield"];
   $vartype="varchar";
   $protected="readonly";
@@ -387,6 +393,7 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
   if($var=="permissions") $val="rw;;rx;;xw;;xx==rw";
   
   $vars["General"]["Global"][]="$var::$val::$vartype::$varname::$varname::$protected::";
+}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -442,7 +449,7 @@ CONF;
      //==================================================
      list($varn,$defval,$datatype,$varname,
 	  $vardesc,$protected,$files)=split("::",$var);
-     $val=$CONFIG["$varn"];
+     $val=$RUNCONFIG["$varn"];
 
      //==================================================
      //GENERATE INPUT
@@ -550,6 +557,23 @@ $content.= <<<CONF
 CONF;
 }//END FOR TAB
 
+if($VERSION["FilesTab"]=="true"){
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//EXTRA TABS IN CASE OF DEBUGGING
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//==================================================
+//FILES
+//==================================================
+$ftable=filesTable($rundir);
+$content.=<<<CONF
+<div class="tabbertab">
+<h2>Files</h2>
+$ftable
+</div>
+CONF;
+}
+
+if($VERSION["ControlButtons"]=="true"){
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //RUN CONTROLS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -564,7 +588,10 @@ loadContent
        $(element).attr('hash',hex_md5(rtext));
        element.innerHTML=rtext;
      }
-     if($('#statusicon').attr('status')=='Running'){
+     if($('#statusicon').attr('status')=='run' ||
+	$('#statusicon').attr('status')=='submit' ||
+	$('#statusicon').attr('status')=='resume'
+	){
        $('#ELBLANKET').css('display','block');
        $('.ELOVER').css('display','block');
      }else{
@@ -581,6 +608,7 @@ loadContent
    )
 AJAX;
 $onload_controls=genOnLoad($ajaxcmd,'load');
+}
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //TITLE & HEADER
@@ -595,10 +623,22 @@ Configuration Window
 </div>
 TITLE;
 
+if($qclosable){
+$closebutton=<<<CLOSE
+  <!-- -------------------- CLOSE BUTTON -------------------- -->
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()"
+       onmouseover="explainThis(this)" explanation="Close">
+      $BUTTONS[Cancel]
+    </a>
+  </div>
+CLOSE;
+}
+
 $header.=<<<HEADER
 <!-- -------------------- RUN NAME -------------------- -->
 <div class="actionbutton">
-Run name:<input type="text" name="run_name" value="$CONFIG[run_name]">
+Run name:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
 </div>
 <div class="actionbutton">
 <!-- -------------------- SAVE BUTTON -------------------- -->
@@ -608,11 +648,7 @@ Run name:<input type="text" name="run_name" value="$CONFIG[run_name]">
 </button> 
 </div>
 <div class="actionbutton"
-     style="position:absolute;right:0px;top:10px;z-index:10000">
-  <!-- -------------------- CONTROLS -------------------- -->
-  <div class="actionbutton" id="runcontrols"
-       style="border:dashed gray 0px">
-  </div>
+     style="position:absolute;right:0px;top:10px">
   <!-- -------------------- RESULTS BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
@@ -621,13 +657,7 @@ Run name:<input type="text" name="run_name" value="$CONFIG[run_name]">
       $BUTTONS[Results]
     </a>
   </div>
-  <!-- -------------------- CLOSE BUTTON -------------------- -->
-  <div class="actionbutton">
-    <a href="JavaScript:void(null)" class="image" onclick="window.close()"
-	      onmouseover="explainThis(this)" explanation="Close">
-	$BUTTONS[Cancel]
-    </a>
-  </div>
+  $closebutton
 </div>
 HEADER;
 
@@ -641,9 +671,8 @@ end:
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(isset($PHP["HeightWindow"])){
    $extrastyle.="height:$PHP[HeightWindow];";
-   $content.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'";
+   $hidvars.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'>";
 }
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //LAST MINUTE ELEMENTS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -689,11 +718,12 @@ echo<<<CONTENT
       <!-- -------------------------------------------------------- -->
       <div style="position:relative">
 	  <input id="TabId" type="hidden" name="TabId" value="$TabNum">
+	  <input type="hidden" name="RunCode" value="$runcode">
+	  $hidvars
 	  <div class="tabber" id="$PHP[TabId]"
 	       style="$extrastyle">
 	    $content
 	  </div>
-	  <input type="hidden" name="RunCode" value="$runcode">
       </div>
       <!-- -------------------------------------------------------- -->
       <!-- FOOTER AREA -->
@@ -701,6 +731,14 @@ echo<<<CONTENT
       <div style="position:relative">
 	$DEBUG
 	$footer
+      </div>
+      <!-- -------------------- CONTROLS -------------------- -->
+      <div class="actionbutton" id="runcontrols"
+	   style="border:solid $COLORS[dark] 2px;
+		  position:fixed;
+		  bottom:0px;right:0px;
+		  z-index:10000;
+		  background-color:$COLORS[back];">
       </div>
       </form>
     </div>

@@ -91,8 +91,7 @@ fi
 "submit"):
 echo "Executing action $action:"
 checkSig $action
-echo -n "
-#!/bin/bash
+echo -n "#!/bin/bash
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #THESE LINES CAN BE CHANGED ACCORDING TO YOUR QUEUE SYSTEM 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -119,10 +118,11 @@ wait
 
 if [ -e 'end.sig' ];then setSig 'end'
 else
-    if [ ! -e 'pause.sig' -a ! -e 'stop.sig' ];then setSig 'fail';fi
+    if [ ! -e 'pause.sig' -a ! -e 'stop.sig' -a ! -e 'kill.sig' ];then setSig 'fail';fi
 fi
 bash sci2web/bin/sci2web.sh post
 " >> /tmp/apprun.$$
+cp -rf /tmp/apprun.$$ run.sh
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #THESE LINES CAN BE CHANGED ACCORDING TO YOUR QUEUE SYSTEM 
@@ -157,22 +157,27 @@ bash sci2web/bin/sci2web.sh submit
 #############################################################
 "check")
 checkSig $action
-if ps $(cat pid.oxt) &> /dev/null
-then
-    echo "--run--"
-else 
-    if [ -e "end.sig" ]
+if [ -f pid.oxt ];then
+    if ps $(cat pid.oxt) &> /dev/null
     then
-	echo "--end--"
+	echo "--run--"
     else 
-	if [ -e "fail.sig" ]
+	if [ -e "end.sig" ]
 	then
-	    echo "--fail--"
-	else
-	    echo "No run status"
+	    echo "--end--"
+	else 
+	    if [ -e "fail.sig" ]
+	    then
+		echo "--fail--"
+	    else
+		echo "No run status"
+	    fi
 	fi
     fi
+else
+    echo "Waiting"
 fi
+	
 ;;
 #############################################################
 #TESTING THE LIFE CYCLE
@@ -180,10 +185,10 @@ fi
 "kill")
 echo "Executing action $action:"
 checkSig $action
+setSig $action
 echo "Execution action $action:"
 atrm $(cat jobid.oxt)
 kill -9 $(cat pid.oxt)
-setSig $action
 ;;
 #############################################################
 #STATUS

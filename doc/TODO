@@ -10,15 +10,11 @@
 
 To Do:
 
-- Change user permissions for info pages of new applications
+- Create a notification window.  A window to show simple messages with
+  an update link.
 
-- Create Configure/Result interface
-
-- Allow to open the configuration window when running
-
-- Remove results
-
-- Select all / Unselect all in database results and in tarball view
+- Redirect the output of the submission and check why is not executing.
+  + Check the status of a submission.
 
 - Plot using a preexistent ps2w file
 
@@ -31,24 +27,53 @@ To Do:
 
 - Toggle between a history list and a control list
 
-- Configure files edition permissions
-
-- Edition button 
-
-- Show details about errors in a bottom notification area
-
-- Eliminate metadata tab in file view window 
+- Configure files edition permissions.
 
 - Create page to get information about remote "Sci2Web server sites"
 
-- When a session has expired close pages or return to home page
+- Change Bug form in order to avoid interference with other forms.
+
+- Add bug icon in other components.
+
+- When a session has expired close pages or return to home page.
+  PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT
+  WINDOWS DETECT A EXPIRED SESSION IT CLOSES AUTOMATICALLY.
 
 Dreams:
 
-- Configure multiple queue system
+- Configure multiple queue system: sge, torque/pbs
 
 - Account page:
   + Allow to see the list of all runs of a given user 
 
 Completed:
+
+- Change user permissions for info pages of new applications.  USER
+  PERMISSIONS ARE CHANGED WHEN THE APPLICATION IS INSTALLED.
+
+- Add a kill action. ADDED.  ACTION ICONS WAS UPDATED.
+
+- Allow to open the configuration window when running.  READY.
+  CONFIGURATION COULD BE OPENED WHEN DESIRED.
+
+- Select all / Unselect all in database results and in tarball view.
+  DONE IN QUEUE TABLE.
+
+- Remove results in the database of results.  DONE.  INTERFACE CHANGED
+  RESPECT TO FILES OPERATIONS.
+
+- Select all / Unselect all in database results and in tarball view.
+  DONE.
+
+- Eliminate metadata tab in file view window.  DONE.
+
+- Improve the Files interface.  DONE!!
+
+- Create Configure/Result interface.  CREATED.  USING FRAMES AND
+  ALREADY CREATED CONFIGURE AND RESULTS SCRIPTS.
+
+- Show details about errors in a bottom notification area.  IT WILL BE
+  BETTER IF THE ERROR FILE IS PARTICULAR OF GIVEN ACTIONS.
+
+
 

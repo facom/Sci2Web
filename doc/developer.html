@@ -921,7 +921,7 @@ and want to update the templates for all the application instances
 already created in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should use the absolute path of the
 utility script:</p>
 <pre class="last literal-block">
-% perl PROJPATH/sci2web/bin/sci2web.pl contvars --appdir .
+% perl SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
 </pre>
 </div>
 <p>This command create three files in the <tt class="docutils literal">sci2web</tt> subdirectory:
@@ -1333,6 +1333,12 @@ RefreshTime=1000
 Tab=Files
 Content=Module:ListFiles?SubDir=.&amp;Filter=*
 RefreshTime=-1
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#PROPER  TIES OF THE CONFIGURE AND RESULTS WINDOW
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Stacking=cols
+Sizes=40%,60%
 </pre>
 </li>
 </ul>
@@ -1364,6 +1370,15 @@ module parameters.</p>
 carefull to not set a very small refresh time for your tabs
 because it could load your web server with apache2 zombie
 processes.</p>
+<p>At the end of this configuration file you will be able to set up
+the properties of a framed version of the configuration and
+results windows.  For small applications it is more comfortable to
+have a single window where the configuration form and the results
+are displayed together.  This is the function of this tabbed
+window.  You can select here if you want to stack the
+configuration and results frames stacked horizontally (<tt class="docutils literal">cols</tt>,
+this is the default) or vertically (<tt class="docutils literal">rows</tt>).  You can also
+modify the relative sizes of the frames.</p>
 </blockquote>
 </li>
 </ol>

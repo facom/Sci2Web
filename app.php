@@ -41,6 +41,17 @@ else $PHP["TabId"]--;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $head="";
 $head.=genHead("","");
+if($qexpire){
+  $head.=genHead("$PROJ[PROJDIR]","0");
+echo<<<CONTENT
+<html>
+$head
+<body onload="alert('We are sorry, your session has expired or it has not started yet. Please login again.')">
+</body>
+</html>
+CONTENT;
+ return 0;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER

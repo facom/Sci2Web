@@ -492,19 +492,28 @@ function queryResultsDatabase(form,resultsid,script)
 function selectAll(formid,object)
 {
     form=document.getElementById(formid);
-    value=object.checked;
+    valueall=object.value;
+    checkall=object.checked;
     i=0;
-    //alert(form.elements.length);
     while(formel=form.elements[i]){
 	if(formel.type.search("checkbox")>=0){
+	    formel.checked=checkall;
+	    formel.value=valueall;
 	    namel=formel.name;
 	    valel=formel.value;
 	    subel=$("input[name="+namel+"_Submit]");
 	    subel.attr("value",valel);
-	    formel.checked=value;
+	    subel.checked=checkall;
 	}
 	i++;
     }
+}
+
+function deselectAll(allname)
+{
+    $('input[name='+allname+']').attr('checked',false);
+    $('input[name='+allname+'_Submit]').attr('checked',false);
+    $('input[name='+allname+'_Submit]').attr('value','off');
 }
 
 function toggleBug(elementid,referer)
@@ -519,7 +528,7 @@ function toggleBug(elementid,referer)
   element.toggle('fast',null);
 }
 
-function setsValue(elementid,value)
+function setValue(elementid,value)
 {
   element=document.getElementById(elementid);
   $(element).attr("value",value);

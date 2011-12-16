@@ -21,6 +21,7 @@ include("$RELATIVE/lib/sci2web.php");
 //////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
+$queue="";
 if(!isset($PHP["Order"])){$PHP["Order"]="configuration_date";}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,6 +88,7 @@ foreach($runs as $run){
     }
   }
   $status_icon=statusIcon($status); 
+  //echo "<textarea>$status_icon</textarea>";br();
 
   //==================================================
   //STATUS BAR
@@ -104,20 +106,26 @@ foreach($runs as $run){
   $conflink="Open('$conflink','Configure','$PROJ[SECWIN]')";
   $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code&HeightWindow=75%";
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
+  $confreslink="$PROJ[BINDIR]/confresults.php?RunCode=$run_code";
+  $confreslink="Open('$confreslink','Configure & Results','$PROJ[PLOTWIN]')";
   $removelink=genRunLink($run_code,"Remove");
+  /*
   if($status=="run" or $status=="pause"){
     $conflink="alert('You cannot configure a running instance.')";
     $removelink="alert('You cannot remove a running instance.')";
   }
+  */
 
   //==================================================
   //TABLE ROW
   //==================================================
-echo <<<QUEUE
+$queue.=<<<QUEUE
 <tr class="entry">
   <td>
-    <input type="checkbox" name="Run$i" value="$run_code"
-	   onchange="popOutHidden(this);">
+    <input type="checkbox" name="Run$i" 
+	   onchange="popOutHidden(this);"
+	   onclick="deselectAll('RunAll')">
+    <input type="hidden" name="Run${i}_Submit" checked="false">
   </td>
   <td>$configuration_date</td>
   <td>
@@ -130,7 +138,7 @@ echo <<<QUEUE
        onmouseover="explainThis(this)" explanation="Results for $run_code ($run_hash)">
        $BUTTONS[Results]
     </a>
-    <a href="JavaScript:$conflink" 
+    <a href="JavaScript:$confreslink" 
        onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
        $BUTTONS[ConfigureResults]
     </a>
@@ -141,6 +149,8 @@ echo <<<QUEUE
 QUEUE;
  $i++;
 }
+echo $queue;
+//echo "<tr><td colspan=10><textarea rows=10 cols=50>$queue</textarea></td></tr>";
 
 end:
 echo<<<RUNS

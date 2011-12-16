@@ -636,6 +636,26 @@ $PROJ["STYLES"]=<<<STYLES
     border-radius:5px;
     -moz-box-shadow:5px
     }
+    .subnotification{
+    position:absolute;
+    width:20%;
+    top:-10px;
+    left:40%;
+    background-color:$COLORS[clear];
+    text-align:center;
+    border:solid $COLORS[text] 1px;
+    display:none;
+    }
+    .suberror{
+    position:absolute;
+    width:20%;
+    bottom:0px;
+    left:40%;
+    background-color:pink;
+    text-align:center;
+    border:solid $COLORS[text] 1px;
+    display:none;
+    }
   </style>
 STYLES;
 ?>

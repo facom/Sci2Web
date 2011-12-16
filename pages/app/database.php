@@ -165,7 +165,7 @@ Database specification to know the available search variables.
   </tr>
 <tr>
   <td colspan="3">
-    <button name="Action">Submit</button>
+    <button name="ActionDatabase">Submit</button>
   </td>
 </tr>
 </table>
