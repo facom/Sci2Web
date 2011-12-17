@@ -10,11 +10,21 @@
 
 To Do:
 
+- Change Bug form in order to avoid interference with other forms.
+  +Add bug icon in other components.
+
+- In the ConfigurationResult window when a run is ended update the
+  results frame.
+
+- Configure valid actions on a dev: compilable, pausable, resumable...
+
 - Create a notification window.  A window to show simple messages with
   an update link.
 
 - Redirect the output of the submission and check why is not executing.
   + Check the status of a submission.
+
+- Test everything is running in Firefox
 
 - Plot using a preexistent ps2w file
 
@@ -30,10 +40,6 @@ To Do:
 - Configure files edition permissions.
 
 - Create page to get information about remote "Sci2Web server sites"
-
-- Change Bug form in order to avoid interference with other forms.
-
-- Add bug icon in other components.
 
 - When a session has expired close pages or return to home page.
   PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT

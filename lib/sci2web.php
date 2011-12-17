@@ -423,7 +423,7 @@ HEADER;
     $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
 
 $header.=<<<HEADER
-$PHP[SESSID] | User <i><b>$name</b></i> | 
+  User <i><b>$name</b></i> | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('changepass')">
   Your account

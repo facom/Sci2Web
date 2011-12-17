@@ -39,8 +39,13 @@ else $PHP["TabId"]--;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //PERLIMINARIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$refresh="";
 $head="";
-$head.=genHead("","");
+if(isset($PHP["SaveContent"]) or
+   isset($PHP["SetApp"])){
+  $refresh=0;
+}
+$head.=genHead("$PROJ[PROJDIR]/$PHP[PAGENAME]",$refresh);
 if($qexpire){
   $head.=genHead("$PROJ[PROJDIR]","0");
 echo<<<CONTENT
