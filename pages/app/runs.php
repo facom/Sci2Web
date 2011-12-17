@@ -214,7 +214,7 @@ HEADER;
 $header.=<<<HEADER
 <div class="actionbutton"
      style="position:absolute;right:0px;top:0px;">
-  <button class="image" onclick="$ajax_runtable">
+  <button class="image" onclick="$('#notaction_error').css('display','none');$ajax_runtable">
     $BUTTONS[Update]
   </button>
 </div>

@@ -748,7 +748,7 @@ TABLE;
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $table.=<<<TABLE
 <tbody id="listfiles">
-<tr><td colspan=10></td></tr>
+<tr><td colspan=10>Loading...</td></tr>
 </tbody>
 TABLE;
 

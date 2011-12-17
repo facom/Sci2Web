@@ -628,7 +628,7 @@ $closebutton=<<<CLOSE
   <!-- -------------------- CLOSE BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" onclick="window.close()"
-       onmouseover="explainThis(this)" explanation="Close">
+       onmouseover="explainThis(this)">
       $BUTTONS[Cancel]
     </a>
   </div>
@@ -652,7 +652,7 @@ Run name:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
   <!-- -------------------- RESULTS BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
-       onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode','Results','$PROJ[SECWIN]')"
+       onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode&HeightWindow=75%','Results','$PROJ[SECWIN]')"
        onmouseover="explainThis(this)" explanation="Results" style="">
       $BUTTONS[Results]
     </a>
@@ -736,7 +736,7 @@ echo<<<CONTENT
       <div class="actionbutton" id="runcontrols"
 	   style="border:solid $COLORS[dark] 2px;
 		  position:fixed;
-		  bottom:0px;right:0px;
+		  bottom:0px;left:0px;
 		  z-index:10000;
 		  background-color:$COLORS[back];">
       </div>
