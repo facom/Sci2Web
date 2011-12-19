@@ -61,6 +61,10 @@ $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
 $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
 
+//RUNS PIPELINE
+readConfig("$apppath/sci2web/version.conf");
+$VERCONFIG=$CONFIG;
+
 //////////////////////////////////////////////////////////////////////////////////
 //LOAD ACTION
 //////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +147,8 @@ HEADER;
 //==================================================
 //CONTROL BUTTONS
 //==================================================
-$actions=$PROJ["Actions"];
+$noactions=preg_split("/,/",$VERCONFIG["InvalidActions"]);
+$actions=array_diff($PROJ["Actions"],$noactions);
 array_unshift($actions,"Remove");
 $links="";
 foreach($actions as $action){

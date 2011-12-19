@@ -42,6 +42,7 @@ $apptable=mysqlCmd("select * from apps");
 
 $i=0;
 foreach($apptable as $approw){
+  list($bugbut,$bugform)=genBugForm2("PageEdition","Editing page content");
   $appcode=$approw["app_code"];
   $appdate=$approw["creation_date"];
   $appauthor=$approw["users_emails_author"];

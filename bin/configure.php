@@ -25,6 +25,15 @@ $PHP["TabId"]--;
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//CHECK FOR ACTIVE SESSIONS
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(!isset($_SESSION["App"])){
+  $onload=genOnLoad("alert('Session has expired or has not been started');window.close()");
+  echo $onload;
+  return;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $title="";
@@ -74,6 +83,10 @@ if(isset($PHP["Closable"])){
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//GENERATE BUG FORM
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+list($bugbutton,$bugform)=genBugForm2("ConfigureRun","Configure Run");
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -580,7 +593,7 @@ if($VERSION["ControlButtons"]=="true"){
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-run.php?RunCode=$runcode&Action=GetControls',
+   '$PROJ[BINDIR]/ajax-trans-run.php?RunCode=$runcode&Action=GetControls&ExcludeActions=$VERSION[InvalidActions]',
    'runcontrols',
    function(element,rtext){
      hash=$(element).attr('hash');
@@ -649,6 +662,10 @@ Run name:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px">
+  <!-- -------------------- BUG BUTTON -------------------- -->
+  <div class="actionbutton">
+    $bugbutton
+  </div>
   <!-- -------------------- RESULTS BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
@@ -741,6 +758,7 @@ echo<<<CONTENT
 		  background-color:$COLORS[back];">
       </div>
       </form>
+      $bugform
     </div>
 </body>
 </html>

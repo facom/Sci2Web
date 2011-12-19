@@ -190,21 +190,48 @@ switch($Action){
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Initializing the version configuration file...";
 	open(fl,">sci2web/version.conf");
-	print fl bar("#",50)."\n";
-	print fl "Application = $appname\n";
-	print fl "AppCompleteName = Complete name of the application\n";
-	print fl "AppBrief = Brief description of the application\n";
-	print fl bar("#",50)."\n";
-	print fl "Version = $vername\n";
-	print fl "EmailsContributors = $emails\n";
-	print fl "ChangesLog = $changeslog\n";
-	print fl "VerTabs = description:Description;documentation:Documentation;downloads:Downloads;runs:Runs;database:Database\n";
-	print fl "QueueMode = QueueList\n";
-	print fl "ResultsDatabase = true\n";
-	print fl bar("#",50)."\n";
-	print fl "RunTab = true\n";
-	print fl "FilesTab = false\n";
-	print fl "ControlButtons = true\n";
+
+$config=<<CONFIG;
+############################################################
+#VERSION CONFIGURATION FILE
+############################################################
+#------------------------------------------------------------
+#GENERAL INFORMATION ABOUT APPLICATION
+#------------------------------------------------------------
+Application = $appname
+AppCompleteName = Complete name of the application
+AppBrief = Brief description of the application
+#------------------------------------------------------------
+#VERSION PROPERTIES
+#------------------------------------------------------------
+
+#Name of this version.  Do not modify in installed applications.
+Version = $vername
+#Emails of the contributors. User with permissions to edit app.
+EmailsContributors = $emails
+#Brief description of the changes log
+ChangesLog = $changeslog
+#Information pages displayed in tabs of the version page
+#Valid pages:description,documentation,downloads,runs,database.
+VerTabs = description:Description;documentation:Documentation;downloads:Downloads;runs:Runs;database:Database
+#Queue mode: QueueList,RunsHistory
+QueueMode = QueueList
+#Do you want to store your results in a new database?
+ResultsDatabase = true
+#Actions not valid for this version of your application
+#Valid actions:Clean,Compile,Run,Pause,Stop,Kill,Resume
+InvalidActions=
+#------------------------------------------------------------
+#CONFIGURATION WINDOW PROPERTIES
+#------------------------------------------------------------
+#Do you want to include a tab with run internal information?
+RunTab = true
+#Do you want to include a tab with a list of run files
+FilesTab = false
+#Do you want to include control panel in the conf. window?
+ControlButtons = true
+CONFIG
+	print fl $config;
 	close(fl);
 
 	rprint "Directory initialized.","=";
@@ -568,7 +595,7 @@ SQL
 	    #========================================
 	    #SAVE CONFIGURATION
             #========================================
-	    sysCmd("head -n 4 sci2web/version.conf > $appdir/app.conf");
+	    sysCmd("grep -v '^#' sci2web/version.conf | head -n 3 > $appdir/app.conf");
 	    #========================================
 	    #SAVE DATABASE
             #========================================

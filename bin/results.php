@@ -63,6 +63,11 @@ if(!isset($PHP["HeightWindow"])){
 $hidvars.="<input type='hidden' name='HeightWindow' value='$PHP[HeightWindow]'>";
 $extrastyle.="height:$PHP[HeightWindow];";
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//GENERATE BUG FORM
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+list($bugbutton,$bugform)=genBugForm2("ResultsRun","Results Run");
+
 //////////////////////////////////////////////////////////////////////////////////
 //LOAD INFORMATION
 //////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +88,33 @@ $runpath="$runspath/$run_hash";
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $resfile="$runpath/sci2web/resultswindow.conf";
 readConfig2("$resfile");
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//STATUS SUMMARY 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$ajax_briefstatus=<<<AJAX
+loadContent
+  ('$PROJ[BINDIR]/ajax-trans-run.php?Action=GetStatus&Summary=true&RunCode=$runcode',
+   'briefstatus',
+   function(element,rtext){
+    hash=$(element).attr('hash');
+    if(hash!=hex_md5(rtext)){
+      $(element).attr('hash',hex_md5(rtext));
+      element.innerHTML=rtext;
+      if(hash && $('#statusicon').attr('status')=='end'){
+	window.location.reload();
+      }
+    }
+   },
+   function(element,rtext){
+   },
+   function(element,rtext){
+   },
+   2000,
+   true
+   )
+AJAX;
+$onloadbriefstatus=genOnLoad($ajax_briefstatus,'load');
 
 //////////////////////////////////////////////////////////////////////////////////
 //GENERATE CONTENT
@@ -271,12 +303,20 @@ $header.=<<<HEADER
     <input type="hidden" name="RunCode" value="$PHP[RunCode]">
     $hidvars
     <!--onclick="window.location.reload()"-->
-    <button href="JavaScript:void(null)" class="image" 
-       onmouseover="explainThis(this)" explanation="Results">
-      $BUTTONS[Update]
-    </button>
+    $onloadbriefstatus
+    <div class="actionbutton" id="briefstatus"></div>
+    <!-- -------------------- BUG BUTTON -------------------- -->
+    <div class="actionbutton">
+      $bugbutton
+    </div>
+    <div class="actionbutton">
+      <button href="JavaScript:void(null)" class="image" 
+	      onmouseover="explainThis(this)" explanation="Results">
+	$BUTTONS[Update]
+      </button>
+    </div>
+    $closebutton
   </div>
-  $closebutton
 </div>
 HEADER;
 
@@ -314,6 +354,7 @@ echo<<<CONTENT
       </div>
     </div>
     </form>
+    $bugform
 </body>
 </html>
 

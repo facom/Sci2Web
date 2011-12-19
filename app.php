@@ -51,7 +51,7 @@ if($qexpire){
 echo<<<CONTENT
 <html>
 $head
-<body onload="alert('We are sorry, your session has expired or it has not started yet. Please login again.')">
+<body onload="alert('$msg')">
 </body>
 </html>
 CONTENT;

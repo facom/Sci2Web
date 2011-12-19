@@ -402,7 +402,11 @@ if($PHP["Action"]=="GetControls")
   //==================================================
   //BUTTONS TO DISPLAY
   //==================================================
-  echo getControlButtons($run_code,$status);
+  $exclude=array();
+  if(isset($PHP["ExcludeActions"])){
+    $exclude=preg_split("/,/",$PHP["ExcludeActions"]);
+  }
+  echo getControlButtons($run_code,$status,"controls",$exclude);
   return 0;
 }
 if($PHP["Action"]=="GetStatus")
@@ -427,8 +431,11 @@ if($PHP["Action"]=="GetStatus")
       $status=$matches[1];
     }
   }
-
   $status_icon=statusIcon($status); 
+  if(isset($PHP["Summary"])){
+    $result="$status_icon";
+    goto next;
+  }
   $bstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh status")*100;
   if(file_exists("$runpath/time_start.oxt")){
     $initime=systemCmd("cat $runpath/time_start.oxt");

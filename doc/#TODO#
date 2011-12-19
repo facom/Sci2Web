@@ -278,7 +278,8 @@ Completed:
   DISPLAYED WHEN THE LINK IS CLICKED.
 
 - Change Bug form in order to avoid interference with other forms.
-  +Add bug icon in other components.
+  +Add bug icon in other components.  DONE.  NOW BUG FORM CAN BE
+  PLACED IN ANY PAGE AT ANY POINT.
 
 
 

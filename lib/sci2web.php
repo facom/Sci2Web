@@ -452,14 +452,14 @@ HEADER;
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //BUG REPORT
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $bugbut=genBugForm("UserOperation","User operations");
+  list($bugbut,$bugform)=genBugForm2("UserOperation","User operations");
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //CLOSE HEADER
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $header.=<<<HEADER
   </form>
-  <div style="position:relative;display:inline-block">$bugbut</div>
+  <div style="position:relative;display:inline-block">$bugbut$bugform</div>
   </div>
   <div class="header_content logo" >
   <!-- LOGO -->
@@ -987,6 +987,7 @@ function toggleButtons2($status)
     $display["Configure"]=$disp;
   }
   if($status=="configured"){
+    $display["Clean"]=$disp;
     $display["Compile"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -1302,16 +1303,20 @@ ICON;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET CONTROL BUTTONS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function getControlButtons($run_code,$status,$id="")
+function getControlButtons($run_code,$status,$id="",$exclude=array())
 {
   global $PHP,$PROJ,$BUTTONS;
 
   divBlanketOver($id);
   $display=toggleButtons2($status);
-  $actions=$PROJ["Actions"];
+  $actions=array_diff($PROJ["Actions"],$exclude);
   $links="";
   foreach($actions as $action){
-    $actionlink=genRunLink($run_code,$action,$id);
+    if(preg_match("/disabled/",$display[$action])){
+      $actionlink="alert('Action is disabled')";
+    }else{
+      $actionlink=genRunLink($run_code,$action,$id);
+    }
     $actionextra="";
 $links.=<<<LINKS
 <div class="actionbutton">
@@ -1480,6 +1485,123 @@ BUG;
    }
 
   return $bugform;
+}
+
+function genBugForm2($module,$subject,$recipient="sci2web@gmail.com")
+{
+  global $PHP,$PROJ,$BUTTONS;
+  $bugform="";
+
+  $user="anonymous";
+  $page=$PHP["PAGENAME"];
+
+  $id=md5("$user$page$module$subject");
+  if(isset($_SESSION["User"])){
+    $user=$_SESSION["User"];
+$ajax_bug=<<<AJAX
+submitForm
+  ('bugreport',
+   '$PROJ[BINDIR]/ajax-bug-report.php?',
+   'bugres',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     element.innerHTML='Reporting bug...';
+   },
+   function(element,rtext){
+     element.innerHTML='Error';
+   }
+   )
+AJAX;
+
+$bugbut=<<<BUG
+  <a href="JavaScript:void(null)" onclick="toggleElement('$id')"
+     style="position:relative;
+	    display:inline-block;
+	    border:solid black 0px;
+	    vertical-align:middle;
+	    height:20px"
+     onmouseover="explainThis(this)"
+     explanation="Report a bug"
+     >
+    $BUTTONS[Bug]
+  </a>
+BUG;
+
+$bugform=<<<BUG
+  <div id="bugres" style="position:fixed;
+                        bottom:10px;
+                        right:10px;
+                        z-index:10000">
+  </div>
+  <div style="position:relative;">
+    <div id="$id" class="bugbox">
+      <form id="bugreport" action="JavaScript:void(null)" method="get" 
+	    enctype="multipart/form-data">
+	<div style="position:absolute;top:5px;right:5px">
+	  <a href="JavaScript:void(null)" 
+	     onclick="toggleElement('$id');$('#bugres').html('')">
+	  $BUTTONS[Cancel]
+	  </a>
+	</div>
+      <table>
+	<tr>
+	</tr><tr>
+	  <td colspan=2><b>Bug Report</b></td>
+	</tr><tr>
+	  <td>From:</td>
+	  <td>
+	    <input type="text" name="BugUser" value="$user" onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugUser_Submit" value="$user">
+	  </td>
+	</tr><tr>
+	  <td>To:</td>
+	  <td>
+	    <input type="text" name="BugRecipient" value="$recipient" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugRecipient_Submit" value="$recipient">
+	  </td>
+	</tr><tr>
+	  <td>Page:</td>
+	  <td>
+	    <input type="text" name="BugPage" value="$page" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugPage_Submit" value="$page">
+	  </td>
+	</tr><tr>
+	  <td>Module:</td>
+	  <td>
+	    <input type="text" name="BugModule" value="$module" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugModule_Submit" value="$module">
+	  </td>
+	</tr><tr>
+	  <td>Subject:</td>
+	  <td>
+	    <input type="text" name="BugSubject" value="$subject" onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugSubject_Submit" value="$subject">
+	  </td>
+	</tr><tr>
+	  <td valign="top">Bug report:</td>
+	  <td>
+	    <textarea cols="30" rows="10" name="BugReport" onchange="popOutHidden(this)"></textarea>
+	    <input type="hidden" name="BugReport_Submit" value="">
+	  </td>
+	</tr><tr>
+	  <td colspan="2" style="text-align:right">
+	    <button name="UserOperation" value="BugReport"
+		    onclick="$ajax_bug">
+	      Report
+	    </button>
+	  </td>
+	</tr><tr>
+	</tr>
+      </table>
+      </form>
+    </div>
+  </div>
+BUG;
+   }
+
+  return array($bugbut,$bugform);
 }
 
 function checkSuperUser()

@@ -1,1 +1,9 @@
 Options -Indexes
+<files *.conf>
+order allow,deny
+deny from all
+</files>
+<files *.info>
+order allow,deny
+deny from all
+</files>
