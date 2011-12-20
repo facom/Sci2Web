@@ -183,7 +183,7 @@ HEADER;
 //==================================================
 //GENERATE LIST OF TEMPLATES
 //==================================================
-$bugbut=genBugForm("NewFromTemplate","Problems creating new from template");
+list($bugbut,$bugform)=genBugForm2("NewFromTemplate","Problems creating new from template",$VERCONFIG["EmailsContributors"]);
 $header.=<<<HEADER
 Template: 
 <select name='Template' onchange='popOutHidden(this)'>
@@ -210,6 +210,9 @@ $header.=<<<HEADER
 	explanation="Add run">
 $BUTTONS[Add]
 </button>
+</div>
+<div class="actionbutton">
+  $bugbut
 </div>
 HEADER;
 
@@ -278,6 +281,7 @@ $footer
 </table>
 </form>
 <div id="notaction_error" class="suberror" style="display:none"></div>
+$bugform
 </div>
 RUNS;
 end:

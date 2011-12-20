@@ -197,7 +197,6 @@ DBOUT;
     shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
     $PHP["DBCOUNTER"]++;
   }
-
   
   return $out;
 }
@@ -205,19 +204,27 @@ DBOUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET LIST OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function listFiles($path,$criterium="*",$opts="")
+function listFiles($path,$criterium="*",$opts="",$exclude="")
 {
   global $PHP;
 
   //FILTER NAME
-  $scol="awk '{print \$9}'";
+  $scol="awk '{print \$NF}'";
   
   //BASIC COMMAND
   $lcmd="ls -ld $opts $criterium";
-  
+  $excl="";
+  foreach(preg_split("/;/",$exclude) as $excludecond){
+    if(isBlank($excludecond)) continue;
+    $excl.="|egrep -v '$excludecond\$'";
+  }
+  /*
+  echo "LIST: $lcmd";br();
+  echo "EXCLUDE: $excl";br();
+  */
   //COMMAND TO SORT DIRS, FILES, LINKS
-  $cmd="($lcmd | grep '^d';$lcmd | grep '^-';$lcmd | grep '^l')  | $scol";
-
+  $cmd="($lcmd | grep '^d' $excl;$lcmd | grep '^-' $excl;$lcmd | grep '^l' $excl)  | $scol";
+  //echo "COMMAND: $cmd";br();
   //EXECUTE COMMAND
   $out=systemCmd("cd $path;$cmd",true);
   

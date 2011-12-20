@@ -224,15 +224,18 @@ RESULT;
   $removeopt="";
   if(checkSuperUser()){
 $removeopt=<<<REMOVE
+<div class="actionbutton">
 <button id="removebut" class="image" name="Button" value="RemoveResults"
 	onclick="$('#action').attr('value','RemoveResults');$ajax_down;"
 	onmouseover="explainThis(this)"
 	explanation="Remove results">
   $BUTTONS[Remove]
 </button>
+</div>
 REMOVE;
 }
 
+  list($bugbut,$bugform)=genBugForm2("DatabaseDownload","Download results from database",$_SESSION["Contributors"]);
 $result.=<<<RESULT
 </tbody>
 <tfooter>
@@ -242,12 +245,17 @@ $result.=<<<RESULT
     <div style="float:right">
       <input id="action" type="hidden" name="Action_Submit" value="None">
       $removeopt
+      <div class="actionbutton">
       <button  id="downbut" class="image" name="Button" value="DownloadResults"
 	       onclick="$('#action').attr('value','DownloadResults');$ajax_down;"
 	       onmouseover="explainThis(this)"
 	       explanation="Download results">
 	$BUTTONS[Down]
       </button>
+      </div>
+      <div class="actionbutton">
+      $bugbut
+      </div>
       <input id="action" type="hidden" name="NumResults_Submit" value="$i">
     </div>
     <div id="down_wait" 
@@ -265,6 +273,7 @@ $result.=<<<RESULT
 </tfooter>
 </table>
 </form>
+$bugform
 RESULT;
 }
 

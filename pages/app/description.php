@@ -38,8 +38,10 @@ if(isset($_SESSION["User"]) and
     strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]")
     )
    ){
+   list($bugbut,$bugform)=genBugForm2("PageEdition","Editing page content");
 $LINK=<<<LINK
 <div id="editlink_$RID" class="editlink">
+  $bugbut
   <a href="JavaScript:void(null)"
   onclick="toggleToEdition('content_$RID','edition_$RID','editlink_$RID','$COLORS[text]','$PROJ[PROJDIR]/lib/ckfinder')">
   Edit
@@ -79,6 +81,7 @@ $CONTENT
 $CONTENT
 </textarea>
 </form>
+$bugform
 $RESULT
 CONTENT;
 ?>

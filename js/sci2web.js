@@ -533,3 +533,8 @@ function setValue(elementid,value)
   element=document.getElementById(elementid);
   $(element).attr("value",value);
 }
+
+function downloadFile(url)
+{
+    window.open(url,'Download');
+}

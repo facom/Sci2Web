@@ -66,7 +66,7 @@ $extrastyle.="height:$PHP[HeightWindow];";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //GENERATE BUG FORM
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-list($bugbutton,$bugform)=genBugForm2("ResultsRun","Results Run");
+list($bugbutton,$bugform)=genBugForm2("ResultsRun","Results Run",$_SESSION["Contributors"]);
 
 //////////////////////////////////////////////////////////////////////////////////
 //LOAD INFORMATION
@@ -231,8 +231,13 @@ $tabcont.=<<<FILE
 $onloadfile
 <div style="position:relative;height:30px">
   <div class="actionbutton">
-    <a href="JavaScript:$flink" style="font-size:12px">
-      $file
+    $file:
+    <a href="JavaScript:$flink" style="font-size:14px">
+      View
+    </a> | 
+    <a href="$rundir/$file" 
+       style="font-size:14px">
+      Download
     </a>
   </div>
   <div class="actionbutton"
@@ -285,8 +290,7 @@ if($qclosable){
 $closebutton=<<<CLOSE
   <!-- -------------------- CLOSE BUTTON -------------------- -->
   <div class="actionbutton">
-    <a href="JavaScript:void(null)" class="image" onclick="window.close()"
-       onmouseover="explainThis(this)" explanation="Close">
+    <a href="JavaScript:void(null)" class="image" onclick="window.close()">
       $BUTTONS[Cancel]
     </a>
   </div>
@@ -295,6 +299,7 @@ CLOSE;
 $header.=<<<HEADER
 <div class="actionbutton">
 <span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
+$bugbutton
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">
@@ -304,10 +309,11 @@ $header.=<<<HEADER
     $hidvars
     <!--onclick="window.location.reload()"-->
     $onloadbriefstatus
-    <div class="actionbutton" id="briefstatus"></div>
-    <!-- -------------------- BUG BUTTON -------------------- -->
-    <div class="actionbutton">
-      $bugbutton
+    <div class="actionbutton" id="briefstatus" 
+	 style="position:relative;
+		border:solid black 0px;
+		text-align:right;
+		width:200px">
     </div>
     <div class="actionbutton">
       <button href="JavaScript:void(null)" class="image" 

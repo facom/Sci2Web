@@ -217,25 +217,51 @@ if($Action=="Save"){
 if($Action=="GetList"){
   $path="$PHP[ROOTPATH]/$Dir";
   if(isset($PHP["SubDir"])) $path.="/$PHP[SubDir]";
-  //echo "PATH:$path";br();
   if(!is_dir($path)){
     $result="<tr><td colspan=10>No directory '$Dir'</td></tr>";
     goto end;
   }
-  $criterium="*";
+  $criterium="";
   if(isset($PHP["Criterium"])) $criterium=$PHP["Criterium"];
+  //CHECK FOR PERMISSIONS FILE
+  $pfile=".s2wfiles";
+  systemCmd("echo '(IFS=/;for dir in \$PWD;do if [ -e \"\$PWD/$pfile\" ];then echo \"\$PWD\"/$pfile;exit 0;fi;cd ..;done;exit 1)' &> $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
+  $pfile=systemCmd("cd $path;bash $PROJ[TMPPATH]/cmd.$PHP[RANDID];rm -rf $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
+  if(isBlank($pfile)){
+    echo "<tr><td colspan=10>Directory has not reading permissions.</td></tr>";
+    return;
+  }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //LIST OF FILES
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $files=listFiles($path,$criterium);
+  //GET FILES LISTED
+  $critlist=shell_exec("cat $pfile");
+  $exclude="";
+  foreach(preg_split("/\n/",$critlist) as $crit){
+    if(preg_match("/^\^/",$crit)){
+      $crit=preg_replace("/\^/","",$crit);
+      $exclude.="$crit;";
+    }else{
+      $criterium.=" $crit ";
+    }
+  }
+  /*
+  echo "CRITERIUM:$criterium";br();
+  echo "EXCLUDE:$exclude";br();
+  */
+  if(isBlank($criterium)) $criterium="*";
+  $files=listFiles($path,$criterium,"",$exclude);
   $result.="";
   $i=0;
-  if(!file_exists("$path/.root")){
+  if(file_exists("$path/../.s2wfiles")){
     array_unshift($files,"..");
   }
   $nfiles=count($files);
 
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //SEPARATE BY WINDOWS
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   if($PHP["Start"]=="All"){
     $start=0;
     $end=count($files);

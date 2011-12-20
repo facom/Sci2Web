@@ -106,7 +106,7 @@ DB;
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-$bugbut=genBugForm("SubmitDatabase","Submission problems");
+list($bugbut,$bugform)=genBugForm2("SubmitDatabase","Submission problems");
 echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
 <h1>Database of Results</h1>
@@ -165,14 +165,12 @@ Database specification to know the available search variables.
   </tr>
 <tr>
   <td colspan="3">
-    <button name="ActionDatabase">Submit</button>
+    <button name="ActionDatabase">Submit</button>$bugbut
   </td>
 </tr>
 </table>
 </form>
-<div style="position:absolute;top:0px;right:0px">
-$bugbut
-</div>
+$bugform
 </div>
 
 <p>SQL Results:</p>

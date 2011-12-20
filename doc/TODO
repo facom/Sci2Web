@@ -10,6 +10,8 @@
 
 To Do:
 
+- Configure files edition permissions.
+
 - Create a notification window.  A window to show simple messages with
   an update link.
   + Redirect the output of the submission and check why is not executing.
@@ -30,8 +32,6 @@ To Do:
 
 - Toggle between a history list and a control list
 
-- Configure files edition permissions.
-
 - Create page to get information about remote "Sci2Web server sites"
 
 - Give access to developers and contributors to the configuration
@@ -39,18 +39,13 @@ To Do:
 
 - Release option in sci2web.pl script: create tarball with the
   application.
-
   + Create a downloads directory in the application directory.  With
     www-data permissions
 
-- When a session has expired close pages or return to home page.
-  PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT
-  WINDOWS DETECT A EXPIRED SESSION IT CLOSES AUTOMATICALLY.
+Dreams:
 
 - Attention to changes in sci2web.conf.  Update changes in the
   doc/install template file.
-
-Dreams:
 
 - Configure multiple queue system: sge, torque/pbs
 
@@ -278,7 +273,14 @@ Completed:
   DISPLAYED WHEN THE LINK IS CLICKED.
 
 - Change Bug form in order to avoid interference with other forms.
-  +Add bug icon in other components.
+  +Add bug icon in other components.  DONE.  NOW BUG FORM CAN BE
+  PLACED IN ANY PAGE AT ANY POINT.
+
+- When a session has expired close pages or return to home page.
+  PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT
+  WINDOWS DETECT A EXPIRED SESSION IT CLOSES AUTOMATICALLY.  DONE.
+
+
 
 
 

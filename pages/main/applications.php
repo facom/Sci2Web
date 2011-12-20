@@ -41,8 +41,8 @@ APPS;
 $apptable=mysqlCmd("select * from apps");
 
 $i=0;
+$bugforms=array();
 foreach($apptable as $approw){
-  list($bugbut,$bugform)=genBugForm2("PageEdition","Editing page content");
   $appcode=$approw["app_code"];
   $appdate=$approw["creation_date"];
   $appauthor=$approw["users_emails_author"];
@@ -67,6 +67,8 @@ CONTENT;
   $appcomplete=$CONFIG["AppCompleteName"];
   $appdesc=$CONFIG["AppBrief"];
 
+  //BUG BUTTON
+  list($bugbut,$bugforms[])=genBugForm2("AppplicationAccess","Access to application $appname","$appauthor");
   $appvers=$approw["versions_codes"];
   if(!preg_match("/[\w\d]/",$appvers)) continue;
   $vers=preg_split("/;/",$appvers);
@@ -127,6 +129,9 @@ $content.=<<<APPS
 </table>
 </form>
 APPS;
+foreach($bugforms as $bugform){
+  echo $bugform;
+}
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////

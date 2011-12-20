@@ -431,12 +431,16 @@ if($PHP["Action"]=="GetStatus")
       $status=$matches[1];
     }
   }
+  $bstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh status")*100;
   $status_icon=statusIcon($status); 
   if(isset($PHP["Summary"])){
-    $result="$status_icon";
+    $result="";
+    if($status=="run" or $status=="pause"){
+      $result.=statusBar($bstatus);
+    }
+    $result.="$status_icon";
     goto next;
   }
-  $bstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh status")*100;
   if(file_exists("$runpath/time_start.oxt")){
     $initime=systemCmd("cat $runpath/time_start.oxt");
     $initime_date=date("r",$initime);

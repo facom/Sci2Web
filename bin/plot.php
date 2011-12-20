@@ -81,7 +81,7 @@ CONTENT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //READ CONFIGURATION FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$fconf="$imgpath/$fname.ps2w";
+$fconf="$imgpath/.$fname.ps2w";
 if(!file_exists($fconf)){
   $pconf=genPlotConf($fpath,$fimgpath);
   $fl=fileOpen("$fconf","w");
@@ -147,7 +147,7 @@ CONTENT;
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=$fname.ps2w',
+   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=.$fname.ps2w',
    'plotarea',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -182,7 +182,7 @@ $colspan=2;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //LINKS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$confile_link=fileWebOpen($imgdir,"$fname.ps2w",'View');
+$confile_link=fileWebOpen($imgdir,".$fname.ps2w",'View');
 $file_link=fileWebOpen($PHP["Dir"],$PHP["File"],'View');
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +207,7 @@ $selSetGrid=genSelect(array("'Yes'","'No'"),"SetGrid",$CONFIG["SetGrid"],"onchan
 $ajaxcmd=<<<AJAX
 submitForm
   ('formplot',
-   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=$fname.ps2w',
+   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=.$fname.ps2w',
    'plotarea',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -251,7 +251,7 @@ $content.=<<<CONTENT
 	<input type="hidden" name="File_Submit" value="$PHP[File]">
 	<input type="hidden" name="DataFiles_Submit" value="$fpath">
         <input type="hidden" name="ImageFile_Submit" value="$fimgpath">
-        <input type="hidden" name="ConfFile_Submit" value="$fname.ps2w">
+        <input type="hidden" name="ConfFile_Submit" value=".$fname.ps2w">
 	<a href="JavaScript:$file_link">$PHP[File]</a>
       </td>
     </tr>
@@ -494,7 +494,7 @@ CONTENT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FOOTER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$bugbut=genBugForm("PlotGeneral","General problems with plot");
+list($bugbut,$bugform)=genBugForm2("PlotGeneral","General problems with plot");
 $footer.= <<<CONF
 </div>
 <div class="formbuttons" id="buttons">
@@ -503,7 +503,7 @@ $footer.= <<<CONF
   <button class="image" onclick="window.close()">
     $BUTTONS[Cancel]
   </button>
-  <div class="close" style="right:38px;top:7px">$bugbut</div>
+  <div class="close" style="right:38px;top:7px">$bugbut$bugform</div>
 </div>
 CONF;
 

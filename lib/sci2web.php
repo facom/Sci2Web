@@ -1220,7 +1220,7 @@ INPUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //ICON STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function statusIcon($status)
+function statusIcon($status,$width="50%")
 {
   global $PHP,$PROJ,$BUTTONS;
 
@@ -1285,12 +1285,13 @@ STATUS;
   }
 
 $icon=<<<ICON
-<div id="statusicon" style="float:center;
+<div id="statusicon" style="display:inline-block;
 			    color:$status_color;
 			    border-radius:5px;
 			    text-align:center;
 			    background-color:$status_bg;
 			    padding:5px;
+			    width:$width;
 			    "
      status="$status">
 <b>$status_text</b>
@@ -1380,13 +1381,14 @@ function genBugForm($module,$subject,$recipient="sci2web@gmail.com")
 
   $user="anonymous";
   $page=$PHP["PAGENAME"];
+  $id=genRandom(2);
 
   $id=md5("$user$page$module$subject");
   if(isset($_SESSION["User"])){
     $user=$_SESSION["User"];
 $ajax_bug=<<<AJAX
 submitForm
-  ('bugreport',
+  ('bugreport$id',
    '$PROJ[BINDIR]/ajax-bug-report.php?',
    'bugres',
    function(element,rtext){
@@ -1420,7 +1422,7 @@ $bugform=<<<BUG
   </div>
   <div style="position:relative;">
     <div id="$id" class="bugbox">
-      <form id="bugreport" action="JavaScript:void(null)" method="get" 
+      <form id="bugreport$id" action="JavaScript:void(null)" method="get" 
 	    enctype="multipart/form-data">
 	<div style="position:absolute;top:5px;right:5px">
 	  <a href="JavaScript:void(null)" 
@@ -1494,13 +1496,14 @@ function genBugForm2($module,$subject,$recipient="sci2web@gmail.com")
 
   $user="anonymous";
   $page=$PHP["PAGENAME"];
-
+  $id=genRandom(2);
+  
   $id=md5("$user$page$module$subject");
   if(isset($_SESSION["User"])){
     $user=$_SESSION["User"];
 $ajax_bug=<<<AJAX
 submitForm
-  ('bugreport',
+  ('bugreport$id',
    '$PROJ[BINDIR]/ajax-bug-report.php?',
    'bugres',
    function(element,rtext){
@@ -1537,7 +1540,7 @@ $bugform=<<<BUG
   </div>
   <div style="position:relative;">
     <div id="$id" class="bugbox">
-      <form id="bugreport" action="JavaScript:void(null)" method="get" 
+      <form id="bugreport$id" action="JavaScript:void(null)" method="get" 
 	    enctype="multipart/form-data">
 	<div style="position:absolute;top:5px;right:5px">
 	  <a href="JavaScript:void(null)" 
@@ -1616,7 +1619,7 @@ function checkSuperUser()
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //SEND EMAIL
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function sendMail($email,$subject,$text,$from,$replyto)
+function sendMail($emails,$subject,$text,$from,$replyto)
 {
   global $PHP,$PROJ;
 
@@ -1625,10 +1628,13 @@ function sendMail($email,$subject,$text,$from,$replyto)
   $headers.="MIME-Version: 1.0\r\n";
   $headers.="Content-type: text/html\r\n";
   
-  if($PROJ["ENABLEMAIL"]){
-    $status=mail($email,$subject,$text,$headers);
-  }else{
-    $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+  $listemails=preg_split("/;/",$emails);
+  foreach($listemails as $email){
+    if(isBlank($email)) continue;
+    if($PROJ["ENABLEMAIL"]){
+      $status=mail($email,$subject,$text,$headers);
+    }else{
+      $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
 $msg=<<<MSG
 Date: $now
 ${headers}To: $email
@@ -1642,7 +1648,38 @@ MSG;
     $fl=fopen("$PROJ[LOGPATH]/mail.log","a");
     fwrite($fl,"$msg");
     fclose($fl);
-  }
+    }//END IF ENABLEMAIL
+  }//END FOREACH LISTEMAILS
 }
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//SEND EMAIL
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function statusBar($bstatus,$width="30%")
+{
+  global $PROJ,$PHP,$COLORS;
+$status=<<<STATUS
+<div id="status_text" 
+     style="display:inline-block;
+	    text-align:center;
+	    width:$width;
+	    height:100%;
+	    border:solid $COLORS[dark] 1px;
+	    margin-right:5px;">
+  <div id="status_bar" 
+       style="width:$bstatus%;
+	      text-align:right;
+	      background-color:$COLORS[dark];
+	      padding:0px;
+	      color:$COLORS[back];
+	      padding:4px;
+	      font-size:12px;">
+    $bstatus%
+  </div>
+</div>
+STATUS;
+ return $status;
+}
+
 
 ?>
