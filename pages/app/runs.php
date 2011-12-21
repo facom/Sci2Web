@@ -156,7 +156,8 @@ foreach($actions as $action){
 $links.=<<<LINKS
 <div class="actionbutton">
 <button class="image" id="Bt_$action" 
-	onclick="$('#actionspec').attr('value','$action');
+	onclick="notDiv('notaction_error','Processing...');
+		 $('#actionspec').attr('value','$action');
 		 $ajax_action;
 		 " 
 	onmouseover="explainThis(this)" 
@@ -186,14 +187,14 @@ HEADER;
 list($bugbut,$bugform)=genBugForm2("NewFromTemplate","Problems creating new from template",$VERCONFIG["EmailsContributors"]);
 $header.=<<<HEADER
 Template: 
-<select name='Template' onchange='popOutHidden(this)'>
+<select name="Template" onchange="popOutHidden(this)">
 HEADER;
 foreach($files as $file){
   preg_match("/(.+)\.conf/",$file,$matches);
   $template=$matches[1];
   $parts=preg_split("/_/",$template);
   $tempname=implode(" ",$parts);
-  $header.="<option value='$template'>$tempname";
+  $header.="<option id='Template_$template' value='$template'>$tempname";
 }
 $header.=<<<HEADER
 </select>
@@ -201,15 +202,37 @@ $header.=<<<HEADER
 HEADER;
 
 $header.=<<<HEADER
+<select name="NumRuns" onchange="popOutHidden(this)">
+HEADER;
+for($i=1;$i<=10;$i++){
+  $header.="<option value='$i'>$i";
+}
+$header.=<<<HEADER
+</select>
+  <input type="hidden" name="NumRuns_Submit" value="1">
+HEADER;
+
+$header.=<<<HEADER
 </div>
 <div class="actionbutton">
-<button class="image" id="new" 
-	onclick="$('#actionspec').attr('value','New');
-		 $ajax_action;"
-	onmouseover="explainThis(this)" 
-	explanation="Add run">
-$BUTTONS[Add]
-</button>
+  <button class="image" id="new" 
+	  onclick="notDiv('notaction_error','Processing...');
+		   $('#actionspec').attr('value','New');
+		   $ajax_action;"
+	  onmouseover="explainThis(this)" 
+	  explanation="Add run from template">
+    $BUTTONS[Add]
+  </button>
+</div>
+<div class="actionbutton">
+  <button class="image" id="new" 
+	  onclick="notDiv('notaction_error','Processing...');
+		   $('#actionspec').attr('value','RemoveTemplate');
+		   $ajax_action;"
+	  onmouseover="explainThis(this)" 
+	  explanation="Remove template">
+    $BUTTONS[Remove]
+  </button>
 </div>
 <div class="actionbutton">
   $bugbut
@@ -222,9 +245,18 @@ HEADER;
 $header.=<<<HEADER
 <div class="actionbutton"
      style="position:absolute;right:0px;top:0px;">
-  <button class="image" onclick="$('#notaction_error').css('display','none');$ajax_runtable">
-    $BUTTONS[Update]
-  </button>
+  <div class="actionbutton">
+    <label>Search:</label>
+    <input type="text" name="searchruns">
+  </div>  
+  <div class="actionbutton">
+    <button class="image" 
+	    onclick="$('#notaction_error').css('display','none');$ajax_runtable"
+	    onmouseover="explainThis(this)"
+	    explanation="Update list">
+      $BUTTONS[Update]
+    </button>
+  </div>
 </div>
 HEADER;
 

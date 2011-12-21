@@ -78,6 +78,7 @@ create table runs (
        run_name varchar(255) not null,
        run_pinfo varchar(255) null,
        run_status tinyint not null,
+       run_template varchar(255) null,
        configuration_date datetime not null,
        permissions char(3) not null,
        run_extra1 varchar(255),       

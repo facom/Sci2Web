@@ -62,7 +62,8 @@ if(isset($PHP["RunMultiple"])){
 }else{
   $runcodes=array($PHP["RunCode"]);
 }
-if($PHP["Action"]=="New"){
+if($PHP["Action"]=="New" or 
+   $PHP["Action"]=="RemoveTemplate"){
   $runcodes=array("00000000");
 }
 /*
@@ -71,7 +72,6 @@ echo "RUNS: $PHP[RunCodes]";br();
 printArray($runcodes,"RUNS");
 goto end;
 */
-
 $nruns=0;
 foreach($runcodes as $runcode){
   if(isBlank($runcode)) continue;
@@ -104,8 +104,25 @@ continue;
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
 //////////////////////////////////////////////////////////////////////////////////
+if($PHP["Action"]=="RemoveTemplate")
+{
+  if($PHP["Template"]=="Default"){
+    $result.="You cannot remove the Default template.";
+  }else{
+    $ftemplate="$runspath/templates/$PHP[Template].conf";
+    if(file_exists($ftemplate)){
+      systemCmd("rm -rf $ftemplate");
+      $onload=genOnLoad("$('#Template_$PHP[Template]').attr('disabled',true)");
+      $result.="Template removed $PHP[Template]$onload";
+    }else{
+      $result.="Template file not found";
+    }
+  }
+}
 if($PHP["Action"]=="New")
 {
+  echo "Number of runs: $PHP[NumRuns]";br();
+  for($nr=1;$nr<=$PHP["NumRuns"];$nr++){
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //NEW 
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -128,7 +145,7 @@ if($PHP["Action"]=="New")
   //==================================================
   //CREATE TEMPORAL RUN DIRECTORY AND FILES
   //==================================================
-  $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genrun --appdir $PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version] --template $PHP[Template] --rundir $runtmp");
+  $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genrun --appdir $PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version] --rundir $runtmp");
   if($PHP["?"]){$qerror=true;$error.="<p>Error generating run</p>";goto next;}
   $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genfiles --runconf $runfile --rundir $runtmp");
   if($PHP["?"]){$qerror=true;$error.="<p>Error generating files</p>";goto next;}
@@ -155,6 +172,7 @@ if($PHP["Action"]=="New")
     getToday("%year-%mon-%mday %hours:%minutes:%seconds");
   $PHP["run_status"]=$S2C["configured"];
   $PHP["run_pinfo"]="";
+  $PHP["run_template"]="$PHP[Template]";
   $PHP["permissions"]="rw";
   $PHP["versions_code"]=$_SESSION["Version"];
   $PHP["apps_code"]=$_SESSION["App"];
@@ -204,7 +222,8 @@ if($PHP["Action"]=="New")
   $sqlcmd=rtrim($sqlcmd,",");
   $resmat=mysqlCmd($sqlcmd);
   if($PHP["?"]){$qerror=true;$error.="<p>Database could not be updated</p>";goto next;}
-  $result.="New run created...";
+  }
+  $result.="$PHP[NumRuns] runs created...";
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

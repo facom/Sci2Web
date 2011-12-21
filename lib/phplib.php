@@ -362,21 +362,18 @@ function readConfig($config)
   $index=array();
   $i=0;
   foreach($lines as $line){
-    if(preg_match("/\w+/",$line) and
+    if(preg_match("/=/",$line) and
        !preg_match("/^\/\//",$line) and
        !preg_match("/^#/",$line)){
       $fields=preg_split("/\s*=\s*/",$line);
-      /*
-      $fields[1]=preg_replace("/\s+r\"/","",$fields[1]);
-      $fields[1]=preg_replace("/\s*r'([^'\)])/","$1",$fields[1]);
-      $fields[1]=preg_replace("/\s+u\"/","",$fields[1]);
-      $fields[1]=preg_replace("/\s+u'/","",$fields[1]);
-      $fields[1]=preg_replace("/\"/","",$fields[1]);
-      $fields[1]=preg_replace("/'/","",$fields[1]);
-      */
       $CONFIG[$fields[0]]=$fields[1];
       //echo "Reading $fields[0] = ".$CONFIG[$fields[0]];br();
       $i++;
+    }else if(preg_match("/\w+/",$line) and
+	     !preg_match("/^\/\//",$line) and
+	     !preg_match("/^#/",$line)){
+      //echo "Orphan line for $fields[0] = ".$line;br();
+      $CONFIG[$fields[0]].="\n$line";
     }
   }
 
@@ -395,7 +392,7 @@ function readConfig2($config)
   $i=0;
   $fieldstr=":";
   foreach($lines as $line){
-    if(preg_match("/\w+/",$line) and
+    if(preg_match("/=/",$line) and
        !preg_match("/^\/\//",$line) and
        !preg_match("/^#/",$line)){
       $fields=preg_split("/\s*=\s*/",$line);
@@ -416,6 +413,11 @@ function readConfig2($config)
       $CONFIG[$field][$NUMREP[$field]]=$value;
       //echo "Reading $fields[0] = ".$CONFIG[$fields[0]];br();
       $i++;
+    }else if(preg_match("/\w+/",$line) and
+	     !preg_match("/^\/\//",$line) and
+	     !preg_match("/^#/",$line)){
+      //echo "Orphan line for $field($NUMREP[$field]) = ".$line;br();
+      $CONFIG[$field][$NUMREP[$field]].="\n$line";
     }
   }
 

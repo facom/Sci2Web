@@ -54,7 +54,8 @@ switch($Action){
 	push(@cmdopt,("appname|a=s","vername|v=s"));
     }
     case "genrun" {
-	push(@cmdopt,("appdir|a=s","template|t=s","rundir|r=s","local|l"));
+	push(@cmdopt,("appdir|a=s","template|t=s","template-file|f",
+		      "rundir|r=s","local|l"));
     }
     case "saveresult" {
 	push(@cmdopt,("rundir|r=s"));
@@ -808,10 +809,16 @@ SQL
 	$appdir=noBlank($options{appdir},"Appdir");
 	Error "Application directory not valid" 
 	    if(!-d "$root/$appdir/sci2web");
-
-	$template=noBlank($options{template},"Template");
-	Error "Template '$template' not found" 
-	    if(!-e "$root/$appdir/sci2web/templates/$template.conf");
+	
+	# if($options{template}){
+	#     $template=$options{template};
+	#     Error "Template '$template' not found" 
+	# 	if(!-e "$root/$appdir/sci2web/templates/$template.conf");
+	# }else{
+	#     $template=noBlank($options{template-file},"Template file");
+	#     Error "Template file '$template' not found" 
+	# 	if(!-e $template);
+	# }
 
 	$rundir=noBlank($options{rundir},"Run directory");
 	Error "Directory '$rundir' already exist" 
@@ -822,6 +829,7 @@ SQL
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Creating Run Directory...";
 	sysCmd("mkdir -p $root/$rundir");
+	sysCmd("echo -e '*\n^sci2web' > $root/$rundir/.s2wfiles");
 
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#COPY APPLICATION FILES
@@ -917,6 +925,7 @@ SQL
 	$dbdir="$RUNSDIR/db/$appname/$vername";
 	if(-d $dbdir){
 	    sysCmd("mkdir -p $dbdir/$runhash");
+	    sysCmd("echo -e '*' > $dbdir/$runhash/.s2wfiles");
 	    sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $dbdir/$runhash");
 	    sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $dbdir/$runhash");
 	    sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");

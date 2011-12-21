@@ -223,7 +223,10 @@ if($Action=="GetList"){
   }
   $criterium="";
   if(isset($PHP["Criterium"])) $criterium=$PHP["Criterium"];
-  //CHECK FOR PERMISSIONS FILE
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //CHECK FOR PERMISSIONS 
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   $pfile=".s2wfiles";
   systemCmd("echo '(IFS=/;for dir in \$PWD;do if [ -e \"\$PWD/$pfile\" ];then echo \"\$PWD\"/$pfile;exit 0;fi;cd ..;done;exit 1)' &> $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
   $pfile=systemCmd("cd $path;bash $PROJ[TMPPATH]/cmd.$PHP[RANDID];rm -rf $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
@@ -478,19 +481,19 @@ $checkcol
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE NAME     							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
+<td class="field">
   $iconimg<a href="$flink" $explanation $extraaction>$fileshort<!--($ftype)--></a>
 </td>
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE METADATA 							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
+<td class="field">
 $metadata
 </td>
 <!-- ---------------------------------------------------------------------- -->
 <!-- ACTIONS         							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
+<td class="field">
 $actions
 </td>
 </tr>

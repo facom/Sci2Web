@@ -253,7 +253,9 @@ $PROJ["STYLES"]=<<<STYLES
     background-color:$COLORS[clear];
     width:70%;
     }
-
+    td.field{
+    font-size:12px;
+    }
     table.apps{
     width: 100%;
     border: solid $COLORS[dark] 0px;
@@ -649,7 +651,7 @@ $PROJ["STYLES"]=<<<STYLES
     .suberror{
     position:absolute;
     width:20%;
-    bottom:0px;
+    top:0px;
     left:40%;
     background-color:pink;
     text-align:center;

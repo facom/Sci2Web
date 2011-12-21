@@ -106,6 +106,7 @@ $DATABASE["Runs"]=
 	"configuration_date"=>"Configuration Date",
 	"run_status"=>"Run Status",
 	"run_pinfo"=>"Run process information",
+	"run_template"=>"Run template",
 	"permissions"=>"Permissions",
 	"versions_code"=>"Version Code",
 	"apps_code"=>"App Code",
@@ -1220,7 +1221,7 @@ INPUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //ICON STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function statusIcon($status,$width="50%")
+function statusIcon($status,$width="")
 {
   global $PHP,$PROJ,$BUTTONS;
 

@@ -10,37 +10,31 @@
 
 To Do:
 
-- Configure files edition permissions.
-
-- Create a notification window.  A window to show simple messages with
-  an update link.
-  + Redirect the output of the submission and check why is not executing.
-  + Check the status of a submission.
-
-- Test everything is running in Firefox
-
-- Plot using a preexistent ps2w file
-
-- Show runs satisfying a criterium (search runs):
+- Show runs following a given criterium (search run): 
+  + Sort runs by date
   + Show runs by all users
 
-- Sort runs by date
-
-- Allow multiple line values in configuration files
-
-- Show submit status and allow to see how is in the queue system
-
 - Toggle between a history list and a control list
-
-- Create page to get information about remote "Sci2Web server sites"
-
-- Give access to developers and contributors to the configuration
-  files of a given application on-line
 
 - Release option in sci2web.pl script: create tarball with the
   application.
   + Create a downloads directory in the application directory.  With
     www-data permissions
+
+- Create a notification window.  A window to show simple messages with
+  an update link.
+  + Redirect the output of the submission and check why is not executing.
+  + Check the status of a submission.
+  + Show submit status and allow to see how is in the queue system
+
+- Test everything is running in Firefox
+
+- Plot using a preexistent ps2w file
+
+- Create page to get information about remote "Sci2Web server sites"
+
+- Give access to developers and contributors to the configuration
+  files of a given application on-line
 
 Dreams:
 
@@ -280,11 +274,14 @@ Completed:
   PARTIALLY DONE.  IT IS REQUIRED THAT WHEN A CONFIGURE OR RESULT
   WINDOWS DETECT A EXPIRED SESSION IT CLOSES AUTOMATICALLY.  DONE.
 
+- Configure files edition permissions.  DONE.  FILE '.S2WFILES'
+  CONFIGURED TO SET UP READING PERMISSIONS.
 
+- Add a new field to the runs database: template.  It will distinguish
+  runs of the same template.  Useful for parametric studies. DONE.
 
+- Create multiple runs with just a click. DONE. INCLUDING ADDITIONALLY:
+  + Template advanced interface: creation, save, removal
 
-
-
-
-
+- Allow multiple line values in configuration files. DONE.
 

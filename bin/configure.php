@@ -266,22 +266,31 @@ if(isset($PHP["Action"])){
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //CREATE TEMPLATE
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  if($PHP["Action"]=="Template"){
+  if($PHP["Action"]=="NewTemplate" or $PHP["Action"]=="SaveTemplate"){
     //==================================================
     //CREATE A NEW TEMPLATE
     //==================================================
     $template=preg_replace("/\s+/","_",$PHP["NewTemplate"]);
     $tempdir="$runspath/templates";
     $notmsg="Saving new template $template";
-    if(file_exists("$tempdir/$template.conf")){
+    if(file_exists("$tempdir/$template.conf") and 
+       $PHP["Action"]=="NewTemplate"
+       ){
       $qerror=true;
       $notmsg=$errors="<p>A template with this name already exist.</p>";
       goto error;
     }else{
-      genConfig("$apppath/sci2web/controlvars.info",
-		"$tempdir/$template.conf",
-		"#T:$PHP[NewTemplate]");
-      $notmsg="<p>Template $PHP[NewTemplate] created...</p>";
+      if($template=="Default"){
+	$notmsg="<p>You cannot save or modify the Default template</p>";
+      }else{
+	genConfig("$apppath/sci2web/controlvars.info",
+		  "$tempdir/$template.conf",
+		  "#T:$PHP[NewTemplate]");
+	mysqlCmd("update runs set run_template='$PHP[NewTemplate]' where run_code='$PHP[RunCode]'");
+	$notmsg="<p>Template $PHP[NewTemplate] created...</p>";
+	if($PHP["Action"]=="SaveTemplate")
+	  $notmsg="<p>Template $PHP[NewTemplate] saved...</p>";
+      }
     }
   }
 
@@ -371,17 +380,29 @@ $groups["General"][]="Buttons";
 if(isset($PHP["template"])){
   $tempname=str_replace("_"," ",$PHP["template"]);
   $tempname=str_replace(".conf","",$tempname);
-}else{$tempname="$RUNCONFIG[run_name]";}
+}else{$tempname="$RUNCONFIG[run_template]";}
 
 //==================================================
 //ADD INPUT AND BUTTON FOR A NEW TEMPLATE
 //==================================================
 $vars["General"]["Buttons"][]=<<<BUTTON
 <div class="actionbutton">
-New template:<input type="text" name="NewTemplate" value="$tempname">
+  Template:<input type="text" name="NewTemplate" value="$tempname">
 </div>
 <div class="actionbutton">
-<button class="image" name='Action' value='Template'>$BUTTONS[Add]</button>
+  <button class="image" name="Action" value="NewTemplate"
+	  onmouseover="explainThis(this)" 
+	  explanation="Add a new template">
+    $BUTTONS[Add]
+  </button>
+</div>
+<div class="actionbutton">
+  <button class="image" name="Action" value="SaveTemplate"
+	  onmouseover="explainThis(this)" 
+	  explanation="Save current template"
+	  >
+    $BUTTONS[Save]
+  </button>
 </div>
 <br/>
 BUTTON;
