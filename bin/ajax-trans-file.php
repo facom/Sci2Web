@@ -159,7 +159,7 @@ if($Action=="RemoveResults"){
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       //REMOVE DATABASE ENTRY
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      mysqlCmd("delete from $dbname where dbrunhash='$runhash'");
+      mysqlCmd("delete from `$dbname` where dbrunhash='$runhash'");
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       //REMOVE FILE
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

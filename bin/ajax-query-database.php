@@ -37,7 +37,7 @@ if(isBlank($PHP["Query"])){
   $PHP["Query"]="dbdate";
 }
 $dbname="${_SESSION[App]}_${_SESSION[Version]}";
-$query="select * from $dbname where $PHP[Query]";
+$query="select * from `$dbname` where $PHP[Query]";
 
 //////////////////////////////////////////////////////////////////////////////////
 //QUERY DATABASE

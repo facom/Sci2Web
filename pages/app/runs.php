@@ -28,7 +28,8 @@ include("$RELATIVE/lib/sci2web.php");
 //INITIALIZATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $result="";
-$header="";
+$controlpanel="";
+$tablehead="";
 $footer="";
 $timeout=2000;
 $conflinknew="$PROJ[BINDIR]/configure.php?Action=New";
@@ -68,10 +69,13 @@ $VERCONFIG=$CONFIG;
 //////////////////////////////////////////////////////////////////////////////////
 //LOAD ACTION
 //////////////////////////////////////////////////////////////////////////////////
+function runTable($order="configuration_date"){
+  global $PHP,$PROJ;
 $ajax_runtable=<<<AJAX
+query=$('#filterquery').attr('value');
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]',
+   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]&Order=$order&FilterQuery='+query,
    'runs_table',
    function(element,rtext){
      $(element).html(rtext);
@@ -79,8 +83,14 @@ loadContent
      $('#DIVOVER').css('display','none');
    },
    function(element,rtext){
+     //*
      $('#DIVBLANKET').css('display','block');
      $('#DIVOVER').css('display','block');
+     //*/
+     /*
+     $('#DIVBLANKET').css('display','none');
+     $('#DIVOVER').css('display','none');
+     */
    },
    function(element,rtext){
    },
@@ -91,7 +101,10 @@ $('input[name=RunAll]').attr('checked',false);
 $('input[name=RunAll_Submit]').attr('checked',false);
 $('input[name=RunAll_Submit]').attr('value','off');
 AJAX;
-$onload_runtable=genOnLoad($ajax_runtable,'load');
+ return $ajax_runtable;
+}
+$ajax_runtable=runTable();
+$onload_runtable=genOnLoad(runTable(),'load');
 
 $errfile="$PHP[TMPDIR]/phpout-ajax-trans-run-$PHP[SESSID]";
 $ajax_action=<<<AJAX
@@ -115,7 +128,6 @@ submitForm
    function(element,rtext){
     elid=$(element).attr('id');
     eliderr=elid+'_error';
-    /*notDiv(elid,'Processing...');*/
    },
    function(element,rtext){
      elid=$(element).attr('id');
@@ -128,65 +140,44 @@ AJAX;
 //////////////////////////////////////////////////////////////////////////////////
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//HEADER
+//CONTROL PANEL
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$controlpanel.=<<<HEADER
+<tr id="controlpanel" 
+    style="display:none"><td colspan=10>
+<div style="position:relative;
+	    border:solid black 1px;
+	    padding:10px;
+	    border-radius:10px;
+	    background-color:$COLORS[clear];
+	    ">
+  <div style="position:absolute;
+	      top:5px;
+	      right:5px;
+	      ">
+    <a href="JavaScript:void(null)"
+       onclick="$('#controlpanel').toggle('fast',null)"
+       >
+      $BUTTONS[Cancel]
+    </a>
+  </div>
+HEADER;
+
+//==================================================
+//NEW FROM TEMPLATE
+//==================================================
 $files=listFiles("$runspath/templates","*.conf");
+list($bugbut,$bugform_new)=
+  genBugForm2("NewFromTemplate",
+	      "Problems creating new from template",
+	      $VERCONFIG["EmailsContributors"]);
 
-//==================================================
-//START HEADER
-//==================================================
-$header.=<<<HEADER
-<tr>
-<td colspan=10>
-<div style="position:relative">
-<div id="notaction" class="subnotification" style="display:none"></div>
-<input id="actionspec" type="hidden" name="Action_Submit" value="None">
-<input type="hidden" name="RunMultiple_Submit" value="true">
-HEADER;
-
-//==================================================
-//CONTROL BUTTONS
-//==================================================
-$noactions=preg_split("/,/",$VERCONFIG["InvalidActions"]);
-$actions=array_diff($PROJ["Actions"],$noactions);
-array_unshift($actions,"Remove");
-$links="";
-foreach($actions as $action){
-  $actionlink=$ajax_action;
-$links.=<<<LINKS
+$controlpanel.=<<<HEADER
 <div class="actionbutton">
-<button class="image" id="Bt_$action" 
-	onclick="notDiv('notaction_error','Processing...');
-		 $('#actionspec').attr('value','$action');
-		 $ajax_action;
-		 " 
-	onmouseover="explainThis(this)" 
-	explanation="$action"
-	>
-$BUTTONS[$action]
-</button> 
+  <big>New from template:</big>
 </div>
-LINKS;
-}
-$header.=<<<BUTTONS
-$links
-BUTTONS;
-
-//==================================================
-//GENERATE LINKS
-//==================================================
-//$actionlink="Open('$conflinknew&Template=Default','Configure','$PROJ[SECWIN]')";
-$actionlink=$ajax_action;
-$header.=<<<HEADER
 <div class="actionbutton">
-HEADER;
-
-//==================================================
-//GENERATE LIST OF TEMPLATES
-//==================================================
-list($bugbut,$bugform)=genBugForm2("NewFromTemplate","Problems creating new from template",$VERCONFIG["EmailsContributors"]);
-$header.=<<<HEADER
-Template: 
 <select name="Template" onchange="popOutHidden(this)">
 HEADER;
 foreach($files as $file){
@@ -194,25 +185,25 @@ foreach($files as $file){
   $template=$matches[1];
   $parts=preg_split("/_/",$template);
   $tempname=implode(" ",$parts);
-  $header.="<option id='Template_$template' value='$template'>$tempname";
+  $controlpanel.="<option id='Template_$template' value='$template'>$tempname";
 }
-$header.=<<<HEADER
+$controlpanel.=<<<HEADER
 </select>
 <input type="hidden" name="Template_Submit" value="Default">
 HEADER;
 
-$header.=<<<HEADER
+$controlpanel.=<<<HEADER
 <select name="NumRuns" onchange="popOutHidden(this)">
 HEADER;
 for($i=1;$i<=10;$i++){
-  $header.="<option value='$i'>$i";
+  $controlpanel.="<option value='$i'>$i";
 }
-$header.=<<<HEADER
+$controlpanel.=<<<HEADER
 </select>
   <input type="hidden" name="NumRuns_Submit" value="1">
 HEADER;
 
-$header.=<<<HEADER
+$controlpanel.=<<<HEADER
 </div>
 <div class="actionbutton">
   <button class="image" id="new" 
@@ -239,36 +230,137 @@ $header.=<<<HEADER
 </div>
 HEADER;
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//UPDATE
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$header.=<<<HEADER
-<div class="actionbutton"
-     style="position:absolute;right:0px;top:0px;">
-  <div class="actionbutton">
-    <label>Search:</label>
-    <input type="text" name="searchruns">
-  </div>  
-  <div class="actionbutton">
-    <button class="image" 
-	    onclick="$('#notaction_error').css('display','none');$ajax_runtable"
-	    onmouseover="explainThis(this)"
-	    explanation="Update list">
-      $BUTTONS[Update]
-    </button>
-  </div>
+//==================================================
+//CONTROL BUTTONS
+//==================================================
+list($bugbut,$bugform_control)=
+  genBugForm2("ControlPanel",
+	      "Problems performing actions",
+	      $VERCONFIG["EmailsContributors"]);
+
+$controlpanel.=<<<HEADER
+<br/>
+<div class="actionbutton">
+  <big>Valid actions:</big>
 </div>
 HEADER;
 
-$header.=<<<HEADER
+$noactions=preg_split("/,/",$VERCONFIG["InvalidActions"]);
+$actions=array_diff($PROJ["Actions"],$noactions);
+array_unshift($actions,"Remove");
+$links="";
+foreach($actions as $action){
+  if($action=="Remove") continue;
+  $actionlink=$ajax_action;
+$links.=<<<LINKS
+<div class="actionbutton">
+<button class="image" id="Bt_$action" 
+	onclick="notDiv('notaction_error','Processing...');
+		 $('#actionspec').attr('value','$action');
+		 $ajax_action;
+		 " 
+	onmouseover="explainThis(this)" 
+	explanation="$action"
+	>
+$BUTTONS[$action]
+</button> 
 </div>
+LINKS;
+}
+$controlpanel.=<<<BUTTONS
+$links
+BUTTONS;
+
+$controlpanel.=<<<BUTTONS
+$bugbut
+</td></tr>
+</div>
+BUTTONS;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//HEADER
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//REMOVE, FILTER AND UPDATE
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+list($bugbut,$bugform_filter)=
+  genBugForm2("History",
+	      "Problems filtering",
+	      $VERCONFIG["EmailsContributors"]);
+
+$tablehead.=<<<HEADER
+<tr><td colspan=10>
+    <div style="position:relative">
+      <div class="actionbutton">
+	<button class="image" id="Bt_Remove" 
+		onclick="notDiv('notaction_error','Processing...');
+			 $('#actionspec').attr('value','Remove');
+			 $ajax_action;
+			 " 
+		onmouseover="explainThis(this)" 
+		explanation="Remove runs"
+		>
+	  $BUTTONS[Remove]
+	</button>
+      </div>
+      <div class="actionbutton">
+	<a href="JavaScript:void(null)"
+	   onclick="$('#controlpanel').toggle('slow',null)"
+	   >
+	  Control Panel
+	</a>
+      </div>
+      <div style="position:absolute;top:0px;right:0px">
+	<div class="actionbutton">
+	  <label><big>Filter runs:</big></label>
+	  <input id="filterquery" type="text" name="searchruns" size="50">
+	</div>  
+	<div class="actionbutton">
+	  <button class="image"
+		  onclick="$ajax_runtable"
+		  onmouseover="explainThis(this)"
+		  explanation="Filter Runs">
+	    $BUTTONS[Search]
+	  </button>
+	</div>  
+	<div class="actionbutton">
+	    $bugbut
+	</div>
+	<div class="actionbutton">
+	  <button class="image" 
+		  onclick="$('#notaction_error').css('display','none');
+			   $ajax_runtable"
+		  onmouseover="explainThis(this)"
+		  explanation="Update list">
+	    $BUTTONS[Update]
+	  </button>
+	</div>
+      </div>
+    </div>
 </td></tr>
 HEADER;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FIELDS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$header.=<<<RUNS
+function sortArrow($action){
+  global $PROJ,$PHP,$BUTTONS;
+  $arrows=$BUTTONS["Sort"];
+$str=<<<ARROW
+<a href="JavaScript:void(null)"	
+   onclick="$action">
+$BUTTONS[Sort]
+</a>
+ARROW;
+  return $str;
+}
+$sdate=sortArrow(runTable("configuration_date"));
+$stemplate=sortArrow(runTable("run_template"));
+$sname=sortArrow(runTable("run_name"));
+$sstatus=sortArrow(runTable("run_status"));
+
+$tablehead.=<<<RUNS
 <tr class="header">
   <td width="2%">
   <input type="checkbox" name="RunAll" checked="false"
@@ -277,15 +369,23 @@ $header.=<<<RUNS
   <input id="runall" type="hidden" name="RunAll_Submit" checked="false">
   </td>
   <td width="20%">
-  Time $sdate</td>
-  <td width="20%">
-  Name of run
+    Time
+    $sdate
+  </td>
+  <td width="10%">
+    Template 
+    $stemplate
   </td>
   <td width="20%">
-  Owner
+    Name of run
+    $sname
   </td>
   <td width="20%">
-  Status$sstatus
+    Owner
+  </td>
+  <td width="20%">
+    Status
+    $sstatus
   </td>
 </tr>
 RUNS;
@@ -293,27 +393,94 @@ RUNS;
 //////////////////////////////////////////////////////////////////////////////////
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
+$TabNext=$PHP["TabId"]+1;
+$newcode=genRandom(8);
+
 echo<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
-<h1>Application Queue</h1>
+
+
+<!--
+<div style="width:29%;
+	    padding:2%;
+	    background-color:lightgreen;
+	    display:inline-block">
+  <center>
+  <big style="font-size:40px">
+    Run
+  </big>
+  </center>
+  <p>
+    Create now a new run, configure and run it!
+  </p>
+</div>
+-->
+
+<h1>Runs</h1>
+
+<p>In this page you will be able to 
+
+run the application on the fly (<a href="#RunNow">run now</a>), 
+
+create single or multiple instances of the application from predefined
+or custom templates and control the running of these instances
+(<a href="#History"
+onclick="$('#controlpanel').toggle('slow',null)">control panel</a>) or
+
+simply check out the list of runs commited by you
+(<a href="#History">history</a>).
+
+</p>
+
+<a name="RunNow"></a>
+<button style="font-size:40px"
+	onclick="notDiv('notaction_error','Processing...');
+		 newcode=randomStr(8);
+		 $('#actionspec').attr('value','New');
+		 $('#newcode').attr('value',newcode);
+		 $ajax_action;
+		 Open('$PROJ[BINDIR]/confresults.php?RunCode='+newcode,'Google','')
+		 /*setTimeout('Open(\'$PROJ[BINDIR]/confresults.php?RunCode='+newcode+'\',\'Google\',\'$PROJ[SECWIN]\')',500);*/
+		 "
+	onmouseover="explainThis(this)" 
+	explanation="Create a new run">
+  <div class="actionbutton">
+    Run!
+  </div>
+  <div class="actionbutton">
+    <img class="image" src="$PROJ[IMGDIR]/icons/actions/Run.gif"/>
+  </div>
+</button>
+
+<a name="History"></a>
+<h1>History</h1>
 $onload_runtable
-<div style="position:relative;padding:5px;border:dashed $COLORS[text] 0px">
-$PROJ[DIVBLANKET]
-$PROJ[DIVOVER]
 <form action="JavaScript:void(null)" id="formqueue">
-<table class="queue">
-<thead>
-$header
-</thead>
-<tbody id="runs_table">
-</tbody>
-<tfooter>
-$footer
-</tfooter>
-</table>
+  <input id="actionspec" type="hidden" name="Action_Submit" value="None">
+  <input id="newcode" type="hidden" name="NewCode_Submit" value="00000000">
+  <input type="hidden" name="RunMultiple_Submit" value="true">
+  <div id="notaction" class="subnotification" style="display:none"></div>
+  <div style="position:relative;
+	      padding:5px;
+	      border:dashed $COLORS[text] 0px">
+    $PROJ[DIVBLANKET]
+    $PROJ[DIVOVER]
+    <table class="queue">
+      <thead>
+	$controlpanel
+	$tablehead
+      </thead>
+      <tbody id="runs_table">
+      </tbody>
+      <tfooter>
+	$footer
+      </tfooter>
+    </table>
 </form>
 <div id="notaction_error" class="suberror" style="display:none"></div>
-$bugform
+$bugform_new
+$bugform_control
+$bugform_filter
 </div>
 RUNS;
 end:

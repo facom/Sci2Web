@@ -12,6 +12,8 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $BASEDIR=`dirname $0`;chop $BASEDIR;
 $ROOTDIR=`dirname $BASEDIR`;chop $ROOTDIR;
+$ABSDIR=`cd $ROOTDIR;pwd`;chop $ABSDIR;
+$ROOTDIR=$ABSDIR;
 require "$BASEDIR/sci2web.pm";
 
 ################################################################################
@@ -49,6 +51,12 @@ switch($Action){
     }
     case "install" {
 	push(@cmdopt,("appdir|d=s"));
+    }
+    case "release" {
+	push(@cmdopt,("appname|a=s","vername|v=s","sci2web|s"));
+    }
+    case "newversion" {
+	push(@cmdopt,("appname|a=s","tempver|t=s","newver|n=s","emails|e=s"));
     }
     case "remove" {
 	push(@cmdopt,("appname|a=s","vername|v=s"));
@@ -212,6 +220,10 @@ Version = $vername
 EmailsContributors = $emails
 #Brief description of the changes log
 ChangesLog = $changeslog
+#Could this application be released
+Release = true
+#Under which license (see apps/licenses directory or add a license there)
+License = GPLv3
 #Information pages displayed in tabs of the version page
 #Valid pages:description,documentation,downloads,runs,database.
 VerTabs = description:Description;documentation:Documentation;downloads:Downloads;runs:Runs;database:Database
@@ -427,7 +439,7 @@ Consider to create a new version of the application.
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#COPY DEFAULT CONF FILE TO RUNS DIRS
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	sysCmd("find $RUNSDIR -name $appname -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
+	#sysCmd("find $RUNSDIR -name $appname' -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
 	
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CREATE THE SQL DATABASE TABLE SCRIPT
@@ -449,7 +461,7 @@ SQL
 		foreach $j (@{$vtivars}){
 		    $varname=$VARS{$j,"var"};
 		    $vartype=$VARS{$j,"datatype"};
-		    $vartype=~s/varchar/varchar\(255\)/;
+		    $vartype=~s/varchar$/varchar\(255\)/;
 		    $vartype=~s/boolean/tinyint\(1\)/;
 		    $vartype=~s/file/varchar\(255\)/;
 		    rprint "\t\t\tInserting variable $varname of type $vartype";
@@ -540,7 +552,112 @@ SQL
 
 	rprint "Run files generated.","=";
     }
+    #======================================================================
+    #RELEASE A NEW APPLICATION
+    #======================================================================
+    case "release" {
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK OPTIONS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$appname=noBlank($options{appname},"Application name");
+	$appdir="$APPSDIR/$appname";
+	Error "Application '$appname' not valid"
+	    if(!-d "$appdir");
+	$vername=noBlank($options{vername},"Version name");
+	$verdir="$appdir/$vername";
+	Error "Template version '$vername' is not installed"
+	    if(!-d "$verdir");
 
+	$appver="${appname}_${vername}";
+	rprint "Realeasing $appver","=";
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#COPYING VERSION DIR
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Copying version directory...";
+	$tgtdir="$TMPDIR/$appver";
+	sysCmd("rm -rf $tgtdir") if(-d $tgtdir);
+	sysCmd("cp -rf $verdir $tgtdir");
+	if(!$options{sci2web}){
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    #GENERATING FILES FROM TEMPLATES
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    $out=sysCmd("cd $tgtdir;perl $BINDIR/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .");
+	    rprint $out;
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    #REMOVING EXTRA FILES
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    rprint "Removing extra files...";
+	    sysCmd("cd $tgtdir;cp -rf sci2web/version.conf .");
+	    sysCmd("cd $tgtdir;rm -rf sci2web .*.temp run.conf");
+	}
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CREATING TARBALL OF APPLICATION
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Creating the tarball...";
+	$tarball="$appver.tar.gz";
+	if($options{sci2web}){
+	    $tarball="${appver}_sci2web.tar.gz";
+	}
+	sysCmd("basepwd=\$(pwd);cd $tgtdir/..;tar zcvf $verdir/sci2web/$tarball --exclude=.gitignore --exclude=sci2web/bin $appver"); 
+
+	rprint "Tarball '$verdir/sci2web/$tarball' created","=";
+    }
+    #======================================================================
+    #CREAT A NEW VERSION FROM AN EXISTING ONE
+    #======================================================================
+    case "newversion" {
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK OPTIONS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$appname=noBlank($options{appname},"Application name");
+	$appdir="$APPSDIR/$appname";
+	Error "Application '$appname' not valid"
+	    if(!-d "$appdir");
+	$tempver=noBlank($options{tempver},"Template version");
+	$tempdir="$appdir/$tempver";
+	Error "Template version '$tempver' is not installed"
+	    if(!-d "$tempdir");
+	$newver=noBlank($options{newver},"New version");
+	$newdir="$appdir/$newver";
+	Error "New version '$newver' already exists"
+	    if(-d "$newdir");
+	if($options{emails}){
+	    $emails=$options{emails};
+	    Error "No valid contributors emails has been provided..."
+		if($emails!~/@/);
+	}
+
+	rprint "Installing a new version from template","=";
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#TEMPORAL COPY OF TEMPLATE VERSION
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Temporal copy of template version...";
+	$tgtdir="$TMPDIR/Versions_$appname";
+	sysCmd("mkdir -p $tgtdir") if(!-d $tgtdir);
+	sysCmd("cp -rf $APPSDIR/$appname/$tempver $tgtdir");
+	rprint "Removing any release...";
+	sysCmd("rm -rf $tgtdir/$vername/$tempver/sci2web/*.tar.gz");
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#RECONFIGURING NEW VERSION
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Reconfiguring new version...";
+	rprint "Changing version name from '$tempver' to '$newver'...";
+	sysCmd("sed -i.save -e 's/\\s*=\\s*dev\$/ = 1.0/gi' $tgtdir/$tempver/sci2web/version.conf");
+	if($options{emails}){
+	    rprint "Changing version contributor...";
+	    sysCmd("sed -i.save -e 's/EmailsContributors\\s*=\\s*.*/EmailsContributors = $emails/gi' $tgtdir/$tempver/sci2web/version.conf");
+	}
+	rprint "Regenerating variables...";
+	sysCmd("cd $tgtdir/$tempver;perl $BINDIR/sci2web.pl contvars --appdir .");
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#INSTALLING NEW VERSION
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Installing new version...";
+	$out=sysCmd("basepwd=\$(pwd);cd $tgtdir/$tempver;perl \$basepwd/$BASEDIR/sci2web.pl install");
+	rprint $out;
+
+	rprint "New version installed","=";
+    }
     #======================================================================
     #INSTALL APPLICATION
     #======================================================================
@@ -551,7 +668,7 @@ SQL
 	%CONFIG=readConfig("sci2web/version.conf");
 	$appname=$CONFIG{Application};
 	$appver=$CONFIG{Version};
-		
+
 	rprint "Installing application '$appname', version '$appver'","=";
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CHECK IF APPLICATION ALREADY EXIST
@@ -615,6 +732,12 @@ users_emails_author='$appauthor;'
 	    rprint "Application '$appname' already exists...";
 	}
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK IF LICENSE FILE EXISTS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$licfile="$APPSDIR/licenses/LICENSE.$CONFIG{License}";
+	Error "License file '$licfile' does not exist.  Check your configuration file."
+	    if(!-e $licfile);
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CHECK IF VERSION ALREADY EXIST
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	$verdir="$APPSDIR/$appname/$appver";
@@ -655,38 +778,49 @@ apps_code='$appname'
 	    #========================================
 	    #CREATING RESULT DATABASE
             #========================================
-$sql=<<SQL;
-drop table if exists `$verdbname`;
-create table `$verdbname` (
-dbrunhash char(32) not null,
-dbauthor varchar(255),
-dbdate datetime not null,
-SQL
-	    open(fl,"<sci2web/controlvars.info");
-	    @lines=<fl>;chomp @lines;
-	    close(fl);
-	    for $line (@lines){
-		next if($line=~/^#/ or $line!~/\w/);
-		@parts=split /::/,$line;
-		$vartype=$parts[2];
-		$vartype=~s/varchar/varchar\(255\)/;
-		$vartype=~s/boolean/tinyint\(1\)/;
-		$vartype=~s/file/varchar\(255\)/;
-		$sql.="$parts[0] $vartype,\n";
-	    }
-$sql.=<<SQL;
-primary key (dbrunhash),
-runs_runcode char(8));
-SQL
-	    open(fl,">/tmp/sql.$$");
-	    print fl $sql;
-	    close(fl);
+# $sql=<<SQL;
+# drop table if exists `$verdbname`;
+# create table `$verdbname` (
+# dbrunhash char(32) not null,
+# dbauthor varchar(255),
+# dbdate datetime not null,
+# SQL
+# 	    open(fl,"<sci2web/controlvars.info");
+# 	    @lines=<fl>;chomp @lines;
+# 	    close(fl);
+# 	    for $line (@lines){
+# 		next if($line=~/^#/ or $line!~/\w/);
+# 		@parts=split /::/,$line;
+# 		$vartype=$parts[2];
+# 		$vartype=~s/varchar$/varchar\(255\)/;
+# 		$vartype=~s/boolean/tinyint\(1\)/;
+# 		$vartype=~s/file/varchar\(255\)/;
+# 		$sql.="$parts[0] $vartype,\n";
+# 	    }
+# $sql.=<<SQL;
+# primary key (dbrunhash),
+# runs_runcode char(8));
+# SQL
+# 	    open(fl,">$TMPDIR/sql.$$");
+# 	    print fl $sql;
+# 	    close(fl);
+# 	    `mysql -u $DBUSER --password=$DBPASS $DBNAME < $TMPDIR/sql.$$`;
 	    `mysql -u $DBUSER --password=$DBPASS $DBNAME < sci2web/controlvars.sql`;
 	    #========================================
 	    #COPY FILES INTO VERSION DIR
             #========================================
 	    rprint "Copying files into version dir...";
 	    sysCmd("tar cf - * .[a-zA-Z]* | tar xf - -C $verdir");
+	    sysCmd("cp -rf $licfile $verdir/LICENSE");
+	    #========================================
+	    #RELEASE TARBALLS
+            #========================================
+	    if($CONFIG{Release}=~/true/){
+		rprint "Releasing tarballs for version...";
+		$out=sysCmd("perl $BINDIR/sci2web.pl release --appname $appname --vername $appver");
+		sysCmd("perl $BINDIR/sci2web.pl release --appname $appname --vername $appver --sci2web");
+	    }
+
 	}else{
 	    Error "Version '$appver' already exists...";
 	}
@@ -899,7 +1033,7 @@ SQL
 	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
 	
 $sql=<<SQL;
-replace into $tbname set
+replace into `$tbname` set
 dbrunhash='$runhash',
 runs_runcode='$runcode',
 dbauthor='$author',

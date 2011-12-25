@@ -45,6 +45,21 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
 $rundir="$runsdir/$run_hash";
 $runpath="$runspath/$run_hash";
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//CHECK IF RUN HAS BEEN CREATED
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if(!file_exists("$runpath/run.info")){
+  $head=genHead("","2");
+echo<<<RESTART
+<html>
+<head>$head</head>
+<body>
+<p>Run has not been found.  We will attempt to open it...</p>
+</body>
+</html>
+RESTART;
+  return 0;
+}
 //////////////////////////////////////////////////////////////////////////////////
 //READ PARAMETERS
 //////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +93,7 @@ echo<<<CONTENT
   <body>
     <frameset $Stacking="$Sizes">
       <frame src="$PROJ[PROJDIR]/bin/configure.php?RunCode=$PHP[RunCode]&HeightWindow=66%&Closable=false"/>
-      <frame src="$PROJ[PROJDIR]/bin/results.php?RunCode=$PHP[RunCode]&HeightWindow=78%&Closable=false"/>
+      <frame src="$PROJ[PROJDIR]/bin/results.php?RunCode=$PHP[RunCode]&HeightWindow=75%&Closable=false"/>
       <noframes>
 	Your browser does not support frames
       </noframes>

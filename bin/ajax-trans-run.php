@@ -122,6 +122,7 @@ if($PHP["Action"]=="RemoveTemplate")
 if($PHP["Action"]=="New")
 {
   echo "Number of runs: $PHP[NumRuns]";br();
+  echo "New code: $PHP[NewCode]";br();
   for($nr=1;$nr<=$PHP["NumRuns"];$nr++){
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //NEW 
@@ -130,7 +131,12 @@ if($PHP["Action"]=="New")
   //RUN VARIABLES
   //==================================================
   //GENERATE NEW RANDOM CODE
-  $PHP["RunCode"]=genRandom(8);
+  if(!isset($PHP["NewCode"]) or
+     $PHP["NewCode"]=="00000000"){
+    $PHP["RunCode"]=genRandom(8);
+  }else{
+    $PHP["RunCode"]=$PHP["NewCode"];
+  }
   $runcode=$PHP["RunCode"];
   //CHOOSE TEMPLATE
   systemCmd("(cat $runspath/templates/$PHP[Template].conf;echo '#$runcode')>$PROJ[TMPPATH]/run.conf.$PHP[RANDID]");

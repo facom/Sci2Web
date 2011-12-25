@@ -32,6 +32,7 @@ $cdir="$PROJ[PAGESDIR]/$PHP[PAGEBASENAME]";
 require_once("$cpath/page.conf");
 if(!isset($PHP["TabId"])) $PHP["TabId"]=$DEFTAB-1;
 else $PHP["TabId"]--;
+$PHP["TabNum"]=$PHP["TabId"]+1;
 
 //////////////////////////////////////////////////////////////////////////////////
 //COMPONENTS
@@ -40,7 +41,7 @@ else $PHP["TabId"]--;
 //CHECK APPLICATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $apppath="$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version]";
-if(!file_exists("$apppath/sci2web/version.conf")){
+if(!file_exists("$apppath/sci2web/version.conf") and !$qexpire){
   $qexpire=true;
   $msg="Application $_SESSION[AppVersion] not found.";
 }
@@ -69,7 +70,7 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$header=genHeader($PAGELOGO);
+$header=genHeader($PAGELOGO,"","Version $_SESSION[Version]");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //BODY DECLARATION
@@ -129,6 +130,11 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 readConfig("$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[VersionId]/sci2web/version.conf");
 $files=preg_split("/;/",$CONFIG["VerTabs"]);
+if(strstr($PROJ["ROOTEMAIL"],$_SESSION["User"]) or 
+   strstr($PROJ["ContributorsEmails"],$_SESSION["User"])
+   ){
+  $files[]="configuration:Configuration";
+}
 
 $i=1;
 foreach($files as $file)
@@ -173,8 +179,11 @@ echo <<<CONTENT
 CONTENT;
   $i++;
 }
+$TabNum=$i-1;
 echo<<<CONTENT
 </div>
+<div id="CtrlTabId" value="$PHP[TabNum]"></div>
+<div id="CtrlTabNum" value="$TabNum"></div>
 $footer
 </body>
 </html>

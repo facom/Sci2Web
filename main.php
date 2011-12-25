@@ -35,6 +35,7 @@ else $PHP["TabId"]--;
 if(!isset($_SESSION["User"])){
   $PHP["TabId"]=0;
 }
+$PHP["TabNum"]=$PHP["TabId"]+1;
 
 //////////////////////////////////////////////////////////////////////////////////
 //COMPONENTS
@@ -136,15 +137,18 @@ AJAX;
    //BUILT THE CONTENT
 echo <<<CONTENT
   $onload
-  <div class="tabbertab maintab">
+  <div class="tabbertab maintab" id="Tab$i">
   <h2>$fid</h2>
   <div class="tabcontent" id="$fid"></div>
   </div>
 CONTENT;
   $i++;
 }
+$TabNum=$i-1;
 echo<<<CONTENT
 </div>
+<div id="CtrlTabId" value="$PHP[TabNum]"></div>
+<div id="CtrlTabNum" value="$TabNum"></div>
 $footer
 </body>
 </html>

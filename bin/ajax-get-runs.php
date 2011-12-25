@@ -22,7 +22,9 @@ include("$RELATIVE/lib/sci2web.php");
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
 $queue="";
-if(!isset($PHP["Order"])){$PHP["Order"]="configuration_date";}
+if(!isset($PHP["Order"])){
+  $PHP["Order"]="configuration_date";
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //STRINGS
@@ -30,6 +32,7 @@ if(!isset($PHP["Order"])){$PHP["Order"]="configuration_date";}
 $remdisp="";
 $i=0;
 $runcodes="";
+$extraselect="";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
@@ -49,9 +52,18 @@ if(!is_dir("$savedbpath")) systemCmd("mkdir -p $savedbpath");
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //GET DATABASE INFORMATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(!isBlank($PHP["FilterQuery"])){
+   $extraselect="and ($PHP[FilterQuery])";
+}
 $runs=mysqlCmd("select * from runs 
+where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]' $extraselect
+order by $PHP[Order]");
+if($PHP["?"]){
+   $runs=mysqlCmd("select * from runs 
 where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]'
 order by $PHP[Order]");
+   echo genOnLoad("$('#filterquery').css('background-color','pink')","error");
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
@@ -71,6 +83,7 @@ foreach($runs as $run){
   $runcodes.="$run_code;";
   $run_hash=$run["run_hash"];
   $run_name=$run["run_name"];
+  $run_template=$run["run_template"];
   $configuration_date=$run["configuration_date"];
   $users_email=$run["users_email"];
   $status=$C2S[$run["run_status"]];
@@ -128,6 +141,7 @@ $queue.=<<<QUEUE
     <input type="hidden" name="Run${i}_Submit" checked="false">
   </td>
   <td>$configuration_date</td>
+  <td>$run_template</td>
   <td>
     $run_name
     <a href="JavaScript:$conflink" 
@@ -150,7 +164,12 @@ QUEUE;
  $i++;
 }
 echo $queue;
-//echo "<tr><td colspan=10><textarea rows=10 cols=50>$queue</textarea></td></tr>";
+echo<<<DEBUG
+<tr><td colspan=10>
+    <!--<textarea rows=10 cols=50>$queue</textarea>-->
+    <!--Filter Query: $PHP[FilterQuery]-->
+</td></tr>
+DEBUG;
 
 end:
 echo<<<RUNS

@@ -73,11 +73,17 @@ CONTENT;
   if(!preg_match("/[\w\d]/",$appvers)) continue;
   $vers=preg_split("/;/",$appvers);
   $verstr="";
-  foreach($vers as $ver){
+  $ivers=arrayInvert($vers);
+  foreach($ivers as $ver){
     if(isBlank($ver)) continue;
     $version=getRow(mysqlCmd("select * from versions where version_code='$ver' and apps_code='$appcode' order by release_date"),0);
     $opsel="";
-    if($version["version_code"]=="dev") $opsel="selected";
+    /*
+    if($version["version_code"]=="dev"){
+      if(!isset($_SESSION["User"]))
+      $opsel="selected";
+    }
+    */
     $verstr.="<option $opsel value='$version[version_code]'>Version $version[version_code] ($version[release_date])";
   }
 $content.=<<<APPS

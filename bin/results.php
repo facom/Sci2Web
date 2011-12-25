@@ -284,8 +284,18 @@ foreach($contabs as $tabcont){
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//HEADER
+//TITLE & HEADER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+$title.=<<<TITLE
+<div style="text-align:center;
+	    font-size:20px;
+	    font-weight:bold;
+	    border-bottom:solid $COLORS[dark] 2px
+	    ">
+Results of Run $PHP[RunCode]
+</div>
+TITLE;
+
 if($qclosable){
 $closebutton=<<<CLOSE
   <!-- -------------------- CLOSE BUTTON -------------------- -->
@@ -298,8 +308,7 @@ CLOSE;
 }
 $header.=<<<HEADER
 <div class="actionbutton">
-<span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
-$bugbutton
+  <span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">
@@ -314,6 +323,9 @@ $bugbutton
 		border:solid black 0px;
 		text-align:right;
 		width:200px">
+    </div>
+    <div class="actionbutton">
+      $bugbutton
     </div>
     <div class="actionbutton">
       <button href="JavaScript:void(null)" class="image" 
@@ -346,6 +358,9 @@ echo<<<CONTENT
       <!-- -------------------------------------------------------- -->
       <!-- HEADER AREA -->
       <!-- -------------------------------------------------------- -->
+      <div style="position:relative">
+	$title
+      </div>
       <div style="position:relative;padding:10px">
 	$header
       </div>

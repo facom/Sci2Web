@@ -159,6 +159,22 @@ get an usable web interface to your NDSA in a couple of minutes:
 
 #. Test it!   
 
+.. Important:: With this procedure you have installed the development
+   version that will be only visible to the application authors and
+   the version contributors.  In order to *release* your application
+   and allow other users to use it you need to create a public version
+   from a copy of the just created developmente version.  The command
+   to perform this is in the case of our sample application is::
+
+      % perl SCI2WEB_PATH/bin/sci2web.pl newversion --appname TestDiffusion --tempver dev --newver 1.0
+
+   where ``1.0`` is the code name of the new version.  Do not forget
+   to edit the configuration file ``version.conf`` for this public
+   version in oreder to distinguish it from other versions.
+
+   The same command could be used to create new versions of your
+   application.
+
 Testing your application in the command line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

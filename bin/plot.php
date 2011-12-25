@@ -497,13 +497,21 @@ CONTENT;
 list($bugbut,$bugform)=genBugForm2("PlotGeneral","General problems with plot");
 $footer.= <<<CONF
 </div>
-<div class="formbuttons" id="buttons">
-</div>
-<div class="close">
-  <button class="image" onclick="window.close()">
-    $BUTTONS[Cancel]
-  </button>
-  <div class="close" style="right:38px;top:7px">$bugbut$bugform</div>
+<div style="position:absolute;
+	    top:0px;right:18px">
+  <div class="actionbutton">
+    $bugbut$bugform
+  </div>
+  <div class="actionbutton">
+    <button class="image" onclick="window.location.reload()">
+      $BUTTONS[Update]
+    </button>
+  </div>
+  <div class="actionbutton">
+    <button class="image" onclick="window.close()">
+      $BUTTONS[Cancel]
+    </button>
+  </div>
 </div>
 CONF;
 

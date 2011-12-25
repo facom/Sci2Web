@@ -653,12 +653,20 @@ $title.=<<<TITLE
 	    font-weight:bold;
 	    border-bottom:solid $COLORS[dark] 2px
 	    ">
-Configuration Window
+Configuration of Run $PHP[RunCode]
 </div>
 TITLE;
 
 if($qclosable){
 $closebutton=<<<CLOSE
+  <!-- -------------------- RESULTS BUTTON -------------------- -->
+  <div class="actionbutton">
+    <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
+       onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode&HeightWindow=75%','Results','$PROJ[SECWIN]')"
+       onmouseover="explainThis(this)" explanation="Results" style="">
+      $BUTTONS[Results]
+    </a>
+  </div>
   <!-- -------------------- CLOSE BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" onclick="window.close()"
@@ -686,14 +694,6 @@ Run name:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
   <!-- -------------------- BUG BUTTON -------------------- -->
   <div class="actionbutton">
     $bugbutton
-  </div>
-  <!-- -------------------- RESULTS BUTTON -------------------- -->
-  <div class="actionbutton">
-    <a href="JavaScript:void(null)" class="image" name="Action" value="Results"
-       onclick="Open('$PROJ[BINDIR]/results.php?RunCode=$runcode&HeightWindow=75%','Results','$PROJ[SECWIN]')"
-       onmouseover="explainThis(this)" explanation="Results" style="">
-      $BUTTONS[Results]
-    </a>
   </div>
   $closebutton
 </div>
@@ -774,7 +774,10 @@ echo<<<CONTENT
       <div class="actionbutton" id="runcontrols"
 	   style="border:solid $COLORS[dark] 2px;
 		  position:fixed;
-		  bottom:0px;left:0px;
+		  bottom:0px;
+		  left:10%;
+		  width:80%;
+		  text-align:center;
 		  z-index:10000;
 		  background-color:$COLORS[back];">
       </div>

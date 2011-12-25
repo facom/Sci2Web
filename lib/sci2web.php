@@ -306,7 +306,10 @@ function genHead($refresh,$time)
   //========================================
   //REFRESH PAGE
   //========================================
-  if(!isBlank($refresh) and !isBlank($time)){
+  if(!isBlank($time)){
+    if(isBlank($refresh)){
+      $refresh="$_SERVER[SCRIPT_NAME]?$_SERVER[QUERY_STRING]";
+    }
     $refline="<meta http-equiv=refresh content='$time;URL=$refresh'>";
   }else{
     $refline="<!--NO REFRESH-->";
@@ -358,7 +361,7 @@ HEAD;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GENERATE HEADER OF HTML FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function genHeader($logo,$style="")
+function genHeader($logo,$style="",$extratext="")
 {
   global $PROJ,$PHP,$COLORS,$BUTTONS;
 
@@ -461,12 +464,22 @@ HEADER;
 $header.=<<<HEADER
   </form>
   <div style="position:relative;display:inline-block">$bugbut$bugform</div>
+  <div style="position:absolute;top:2em;right:0px;z-index:8000">
+  <a href="http://sci2web.org">
+  <img src="$PROJ[IMGDIR]/sci2web-poweredby.jpg"/>
+  </a>
   </div>
-  <div class="header_content logo" >
+  </div>
+  <div class="header_content" >
   <!-- LOGO -->
   <a href="$PROJ[PROJDIR]">
-  <img src="$logo" class="mainlogo"/>
+  <img src="$logo" class="mainlogo"/>  
   </a>
+  <div class="version">
+  <a href="$PROJ[PROJDIR]/main.php?TabId=4">
+    $extratext
+  </a>
+  </div>
   </div>
   <div class="header_content" style="height:50px">
   <!-- MENUS -->
@@ -486,14 +499,33 @@ function genFooter()
 
 $footer=<<<FOOTER
   <div class="footer_container">
+    <div style="position:absolute;
+		top:0px;left:0px;
+		text-align:right;
+		width:$PROJ[BODYWIDTH]%;
+		margin-left:$PROJ[BODYMARGIN]%;
+		z-index:8000;
+		padding:10px;
+		">
+      Supported by:
+      <a href="http://www.udea.edu.co">
+	 <img src="$PROJ[IMGDIR]/udea.jpg" height="60px" style="padding:5px" align="center"/>
+      </a>
+      <a href="http://astronomia.udea.edu.co/facom">
+	<img src="$PROJ[IMGDIR]/facom.jpg" height="60px" style="padding:5px" align="center"/>
+      </a>
+    </div>
   <div class="footer_contain">
+  <img src="$PROJ[PROJDIR]/images/sci2web-logo.jpg" height="30px" style="border-right:solid $COLORS[dark] 1px;padding-right:5px;margin-right:5px"/>
+  <div style="display:inline-block">
   <a href="http://sci2web.org">
   Sci2Web.org
   </a><br/>
-  Developed by Jorge Zuluaga, 
+  Developed by <b>Jorge Zuluaga</b>, 
   <i style="color:$COLORS[dark];font-decoration:underline">
   zuluagajorge at gmail dot com
-  </i><br/>
+  </i>
+  </div><br/>
   Powered by 
   <a href="http://php3.de">
     <img src="$PROJ[IMGDIR]/php.gif" height="30px" align="center">
@@ -1005,7 +1037,8 @@ function toggleButtons2($status)
     $display["Remove"]=$disp;
     $display["Kill"]=$disp;
   }
-  if($status=="run"){
+  if($status=="run" or
+     $status=="resume"){
     $display["Pause"]=$disp;
     $display["Stop"]=$disp;
     $display["Stop"]=$disp;

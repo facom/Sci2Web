@@ -14,13 +14,6 @@ To Do:
   + Sort runs by date
   + Show runs by all users
 
-- Toggle between a history list and a control list
-
-- Release option in sci2web.pl script: create tarball with the
-  application.
-  + Create a downloads directory in the application directory.  With
-    www-data permissions
-
 - Create a notification window.  A window to show simple messages with
   an update link.
   + Redirect the output of the submission and check why is not executing.
@@ -35,6 +28,10 @@ To Do:
 
 - Give access to developers and contributors to the configuration
   files of a given application on-line
+
+- Clean temporal
+
+- Minimum and maximum
 
 Dreams:
 
@@ -284,4 +281,28 @@ Completed:
   + Template advanced interface: creation, save, removal
 
 - Allow multiple line values in configuration files. DONE.
+
+- Release option in sci2web.pl script: create tarball with the
+  application.
+  + Create a downloads directory in the application directory.  With
+    www-data permissions
+
+  DONE.  TARBALL WITH RELEASE IS INSTALLED IN THE SCI2WEB DIRECTORY OF
+  THE APPLICATION VERSION.  TWO TYPES OF TARBALL ARE RELEASE: SCI2WEB
+  ENABLED APPLICATION (INSTALLABLE IN OTHER SCI2WEB SERVER SITES) AND
+  "BAREBONES" APPLICATION (THE SAME SET OF FILES AS THAT USED TO
+  INSTALL IT) + VERSION.CONF AND LICENSE FILES.
+    
+- Change the position of the "Powered by Sci2Web" logo and add a link
+  to the home page of the suite.  DONE.  ADDITIONALLY LOGO WAS
+  REDESIGNED.
+
+- Add information about the version of the application in the
+  application logo area.  DONE.  ADDITIONALLY WITH LINK TO THE PORTED
+  APPLICATIONS TAB IN THE MAIN PAGE.
+
+- Check that tabs of the app page cannot be load directly from the
+  browser.  DONE.  CTRL+LEFT,CTRL+RIGHT CHANGE TO THE NEXT TAB
+
+- Toggle between a history list and a control list.  DONE.
 
