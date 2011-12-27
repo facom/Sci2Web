@@ -73,9 +73,15 @@ function runTable($order="configuration_date"){
   global $PHP,$PROJ;
 $ajax_runtable=<<<AJAX
 query=$('#filterquery').attr('value');
+orderdir=$('#OrderDirection_$order').attr('value');
+if(!orderdir){
+  $('#OrderDirection_$order').attr('value','DESC');
+}else{
+  $('#OrderDirection_$order').attr('value','');
+}
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]&Order=$order&FilterQuery='+query,
+   '$PROJ[BINDIR]/ajax-get-runs.php?$PHP[QSTRING]&Order=$order&OrderDirection='+orderdir+'&FilterQuery='+query,
    'runs_table',
    function(element,rtext){
      $(element).html(rtext);
@@ -207,7 +213,8 @@ $controlpanel.=<<<HEADER
 </div>
 <div class="actionbutton">
   <button class="image" id="new" 
-	  onclick="notDiv('notaction_error','Processing...');
+	  onclick="$('#notaction_error').html('Processing...');
+		   $('#notaction_error').fadeIn(1000,null);
 		   $('#actionspec').attr('value','New');
 		   $ajax_action;"
 	  onmouseover="explainThis(this)" 
@@ -217,7 +224,8 @@ $controlpanel.=<<<HEADER
 </div>
 <div class="actionbutton">
   <button class="image" id="new" 
-	  onclick="notDiv('notaction_error','Processing...');
+	  onclick="$('#notaction_error').html('Processing...');
+		   $('#notaction_error').fadeIn(1000,null);
 		   $('#actionspec').attr('value','RemoveTemplate');
 		   $ajax_action;"
 	  onmouseover="explainThis(this)" 
@@ -255,7 +263,8 @@ foreach($actions as $action){
 $links.=<<<LINKS
 <div class="actionbutton">
 <button class="image" id="Bt_$action" 
-	onclick="notDiv('notaction_error','Processing...');
+	onclick="$('#notaction_error').html('Processing...');
+		 $('#notaction_error').fadeIn(1000,null);
 		 $('#actionspec').attr('value','$action');
 		 $ajax_action;
 		 " 
@@ -307,13 +316,39 @@ $tablehead.=<<<HEADER
       <div class="actionbutton">
 	<a href="JavaScript:void(null)"
 	   onclick="$('#controlpanel').toggle('slow',null)"
+	   onmouseover="explainThis(this)"
+	   explanation="Click to show control panel"
 	   >
 	  Control Panel
 	</a>
       </div>
       <div style="position:absolute;top:0px;right:0px">
 	<div class="actionbutton">
-	  <label><big>Filter runs:</big></label>
+	  <label><big>
+	      <a href="JavaScript:void(null)" 
+		 onclick="toggleElement('filterhelp')"
+		 onmouseover="explainThis(this)"
+		 explanation="Click for help">
+		Filter runs</a>:
+	  </big></label>
+	  <div id="filterhelp" class="displayable" style="display:none">
+	    Example: <i>run_template='My Template' and run_status='0'</i><br/><br/>
+	    Valid fields:<br/>
+	    <b>configuration_date[datetime]</b>: Time of configuration (customizable)<br/>
+	    <b>run_code[char(8)]</b>: User code of the run (automatic)<br/>
+	    <b>run_hash[char(32)]</b>: Unique code of the run (automatic)<br/>
+	    <b>run_name[varchar(255)]</b>: Name of the run (customizable)<br/>
+	    <b>run_pinfo[varchar(255)]</b>: Process information (automatic)<br/>
+	    <b>run_status[tinyint(4)]</b>: Status of the run
+	    (automatic): 0,error; 1,configured; 2,clean; 3,compiled;
+	    4,ready; 5,submitted; 6,running; 7,paused; 8,resumed;
+	    9,stopped; 10,failed; 11,ended; 12,finished;
+	    13,killed<br/>
+	    <b>run_template[varchar(255)]</b>: Template of the run (customizable)<br/>
+	    <b>users_email[varchar(255)]</b>: e-mail of the user (customizable)<br/>
+	    <b>apps_code[varchar(255)]</b>: Application (automatic)<br/>
+	    <b>versions_code[varchar(255)]</b>: Version(automatic)<br/>
+	  </div>
 	  <input id="filterquery" type="text" name="searchruns" size="50">
 	</div>  
 	<div class="actionbutton">
@@ -344,10 +379,11 @@ HEADER;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FIELDS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function sortArrow($action){
+function sortArrow($id,$action){
   global $PROJ,$PHP,$BUTTONS;
   $arrows=$BUTTONS["Sort"];
 $str=<<<ARROW
+<span id="OrderDirection_$id" value="" style="display:none"></span>
 <a href="JavaScript:void(null)"	
    onclick="$action">
 $BUTTONS[Sort]
@@ -355,35 +391,32 @@ $BUTTONS[Sort]
 ARROW;
   return $str;
 }
-$sdate=sortArrow(runTable("configuration_date"));
-$stemplate=sortArrow(runTable("run_template"));
-$sname=sortArrow(runTable("run_name"));
-$sstatus=sortArrow(runTable("run_status"));
+$sdate=sortArrow("configuration_date",runTable("configuration_date"));
+$stemplate=sortArrow("run_template",runTable("run_template"));
+$sname=sortArrow("run_name",runTable("run_name"));
+$sstatus=sortArrow("run_status",runTable("run_status"));
 
 $tablehead.=<<<RUNS
 <tr class="header">
-  <td width="2%">
+  <td width="1%">
   <input type="checkbox" name="RunAll" checked="false"
 	 onclick="selectAll('formqueue',this)"
 	 onchange="popOutHidden(this)">
   <input id="runall" type="hidden" name="RunAll_Submit" checked="false">
   </td>
-  <td width="20%">
-    Time
+  <td width="25%">
+    Run
+    $sname
+  </td>
+  <td width="25%">
+    Date
     $sdate
   </td>
-  <td width="10%">
+  <td width="25%">
     Template 
     $stemplate
   </td>
-  <td width="20%">
-    Name of run
-    $sname
-  </td>
-  <td width="20%">
-    Owner
-  </td>
-  <td width="20%">
+  <td width="24%">
     Status
     $sstatus
   </td>
@@ -434,7 +467,8 @@ simply check out the list of runs commited by you
 
 <a name="RunNow"></a>
 <button style="font-size:40px"
-	onclick="notDiv('notaction_error','Processing...');
+	onclick="$('#notaction_error').html('Processing...');
+		 $('#notaction_error').fadeIn(1000,null);
 		 newcode=randomStr(8);
 		 $('#actionspec').attr('value','New');
 		 $('#newcode').attr('value',newcode);

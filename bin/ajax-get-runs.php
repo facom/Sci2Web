@@ -25,6 +25,9 @@ $queue="";
 if(!isset($PHP["Order"])){
   $PHP["Order"]="configuration_date";
 }
+if(!isset($PHP["OrderDirection"])){
+  $PHP["OrderDirection"]="";
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //STRINGS
@@ -57,13 +60,15 @@ if(!isBlank($PHP["FilterQuery"])){
 }
 $runs=mysqlCmd("select * from runs 
 where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]' $extraselect
-order by $PHP[Order]");
+order by $PHP[Order] $PHP[OrderDirection]");
 if($PHP["?"]){
    $runs=mysqlCmd("select * from runs 
 where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]'
 order by $PHP[Order]");
    echo genOnLoad("$('#filterquery').css('background-color','pink')","error");
-}
+ }else{
+   echo genOnLoad("$('#filterquery').css('background-color','lightgreen')","error");
+ }
 
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
@@ -100,6 +105,7 @@ foreach($runs as $run){
       $status=$matches[1];
     }
   }
+  $PHP["RunCode"]=$run_code;
   $status_icon=statusIcon($status); 
   //echo "<textarea>$status_icon</textarea>";br();
 
@@ -121,44 +127,110 @@ foreach($runs as $run){
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
   $confreslink="$PROJ[BINDIR]/confresults.php?RunCode=$run_code";
   $confreslink="Open('$confreslink','Configure & Results','$PROJ[PLOTWIN]')";
+  $fullstatuslink="$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$run_code";
+  $fullstatuslink="Open('$fullstatuslink','Full job Status','$PROJ[SECWIN]')";
   $removelink=genRunLink($run_code,"Remove");
-  /*
-  if($status=="run" or $status=="pause"){
-    $conflink="alert('You cannot configure a running instance.')";
-    $removelink="alert('You cannot remove a running instance.')";
-  }
-  */
 
   //==================================================
   //TABLE ROW
   //==================================================
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //CHECK
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$row_check=<<<ROW
+<td>
+  <input type="checkbox" name="Run$i" 
+	 onchange="popOutHidden(this);"
+	 onclick="deselectAll('RunAll');
+		  clickRow(this);"
+	 color_unchecked="$COLORS[clear]"
+	 color_checked="$COLORS[text]">
+  <input type="hidden" name="Run${i}_Submit" checked="false">
+</td>
+ROW;
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //NAME
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$row_name=<<<ROW
+<td id="name$i" 
+    onmouseover="
+		 $('#actionarrow$i').css('display','block');
+		 "
+    onmouseout="
+		$('#actionarrow$i').css('display','none');
+		">
+  <div style="position:relative">
+    <b onmouseover="explainThis(this)"
+       explanation="Code $run_code, Hash $run_hash">
+      $run_name
+    </b>
+    <div id="actionarrow$i" 
+	 style="display:none;
+		position:absolute;
+		right:0px;top:0px">
+      <a href="JavaScript:void(null)" 
+	 onclick="
+		  toggleElement('runactions$i');
+		  ">
+	$BUTTONS[Down]
+      </a>
+    </div>
+    <div id="runactions$i"
+	 class="contextual"
+	 style="position:absolute;
+		right:0px;
+		display:none;
+		text-align:left;
+		font-size:12px;"
+	 onmouseover="$('#runactions$i').css('display','block');"
+	 onmouseout="$('#runactions$i').css('display','none');"
+	 >
+      <a href="JavaScript:$conflink">
+	$BUTTONS[Configure]Configure 
+      </a>
+      <br/><a href="JavaScript:$reslink">
+	$BUTTONS[Results]Results 
+      </a>
+      <br/><a href="JavaScript:$confreslink">
+	$BUTTONS[ConfigureResults]Control panel 
+      </a>
+      <br/><a href="JavaScript:$fullstatuslink">
+	$BUTTONS[Open]Run status
+      </a>
+    </div>
+  </div>
+</td>
+ROW;
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //DATE
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$row_date=<<<ROW
+<td>$configuration_date</td>
+ROW;
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //TEMPLATE
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$row_template=<<<ROW
+<td>$run_template</td>
+ROW;
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //STATUS
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$row_status=<<<ROW
+<td>$status_icon</td>
+ROW;
+
 $queue.=<<<QUEUE
 <tr class="entry">
-  <td>
-    <input type="checkbox" name="Run$i" 
-	   onchange="popOutHidden(this);"
-	   onclick="deselectAll('RunAll')">
-    <input type="hidden" name="Run${i}_Submit" checked="false">
-  </td>
-  <td>$configuration_date</td>
-  <td>$run_template</td>
-  <td>
-    $run_name
-    <a href="JavaScript:$conflink" 
-       onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
-       $BUTTONS[Configure]
-    </a>
-    <a href="JavaScript:$reslink" 
-       onmouseover="explainThis(this)" explanation="Results for $run_code ($run_hash)">
-       $BUTTONS[Results]
-    </a>
-    <a href="JavaScript:$confreslink" 
-       onmouseover="explainThis(this)" explanation="Configure $run_code ($run_hash)">
-       $BUTTONS[ConfigureResults]
-    </a>
-  </td>
-  <td>$users_email</td>
-  <td>$status_icon$bstatus</td>
+  $row_check
+  $row_name
+  $row_date
+  $row_template
+  $row_status
 </tr>
 QUEUE;
  $i++;

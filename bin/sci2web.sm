@@ -1,11 +1,30 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# UTILITY ROUTINES AND VARIABLES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+###################################################
 #GET THE RIGHT PATH
+###################################################
 BIN=$(stat -c %N sci2web/bin | awk -F' -> ' '{print $2}'  | sed -e "s/['\`]//g")
 
+###################################################
+#TIME ROUTINE
+###################################################
 function NOW
 {
     date +%s.%N
 }
 
+###################################################
+#CHECK STATUS FOR EXECUTE A GIVEN ACTION
+###################################################
 #Signals:clean,compile,pre,submit,run,start,fail,end,pause,resume,stop,post
 function checkSig
 {
@@ -97,15 +116,34 @@ function checkSig
 		exit 1
 	    fi
 	    ;;
-	"checkrun")
-	    if [ -e "end.sig" -o -e "pause.sig" -o -e "fail.sig" -o -e "stop.sig" -o -e "post.sig" ]
+	"check")
+	    if [ -e "pause.sig" -o -e "fail.sig" -o -e "stop.sig" ]
 	    then 
 		echo "$signal:application is not checkeable"
 		exit 1
 	    fi
-	    if [ ! -e "start.sig" ];then 
+	    if [ ! -e "start.sig" -a ! -e "end.sig" ];then 
 		echo "$signal:application not started"
 		exit 1
+	    fi
+	    ;;
+	"qstatus")
+	    if [ ! -e "jobid.oxt" ];then
+		echo "$signal:job has not been submitted"
+	    fi
+	    if [ -e "end.sig" -o -e "fail.sig" -o -e "stop.sig" -o -e "post.sig" ]
+	    then 
+		echo "$signal:application is not checkeable"
+		exit 1
+	    fi
+	    if [ ! -e "submit.sig" -a ! -e "start.sig" ];then 
+		echo "$signal:application not submitted"
+		exit 1
+	    fi
+	    ;;
+	"fullinfo")
+	    if [ ! -e "jobid.oxt" ];then
+		echo "$signal:job has not been submitted"
 	    fi
 	    ;;
 	"resume")
@@ -145,6 +183,9 @@ function checkSig
     esac
 }
 
+###################################################
+#SET THE SIGNAL FILES
+###################################################
 function setSig
 {
     signal=$1
@@ -207,6 +248,9 @@ function setSig
     echo $(NOW) > $signal.sig
 }
 
+###################################################
+#CHECK NOT BLANK
+###################################################
 function notBlank
 {
   test "x$1" != "x"

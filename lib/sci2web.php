@@ -1052,6 +1052,7 @@ function toggleButtons2($status)
      $status=="stop" or
      $status=="kill"){
     $display["Clean"]=$disp;
+    $display["Compile"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -1276,12 +1277,13 @@ function statusIcon($status,$width="")
     $status_bg="green";
     break;
   case "submit":
-    $status_link="";
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=RunStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Submitted";
     $status_color="white";
     $status_bg="blue";
     break;
   case "run":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Running";
     $status_color="white";
     $status_bg="red";
@@ -1302,11 +1304,13 @@ function statusIcon($status,$width="")
     $status_bg="lightgray";
     break;
   case "kill":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Killed";
     $status_color="white";
     $status_bg="black";
     break;
   case "end":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Ended";
     $status_color="white";
     $status_bg="blue";

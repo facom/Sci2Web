@@ -27,7 +27,7 @@ $extraaction="";
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $Action=$PHP["Action"];
-$Dir=$PHP["Dir"];
+if(isset($PHP["Dir"])) $Dir=$PHP["Dir"];
 if(isset($PHP["File"])) $File=$PHP["File"];
 else $File="";
 if(!isset($PHP["LinkTarget"])) $PHP["LinkTarget"]="Blank";
@@ -70,13 +70,18 @@ $dpath="$PHP[ROOTPATH]/$Dir";
 $flink="$Dir/$File";
 $fpath="$PHP[ROOTPATH]/$flink";
 
-/*
-printArray($_GET,"GET");
-goto end;
-//*/
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
 //////////////////////////////////////////////////////////////////////////////////
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//DOWNLOAD FILES
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($Action=="Check"){
+  $tocheck=$PHP["ToCheck"];
+  systemCmd("($tocheck) &> $PROJ[TMPPATH]/check.$PHP[RANDID]");
+  $result=shell_exec("cat $PROJ[TMPPATH]/check.$PHP[RANDID]");
+  goto end;
+}
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //DOWNLOAD FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

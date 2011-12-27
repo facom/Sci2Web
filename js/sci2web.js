@@ -25,12 +25,14 @@ function Close()
   FORMS
   ////////////////////////////////////////////////////////////////////////////////
  */
-function clickRow(row,color)
+function clickRow(row)
 {
+    unchecked=$(row).attr('color_unchecked');
+    checked=$(row).attr('color_checked');
     if(!row.checked){
-	row.parentNode.parentNode.style.backgroundColor='white';
+	row.parentNode.parentNode.style.backgroundColor=unchecked;
     }else{
-	row.parentNode.parentNode.style.backgroundColor=color;
+	row.parentNode.parentNode.style.backgroundColor=checked;
     }
 }
 

@@ -133,7 +133,7 @@ $files=preg_split("/;/",$CONFIG["VerTabs"]);
 if(strstr($PROJ["ROOTEMAIL"],$_SESSION["User"]) or 
    strstr($PROJ["ContributorsEmails"],$_SESSION["User"])
    ){
-  $files[]="configuration:Configuration";
+  //$files[]="configuration:Configuration";
 }
 
 $i=1;

@@ -599,6 +599,15 @@ $PROJ["STYLES"]=<<<STYLES
     background-color:$COLORS[clear];
     z-index:10000;
     }
+    .contextual{
+    position:absolute;
+    float:left;
+    padding:10px;
+    background-color:$COLORS[clear];
+    z-index:10000;
+    border:solid $COLORS[dark] 2px;
+    border-radius:10px;
+    }
     .userbox{
     position:absolute;
     top:20px;right:10%;

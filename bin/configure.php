@@ -680,7 +680,7 @@ CLOSE;
 $header.=<<<HEADER
 <!-- -------------------- RUN NAME -------------------- -->
 <div class="actionbutton">
-Run name:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
+<span style="font-size:18px"><b>Run name</b></span>:<input type="text" name="run_name" value="$RUNCONFIG[run_name]">
 </div>
 <div class="actionbutton">
 <!-- -------------------- SAVE BUTTON -------------------- -->

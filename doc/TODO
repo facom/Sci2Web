@@ -10,16 +10,6 @@
 
 To Do:
 
-- Show runs following a given criterium (search run): 
-  + Sort runs by date
-  + Show runs by all users
-
-- Create a notification window.  A window to show simple messages with
-  an update link.
-  + Redirect the output of the submission and check why is not executing.
-  + Check the status of a submission.
-  + Show submit status and allow to see how is in the queue system
-
 - Test everything is running in Firefox
 
 - Plot using a preexistent ps2w file
@@ -306,3 +296,16 @@ Completed:
 
 - Toggle between a history list and a control list.  DONE.
 
+- Show runs following a given criterium (search run): 
+  + Sort runs by date
+  + Show runs by all users
+
+  DONE.
+
+- Create a notification window.  A window to show simple messages with
+  an update link.
+  + Redirect the output of the submission and check why is not executing.
+  + Check the status of a submission.
+  + Show submit status and allow to see how is in the queue system
+
+  DONE. SCRIPT WATCH.PHP CREATED.
