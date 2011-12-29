@@ -17,17 +17,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 $RELATIVE="..";
 include_once("$RELATIVE/lib/sci2web.php");
-
+//echo "Start";
 //////////////////////////////////////////////////////////////////////////////////
 //GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
+$explanation="";
+$extraaction="";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $Action=$PHP["Action"];
-$Dir=$PHP["Dir"];
+if(isset($PHP["Dir"])) $Dir=$PHP["Dir"];
 if(isset($PHP["File"])) $File=$PHP["File"];
 else $File="";
+if(!isset($PHP["LinkTarget"])) $PHP["LinkTarget"]="Blank";
+$Target=$PHP["LinkTarget"];
 $result="";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,6 +39,7 @@ $result="";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function genListCmd($dir,$id,$start){
   global $PROJ;
+  $imgload=genLoadImg("animated/loader-circle.gif");
 $cmd=<<<AJAX
 loadContent
   (
@@ -46,6 +51,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -62,9 +68,11 @@ AJAX;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$dpath="$PHP[ROOTPATH]/$Dir";
-$flink="$Dir/$File";
-$fpath="$PHP[ROOTPATH]/$flink";
+if(isset($Dir)){
+  $dpath="$PHP[ROOTPATH]/$Dir";
+  $flink="$Dir/$File";
+  $fpath="$PHP[ROOTPATH]/$flink";
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
@@ -72,19 +80,68 @@ $fpath="$PHP[ROOTPATH]/$flink";
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //DOWNLOAD FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
+if($Action=="Check"){
+  $tocheck=$PHP["ToCheck"];
+  systemCmd("($tocheck) &> $PROJ[TMPPATH]/check.$PHP[RANDID]");
+  $result=shell_exec("cat $PROJ[TMPPATH]/check.$PHP[RANDID]");
+  goto end;
+}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//DOWNLOAD FILES
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($Action=="DownloadFiles"){
+  $dirpath="$PHP[ROOTPATH]/$PHP[DownloadDir]";
+  $objs=array();
+  $nobjs=$PHP["NumFiles"];
+  for($i=0;$i<$nobjs;$i++){
+    if($PHP["obj$i"]=="on"){
+      $objs[]=$PHP["objfile$i"];
     }
   }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
+  $nobjs=count($objs);
+  /*
+  printArray($objs,"OBJ");
+  print "OBJS:$nobjs";br();
+  print "DPATH:$dirpath";br();
+  //goto end;
+  //*/
+  if($nobjs>0){
+    $tarhash=md5(join(",",$objs));  
     $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
     $tardir="$PROJ[TMPDIR]/$tarfile";
     $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
+    $objslist=join(" ",$objs);
+    systemCmd("cd $dirpath;tar zcf $tarpath $objslist .s2wfiles");
+    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
+$result=<<<RESULT
+Packed $nobjs objects. 
+<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
+RESULT;
+  }else{
+    $result.="<i>No files selected</i>";
+  }
+  goto end;
+}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//DOWNLOAD RESULTS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($Action=="DownloadResults"){
+  $results=array();
+  $nresults=$PHP["NumResults"];
+  for($i=0;$i<$nresults;$i++){
+    if($PHP["result$i"]=="on"){
+      $results[]=$PHP["reshash$i"].".tar.gz";
+    }
+  }
+  $nresults=count($results);
+  if($nresults>0){
+    $tarhash=md5(join(",",$results));  
+    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
+    $tardir="$PROJ[TMPDIR]/$tarfile";
+    $tarpath="$PROJ[TMPPATH]/$tarfile";
+    $resultslist=join(" ",$results);
+    systemCmd("cd $dpath;echo '*.tar.gz' > .s2wfiles");
+    systemCmd("cd $dpath;tar zcf $tarpath $resultslist .s2wfiles");
     $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
 $result=<<<RESULT
 <a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
@@ -95,39 +152,14 @@ RESULT;
   goto end;
 }
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//DOWNLOAD FILES
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
-    }
-  }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
-    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
-    $tardir="$PROJ[TMPDIR]/$tarfile";
-    $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
-    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
-$result=<<<RESULT
-<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
-RESULT;
-  }else{
-    $result.="<i>No files selected</i>";
-  }
-  goto end;
-}
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//DOWNLOAD FILES
+//REMOVE RESULTS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 if($Action=="RemoveResults"){
   $results=array();
-  foreach($_GET as $result){
-    if(preg_match("/ObjDown:(.+)/",$result,$res)){
-      $reshash=preg_replace("/\.tar\.gz/","",$res[1]);
-      $results[]="$reshash";
+  $nresults=$PHP["NumResults"];
+  for($i=0;$i<$nresults;$i++){
+    if($PHP["result$i"]=="on"){
+      $results[]=$PHP["reshash$i"];
     }
   }
   $nresults=count($results);
@@ -137,37 +169,15 @@ if($Action=="RemoveResults"){
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       //REMOVE DATABASE ENTRY
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      mysqlCmd("delete from $dbname where dbrunhash='$runhash'");
+      mysqlCmd("delete from `$dbname` where dbrunhash='$runhash'");
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       //REMOVE FILE
       //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       systemCmd("rm -rf $dpath/$runhash.tar.gz");
     }
-    $result.="<i>$nresults results removed, please update results.</i>";
+    $result.="<i>$nresults results removed, please resubmit your search.</i>";
   }else{
-    $result.="<i>No files selected</i>";
-  }
-  goto end;
-}
-if($Action=="Download"){
-  $objects="";
-  foreach($_GET as $object){
-    if(preg_match("/ObjDown:(.+)/",$object,$objs)){
-      $objects.="$objs[1] ";
-    }
-  }
-  if(strlen($objects)>0){
-    $tarhash=md5($objects);  
-    $tarfile="tarball-$tarhash-$PHP[SESSID].tar.gz";
-    $tardir="$PROJ[TMPDIR]/$tarfile";
-    $tarpath="$PROJ[TMPPATH]/$tarfile";
-    systemCmd("cd $dpath;tar zcf $tarpath $objects");
-    $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
-$result=<<<RESULT
-<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
-RESULT;
-  }else{
-    $result.="<i>No files selected</i>";
+    $result.="<i>No results selected</i>";
   }
   goto end;
 }
@@ -217,25 +227,57 @@ if($Action=="Save"){
 if($Action=="GetList"){
   $path="$PHP[ROOTPATH]/$Dir";
   if(isset($PHP["SubDir"])) $path.="/$PHP[SubDir]";
-  //echo "PATH:$path";br();
   if(!is_dir($path)){
     $result="<tr><td colspan=10>No directory '$Dir'</td></tr>";
     goto end;
   }
-  $criterium="*";
-  if(isset($PHP["Criterium"])) $criterium=$PHP["Criterium"];
+  $criterium="";
+  if(isset($PHP["Criterium"])) $criterium="$PHP[Criterium]";
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //CHECK FOR PERMISSIONS 
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  $pfile=".s2wfiles";
+  systemCmd("echo '(IFS=/;for dir in \$PWD;do if [ -e \"\$PWD/$pfile\" ];then echo \"\$PWD\"/$pfile;exit 0;fi;cd ..;done;exit 1)' &> $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
+  $pfile=systemCmd("cd $path;bash $PROJ[TMPPATH]/cmd.$PHP[RANDID];rm -rf $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
+  if(isBlank($pfile)){
+    echo "<tr><td colspan=10>Directory has not reading permissions.</td></tr>";
+    return;
+  }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //LIST OF FILES
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $files=listFiles($path,$criterium);
+  //GET FILES LISTED
+  $critlist=shell_exec("cat $pfile");
+  $exclude="";
+  foreach(preg_split("/\n/",$critlist) as $crit){
+    if(preg_match("/^\^/",$crit)){
+      $crit=preg_replace("/\^/","",$crit);
+      $exclude.="$crit;";
+    }else{
+      $criterium.=" $crit ";
+    }
+  }
+  $search="*";
+  if(isset($PHP["Search"])) $search="$PHP[Search]";
+  if(isBlank($criterium)) $criterium="*";
+  /*
+  echo "CRITERIUM:$criterium";br();
+  echo "SEARCH:$search";br();
+  echo "EXCLUDE:$exclude";br();
+  //*/
+  $files=listFiles($path,$criterium,"",$exclude,$search);
   $result.="";
   $i=0;
-  if(!file_exists("$path/.root")){
+  if(file_exists("$path/../.s2wfiles")){
     array_unshift($files,"..");
   }
   $nfiles=count($files);
 
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //SEPARATE BY WINDOWS
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   if($PHP["Start"]=="All"){
     $start=0;
     $end=count($files);
@@ -284,7 +326,7 @@ $result.=<<<CONTROLS
 </td>
 </tr>
 CONTROLS;
-
+  $seli=0;
   foreach($files as $file){
     if(($i<$start or $i>=$end) and $file!=".."){
       $i++;
@@ -318,16 +360,20 @@ CONTROLS;
     //==================================================
     $date=date("Y-m-d H:i",filemtime($filepath));
     $size=round($size,1);
-    $flink_view=fileWebOpen($Dir,$file,'View');
-    $flink_edit=fileWebOpen($Dir,$file,'Edit');
+    $flink_view=fileWebOpen($Dir,$file,"View",$Target);
+    $flink_edit=fileWebOpen($Dir,$file,"Edit",$Target);
     $flink_plot="Open('$PROJ[BINDIR]/plot.php?Dir=$Dir&File=$file','Plot $file','$PROJ[PLOTWIN]')";
     //::::::::::::::::::::::::::::::::::::::::
     //CHECK
     //::::::::::::::::::::::::::::::::::::::::
 $checkcol=<<<CHECK
-<input type="checkbox" name="obj$i" value="ObjDown:$file"
-       onchange="popOutHidden(this)"><!--$i-->
-<input type="hidden" name="obj${i}_Submit" value="off">
+<input type="checkbox" name="obj$seli"
+       onchange="popOutHidden(this)" 
+       onclick="deselectAll('objall')"
+       color_unchecked="$COLORS[clear]"
+       color_checked="$COLORS[text]">
+<input type="hidden" name="obj${seli}_Submit" value="off">
+<input type="hidden" name="objfile${seli}_Submit" value="$file">
 CHECK;
     blankFunc();
     if($file=="..") $checkcol="";
@@ -339,11 +385,13 @@ CHECK;
       //##############################
       //DIRECTORY
       //##############################
-      $id="file";
+      $dirhash=md5($Dir);
+      $id="file_$dirhash";
+      $imgload=genLoadImg("animated/loader-circle.gif");
 $ajax_subdir=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$Dir/$file&Start=0',
+   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$Dir/$file&Start=0&Search=$search',
    'listfiles',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -351,6 +399,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -362,8 +411,9 @@ loadContent
 AJAX;
       blankFunc();
       $flink="JavaScript:$ajax_subdir";
+      $extraaction="onclick=$('input[name=DownloadDir_Submit]').attr('value','$Dir/$file')";
       break;
-    case "TEXT":case "SCRIPT":
+    case "TEXT":case "SCRIPT":case "IMAGE":
       //##############################
       //TEXT FILE
       //##############################
@@ -397,7 +447,7 @@ AJAX;
       //DIRECTORY
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a>
+$BUTTONS[Results]<a href="JavaScript:$flink_view">View</a><br/>
 ACTIONS;
       break;
     case "TEXT":case "SCRIPT":
@@ -405,9 +455,9 @@ ACTIONS;
       //TEXT FILE
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a> | 
-<a href="JavaScript:$flink_edit">Edit</a> | 
-<a href="JavaScript:$flink_plot">Plot</a>
+$BUTTONS[Results] <a href="JavaScript:$flink_view">View</a><br/>
+$BUTTONS[Configure] <a href="JavaScript:$flink_edit">Edit</a><br/>
+$BUTTONS[Plot] <a href="JavaScript:$flink_plot">Plot</a><br/>
 ACTIONS;
       break;
     case "IMAGE":case "TGZ":
@@ -415,7 +465,7 @@ ACTIONS;
       //TEXT FILE
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a>
+$BUTTONS[Results] <a href="JavaScript:$flink_view">View</a>
 ACTIONS;
       break;
     default:
@@ -447,26 +497,68 @@ $checkcol
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE NAME     							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
-  $iconimg<a href="$flink" $explanation>$fileshort<!--($ftype)--></a>
+<td class="field" colspan="2"
+    onmouseover="
+		 $('#actionarrow$i').css('display','block');
+		 $(this).css('background-color','$COLORS[text]');
+		 "
+    onmouseout="
+		$('#actionarrow$i').css('display','none');
+		$(this).css('background-color','$COLORS[clear]');
+		">
+  <div style="position:relative">
+    $iconimg
+    <a href="$flink" $explanation $extraaction>$fileshort<!--($ftype)--></a>
+    <br/>
+    <span style="font-size:10px">$metadata</span>
+    <div id="actionarrow$i" 
+	 style="display:none;
+		position:absolute;
+		right:0px;bottom:0px">
+      <a href="JavaScript:void(null)" 
+	 onclick="
+		  toggleElement('runactions$i');
+		  ">
+	$BUTTONS[Down]
+      </a>
+    </div>
+    <div id="runactions$i"
+	 class="contextual"
+	 style="position:absolute;
+		right:0px;
+		display:none;
+		text-align:left;
+		font-size:12px;"
+	 onmouseover="$('#runactions$i').css('display','block');"
+	 onmouseout="$('#runactions$i').css('display','none');"
+	 >
+      $actions
+    </div>
+
+  </div>
 </td>
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE METADATA 							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
+<!--
+<td class="field">
 $metadata
 </td>
+-->
 <!-- ---------------------------------------------------------------------- -->
 <!-- ACTIONS         							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td>
+<!--
+<td class="field">
 $actions
 </td>
+-->
 </tr>
 TABLE;
- 
+     $seli++;
   }//END FOR FILES
-  
+  $nselfiles=$seli;  
+  $result.="<input type='hidden' name='NumFiles_Submit' value='$nselfiles'/>";
   if($end<$nfiles){
 $result.=<<<CONTROLS
 <tr style="background-color:$COLORS[text];text-align:center">
@@ -479,10 +571,11 @@ CONTROLS;
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //RESULT
 //////////////////////////////////////////////////////////////////////////////////
 end:
 echo $result;
+
+finalizePage();
 ?>

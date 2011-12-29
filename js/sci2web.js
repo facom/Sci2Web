@@ -21,16 +21,36 @@ function Close()
 }
 
 /*
+ */
+function Reload()
+{
+    window.location.reload();
+}
+
+/*
   ////////////////////////////////////////////////////////////////////////////////
   FORMS
   ////////////////////////////////////////////////////////////////////////////////
  */
-function clickRow(row,color)
+function clickRow(row)
 {
+    unchecked=$(row).attr('color_unchecked');
+    checked=$(row).attr('color_checked');
     if(!row.checked){
-	row.parentNode.parentNode.style.backgroundColor='white';
+	row.parentNode.parentNode.style.backgroundColor=unchecked;
     }else{
-	row.parentNode.parentNode.style.backgroundColor=color;
+	row.parentNode.parentNode.style.backgroundColor=checked;
+    }
+}
+
+function clickRow2(row)
+{
+    unchecked=$(row).attr('color_unchecked');
+    checked=$(row).attr('color_checked');
+    if(!row.checked){
+	$(row.parentNode.parentNode).css('background-color',unchecked);
+    }else{
+	$(row.parentNode.parentNode).css('background-color',checked);
     }
 }
 
@@ -49,16 +69,48 @@ function popOutHidden(field)
 {
     var sname=$(field).attr("name")+'_Submit';
     var hfield=$('input[name="'+sname+'"]');
+    newvalue=$(field).attr("value");
     if(hfield.length==0){
 	var newfield=$(field).clone();
 	$(newfield).
-	    attr("name",sname).
-	    attr("type","hidden");
+	  attr("name",sname).
+	  attr("type","hidden").
+	  attr("value",newvalue);
 	$(field).after(newfield);
-    }else{
-	//alert("Element "+$(hfield).attr("name")+" Changed to "+$(field).attr("value"));
-	hfield.attr("value",$(field).attr("value"));
     }
+    hfield=$('input[name="'+sname+'"]');
+    value=hfield.attr("value");
+    if($(field).attr("type")=="checkbox"){
+      if(field.checked){
+	newvalue="on";
+ 	$(field).attr("value","on"); 
+      }else{
+	newvalue="off";
+ 	$(field).attr("value","off"); 
+      }
+    }
+    //alert("Element "+$(hfield).attr("name")+" Changed from "+value+" to "+newvalue);
+    hfield.attr("value",newvalue);
+}
+
+function popOutHidden2(field)
+{
+    var sname=$(field).attr("name")+'_Submit';
+    var hfield=$('input[name="'+sname+'"]');
+
+    //alert("Name:"+$('input[name="'+sname+'"]').attr('name'));
+
+    newvalue=$(field).attr("value");
+    if($(field).attr("type")=="checkbox"){
+      if(field.checked){
+	newvalue="on";
+ 	$(field).attr("value","on"); 
+      }else{
+	newvalue="off";
+ 	$(field).attr("value","off"); 
+      }
+    }
+    hfield.attr("value",newvalue);
 }
 
 /*
@@ -208,15 +260,18 @@ function submitForm(formid,script,
   i=0;
   qstring="";
   while(formel=form.elements[i]){
-      esname=$(formel).attr("name");
-      if(esname.search("_Submit")>=0){
-	  ename=esname.split("_")[0];
-	  qstring+=ename+"="+$(formel).attr("value")+"&";
+      if(esname=$(formel).attr("name")){
+	  //alert(esname);
+	  if(esname.search("_Submit")>=0){
+	      ename=esname.split("_")[0];
+	      qstring+=ename+"="+$(formel).attr("value")+"&";
+	  }
       }
       i++;
   }
   script=script+"&"+qstring;
-
+  //alert(script);
+  
   x.onreadystatechange=function(){
     rtext=x.responseText;
     if(x.readyState==4){
@@ -268,7 +323,7 @@ function explainThis(object)
 	positionLeft:boxleft,
 	borderSize:1,
 	loader:0,
-	windowBGColor:"#F3B06C",
+	windowBGColor:"lightgray",
 	windowPadding:2
 	}
     );
@@ -455,7 +510,6 @@ function queryResultsDatabase(form,resultsid,script)
     results=document.getElementById(resultsid);
     querytxt=form.elements[0].value;
     scripturl=script+"Query="+querytxt;
-
     loadContent(scripturl,resultsid,
 		function(element,rtext){
 		    element.innerHTML=rtext;
@@ -479,19 +533,28 @@ function queryResultsDatabase(form,resultsid,script)
 function selectAll(formid,object)
 {
     form=document.getElementById(formid);
-    value=object.checked;
+    valueall=object.value;
+    checkall=object.checked;
     i=0;
-    //alert(form.elements.length);
     while(formel=form.elements[i]){
 	if(formel.type.search("checkbox")>=0){
+	    formel.checked=checkall;
+	    formel.value=valueall;
 	    namel=formel.name;
 	    valel=formel.value;
 	    subel=$("input[name="+namel+"_Submit]");
 	    subel.attr("value",valel);
-	    formel.checked=value;
+	    subel.checked=checkall;
 	}
 	i++;
     }
+}
+
+function deselectAll(allname)
+{
+    $('input[name='+allname+']').attr('checked',false);
+    $('input[name='+allname+'_Submit]').attr('checked',false);
+    $('input[name='+allname+'_Submit]').attr('value','off');
 }
 
 function toggleBug(elementid,referer)
@@ -506,8 +569,140 @@ function toggleBug(elementid,referer)
   element.toggle('fast',null);
 }
 
-function setsValue(elementid,value)
+function setValue(elementid,value)
 {
   element=document.getElementById(elementid);
   $(element).attr("value",value);
 }
+
+function downloadFile(url)
+{
+    window.open(url,'Download');
+}
+
+function randomStr(size)
+{
+    var text="";
+    var possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for(var i=0;i<size;i++)
+        text+=possible.charAt(Math.floor(Math.random()*possible.length));
+    return text;
+}
+
+/*
+  SHORT CUTS
+*/
+var isCtrl=false;
+$(document).keyup(function(e){
+	if(e.which==17) isCtrl=false;
+    }).keydown(function(e){
+	    if(e.which==17) isCtrl=true;
+	    /*CTRL+RIGHT*/
+	    if(e.which==39 && isCtrl == true) {
+		tabid=$("#CtrlTabId").attr("value");
+		tabnum=$("#CtrlTabNum").attr("value");
+		tabnext=(parseInt(tabid)+1)%(tabnum+1);
+		if(tabnext>tabnum) tabnext=1;
+		document.location.href="?TabId="+tabnext;
+		return false;
+	    }
+	    /*CTRL+LEFT*/
+	    if(e.which==37 && isCtrl == true) {
+		tabid=$("#CtrlTabId").attr("value");
+		tabnum=$("#CtrlTabNum").attr("value");
+		tabnext=(parseInt(tabid)-1)%(tabnum+1);
+		if(tabnext<=0) tabnext=tabnum;
+		document.location.href="?TabId="+tabnext;
+		return false;
+	    }
+	});
+
+/*
+KEYS CODES:
+Backspace:8
+Tab:9
+Enter:13
+Shift:16
+Ctrl:17
+Alt:18
+Pause:19
+Capslock:20
+Esc:27
+Page up:33
+Page down:34
+End:35
+Home:36
+Left arrow:37
+Up arrow:38
+Right arrow:39
+Down arrow:40
+Insert:45
+Delete:46
+0:48
+1:49
+2:50
+3:51
+4:52
+5:53
+6:54
+7:55
+8:56
+9:57
+a:65
+b:66
+c:67
+d:68
+e:69
+f:70
+g:71
+h:72
+i:73
+j:74
+k:75
+l:76
+m:77
+n:78
+o:79
+p:80
+q:81
+r:82
+s:83
+t:84
+u:85
+v:86
+w:87
+x:88
+y:89
+z:90
+0 (numpad):96
+1 (numpad):97
+2 (numpad):98
+3 (numpad):99
+4 (numpad):100
+5 (numpad):101
+6 (numpad):102
+7 (numpad):103
+8 (numpad):104
+9 (numpad):105
+*:106
++:107
+-:109
+.:110
+/:111
+F1:112
+F2:113
+F3:114
+F4:115
+F5:116
+F6:117
+F7:118
+F8:119
+F9:120
+F10:121
+F11:122
+F12:123
+=:187
+Coma:188
+Slash /:191
+Backslash \:220
+*/

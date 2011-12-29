@@ -13,41 +13,50 @@ $PROJ["STYLES"]=<<<STYLES
     /*GENERAL*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     html body{
-    background-color:$COLORS[text];
-    padding:0px;
-    margin:0px;
-    font:14px Arial;
+	background-color:$COLORS[text];
+	padding:0px;
+	margin:0px;
+	font:14px Arial;
     }
     /*TEXT*/
     p,li{
-    font:18px Arial;
+	font:18px Arial;
     }
     /*LINKS*/
     a:link{
-    color:$COLORS[dark];
-    text-decoration:none;
+	color:blue;
+	text-decoration:none;
     }
     a:visited{
-    color:$COLORS[dark];
+	color:blue;
     }
     a:hover{
-    /*
-    background-color:$COLORS[dark];
-    color:$COLORS[back];
-    text-decoration:underline;
-    */
-    font-weight:bold;
+	color:blue;
+	text-decoration:underline;
     }
     a.sci2web{
     font-weight:bold;
     }
-    text.quote{
+    div.quote{
     margin-left:10px;
     font-style:italic;
+    }
+    a.image{
+    padding:3px;
+    padding-bottom:7px;
+    background-color:white;
+    text-align:center;
+    vertical-align:center;
+    text-height:300px;
+    border:solid gray 1px;
+    border-radius:2px;
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*IMG*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+    img {
+    border: 0px;
+    }
     img.mainlogo{
     height:$PROJ[LOGOHEIGHT]px;
     }
@@ -63,12 +72,16 @@ $PROJ["STYLES"]=<<<STYLES
     align:center;
     }
     div.header_content{
-    position:relatice;
+    position:relative;
     top:0px;
     left:0px;
     width:$PROJ[BODYWIDTH]%;
     margin-left:$PROJ[BODYMARGIN]%;
     background-color:$COLORS[back];
+    }
+    div.version{
+    font-size:20px;
+    font-weight:bold;
     }
     div.logo{
     background-image:url('$PROJ[IMGDIR]/sci2web-poweredby.jpg');
@@ -94,13 +107,13 @@ $PROJ["STYLES"]=<<<STYLES
     padding:10px;
     }
     div.debug_top{
-    position:absolute;
-    top:0px;right:0px;
+    position:fixed;
+    top:0px;right:10px;
     z-index:1;
     }
     div.debug_bottom{
-    position:absolute;
-    bottom:-100px;right:0px;
+    position:fixed;
+    bottom:0px;right:10px;
     z-index:9001;
     }
     div.notification1{
@@ -129,9 +142,22 @@ $PROJ["STYLES"]=<<<STYLES
     position:absolute;
     top:10px;right:10px;
     }
+    div.actionbutton{
+    display:inline-block;
+    vertical-align:middle;
+    border:solid black 0px;
+    padding:2px;
+    }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*FORMS*/
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+    form.inline{
+    position:relative;
+    display:inline-block;
+    height:20px;
+    border:solid black 0px;
+    text-height:20px;
+    }
     textarea.filearea{
     width:100%;
     height:90%;
@@ -143,19 +169,29 @@ $PROJ["STYLES"]=<<<STYLES
     }
     div.plainarea{
     width:100%-10px;
-    height:95%;
     white-space:pre-wrap;
-    padding-left:10px;
+    padding:10px;
+    height:92%;
     border-top:solid $COLORS[dark] 2px;
     background-color:$COLORS[clear];
     overflow:auto;
     font-family:courier;
-    font-size:120%;
+    font-size:12px;
+    }
+    div.viewarea{
+    width:100%-10px;
+    white-space:pre-wrap;
+    padding:10px;
+    border-top:solid $COLORS[dark] 2px;
+    background-color:$COLORS[clear];
+    overflow:auto;
+    font-family:courier;
+    font-size:14px;
     }
     div.imgarea{
     height:95%;
     width:100%;
-    border:dashed $COLORS[text] 2px;
+    border:dashed $COLORS[text] 0px;
     text-align:center;
     }
     .image{
@@ -166,9 +202,9 @@ $PROJ["STYLES"]=<<<STYLES
     top:35px;right:5px
     }
     div.editlink{
-    background-color:$COLORS[text];
-    padding:2px;
-    text-align:right;
+	padding:2px;
+	text-align:right;
+	border-bottom:dashed $COLORS[text] 2px;
     }
     /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
     /*TABLES*/
@@ -221,7 +257,9 @@ $PROJ["STYLES"]=<<<STYLES
     background-color:$COLORS[clear];
     width:70%;
     }
-
+    td.field{
+    font-size:12px;
+    }
     table.apps{
     width: 100%;
     border: solid $COLORS[dark] 0px;
@@ -561,6 +599,19 @@ $PROJ["STYLES"]=<<<STYLES
     background-color:$COLORS[clear];
     z-index:10000;
     }
+    .contextual{
+    position:absolute;
+    float:left;
+    padding:10px;
+    background-color:$COLORS[clear];
+    z-index:10000;
+    border:solid $COLORS[dark] 2px;
+    border-radius:10px;
+    }
+    .explanationtxt{
+    font-style:italic;
+    font-size:10px;
+    }
     .userbox{
     position:absolute;
     top:20px;right:10%;
@@ -596,13 +647,33 @@ $PROJ["STYLES"]=<<<STYLES
     float:left;
     position:fixed;
     top:0px;
-    width:20%;
-    left:40%;
+    width:40%;
+    left:30%;
     text-align:center;
     box-shadow:2px 2px 2px $COLORS[text];
     -moz-box-shadow: 2px 2px 2px $COLORS[text];
     border-radius:5px;
     -moz-box-shadow:5px
+    }
+    .subnotification{
+    position:absolute;
+    width:20%;
+    top:-10px;
+    left:40%;
+    background-color:$COLORS[clear];
+    text-align:center;
+    border:solid $COLORS[text] 1px;
+    display:none;
+    }
+    .suberror{
+    position:absolute;
+    width:20%;
+    top:0px;
+    left:40%;
+    background-color:pink;
+    text-align:center;
+    border:solid $COLORS[text] 1px;
+    display:none;
     }
   </style>
 STYLES;

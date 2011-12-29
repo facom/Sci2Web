@@ -43,20 +43,64 @@ $qerror=true;
 //DIRECTORIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //==================================================
-//FILE PATH
+//FILES PATH
 //==================================================
 $path="$PHP[ROOTPATH]/$PHP[Dir]";
 $imgdir="$PHP[Dir]";
 $imgpath="$PHP[ROOTPATH]/$imgdir";
+
 //==================================================
 //FILE & IMAGE NAME
 //==================================================
-list($fname,$fext)=preg_split("/\./",$PHP["File"]);
+if(!preg_match("/,/",$PHP["File"]) and
+   preg_match("/\.ps2w/",$PHP["File"])){
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //READ PS2W FILES
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  $fpath="$path/$PHP[File]";
+  readConfig("$fpath");
+  //DATA FILES
+  $fdatafiles=$CONFIG["ImageFile"];
+  $fdatafiles=preg_replace("/[\"\']/","",$fdatafiles);
+  //GET THE IMAGE NAME
+  $fimgfile=$CONFIG["ImageFile"];
+  $fimgfile=preg_replace("/[\"\']/","",$fimgfile);
+  list($fname,$fext)=preg_split("/\./",$fimgfile);
+  //COPY PS2W AS SCI2WEB PLOTTING SCRIPT
+  systemCmd("cp -rf $fpath $imgpath/.$fname.ps2w");
+  //REPLACE " BY '
+  shell_exec("sed -i.save -e \"s/\\\"/\'/gi\" $imgpath/.$fname.ps2w");
+  //PLOT CONFIGURATION FILE
+  $fconf="$imgpath/.$fname.ps2w";
+}else{
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //GET LIST OF FILES
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  $fname="";
+  $datafiles="";
+  $ncols=array();
+  foreach(preg_split("/,/",$PHP["File"]) as $file){
+    //COUNT NUMBER OF COLUMNS
+    $fpath="$path/$file";
+    $ncols[]=systemCmd("grep -v '^#' $fpath | head -n 1 | awk '{print NF}'");
+    if(!file_exists($fpath)){
+      $content.="<div class='tabbertab sectab'><h2>Error</h2><p>File '$fpath' does not exist.</p>";
+      goto end;
+    }
+    list($tfname,$fext)=preg_split("/\./",$file);
+    $fname.="${tfname}_";
+    $datafiles.="'$file',";
+  }
+  $fname=preg_replace("/_$/","",$fname);
+  $datafiles=preg_replace("/,$/","",$datafiles);
+  //PLOT CONFIGURATION FILE
+  $fconf="$imgpath/.$fname.ps2w";
+}
 $fimg="$fname.png";
+
 //==================================================
 //FILE & IMAGE DIR AND PATH
 //==================================================
-$fpath="$path/$PHP[File]";
 $fimgdir="$imgdir/$fimg";
 $fimgpath="$imgpath/$fimg";
 
@@ -67,23 +111,12 @@ if(file_exists($fimgpath)){
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//CHECK FILE
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if(!file_exists($fpath)){
-$content.=<<<CONTENT
-<div class="tabbertab sectab">
-<h2>Error</h2>
-<p>File '$fpath' does not exist.</p>
-CONTENT;
-  goto end;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //READ CONFIGURATION FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$fconf="$imgpath/$fname.ps2w";
+//echo "CONF:$fconf";br();
 if(!file_exists($fconf)){
-  $pconf=genPlotConf($fpath,$fimgpath);
+  $pconf=genPlotConf($datafiles,$fimgpath);
+  //echo $pconf;br();
   $fl=fileOpen("$fconf","w");
   fwrite($fl,$pconf);
   fclose($fl);
@@ -94,8 +127,6 @@ ps2wToPlain($CONFIG);
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FILE PROPERTIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//COUNT NUMBER OF COLUMNS
-$ncols=systemCmd("grep -v '^#' $fpath | head -n 1 | awk '{print NF}'");
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //CHECK PLOTTING DIRECTORY
@@ -147,7 +178,7 @@ CONTENT;
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=$fname.ps2w',
+   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=.$fname.ps2w',
    'plotarea',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -182,7 +213,8 @@ $colspan=2;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //LINKS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$confile_link=fileWebOpen($imgdir,"$fname.ps2w",'View');
+$confile_link=fileWebOpen($imgdir,".$fname.ps2w",'View');
+$outfile_link=fileWebOpen($PHP[TMPDIR],"phpout-ajax-plot-$PHP[SESSID]",'View');
 $file_link=fileWebOpen($PHP["Dir"],$PHP["File"],'View');
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +239,7 @@ $selSetGrid=genSelect(array("'Yes'","'No'"),"SetGrid",$CONFIG["SetGrid"],"onchan
 $ajaxcmd=<<<AJAX
 submitForm
   ('formplot',
-   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=$fname.ps2w',
+   '$PROJ[BINDIR]/ajax-plot.php?Dir=$PHP[Dir]&File=$PHP[File]&Image=$fimg&ImgDir=$imgdir&ConfFile=.$fname.ps2w',
    'plotarea',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -223,6 +255,7 @@ submitForm
    )
 AJAX;
 //*/
+$BaseDir=basename($PHP["Dir"]);
 $content.=<<<CONTENT
 <!-- ---------------------------------------------------------------------- -->
 <!-- FORM								    -->
@@ -244,15 +277,42 @@ $content.=<<<CONTENT
     <!-- -------------------------------------------------- -->
     <tr>
       <td class="field">
-	File
+	Directory
       </td>
       <td class="value">
 	<input type="hidden" name="Dir_Submit" value="$PHP[Dir]">
+	<b onmouseover="explainThis(this)" explanation="$PHP[Dir]">
+	  $BaseDir
+	</b>
+      </td>
+    </tr>
+    <tr>
+      <td class="field">
+	Image
+      </td>
+      <td class="value">
+        <input type="hidden" name="ImageFile_Submit" value="$fimg">
+	<b onmouseover="explainThis(this)" explanation="Image file">
+	  $fimg
+	</b>
+      </td>
+    </tr>
+    <tr>
+      <td class="field">
+	Files
+      </td>
+      <td class="value">
 	<input type="hidden" name="File_Submit" value="$PHP[File]">
-	<input type="hidden" name="DataFiles_Submit" value="$fpath">
-        <input type="hidden" name="ImageFile_Submit" value="$fimgpath">
-        <input type="hidden" name="ConfFile_Submit" value="$fname.ps2w">
-	<a href="JavaScript:$file_link">$PHP[File]</a>
+        <input type="hidden" name="ConfFile_Submit" value=".$fname.ps2w">
+	<input type="hidden" name="DataFiles_Submit" value="$CONFIG[DataFiles]">
+	<input type="text" name="DataFiles" value="$CONFIG[DataFiles]" 
+	       onchange="popOutHidden(this)" 
+	       onfocus="$('#explanationf').toggle('fast',null);"
+	       onblur="$('#explanationf').toggle('fast',null);">
+	<br/>
+	<div id="explanationf" class="explanationtxt" style="display:none">
+	  Give the name of the files separated by ','
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -267,12 +327,16 @@ $content.=<<<CONTENT
     <tr>
       <td class="field">X Column</td>
       <td class="value">
-
+	<input type="hidden" name="XCols_Submit" value="$CONFIG[XCols]">
 	<input type="text" name="XCols" value="$CONFIG[XCols]" 
 	       onchange="popOutHidden(this)" 
-	       onmouseover="explainThis(this)" 
-	       explanation="This is the column with the abcsisas" >
-	<input type="hidden" name="XCols_Submit" value="$CONFIG[XCols]">
+	       onfocus="$('#explanationx').toggle('fast',null);"
+	       onblur="$('#explanationx').toggle('fast',null);">
+	<br/>
+	<div id="explanationx" class="explanationtxt" style="display:none">
+	  Indicate the column(s) with the value of the abcisas.<br/>
+	  Ex.: '1' (single file), '1,2' (multiple file)
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -281,11 +345,18 @@ $content.=<<<CONTENT
     <tr>
       <td class="field">Y Columns</td>
       <td class="value">
+	<input type="hidden" name="YCols_Submit" value="$CONFIG[YCols]">
 	<input type="text" name="YCols" value="$CONFIG[YCols]" 
 	       onchange="popOutHidden(this)"
-	       onmouseover="explainThis(this)" 
-	       explanation="This is the column with the ordinates">
-	<input type="hidden" name="YCols_Submit" value="$CONFIG[YCols]">
+	       onfocus="$('#explanationy').toggle('fast',null);"
+	       onblur="$('#explanationy').toggle('fast',null);"
+	<br/>
+	<div id="explanationy" class="explanationtxt" style="display:none">
+	  Column(s) with the value of the ordinates. Use brackets to
+	  group columns for multiple files<br/> Ex.: '[1]' (single
+	  file, single column), '[1,2]' (multiple columns, single
+	  file), '[1,2],[3]' (multiple files).
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -294,8 +365,27 @@ $content.=<<<CONTENT
     <tr>
       <td class="field">Styles</td>
       <td class="value">
-	<input type="text" name="LinesInformation" value="$CONFIG[LinesInformation]" onchange="popOutHidden(this)">
-	<input type="hidden" name="LinesInformation_Submit" value="$CONFIG[LinesInformation]">
+	<input type="hidden" name="LinesInformation_Submit" 
+	       value="$CONFIG[LinesInformation]">
+	<input type="text" name="LinesInformation" 
+	       value="$CONFIG[LinesInformation]" 
+	       onchange="popOutHidden(this)"
+	       onfocus="$('#explanationl').toggle('fast',null);"
+	       onblur="$('#explanationl').toggle('fast',null);"
+	       >
+	<br/>
+	<div id="explanationl" class="explanationtxt" style="display:none">
+	  Style specification for plot.  Format:
+	  ('label','color','linestyle',<br/>linewidth,'markerstyle',markersize).
+	  Where:<br/> linestyle: '-' (continuous), '--' (dashed), ':'
+	  (dotted), '-.' (dashed-dotted).<br/>  markerstyle: '*'
+	  (star), '+' (plus), '.' (dot), 'o' (circle), 's'
+	  (squares).<br/>Leave blank line or marker style to disable.
+	  <br>Ex.:[('Velocity','blue','--',2,'',1)] (single column),
+	  [('Vx','red','-',2,'+',3),('Vy','gren','-',2,'+',3)],
+	  [('Vtot','blue','',1,'*',3)] (multiple columns, multiple
+	  files)
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -310,8 +400,15 @@ $content.=<<<CONTENT
     <tr>
       <td class="field">X range</td>
       <td class="value">
-	<input type="text" name="XRange" value="$CONFIG[XRange]" onchange="popOutHidden(this)">
 	<input type="hidden" name="XRange_Submit" value="$CONFIG[XRange]">
+	<input type="text" name="XRange" value="$CONFIG[XRange]" 
+	       onchange="popOutHidden(this)"
+	       onfocus="$('#explanationxr').toggle('fast',null);"
+	       onblur="$('#explanationxr').toggle('fast',null);">
+	<br/>
+	<div id="explanationxr" class="explanationtxt" style="display:none">
+	  Range for abcisas.<br/>Ex.:'Auto' (auto range), (2,3) (custom range)
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -320,8 +417,15 @@ $content.=<<<CONTENT
     <tr>
       <td class="field">Y range</td>
       <td class="value">
-	<input type="text" name="YRange" value="$CONFIG[YRange]" onchange="popOutHidden(this)">
 	<input type="hidden" name="YRange_Submit" value="$CONFIG[YRange]">
+	<input type="text" name="YRange" value="$CONFIG[YRange]" 
+	       onchange="popOutHidden(this)"
+	       onfocus="$('#explanationxr').toggle('fast',null);"
+	       onblur="$('#explanationxr').toggle('fast',null);">
+	<br/>
+	<div id="explanationxr" class="explanationtxt" style="display:none">
+	  Range for ordinates.<br/>Ex.:'Auto' (auto range), (2,3) (custom range)
+	</div>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -333,9 +437,9 @@ $content.=<<<CONTENT
 	Extra code
       </td>
       <td class="value">
+	<input type="hidden" name="ExtraCode_Submit" value="$CONFIG[ExtraCode]">
 	<textarea name="ExtraCode" style="width:100%" disabled 
 		  onchange="popOutHidden(this)">$CONFIG[ExtraCode]</textarea>
-	<input type="hidden" name="ExtraCode_Submit" value="$CONFIG[ExtraCode]">
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -394,8 +498,9 @@ $content.=<<<CONTENT
       <tr>
 	<td class="field">Grid style</td>
 	<td class="value">
-	  <input type="text" name="GridStyle" value="$CONFIG[GridStyle]">
-	  <input type="hidden" name="GridStyle_Submit" value="$CONFIG[GridStyle]" onchange="popOutHidden(this)">
+	  <input type="hidden" name="GridStyle_Submit" value="$CONFIG[GridStyle]">
+	  <input type="text" name="GridStyle" value="$CONFIG[GridStyle]"
+		 onchange="popOutHidden(this)">
 	</td>
       </tr>
       <!-- -------------------------------------------------- -->
@@ -407,9 +512,10 @@ $content.=<<<CONTENT
 	  Extra decoration
 	</td>
 	<td class="value">
+	  <input type="hidden" name="ExtraDecoration_Submit" 
+		 value="$CONFIG[ExtraDecoration]">
 	  <textarea name="ExtraDecoration" style="width:100%" disabled
 		    onchange="popOutHidden(this)">$CONFIG[ExtraDecoration]</textarea>
-	  <input type="hidden" name="ExtraDecoration_Submit" value="$CONFIG[ExtraDecoration]">
 	</td>
       </tr>
       <!-- -------------------------------------------------- -->
@@ -429,18 +535,18 @@ $content.=<<<CONTENT
   $onload
 
   <div style="float:right;top:0px;right:0px;text-align:center;padding:5px">
-    Title:<input type="text" name="Title" value="$CONFIG[Title]" onchange="popOutHidden(this)">
     <input type="hidden" name="Title_Submit" value="$CONFIG[Title]">
+    Title:<input type="text" name="Title" value="$CONFIG[Title]" onchange="popOutHidden(this)">
   </div>
 
   <div style="float:left;top:0px;left:0px text-align:center;padding:5px">
-    Y Label:<input type="text" name="YLabel" value="$CONFIG[YLabel]" onchange="popOutHidden(this)">
     <input type="hidden" name="YLabel_Submit" value="$CONFIG[YLabel]">
+    Y Label:<input type="text" name="YLabel" value="$CONFIG[YLabel]" onchange="popOutHidden(this)">
   </div>
 
   <div style="float:right;position:absolute;bottom:5px;right:5px;text-align:center">
-    X Label:<input type="text" name="XLabel" value="$CONFIG[XLabel]" onchange="popOutHidden(this)">
     <input type="hidden" name="XLabel_Submit" value="$CONFIG[XLabel]">
+    X Label:<input type="text" name="XLabel" value="$CONFIG[XLabel]" onchange="popOutHidden(this)">
   </div>
 
   <div id="plotarea" style="float:left;position:relative;top:0px;left:0px;height:$hplot%;width:100%;text-align:center;">
@@ -448,25 +554,17 @@ $content.=<<<CONTENT
   </div>
 
   <div style="float:left;position:absolute;bottom:5px;left:5px;z-index:6000;font-size:14px">
-    <input type="submit" name="PlotAction" value="Update">
     <input type="hidden" name="PlotAction_Submit" value="Update">
+    <input type="submit" name="PlotAction" value="Update">
     <a href="$preimg">
       Download
     </a> |
     <a href="JavaScript:$confile_link">
       PS2W File
     </a> |
-    <!--
-    <a href="JavaScript:void(0)" onclick="toggleElement('information')">
-      Information
-    </a> |
-    -->
-    <a href="$PHP[TMPDIR]/phpout-ajax-plot-$PHP[SESSID]">
-      Output
-    </a> |
-    <a href="$PHP[TMPDIR]/phperr-ajax-plot-$PHP[SESSID]">
-      Error
-    </a>
+    <a href="JavaScript:$outfile_link">
+      Output/Error
+    </a> 
   </div>
   
   <div id="information" class="userbox">
@@ -494,16 +592,24 @@ CONTENT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FOOTER
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-$bugbut=genBugForm("PlotGeneral","General problems with plot");
+list($bugbut,$bugform)=genBugForm2("PlotGeneral","General problems with plot");
 $footer.= <<<CONF
 </div>
-<div class="formbuttons" id="buttons">
-</div>
-<div class="close">
-  <button class="image" onclick="window.close()">
-    $BUTTONS[Cancel]
-  </button>
-  <div class="close" style="right:38px;top:7px">$bugbut</div>
+<div style="position:absolute;
+	    top:0px;right:18px">
+  <div class="actionbutton">
+    $bugbut$bugform
+  </div>
+  <div class="actionbutton">
+    <button class="image" onclick="window.location.reload()">
+      $BUTTONS[Update]
+    </button>
+  </div>
+  <div class="actionbutton">
+    <button class="image" onclick="window.close()">
+      $BUTTONS[Cancel]
+    </button>
+  </div>
 </div>
 CONF;
 

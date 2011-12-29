@@ -1,0 +1,173 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#          _ ___               _     
+#         (_)__ \             | |    
+# ___  ___ _   ) |_      _____| |__  
+#/ __|/ __| | / /\ \ /\ / / _ \ '_ \ 
+#\__ \ (__| |/ /_ \ V  V /  __/ |_) |
+#|___/\___|_|____| \_/\_/ \___|_.__/ 
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#QUEUE ROUTINES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+case $QSYSTEM in
+
+#################################################################################
+#################################################################################
+### AT/BATCH SYSTEM
+#################################################################################
+#################################################################################
+at|batch)
+
+#==================================================
+#SUBMIT
+#Submit Job to the Scheduler
+#==================================================
+function submitJob
+{
+    script=run.sh
+    {
+	echo -e "#!/bin/bash
+#############################################################
+#SCHEDULER OPTIONS
+#############################################################
+#$QSYSTEM
+"
+	cat $script
+    } >> submit.sh
+    if [ $QSYSTEM = "at" ];then cmd="$QSYSTEM now"
+    else cmd="$QSYSTEM"
+    fi
+    if ! $cmd < submit.sh &> /tmp/jobinfo.$$;then
+	echo "Error submitting your job:"
+	cat /tmp/jobinfo.$$
+	rm -rf /tmp/*.$$
+	exit 1
+    fi
+    cat /tmp/jobinfo.$$
+    jobid=$(tail -n 1 /tmp/jobinfo.$$ | cut -f 2 -d ' ')
+    echo $jobid > jobid.oxt
+    rm -rf /tmp/*.$$
+}
+
+#==================================================
+#CHECK JOB
+#Check if the job is running
+#==================================================
+function checkJob
+{
+    ps $(cat pid.oxt)
+}
+
+#==================================================
+#KILL JOB
+#Kill the Job completely
+#==================================================
+function killJob
+{
+    atrm $(cat jobid.oxt)
+    kill -9 $(cat pid.oxt)
+}
+
+#==================================================
+#STATUS JOB
+#See the status of the Job
+#==================================================
+function statusJob
+{
+    atq | grep $(cat jobid.oxt)
+}
+
+#==================================================
+#JOB FULL INFO 
+#Full info about the job
+#==================================================
+function fullinfoJob
+{
+    echo "Time start:" $(cat time_start.oxt 2> /dev/null)
+    echo "Time end:" $(cat time_end.oxt 2> /dev/null) 
+    echo "Process ID:" $(cat pid.oxt 2> /dev/null)
+    echo "Job ID:" $(cat jobid.oxt 2> /dev/null)
+}
+
+;;
+#################################################################################
+#################################################################################
+### TORQUE/PBS
+#################################################################################
+#################################################################################
+pbs)
+
+#==================================================
+#SUBMIT
+#Submit Job to the Scheduler
+#==================================================
+function submitJob
+{
+    script=run.sh
+    {
+	echo -e "#!/bin/bash
+#############################################################
+#SCHEDULER OPTIONS
+#############################################################
+#PBS -V
+#PBS -j oe
+#PBS -o jobpbs.oxt
+#PBS -N Job-$$
+cd \$PBS_O_WORKDIR
+"
+	cat $script
+    } >> submit.sh
+    if ! qsub submit.sh &> /tmp/jobinfo.$$;then
+	echo "Error submitting your job:"
+	cat /tmp/jobinfo.$$
+	rm -rf /tmp/*.$$
+	exit 1
+    fi
+    cat /tmp/jobinfo.$$
+    jobid=$(cat /tmp/jobinfo.$$)
+    echo $jobid > jobid.oxt
+    rm -rf /tmp/*.$$
+}
+
+#==================================================
+#CHECK JOB
+#Check if the job is running
+#==================================================
+function checkJob
+{
+    qstat -f $(cat jobid.oxt) | grep "job_state = R"
+}
+
+#==================================================
+#KILL JOB
+#Kill the Job completely
+#==================================================
+function killJob
+{
+    qdel $(cat jobid.oxt)
+}
+
+#==================================================
+#STATUS JOB
+#See the status of the Job
+#==================================================
+function statusJob
+{
+    qstat -a $(cat jobid.oxt)
+}
+
+#==================================================
+#JOB FULL INFO 
+#Full info about the job
+#==================================================
+function fullinfoJob
+{
+    if ! qstat -f $(cat jobid.oxt);then
+	echo "Stored Job Information:"
+	cat jobinfo.oxt
+    fi
+}
+
+;;
+esac
+

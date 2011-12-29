@@ -134,8 +134,6 @@ function tabberObj(argsObj)
 /*--------------------------------------------------
   Methods for tabberObj
   --------------------------------------------------*/
-
-
 tabberObj.prototype.init = function(e)
 {
   /* Set up the tabber interface.

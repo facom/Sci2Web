@@ -23,6 +23,7 @@ include_once("phplib.php");
 //CONFIGURATION
 //////////////////////////////////////////////////////////////////////////////////
 if(!file_exists("$PHP[PROJPATH]/lib/sci2web.conf")){
+  echo "<img src='images/sci2web-mainlogo.jpg' height='100px'/>";
   echo "<p>Sci2Web configuration file not present</p>";
   echo "<p>Check <a href='doc/install.html'>installation guide</a></p>";
   exit(1);
@@ -50,6 +51,7 @@ else{$PROJ["PAGETITLE"]=$PAGETITLE;}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(!isset($RELATIVE)){$RELATIVE=".";}
 $PROJ["PROJDIR"]="/$PROJ[PROJBASE]/$PROJ[PROJNAME]";
+$PROJ["PROJURL"]="$PHP[SERVER]/$PROJ[PROJDIR]";
 if(!isset($_SESSION["PROJDIR"]))
    $_SESSION["PROJDIR"]=$PROJ["PROJDIR"];
 $PROJ["PROJPATH"]=rtrim(shell_exec("cd $RELATIVE;pwd"));
@@ -70,12 +72,14 @@ $PROJ["LIBDIR"]="$PROJ[PROJDIR]/lib";
 $PROJ["LIBPATH"]="$PROJ[PROJPATH]/lib";
 $PROJ["JSDIR"]="$PROJ[PROJDIR]/js";
 $PROJ["JSPATH"]="$PROJ[PROJPATH]/js";
+$PROJ["LOGDIR"]="$PROJ[PROJDIR]/log";
+$PROJ["LOGPATH"]="$PROJ[PROJPATH]/log";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //AUTHENTICATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $PROJ["LOGIN"]=true;
-$PROJ["ROOTEMAIL"]="sci2web@gmail.com";
+$PROJ["ROOTEMAIL"]=$PROJ["WEBMASTER"];
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //COMMON ELEMENTS
@@ -102,8 +106,10 @@ $DATABASE["Runs"]=
 	"configuration_date"=>"Configuration Date",
 	"run_status"=>"Run Status",
 	"run_pinfo"=>"Run process information",
+	"run_template"=>"Run template",
 	"permissions"=>"Permissions",
-	"versions_id"=>"Version ID",
+	"versions_code"=>"Version Code",
+	"apps_code"=>"App Code",
 	"users_email"=>"User e-mail",
 	"run_extra1"=>"Extra field 1",
 	"run_extra2"=>"Extra field 2",
@@ -120,7 +126,7 @@ $PS2W=array("ImageFile","DataFiles","XCols","YCols",
 //STATUS DICTIONARY
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $C2S=array("error","configured","clean","compiled","ready","submit",
-	   "run","pause","resume","stop","fail","end","finish");
+	   "run","pause","resume","stop","fail","end","finish","kill");
 $S2C=invertHash($C2S);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +150,7 @@ listButtons();
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ACTIONS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Resume");
+$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Kill","Resume");
 
 //////////////////////////////////////////////////////////////////////////////////
 //AUTHENTICATION
@@ -256,27 +262,21 @@ function checkAuthentication()
 	  mysqlCmd("replace into users set email='$PHP[SignupEmail]',username='$PHP[SignupName]',password='$codepass',activate='0',actcode='$PHP[RANDID]'");
 	  //EMAIL
 	  $acturl="$PHP[SERVER]/$PROJ[PROJDIR]/main.php?UserOperation=Activate&SignupEmail=$PHP[SignupEmail]&ActivationCode=$PHP[RANDID]";
-	  if($PROJ["ENABLEMAIL"]){
 $text=<<<TEXT
 <p>Welcome to Sci2Web,</p>
 <p>
 Somebody has tried to sign-up using your
 e-mail <i>$PHP[SignupEmail]</i> in the <b>Sci2Web</b> platform at
 the <b>$PROJ[SCI2WEBSITE]</b>.  If you are who is trying to get an
-account use the following link to activate your account:
+account use the following link to activate it:
 </p>
 <a href="$acturl">Activation link</a>
 TEXT;
-	    blankFunc();
-	    $email=$PHP["SignupEmail"];
-	    $subject="[Sci2Web] Activate your account";
-	    $from=$replyto=$PROJ["ROOTEMAIL"];
-	    sendMail($email,$subject,$text,$from,$replyto);
-	  }else{
-	    $fl=fopen("$PHP[TMPPATH]/$PHP[SignupEmail]-activationurl","w");
-	    fwrite($fl,"$acturl\n");
-	    fclose($fl);
-	  }
+          blankFunc();
+	  $email=$PHP["SignupEmail"];
+	  $subject="[Sci2Web] Activate your account";
+	  $from=$replyto=$PROJ["ROOTEMAIL"];
+	  sendMail($email,$subject,$text,$from,$replyto);
 	  //NOTIFICATION
 	  $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
 	  echo "$onload";
@@ -306,7 +306,10 @@ function genHead($refresh,$time)
   //========================================
   //REFRESH PAGE
   //========================================
-  if(!isBlank($refresh) and !isBlank($time)){
+  if(!isBlank($time)){
+    if(isBlank($refresh)){
+      $refresh="$_SERVER[SCRIPT_NAME]?$_SERVER[QUERY_STRING]";
+    }
     $refline="<meta http-equiv=refresh content='$time;URL=$refresh'>";
   }else{
     $refline="<!--NO REFRESH-->";
@@ -358,9 +361,10 @@ HEAD;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GENERATE HEADER OF HTML FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function genHeader($logo,$style="")
+function genHeader($logo,$style="",$extratext="")
 {
   global $PROJ,$PHP,$COLORS,$BUTTONS;
+
   $header="";
   
   //==================================================
@@ -375,7 +379,7 @@ HEADER;
   //==================================================
   //IF USER HAS BEEN AUTHENTICATED
   //==================================================
-  $header.="<form method='get' action='?' enctype='multipart/form-data'>";
+  $header.="<form method='post' class='inline' action='?' enctype='multipart/form-data'>";
 
   if(!isset($_SESSION["User"])){
 $header.=<<<HEADER
@@ -423,14 +427,13 @@ HEADER;
     $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
 
 $header.=<<<HEADER
-User $name | 
+  User <i><b>$name</b></i> | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('changepass')">
   Your account
   </a>
   </div>
   <div id="changepass" class="userbox">
-  <form>
   User e-mail: $_SESSION[User]
   <table>
   <tr><td>Old password:</td><td><input type="password" name="OldPassword"></td></tr>
@@ -446,25 +449,37 @@ User $name |
 | 
 <a href="$PROJ[PROJDIR]">Home</a> 
 | 
-<a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a>
+<a href="$PROJ[PROJDIR]/main.php?UserOperation=Logout">Logout</a> | 
 HEADER;
   }    
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //BUG REPORT
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  $bugbut=genBugForm("UserOperation","Logout");
+  list($bugbut,$bugform)=genBugForm2("UserOperation","User operations");
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //CLOSE HEADER
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $header.=<<<HEADER
   </form>
-  $bugbut
+  <div style="position:relative;display:inline-block">$bugbut$bugform</div>
+  <div style="position:absolute;top:2em;right:0px;z-index:8000">
+  <a href="http://sci2web.org">
+  <img src="$PROJ[IMGDIR]/sci2web-poweredby.jpg"/>
+  </a>
   </div>
-  <div class="header_content logo" >
+  </div>
+  <div class="header_content" >
   <!-- LOGO -->
-  <img src="$logo" class="mainlogo"/>
+  <a href="$PROJ[PROJDIR]">
+  <img src="$logo" class="mainlogo"/>  
+  </a>
+  <div class="version">
+  <a href="$PROJ[PROJDIR]/main.php?TabId=4">
+    $extratext
+  </a>
+  </div>
   </div>
   <div class="header_content" style="height:50px">
   <!-- MENUS -->
@@ -484,14 +499,39 @@ function genFooter()
 
 $footer=<<<FOOTER
   <div class="footer_container">
+    <div style="position:absolute;
+		top:0px;left:0px;
+		text-align:right;
+		width:$PROJ[BODYWIDTH]%;
+		margin-left:$PROJ[BODYMARGIN]%;
+		z-index:8000;
+		padding:10px;
+		">
+      Supported by:
+      <a href="http://www.udea.edu.co">
+	 <img src="$PROJ[IMGDIR]/udea.jpg" height="60px" style="padding:5px" align="center"/>
+      </a>
+      <a href="http://astronomia.udea.edu.co/facom">
+	<img src="$PROJ[IMGDIR]/facom.jpg" height="60px" style="padding:5px" align="center"/>
+      </a>
+    </div>
   <div class="footer_contain">
-  Version <b>$PROJ[VERSION]</b><br/>
-  Developed by Jorge Zuluaga, 
+  <img src="$PROJ[PROJDIR]/images/sci2web-logo.jpg" height="30px" style="border-right:solid $COLORS[dark] 1px;padding-right:5px;margin-right:5px"/>
+  <div style="display:inline-block">
+  <a href="http://sci2web.org">
+  Sci2Web.org
+  </a><br/>
+  Developed by <b>Jorge Zuluaga</b>, 
   <i style="color:$COLORS[dark];font-decoration:underline">
   zuluagajorge at gmail dot com
-  </i><br/>
+  </i>
+  </div><br/>
   Powered by 
-  <a href="http://php3.de"><img src="$PROJ[IMGDIR]/php.gif" height="30px" align="center"></a><br/>
+  <a href="http://php3.de">
+    <img src="$PROJ[IMGDIR]/php.gif" height="30px" align="center">
+  </a>
+  <img src="$PROJ[IMGDIR]/ajax.jpg" height="40px" align="center">
+  <br/>
   </div>
   </div>
 
@@ -623,18 +663,21 @@ function readParamModel($varsconf)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //TABLE OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function filesTable($dir,$options=""){
+function filesTable($dir,$options="",$target="Blank"){
   global $PHP,$PROJ,$BUTTONS;
-  $id="file";
+  $dirhash=md5($dir);
+  $id="file_$dirhash";
+  $rid=genRandom(4);
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //TABLE HEADER
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+  $imgload=genLoadImg("animated/loader-circle.gif");
 $ajax_filelist=<<<AJAX
+search=$('#searchfile$rid').attr('value');
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0',
+   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0&LinkTarget=$target&Search='+search,
    'listfiles',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -642,6 +685,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -676,9 +720,8 @@ AJAX;
 
 $table=<<<TABLE
 $onload
-<form id="formfiles" action="JavaScript:void(null)" method="get"
-      enctype="multipart/form-data"
-      onsubmit="$ajax_down">
+<form id="formfiles" action="JavaScript:void(null)" 
+      method="get" enctype="multipart/form-data">
 <table class="files">
 <!-- ---------------------------------------------------------------------- -->
 <!-- BUTTON HEADER							    -->
@@ -688,15 +731,19 @@ $onload
     <td colspan=4>
       <div style="position:relative">
 	<div style="position:absolute;float:right;top:0px;right:0px">
+	  Search: 
+	  <input id="searchfile$rid" type="text" value="">
 	  <a href="JavaScript:$ajax_filelist">$BUTTONS[Update]</a>
 	</div>
 	<div style="position:relative;float:left;top:0px;left:0px;">
-	  <button id="downbut" class="image" name="Action" value="Download"
+	  <button id="downbut" class="image" name="Action"
 		  onmouseover="explainThis(this)"
-		  explanation="Download">
+		  explanation="Download"
+		  onclick="$('#action').attr('value','DownloadFiles');$ajax_down">
 	    $BUTTONS[Down]
 	  </button>
-	  <input type="hidden" name="Action_Submit" value="Download">
+	  <input id="action" type="hidden" name="Action_Submit" value="None">
+	  <input id="action" type="hidden" name="DownloadDir_Submit" value="$dir">
 	</div>
 	<div id="down_wait" 
 	     style="prosition:absolute;float:left;bottom:0px;display:none;">
@@ -712,22 +759,23 @@ $onload
 <!-- COMMON HEADER							    -->
 <!-- ---------------------------------------------------------------------- -->
 <tr class="head">
-<td class="check">
+<td class="check" width="10%">
 <input type="checkbox" 
        name="objall" 
        value="all"
        onchange="popOutHidden(this)" 
        onclick="selectAll('formfiles',this)">
-<!--<input type="hidden" name="objall_Submit" value="off">-->
 </td>
-<td>
-Filename
+<td >
+File
 </td>
+<!--
 <td>
 Properties
 </td>
-<td>
-Action
+-->
+<td width="20%">
+Actions
 </td>
 </tr>
 </thead>
@@ -739,7 +787,7 @@ TABLE;
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $table.=<<<TABLE
 <tbody id="listfiles">
-<tr><td colspan=10></td></tr>
+<tr><td colspan=10>Loading...</td></tr>
 </tbody>
 TABLE;
 
@@ -750,12 +798,9 @@ $table.=<<<TABLE
 TABLE;
 
   //WRAP
-  divBlanketOver("$id");
 
 $table=<<<TABLE
 <div style="position:relative">
-$PROJ[DIVBLANKET]
-$PROJ[DIVOVER]
 $table
 </div>
 TABLE;
@@ -832,14 +877,19 @@ function filedType($file)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //OPEN FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function fileWebOpen($dir,$file,$mode)
+function fileWebOpen($dir,$file,$mode,$target="Blank")
 {
   global $PHP,$PROJ;
-  
+  $link="$PROJ[BINDIR]/file.php?Dir=$dir&File=$file&Mode=$mode";
+  if($target=="Blank"){
 $link=<<<LINK
-Open('$PROJ[BINDIR]/file.php?Dir=$dir&File=$file&Mode=$mode','File $file','$PROJ[SECWIN]')
+Open('$link','File $file','$PROJ[SECWIN]')
 LINK;
-  
+  }else{
+$link=<<<LINK
+location.href='$link'
+LINK;
+  }
   return $link;
 }
 
@@ -910,7 +960,8 @@ function toggleButtons($status)
 		 "Stop"=>$none,
 		 "Resume"=>$none,
 		 "Remove"=>$none,
-		 "Configure"=>$none
+		 "Configure"=>$none,
+		 "Kill"=>$none
 		 );
   if($status=="clean"){
     $display["Compile"]=$disp;
@@ -932,20 +983,25 @@ function toggleButtons($status)
     $display["Stop"]=$disp;
     $display["Resume"]=$disp;
     $display["Remove"]=$disp;
+    $display["Kill"]=$disp;
   }
-  if($status=="submit" or
-     $status=="run"){
+  if($status=="run"){
     $display["Pause"]=$disp;
     $display["Stop"]=$disp;
-    $display["Stop"]=$disp;
+    $display["Kill"]=$disp;
+  }
+  if($status=="submit"){
+    $display["Kill"]=$disp;
   }
   if($status=="end" or
      $status=="fail" or
-     $status=="stop"){
+     $status=="stop" or
+     $status=="kill"){
     $display["Clean"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
+    $display["Kill"]=$disp;
   }
   return $display;
 }
@@ -961,7 +1017,8 @@ function toggleButtons2($status)
 		 "Stop"=>$none,
 		 "Resume"=>$none,
 		 "Remove"=>$none,
-		 "Configure"=>$none
+		 "Configure"=>$none,
+		 "Kill"=>$none
 		 );
   if($status=="clean"){
     $display["Compile"]=$disp;
@@ -969,6 +1026,7 @@ function toggleButtons2($status)
     $display["Configure"]=$disp;
   }
   if($status=="configured"){
+    $display["Clean"]=$disp;
     $display["Compile"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -983,17 +1041,24 @@ function toggleButtons2($status)
     $display["Stop"]=$disp;
     $display["Resume"]=$disp;
     $display["Remove"]=$disp;
+    $display["Kill"]=$disp;
   }
-  if($status=="submit" or
-     $status=="run"){
+  if($status=="run" or
+     $status=="resume"){
     $display["Pause"]=$disp;
     $display["Stop"]=$disp;
     $display["Stop"]=$disp;
+    $display["Kill"]=$disp;
+  }
+  if($status=="submit"){
+    $display["Kill"]=$disp;
   }
   if($status=="end" or
      $status=="fail" or
-     $status=="stop"){
+     $status=="stop" or
+     $status=="kill"){
     $display["Clean"]=$disp;
+    $display["Compile"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -1014,7 +1079,7 @@ $replconf=<<<REPLACE
   {
   /*toolbar:'Basic',*/
   uiColor:'$COLORS[text]',
- filebrowserBrowseUrl : '$ckfinder/ckfinder.html',
+  filebrowserBrowseUrl : '$ckfinder/ckfinder.html',
   filebrowserImageBrowseUrl:'$ckfinder/ckfinder.html?Type=Images',
   filebrowserFlashBrowseUrl:'$ckfinder/ckfinder.html?Type=Flash',
   filebrowserUploadUrl:'$ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
@@ -1029,14 +1094,14 @@ REPLACE;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GENERATE BLANK PLOT CONFIGURATION
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function genPlotConf($datafile,$imgfile)
+function genPlotConf($datafiles,$imgfile)
 {
   global $PHP,$PROJ;
   blankFunc();
 
 $conf=<<<CONF
 ImageFile='$imgfile'
-DataFiles=['$datafile']
+DataFiles=[$datafiles]
 
 XCols=[1]
 YCols=[[2]]
@@ -1097,12 +1162,11 @@ function savePlotConf($confpath)
 function ps2wToPlain(&$vector)
 {
   global $PHP,$PROJ,$PS2W;
-
+  
   foreach($PS2W as $field){
-    $vector[$field]=preg_replace("/[\[\]]/","",$vector[$field]);
-    /*
-    $vector[$field]=preg_replace("/\s*r'/","",$vector[$field]);
-    */
+    //$vector[$field]=preg_replace("/[\[\]]/","",$vector[$field]);
+    $vector[$field]=preg_replace("/^\[/","",$vector[$field]);
+    $vector[$field]=preg_replace("/\]$/","",$vector[$field]);
   }
   return 0;
 }
@@ -1114,18 +1178,11 @@ function plainTops2w(&$vector)
 {
   global $PHP,$PROJ,$PS2W;
 
-  foreach($PS2W as $field){
-    /*
-    $vector[$field]=
-      preg_replace("/([,\(\)\s]*)([^,\(\)]+)([,\(\)\s]*)/",
-		   "$1r'$2'$3",$vector[$field]);
-    */
-  }
   $vector["ImageFile"]="'$vector[ImageFile]'";
-  $vector["DataFiles"]="['$vector[DataFiles]']";
+  $vector["DataFiles"]="[$vector[DataFiles]]";
   $vector["XCols"]="[$vector[XCols]]";
-  $vector["YCols"]="[[$vector[YCols]]]";
-  $vector["LinesInformation"]="[[$vector[LinesInformation]]]";
+  $vector["YCols"]="[$vector[YCols]]";
+  $vector["LinesInformation"]="[$vector[LinesInformation]]";
 
   return 0;
 }
@@ -1196,10 +1253,11 @@ INPUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //ICON STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function statusIcon($status)
+function statusIcon($status,$width="")
 {
+  global $PHP,$PROJ,$BUTTONS;
+
   $icon="";
-  //$status="end";
   switch($status){
   case "configured":
     $status_text="Configured";
@@ -1216,7 +1274,14 @@ function statusIcon($status)
     $status_color="white";
     $status_bg="green";
     break;
+  case "submit":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=RunStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
+    $status_text="Submitted";
+    $status_color="white";
+    $status_bg="blue";
+    break;
   case "run":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Running";
     $status_color="white";
     $status_bg="red";
@@ -1226,24 +1291,45 @@ function statusIcon($status)
     $status_color="red";
     $status_bg="yellow";
     break;
+  case "resume":
+    $status_text="Resumed";
+    $status_color="white";
+    $status_bg="blue";
+    break;
   case "stop":
     $status_text="Stopped";
     $status_color="black";
     $status_bg="lightgray";
     break;
+  case "kill":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
+    $status_text="Killed";
+    $status_color="white";
+    $status_bg="black";
+    break;
   case "end":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Ended";
     $status_color="white";
     $status_bg="blue";
     break;
   }
+  if(isset($status_link)){
+$status_text=<<<STATUS
+$status_text <a href="$status_link" target="_blank">$BUTTONS[Open]</a>
+STATUS;
+  }
 
 $icon=<<<ICON
-<div style="float:center;
-	    color:$status_color;
-	    border-radius:5px;
-	    text-align:center;
-	    background-color:$status_bg">
+<div id="statusicon" style="display:inline-block;
+			    color:$status_color;
+			    border-radius:5px;
+			    text-align:center;
+			    background-color:$status_bg;
+			    padding:5px;
+			    width:$width;
+			    "
+     status="$status">
 <b>$status_text</b>
 </div>
 ICON;
@@ -1254,30 +1340,41 @@ ICON;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET CONTROL BUTTONS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function getControlButtons($run_code,$status,$id="")
+function getControlButtons($run_code,$status,$id="",$exclude=array())
 {
   global $PHP,$PROJ,$BUTTONS;
 
   divBlanketOver($id);
   $display=toggleButtons2($status);
-  $actions=$PROJ["Actions"];
+  $actions=array_diff($PROJ["Actions"],$exclude);
   $links="";
   foreach($actions as $action){
-    $actionlink=genRunLink($run_code,$action,$id);
+    if(preg_match("/disabled/",$display[$action])){
+      $actionlink="alert('Action is disabled')";
+    }else{
+      $actionlink=genRunLink($run_code,$action,$id);
+    }
     $actionextra="";
 $links.=<<<LINKS
-<button href="JavaScript:void(null)" 
-	class="image" id="Bt_$action" 
-	onclick="$actionlink" 
-	$display[$action]>
+<div class="actionbutton">
+<a href="JavaScript:void(null)" 
+   class="image" id="Bt_$action" 
+   onclick="$actionlink" 
+   onmouseover="explainThis(this)" explanation="$action"
+   $display[$action]>
 $BUTTONS[$action]
-</button> 
+</a> 
+</div>
 LINKS;
   }
+  $status_icon=statusIcon($status); 
 $controls=<<<CONTROLS
+  <div class="actionbutton" style="position:relative">
   $PROJ[DIVBLANKET]
   $PROJ[DIVOVER]
+  <div class="actionbutton">$status_icon</div>
   $links
+  </div>
 CONTROLS;
   return $controls;
 }
@@ -1313,22 +1410,25 @@ STATUS;
    return $bstatus;
 }
 
-function genBugForm($module,$subject)
+function genBugForm($module,$subject,$recipient="sci2web@gmail.com")
 {
   global $PHP,$PROJ,$BUTTONS;
-  $id=md5("$user$page$module$subject");
   $bugform="";
+
   $user="anonymous";
   $page=$PHP["PAGENAME"];
+  $id=genRandom(2);
+
+  $id=md5("$user$page$module$subject");
   if(isset($_SESSION["User"])){
     $user=$_SESSION["User"];
 $ajax_bug=<<<AJAX
 submitForm
-  ('bugreport',
+  ('bugreport$id',
    '$PROJ[BINDIR]/ajax-bug-report.php?',
-   'casa',
+   'bugres',
    function(element,rtext){
-     element.innerHTML='';
+     element.innerHTML=rtext;
    },
    function(element,rtext){
      element.innerHTML='Reporting bug...';
@@ -1340,16 +1440,32 @@ submitForm
 AJAX;
 
 $bugform=<<<BUG
-  <a href="JavaScript:void(null)" onclick="toggleElement('$id')">$BUTTONS[Bug]</a>
-  <div id="casa" style="position:fixed;
-			bottom:10px;
-			right:10px;
-			z-index:10000">
+  <a href="JavaScript:void(null)" onclick="toggleElement('$id')"
+     style="position:relative;
+	    display:inline-block;
+	    border:solid black 0px;
+	    vertical-align:middle;
+	    height:20px"
+     onmouseover="explainThis(this)"
+     explanation="Report a bug"
+     >
+    $BUTTONS[Bug]
+  </a>
+  <div id="bugres" style="position:fixed;
+                        bottom:10px;
+                        right:10px;
+                        z-index:10000">
   </div>
   <div style="position:relative;">
     <div id="$id" class="bugbox">
-      <form id="bugreport" action="JavaScript:void(null)" method="get" 
+      <form id="bugreport$id" action="JavaScript:void(null)" method="get" 
 	    enctype="multipart/form-data">
+	<div style="position:absolute;top:5px;right:5px">
+	  <a href="JavaScript:void(null)" 
+	     onclick="toggleElement('$id');$('#bugres').html('')">
+	  $BUTTONS[Cancel]
+	  </a>
+	</div>
       <table>
 	<tr>
 	</tr><tr>
@@ -1359,6 +1475,12 @@ $bugform=<<<BUG
 	  <td>
 	    <input type="text" name="BugUser" value="$user" onchange="popOutHidden(this)">
 	    <input type="hidden" name="BugUser_Submit" value="$user">
+	  </td>
+	</tr><tr>
+	  <td>To:</td>
+	  <td>
+	    <input type="text" name="BugRecipient" value="$recipient" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugRecipient_Submit" value="$recipient">
 	  </td>
 	</tr><tr>
 	  <td>Page:</td>
@@ -1390,7 +1512,6 @@ $bugform=<<<BUG
 		    onclick="$ajax_bug">
 	      Report
 	    </button>
-	    <br/><i>Use the same bug link to close this window</i><br/>
 	  </td>
 	</tr><tr>
 	</tr>
@@ -1404,6 +1525,124 @@ BUG;
   return $bugform;
 }
 
+function genBugForm2($module,$subject,$recipient="sci2web@gmail.com")
+{
+  global $PHP,$PROJ,$BUTTONS;
+  $bugform="";
+
+  $user="anonymous";
+  $page=$PHP["PAGENAME"];
+  $id=genRandom(2);
+  
+  $id=md5("$user$page$module$subject");
+  if(isset($_SESSION["User"])){
+    $user=$_SESSION["User"];
+$ajax_bug=<<<AJAX
+submitForm
+  ('bugreport$id',
+   '$PROJ[BINDIR]/ajax-bug-report.php?',
+   'bugres',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     element.innerHTML='Reporting bug...';
+   },
+   function(element,rtext){
+     element.innerHTML='Error';
+   }
+   )
+AJAX;
+
+$bugbut=<<<BUG
+  <a href="JavaScript:void(null)" onclick="toggleElement('$id')"
+     style="position:relative;
+	    display:inline-block;
+	    border:solid black 0px;
+	    vertical-align:middle;
+	    height:20px"
+     onmouseover="explainThis(this)"
+     explanation="Report a bug"
+     >
+    $BUTTONS[Bug]
+  </a>
+BUG;
+
+$bugform=<<<BUG
+  <div id="bugres" style="position:fixed;
+                        bottom:10px;
+                        right:10px;
+                        z-index:10000">
+  </div>
+  <div style="position:relative;">
+    <div id="$id" class="bugbox">
+      <form id="bugreport$id" action="JavaScript:void(null)" method="get" 
+	    enctype="multipart/form-data">
+	<div style="position:absolute;top:5px;right:5px">
+	  <a href="JavaScript:void(null)" 
+	     onclick="toggleElement('$id');$('#bugres').html('')">
+	  $BUTTONS[Cancel]
+	  </a>
+	</div>
+      <table>
+	<tr>
+	</tr><tr>
+	  <td colspan=2><b>Bug Report</b></td>
+	</tr><tr>
+	  <td>From:</td>
+	  <td>
+	    <input type="text" name="BugUser" value="$user" onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugUser_Submit" value="$user">
+	  </td>
+	</tr><tr>
+	  <td>To:</td>
+	  <td>
+	    <input type="text" name="BugRecipient" value="$recipient" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugRecipient_Submit" value="$recipient">
+	  </td>
+	</tr><tr>
+	  <td>Page:</td>
+	  <td>
+	    <input type="text" name="BugPage" value="$page" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugPage_Submit" value="$page">
+	  </td>
+	</tr><tr>
+	  <td>Module:</td>
+	  <td>
+	    <input type="text" name="BugModule" value="$module" disabled onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugModule_Submit" value="$module">
+	  </td>
+	</tr><tr>
+	  <td>Subject:</td>
+	  <td>
+	    <input type="text" name="BugSubject" value="$subject" onchange="popOutHidden(this)">
+	    <input type="hidden" name="BugSubject_Submit" value="$subject">
+	  </td>
+	</tr><tr>
+	  <td valign="top">Bug report:</td>
+	  <td>
+	    <textarea cols="30" rows="10" name="BugReport" onchange="popOutHidden(this)"></textarea>
+	    <input type="hidden" name="BugReport_Submit" value="">
+	  </td>
+	</tr><tr>
+	  <td colspan="2" style="text-align:right">
+	    <button name="UserOperation" value="BugReport"
+		    onclick="$ajax_bug">
+	      Report
+	    </button>
+	  </td>
+	</tr><tr>
+	</tr>
+      </table>
+      </form>
+    </div>
+  </div>
+BUG;
+   }
+
+  return array($bugbut,$bugform);
+}
+
 function checkSuperUser()
 {
   global $PROJ;
@@ -1412,4 +1651,71 @@ function checkSuperUser()
   return $condition;
 	      
 }
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//SEND EMAIL
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function sendMail($emails,$subject,$text,$from,$replyto)
+{
+  global $PHP,$PROJ;
+
+  $headers ="From: $from\r\n";
+  $headers.="Reply-to: $replyto\r\n";
+  $headers.="MIME-Version: 1.0\r\n";
+  $headers.="Content-type: text/html\r\n";
+  
+  $listemails=preg_split("/;/",$emails);
+  foreach($listemails as $email){
+    if(isBlank($email)) continue;
+    if($PROJ["ENABLEMAIL"]){
+      $status=mail($email,$subject,$text,$headers);
+    }else{
+      $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+$msg=<<<MSG
+Date: $now
+${headers}To: $email
+Subject: $subject
+
+$text
+================================================================================
+
+
+MSG;
+    $fl=fopen("$PROJ[LOGPATH]/mail.log","a");
+    fwrite($fl,"$msg");
+    fclose($fl);
+    }//END IF ENABLEMAIL
+  }//END FOREACH LISTEMAILS
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//SEND EMAIL
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function statusBar($bstatus,$width="30%")
+{
+  global $PROJ,$PHP,$COLORS;
+$status=<<<STATUS
+<div id="status_text" 
+     style="display:inline-block;
+	    text-align:center;
+	    width:$width;
+	    height:100%;
+	    border:solid $COLORS[dark] 1px;
+	    margin-right:5px;">
+  <div id="status_bar" 
+       style="width:$bstatus%;
+	      text-align:right;
+	      background-color:$COLORS[dark];
+	      padding:0px;
+	      color:$COLORS[back];
+	      padding:4px;
+	      font-size:12px;">
+    $bstatus%
+  </div>
+</div>
+STATUS;
+ return $status;
+}
+
+
 ?>

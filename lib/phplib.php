@@ -63,19 +63,18 @@ $PHP["REFERERNAME"]=$PHP["REFERERNAME"][0];
 //FILES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $PHP["SESPAGEPREFIX"]="$PHP[PAGEBASENAME]-$PHP[SESSID]";
-$PHP["DBFILE"]="phpdb-$PHP[SESPAGEPREFIX]";
-$PHP["CMDERRFILE"]="phperr-$PHP[SESPAGEPREFIX]";
+$PHP["DBFILE"]="phpserver-$PHP[SESPAGEPREFIX]";
 $PHP["CMDOUTFILE"]="phpout-$PHP[SESPAGEPREFIX]";
 $PHP["SQLFILE"]="phpsql-$PHP[SESPAGEPREFIX]";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DEBUGGING MODE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+shell_exec("(date;echo -e 'Output File:\n') > $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
+$PHP["SYSCOUNTER"]=1;
 if($PHP["DEBUG"]){
   $PHP["DBCOUNTER"]=$PHP["SQLCOUNTER"]=1;
   $PHP["FL"]=fopen("$PHP[TMPPATH]/$PHP[DBFILE]","w");
-  shell_exec("(date;echo -e 'Error File:\n') > $PHP[TMPPATH]/$PHP[CMDERRFILE]");
-  shell_exec("(date;echo -e 'Output File:\n') > $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
   shell_exec("(date;echo -e 'SQL File:\n') > $PHP[TMPPATH]/$PHP[SQLFILE]");
 }
 
@@ -161,16 +160,15 @@ function systemCmd($cmd,$preserve=false)
   $ocmd=$cmd;
   $PHP["?"]=0;
 
-  if($PHP["DEBUG"]){
-$dberr=<<<DBERR
+  if($PHP["DEBUG"] or true){
+$dbout=<<<DBOUT
 ================================================================================
-Command $PHP[DBCOUNTER]:
+Command $PHP[SYSCOUNTER]:
     $ocmd
-Error:
-DBERR;
+DBOUT;
     blankFunc();
-    shell_exec("echo \"$dberr\" >> $PHP[TMPPATH]/$PHP[CMDERRFILE]");
-    $cmd="($cmd) 2>> $PHP[TMPPATH]/$PHP[CMDERRFILE]";
+    shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
+    $cmd="($cmd) 2>> $PHP[TMPPATH]/$PHP[CMDOUTFILE]";
   }
 
   //========================================
@@ -189,20 +187,16 @@ DBERR;
   //========================================
   //SAVE COMMAND INFORMATION
   //========================================
-  if($PHP["DEBUG"]){
+  if($PHP["DEBUG"] or true){
     $eout=implode("\n",$outs);
 $dbout=<<<DBOUT
-================================================================================
-Command $PHP[DBCOUNTER]:
-    $ocmd
 Output:
 $eout
 DBOUT;
     blankFunc();
     shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
-    $PHP["DBCOUNTER"]++;
+    $PHP["SYSCOUNTER"]++;
   }
-
   
   return $out;
 }
@@ -210,19 +204,33 @@ DBOUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET LIST OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function listFiles($path,$criterium="*",$opts="")
+function listFiles($path,$criterium="*",$opts="",$exclude="",$search="*")
 {
   global $PHP;
 
   //FILTER NAME
-  $scol="awk '{print \$9}'";
+  $scol="awk '{print \$NF}'";
   
   //BASIC COMMAND
   $lcmd="ls -ld $opts $criterium";
-  
+  $excl="";
+  foreach(preg_split("/;/",$exclude) as $excludecond){
+    if(isBlank($excludecond)) continue;
+    $excl.="|egrep -v '$excludecond\$'";
+  }
+  $srch="";
+  foreach(preg_split("/\s+/",$search) as $searchcond){
+    if(isBlank($searchcond)) continue;
+    $srch.="|egrep '$searchcond\$'";
+  }
+  /*
+  echo "LIST: $lcmd";br();
+  echo "EXCLUDE: $excl";br();
+  echo "SEARCH: $srch";br();
+  //*/
   //COMMAND TO SORT DIRS, FILES, LINKS
-  $cmd="($lcmd | grep '^d';$lcmd | grep '^-';$lcmd | grep '^l')  | $scol";
-
+  $cmd="($lcmd | grep '^d' $excl;$lcmd | grep '^-' $excl $srch;$lcmd | grep '^l' $excl $srch) | $scol";
+  //echo "COMMAND: $cmd";br();
   //EXECUTE COMMAND
   $out=systemCmd("cd $path;$cmd",true);
   
@@ -280,50 +288,35 @@ function genSelect($array,$name,$selected,$actions="",$style="")
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//SEND EMAIL
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function sendMail($email,$subject,$text,$from,$replyto)
-{
-  global $PHP;
-
-  $headers ="From: $from\r\n";
-  $headers.="Reply-to: $replyto\r\n";
-  $headers.="MIME-Version: 1.0\r\n";
-  $headers.="Content-type: text/html\r\n";
-  
-  $status=mail($email,$subject,$text,$headers);
-  $fl=fopen("$PHP[TMPPATH]/email-$PHP[SESSID]","w");
-  fwrite($fl,"mail($email,$subject,$text,$headers)");
-  fclose($fl);
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //UPLOAD FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function uploadFile($tgtpath)
 {
-  global $PHP,$PROJ;
-  
-  foreach(array_keys($_FILES) as $filename){
-    $file=$_FILES[$filename];
+  global $PHP;
+  if(count($_FILES)<1){
+    return true;
+  }else{
+    foreach(array_keys($_FILES) as $filename){
+      $file=$_FILES[$filename];
 
-    if(isBlank($file["name"])) break;
-    $PHP[$filename]=$file["name"];
-    //==================================================
-    //DO NOT ALLOW THE UPLOADING OF SUSPICIOUS FILES
-    //==================================================
-    foreach($PHP["SUSFILES"] as $susfile){
-      if(preg_match("/$susfile/",$file["type"])){
-	echo "<p>You are trying to upload suspicious files.</p>";
-	exit(1);
+      if(isBlank($file["name"])) break;
+      $PHP[$filename]=$file["name"];
+      //==================================================
+      //DO NOT ALLOW THE UPLOADING OF SUSPICIOUS FILES
+      //==================================================
+      foreach($PHP["SUSFILES"] as $susfile){
+	if(preg_match("/$susfile/",$file["type"])){
+	  echo "<p>You are trying to upload suspicious files.</p>";
+	  exit(1);
+	}
       }
+      //==================================================
+      //CHECK FILE
+      //==================================================
+      systemCmd("mv $file[tmp_name] $tgtpath/$file[name]");
     }
-    //==================================================
-    //CHECK FILE
-    //==================================================
-    systemCmd("mv $file[tmp_name] $tgtpath/$file[name]");
+    return $file["error"];
   }
-  return $file["error"];
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -375,21 +368,18 @@ function readConfig($config)
   $index=array();
   $i=0;
   foreach($lines as $line){
-    if(preg_match("/\w+/",$line) and
+    if(preg_match("/=/",$line) and
        !preg_match("/^\/\//",$line) and
        !preg_match("/^#/",$line)){
       $fields=preg_split("/\s*=\s*/",$line);
-      /*
-      $fields[1]=preg_replace("/\s+r\"/","",$fields[1]);
-      $fields[1]=preg_replace("/\s*r'([^'\)])/","$1",$fields[1]);
-      $fields[1]=preg_replace("/\s+u\"/","",$fields[1]);
-      $fields[1]=preg_replace("/\s+u'/","",$fields[1]);
-      $fields[1]=preg_replace("/\"/","",$fields[1]);
-      $fields[1]=preg_replace("/'/","",$fields[1]);
-      */
       $CONFIG[$fields[0]]=$fields[1];
       //echo "Reading $fields[0] = ".$CONFIG[$fields[0]];br();
       $i++;
+    }else if(preg_match("/\w+/",$line) and
+	     !preg_match("/^\/\//",$line) and
+	     !preg_match("/^#/",$line)){
+      //echo "Orphan line for $fields[0] = ".$line;br();
+      $CONFIG[$fields[0]].="\n$line";
     }
   }
 
@@ -408,7 +398,7 @@ function readConfig2($config)
   $i=0;
   $fieldstr=":";
   foreach($lines as $line){
-    if(preg_match("/\w+/",$line) and
+    if(preg_match("/=/",$line) and
        !preg_match("/^\/\//",$line) and
        !preg_match("/^#/",$line)){
       $fields=preg_split("/\s*=\s*/",$line);
@@ -429,6 +419,11 @@ function readConfig2($config)
       $CONFIG[$field][$NUMREP[$field]]=$value;
       //echo "Reading $fields[0] = ".$CONFIG[$fields[0]];br();
       $i++;
+    }else if(preg_match("/\w+/",$line) and
+	     !preg_match("/^\/\//",$line) and
+	     !preg_match("/^#/",$line)){
+      //echo "Orphan line for $field($NUMREP[$field]) = ".$line;br();
+      $CONFIG[$field][$NUMREP[$field]].="\n$line";
     }
   }
 
@@ -467,7 +462,7 @@ function loadFile($file)
 function finalizePage()
 {
   global $PHP;
-  shell_exec("rm $PHP[TMPPATH]/*.$PHP[RANDID]");
+  shell_exec("find $PHP[TMPPATH] -name '*$PHP[RANDID]*' -exec rm -rf {} \\;");
   return 0;
 }
 
@@ -732,6 +727,19 @@ function getAttrs($resmat)
     }
   }
   return $attrs;
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//ARRAY INVERT
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function arrayInvert($oldarray)
+{
+  $newarray=array();
+  $arraysize=count($oldarray);
+  for($i=$arraysize-1;$i>=0;$i--){
+    $newarray[]=$oldarray[$i];
+  }
+  return $newarray;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

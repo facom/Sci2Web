@@ -10,24 +10,35 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # PACKAGE
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#DATABASE INFORMATION
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$DBNAME="sci2web";
+$DBSERVER="localhost";
+$DBUSER="sci2web";
+$DBPASS="WebPoweredNDSA";
+$APACHEUSER="www-data";
+$APACHEGROUP="www-data";
+%CONFIG={};
+
 #################################################################################
 #EXTERNAL PACKAGES
 #################################################################################
 use Digest::MD5 qw(md5_hex);
 use DBI;
 use DBD::mysql;
-#OPERATORS
-sub vprint{vprintFunc(@_);}
-sub Exit{exitFunc(@_);}
+use Getopt::Long;
+use Pod::Usage;
+use Switch;
+use Term::ReadKey;
+Getopt::Long::Configure("bundling");
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#DATABASE
+#OPERATORS
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$DBNAME="sci2web";
-$DBSERVER="localhost";
-$DBUSER="sci2web";
-$DBPASS="WebPoweredNDSA";
-%CONFIG={};
+sub rprint{rprintFunc(@_);}
+sub vprint{vprintFunc(@_);}
+sub Exit{exitFunc(@_);}
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CONNECT TO DATABASE
@@ -40,7 +51,7 @@ $DB=DBI->connect("DBI:mysql:$DBNAME:$DBSERVER","$DBUSER","$DBPASS");
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #BEHAVIOR
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$VERBOSE=1;
+$VERBOSE=0;
 $EXITCODE=0;
 $BACKUP=0;
 
@@ -54,12 +65,23 @@ $BACKUP=0;
 #DIRECTORIES
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $BINDIR="$ROOTDIR/bin";
+$INSTALLDIR="$ROOTDIR/doc/install";
 $APPSDIR="$ROOTDIR/apps";
 $RUNSDIR="$ROOTDIR/runs";
+$TMPDIR="$ROOTDIR/tmp";
+$TRASHDIR="$ROOTDIR/tmp";
 
 #################################################################################
 #USEFUL ROUTINES
 #################################################################################
+sub error
+{
+    my $msg=shift;
+    print stderr "Error:\n\t$msg\n";
+    pod2usage(2);
+    Exit(1)
+}
+
 sub unique
 {
     my @list=@_;
@@ -76,20 +98,28 @@ sub bar
     for($i=0;$i<$n;$i++){$str.="$char";}
     return $str;
 }
-sub marquee
-{
-    my $msg=shift;
-    my $char=shift;
-    my $len=length($msg);
-    my $bar=bar($char,$len);
-    my $str="$bar\n$msg\n$bar\n";
-    return $str;
-}
 sub vprintFunc
 {
     print @_ if($VERBOSE);
     return 0;
 }
+
+sub rprintFunc
+{
+    my $msg=shift;
+    my $char=shift;
+    my $str;
+    if(length($char)>0){
+	my $len=length($msg);
+	my $bar=bar($char,$len);
+	$str="$bar\n$msg\n$bar\n";
+    }else{
+	$str="$msg\n";
+    }
+    print $str;
+    return 0;
+}
+
 sub readLines
 {
     my $file=shift;
@@ -132,6 +162,7 @@ sub sysCmd
     my $out=`$cmd`;
     $EXITCODE="$?";
     chop $out;
+    vprint "\tOut:$out\n";
     return $out;
 }
 sub randInt
@@ -150,27 +181,6 @@ sub exitFunc
     }
 }
 
-sub readConfig
-{
-    my $filename=shift;
-    my @lines,$line,$field,@fields;
-    if(!-e $filename){
-	print "File '$filename' does not exist\n";
-	return;
-    }
-    open(fl,"<$filename");
-    @lines=<fl>;chomp @lines;
-    close(fl);
-    foreach $line (@lines)
-    {
-	next if($line=~/^#/ or $line!~/[^\s]/);
-	@fields=split /\s*=\s*/,$line;
-	$field=$fields[0];
-	next if($field!~/\w/);
-        $CONFIG{"$field"}=join "=",@fields[1..$#fields];
-    }
-}
-
 sub cleanConfig
 {
     my $file=shift;
@@ -178,6 +188,75 @@ sub cleanConfig
     sysCmd("cat lib/sci2web.conf | egrep -v '^#' | egrep -v '^<' | egrep -v '^/' | grep -v '^?' | grep -v '^*' | egrep -v '^\$' > /tmp/$fname.$$");
     
     return "/tmp/$fname.$$";
+}
+
+sub readConfig {
+    my $envfile=shift;
+    my %CONFIG;
+
+    Error "File: $envfile does not exist." if(!-e $envfile);
+
+    open(fl,"$envfile");
+    my @lines=<fl>;
+    chomp @lines;
+    foreach $line (@lines){
+	next if($line=~/^\#/ or
+		$line=~/^$/);
+	($var,$val)=split(/\s*=\s*/,$line);
+	#vprint "VAR: $var\nVAL: $val\n";
+	$CONFIG{"$var"}=$val;
+    }
+    close($fl);
+    return %CONFIG;
+}
+
+sub promptAns
+{
+    my $question=shift;
+    my $defval=shift;
+    print "$question [$defval]:";
+    my $ans=<STDIN>;
+    if($ans!~/\w/){
+	$ans=$defval;
+    }
+    return $ans;
+}
+
+sub mysqlCmd
+{
+    my $sql=shift;
+    vprint "\tSQL:\n\t\t$sql\n";
+
+    my $query=$DB->prepare($sql);
+    my $nres=$query->execute or die("Database query failed.");
+    vprint "\tNRES:\n\t\t$nres\n";
+
+    my @result=(),@data=();
+    while(@data=$query->fetchrow_array()){
+	push(@result,@data);
+    }
+    vprint "\tRESULTS:\n\t\t@result\n";
+    $query->finish();
+    return @result;
+}
+
+sub mysqlDo
+{
+    my $sql=shift;
+    vprint "\tSQL:\n\t\t$sql\n";
+    my $query=$DB->prepare($sql);
+    my $nres=$query->execute or die("Database query failed:".$query->errstr);
+    vprint "\tNRES:\n\t\t$nres\n";
+    return 0;
+}
+
+sub noBlank
+{
+    my $var=shift;
+    my $name=shift;
+    $name="Variables" if($name!~/\w/);
+    Error "$name must be not null" if(length($var)<1);
+    return $var;
 }
 
 1;

@@ -32,23 +32,45 @@ $cdir="$PROJ[PAGESDIR]/$PHP[PAGEBASENAME]";
 require_once("$cpath/page.conf");
 if(!isset($PHP["TabId"])) $PHP["TabId"]=$DEFTAB-1;
 else $PHP["TabId"]--;
-if(!isset($_SESSION["User"])){
-  $PHP["TabId"]=0;
-}
+$PHP["TabNum"]=$PHP["TabId"]+1;
 
 //////////////////////////////////////////////////////////////////////////////////
 //COMPONENTS
 //////////////////////////////////////////////////////////////////////////////////
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//CHECK APPLICATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$apppath="$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version]";
+if(!file_exists("$apppath/sci2web/version.conf") and !$qexpire){
+  $qexpire=true;
+  $msg="Application $_SESSION[AppVersion] not found.";
+}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //PERLIMINARIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$refresh="";
 $head="";
-$head.=genHead("","");
+if(isset($PHP["SaveContent"]) or
+   isset($PHP["SetApp"])){
+  $refresh=0;
+}
+$head.=genHead("$PROJ[PROJDIR]/$PHP[PAGENAME]",$refresh);
+if($qexpire){
+  $head.=genHead("$PROJ[PROJDIR]","0");
+echo<<<CONTENT
+<html>
+$head
+<body onload="alert('$msg')">
+</body>
+</html>
+CONTENT;
+ return 0;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$header=genHeader($PAGELOGO);
+$header=genHeader($PAGELOGO,"","Version $_SESSION[Version]");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //BODY DECLARATION
@@ -106,23 +128,29 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DISPLAY THE CONTENT OF EACH FILE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+readConfig("$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[VersionId]/sci2web/version.conf");
+$files=preg_split("/;/",$CONFIG["VerTabs"]);
+if(strstr($PROJ["ROOTEMAIL"],$_SESSION["User"]) or 
+   strstr($PROJ["ContributorsEmails"],$_SESSION["User"])
+   ){
+  //$files[]="configuration:Configuration";
+}
+
 $i=1;
 foreach($files as $file)
 {
   if(isBlank($file)) continue;
 
   //GET INDEX VALUE
-  $fcontent=systemCmd("head -n 1 $cpath/$file");
-  preg_match("/<!--\s*(.+)\s*-->/",$fcontent,$matches);
-  $fid=$matches[1];
-  if(isBlank($fid)) $fid="tab$i";
+  list($fname,$fid)=preg_split("/:/",$file);
+  $file="$fname.php";
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");
 $ajaxcmd=<<<AJAX
 loadContent
   (
-   '$cdir/$file?$PHP[QSTRING]',
+   '$cdir/$file?$PHP[QSTRING]&TabNum=$i',
    '$fid',
    function(element,rtext){
      $(element).html(rtext);
@@ -151,8 +179,11 @@ echo <<<CONTENT
 CONTENT;
   $i++;
 }
+$TabNum=$i-1;
 echo<<<CONTENT
 </div>
+<div id="CtrlTabId" value="$PHP[TabNum]"></div>
+<div id="CtrlTabNum" value="$TabNum"></div>
 $footer
 </body>
 </html>

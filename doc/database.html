@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<title></title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left{
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document">
+
+
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//ROLES
+//////////////////////////////////////////////////////////////////////
+. -->
+<style>.red{color:red}</style><!-- See more at: http://docutils.sourceforge.net/docs/ref/rst/definitions.html -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Derived from the Unicode character mappings available from
+<http://www.w3.org/2003/entities/xml/>.
+Processed by unicode2rstsubs.py, part of Docutils:
+<http://docutils.sourceforge.net>. -->
+<!-- .. include:: <isoamsb.txt>
+.. include:: <isoamsc.txt>
+.. include:: <isoamso.txt>
+.. include:: <isoamsr.txt>
+.. include:: <isogrk1.txt> -->
+<img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
+<div class="section" id="search-in-the-results-database">
+<h1><a class="toc-backref" href="#id1">Search in the Results Database</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Author:</th><td class="field-body">Jorge Zuluaga</td>
+</tr>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">Revision 1, Wed Nov 30 06:29:15 COT 2011</td>
+</tr>
+<tr class="field"><th class="field-name">Copyright:</th><td class="field-body">This document has been placed in the public domain.</td>
+</tr>
+</tbody>
+</table>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#search-in-the-results-database" id="id1">Search in the Results Database</a><ul>
+<li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
+<li><a class="reference internal" href="#presenting-sci2web" id="id3">Presenting Sci2Web</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="abstract">
+<h2><a class="toc-backref" href="#id2">Abstract</a></h2>
+</div>
+<div class="section" id="presenting-sci2web">
+<h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a tool to provide graphical web interfaces to <em>Naturally
+Developed Scientific Applications</em> (NDSAs).  NDSAs is a generic name
+we use to call those programs developed or adapted by scientist and
+used in scientific research.  Although today you can find powerful
+scientific software providing advanced graphical and user interfaces
+(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
+depend on programs developed in low level programming languages (C,
+fortran).  Even although a growing number of scientist are using
+powerful and modern languajes (C++, Java, Python) their programs still
+have simplified user interfaces and most of them lack of a proper
+graphical interface (in most cases these interfaces are simply not
+required or not important in the scientific work).</p>
+<p>Most of the time scientists restrict their programs just for their
+personal use or share it only with close colleagues.  But from time to
+time a <em>good piece of code</em> arises having the potential to become a
+publickly available program.  The decision to share a program and
+allows other to use it is a wise decision that in some cases have a
+very positive impact on the visibility of the developer scientific
+work.  However the development of software intended for <em>final users</em>,
+even although they could be experts, could be a challenge even for a
+skillful scientific developer.  Many skills are required ranging from
+operating system programming to advanced graphical interfaces
+development.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a solution created for those scientist who desire to share
+the software they developed with a wider scientific community but to
+the lowest developing cost.  Imagine to have an <em>active web page</em> (a
+web page whose content changes according to the user input) able to
+configure and control the execution of your programs?  This is exactly
+what <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> provides you.  If you want to see a living example go
+now to the <a class="reference external" href="http://www.google.com">Diffusion application</a>.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is not a content or a version management software.  It simply
+provides the required tools to configure and run NDSA applications
+using the web.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

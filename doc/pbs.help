@@ -1,0 +1,104 @@
+Installing and using Torque/PBS
+===============================
+
+- Reference:
+
+  http://www.clusterresources.com/torquedocs/
+
+- Installing:
+
+* Getting the sources: 
+
+  http://www.adaptivecomputing.com/resources/downloads/torque
+
+* Unpacking and installing:
+  
+  # tar zxvf torque-<version>.tar.gz -C /usr/local/src
+  # cd /usr/local/src/torque-<version>
+  # ./configure && make && make install
+  # make packages
+
+* Create daemons:
+
+  foreach <service> in pbs_server pbs_sched pbs_mom:
+
+  # cp contrib/init.d/debian.<service> /etc/init.d/<service>
+  
+* Basic configuration:
+
+  + Create pbs database and basic queue:
+
+    # ./torque.setup root
+
+  + Configure nodes:
+
+    # nano /var/spool/torque/server_priv/nodes
+
+    <node1> np=<np>
+    <node2> np=<np>
+
+  + Configure mom:
+
+    # nano /var/spool/torque/mom_priv/config
+
+    $pbsserver <head_node>
+
+    NOTE: Be sure that the server and nodes IPs, names and aliases are
+    	  properly configured in the /etc/hosts file.  Example:
+
+	      192.168.0.1  headnode.net headnode
+	      192.168.0.2  node1.net node1
+	      192.168.0.3  node1.net node1
+
+* Start services:
+
+  foreach <service> in pbs_server pbs_sched pbs_mom:
+
+  # service <service> start
+
+* For the compute nodes:
+
+  + Get Torque/PBS sources
+  
+  + Configure, compile, install:
+
+    # ./configure --disable-server
+    # make && make install
+
+  + Copy /var/spool/mom_priv/config from the head node to the compute
+    nodes.
+
+  + Start pbs_mom
+
+* Test:
+
+  + Check nodes:
+  
+    # pbsnodes -a 
+    
+  + Check run:
+
+    # su -l <user>
+
+    $ nano test-pbs.sh
+
+      #!/bin/bash
+      #PBS -j oe
+      #PBS -o /tmp/test-job.out
+      #PBS -N Test
+      env | grep PBS
+      cd /tmp
+      date
+      ls -R / &> /tmp/test-ls.out
+      date
+    
+    $ qsub test-pbs.sh
+
+    $ qstat -a
+
+    $ qstat -q
+
+    $ qdel <jobid>
+
+    Where jobid is the id of the job you have just submitted.
+

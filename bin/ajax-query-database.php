@@ -28,7 +28,7 @@ $appdir="$PROJ[APPSDIR]/$appname";
 $apppath="$PROJ[APPSPATH]/$appname";
 $savedbdir="$PROJ[RUNSDIR]/db/$appname";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
-list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info");
+list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/controlvars.info");
 
 //////////////////////////////////////////////////////////////////////////////////
 //BUILD QUERY
@@ -36,8 +36,8 @@ list($tabs,$groups,$vars)=readParamModel("$apppath/sci2web/parametrization.info"
 if(isBlank($PHP["Query"])){
   $PHP["Query"]="dbdate";
 }
-$dbname="$_SESSION[App]_$_SESSION[Version]";
-$query="select * from $dbname where $PHP[Query]";
+$dbname="${_SESSION[App]}_${_SESSION[Version]}";
+$query="select * from `$dbname` where $PHP[Query]";
 
 //////////////////////////////////////////////////////////////////////////////////
 //QUERY DATABASE
@@ -118,8 +118,7 @@ $result.=<<<RESULT
 CSV result file: 
 <a href="$filecsv_dir">download</a>,
 <a href="JavaScript:Open('$PROJ[BINDIR]/file.php?Dir=$PROJ[TMPDIR]&File=$filecsv&Mode=View','CSV File','$PROJ[SECWIN]')">view</a>
-<form id="formdbres" action="JavaScript:void(null)"
-      onsubmit="$ajax_down">
+<form id="formdbres" action="JavaScript:void(null)">
 <table class="sqlresults">
 <thead>
 <tr class="sqlhead">
@@ -148,7 +147,7 @@ RESULT;
 $result.=<<<RESULT
 <td>
   <input type="checkbox" 
-	 name="objall" 
+	 name="resultall" 
 	 value="all"
 	 onchange="popOutHidden(this)" 
 	 onclick="selectAll('formdbres',this)">
@@ -206,9 +205,10 @@ RESULT;
     $file="$row[dbrunhash].tar.gz";
 $result.=<<<RESULT
 <td>
-  <input type="checkbox" name="obj$i" value="ObjDown:$file"
-	 onchange="popOutHidden(this)">
-  <input type="hidden" name="obj${i}_Submit" value="off">
+  <input type="checkbox" name="result$i" 
+	 onchange="popOutHidden(this)" onclick="deselectAll('resultall')">
+  <input type="hidden" name="result${i}_Submit" value="off">
+  <input type="hidden" name="reshash${i}_Submit" value="$row[dbrunhash]">
 </td>
 <td>
   <a href="JavaScript:Open('$PROJ[BINDIR]/file.php?Mode=View&Dir=$savedbdir&File=$row[dbrunhash].tar.gz','Results for $runhash','$PROJ[SECWIN]')">Browse</a>
@@ -224,15 +224,18 @@ RESULT;
   $removeopt="";
   if(checkSuperUser()){
 $removeopt=<<<REMOVE
+<div class="actionbutton">
 <button id="removebut" class="image" name="Button" value="RemoveResults"
-	onmouseover="setsValue('action_remove','RemoveResults');explainThis(this)"
-	explanation="Remove results" $removeopt>
+	onclick="$('#action').attr('value','RemoveResults');$ajax_down;"
+	onmouseover="explainThis(this)"
+	explanation="Remove results">
   $BUTTONS[Remove]
 </button>
-<input id="action_remove" type="hidden" name="Action_Submit" value="">
+</div>
 REMOVE;
 }
 
+  list($bugbut,$bugform)=genBugForm2("DatabaseDownload","Download results from database",$_SESSION["Contributors"]);
 $result.=<<<RESULT
 </tbody>
 <tfooter>
@@ -240,13 +243,20 @@ $result.=<<<RESULT
 <td colspan="8" style="text-align:right">
   <div style="position:relative">
     <div style="float:right">
+      <input id="action" type="hidden" name="Action_Submit" value="None">
       $removeopt
-      <button id="downbut" class="image" name="Button" value="Download"
-	      onmouseover="setsValue('action_down','Download');explainThis(this)"
-	      explanation="Download results">
+      <div class="actionbutton">
+      <button  id="downbut" class="image" name="Button" value="DownloadResults"
+	       onclick="$('#action').attr('value','DownloadResults');$ajax_down;"
+	       onmouseover="explainThis(this)"
+	       explanation="Download results">
 	$BUTTONS[Down]
       </button>
-      <input id="action_down" type="hidden" name="Action_Submit" value="">
+      </div>
+      <div class="actionbutton">
+      $bugbut
+      </div>
+      <input id="action" type="hidden" name="NumResults_Submit" value="$i">
     </div>
     <div id="down_wait" 
 	 style="border:solid black 0px;float:right;position:relative;top:15px;
@@ -263,9 +273,12 @@ $result.=<<<RESULT
 </tfooter>
 </table>
 </form>
+$bugform
 RESULT;
 }
 
 end:
 echo $result;
+
+finalizePage();
 ?>

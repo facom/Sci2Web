@@ -1,0 +1,8 @@
+name="output"
+set title "Diffusion of 10000 particles"
+set term png
+set output name.'.png'
+file=name.".txt"
+print "Plotting results..."
+set grid
+plot file u 2:3 w p

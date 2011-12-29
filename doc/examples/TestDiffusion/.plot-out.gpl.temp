@@ -1,0 +1,8 @@
+name="[[OutputFile]]"
+set title "Diffusion of [[NumberParticles]] particles"
+set term png
+set output name.'.png'
+file=name.".txt"
+print "Plotting results..."
+[[PlotStyle]]
+plot file u 2:3 w p

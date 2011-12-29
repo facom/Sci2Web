@@ -46,7 +46,7 @@ $runpath="$runspath/$run_hash";
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 $status=$C2S[$run_status];
 if($status=="submit" or $status=="resume"){
-  $cstatus=systemCmd("cd $runpath;bash sci2web/bin/s2w-action.sh check");
+  $cstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh check");
   //==================================================
   //IF THERE IS STATUS CHANGE STATUS
   //==================================================
@@ -80,3 +80,6 @@ echo<<<CONTROL
 $links
 <p><i id="result"></i></p>
 CONTROL;
+
+finalizePage();
+?>

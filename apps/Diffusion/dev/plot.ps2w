@@ -2,7 +2,7 @@
 #BASIC INFORMATION
 ###################################################
 ImageFile="path1-ps2w.png"
-DataFiles=["path-1.dat"]
+DataFiles=["scratch/path-1.dat"]
 
 XCols=[2]
 YCols=[[3]]
