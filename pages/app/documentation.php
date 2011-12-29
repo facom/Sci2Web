@@ -17,6 +17,8 @@ include("$RELATIVE/lib/sci2web.php");
 //////////////////////////////////////////////////////////////////////////////////
 //VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
+$bugbut="";
+$bugform="";
 $APPNAME="$_SESSION[App]";
 $APPDIR="$PROJ[APPSDIR]/$APPNAME";
 $APPPATH="$PROJ[APPSPATH]/$APPNAME";
@@ -48,10 +50,12 @@ LINK;
    //SAVE
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    if(isset($PHP["SaveContent"])){
-     if(!isBlank($PHP["CONTENT_$FHASH"])){
-       $fl=fileOpen("$APPPATH/$FILE","w");
-       fwrite($fl,$PHP["CONTENT_$FHASH"]);
-       fclose($fl);
+     if(isset($PHP["CONTENT_$FHASH"])){
+       if(!isBlank($PHP["CONTENT_$FHASH"])){
+	 $fl=fileOpen("$APPPATH/$FILE","w");
+	 fwrite($fl,$PHP["CONTENT_$FHASH"]);
+	 fclose($fl);
+       }
      }
    }
  }

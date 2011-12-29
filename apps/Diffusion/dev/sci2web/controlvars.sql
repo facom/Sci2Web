@@ -1,5 +1,5 @@
-drop table if exists Diffusion_dev;
-create table Diffusion_dev (
+drop table if exists `Diffusion_dev`;
+create table `Diffusion_dev` (
 dbrunhash char(32) not null,
 dbauthor varchar(255),
 dbdate datetime not null,
@@ -16,6 +16,5 @@ DelayTime float,
 QuerySleep tinyint(1),
 GeneralComments text,
 primary key (dbrunhash),
-#LINKS
 runs_runcode char(8)
 );

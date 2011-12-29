@@ -279,4 +279,6 @@ RESULT;
 
 end:
 echo $result;
+
+finalizePage();
 ?>

@@ -43,21 +43,18 @@ $qerror=true;
 //DIRECTORIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //==================================================
-//FILES PATH
+//FILE PATH
 //==================================================
 $path="$PHP[ROOTPATH]/$PHP[Dir]";
 $imgdir="$PHP[Dir]";
 $imgpath="$PHP[ROOTPATH]/$imgdir";
+$fpath="$path/$PHP[File]";
 
 //==================================================
 //FILE & IMAGE NAME
 //==================================================
-if(!preg_match("/,/",$PHP["File"]) and
-   preg_match("/\.ps2w/",$PHP["File"])){
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  //READ PS2W FILES
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  $fpath="$path/$PHP[File]";
+list($fname,$fext)=preg_split("/\./",$PHP["File"]);
+if($fext=="ps2w"){
   readConfig("$fpath");
   //DATA FILES
   $fdatafiles=$CONFIG["ImageFile"];
@@ -70,31 +67,6 @@ if(!preg_match("/,/",$PHP["File"]) and
   systemCmd("cp -rf $fpath $imgpath/.$fname.ps2w");
   //REPLACE " BY '
   shell_exec("sed -i.save -e \"s/\\\"/\'/gi\" $imgpath/.$fname.ps2w");
-  //PLOT CONFIGURATION FILE
-  $fconf="$imgpath/.$fname.ps2w";
-}else{
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  //GET LIST OF FILES
-  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  $fname="";
-  $datafiles="";
-  $ncols=array();
-  foreach(preg_split("/,/",$PHP["File"]) as $file){
-    //COUNT NUMBER OF COLUMNS
-    $fpath="$path/$file";
-    $ncols[]=systemCmd("grep -v '^#' $fpath | head -n 1 | awk '{print NF}'");
-    if(!file_exists($fpath)){
-      $content.="<div class='tabbertab sectab'><h2>Error</h2><p>File '$fpath' does not exist.</p>";
-      goto end;
-    }
-    list($tfname,$fext)=preg_split("/\./",$file);
-    $fname.="${tfname}_";
-    $datafiles.="'$file',";
-  }
-  $fname=preg_replace("/_$/","",$fname);
-  $datafiles=preg_replace("/,$/","",$datafiles);
-  //PLOT CONFIGURATION FILE
-  $fconf="$imgpath/.$fname.ps2w";
 }
 $fimg="$fname.png";
 
@@ -111,12 +83,23 @@ if(file_exists($fimgpath)){
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//CHECK FILE
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if(!file_exists($fpath)){
+$content.=<<<CONTENT
+<div class="tabbertab sectab">
+<h2>Error</h2>
+<p>File '$fpath' does not exist.</p>
+CONTENT;
+  goto end;
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //READ CONFIGURATION FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//echo "CONF:$fconf";br();
+$fconf="$imgpath/.$fname.ps2w";
 if(!file_exists($fconf)){
-  $pconf=genPlotConf($datafiles,$fimgpath);
-  //echo $pconf;br();
+  $pconf=genPlotConf($fpath,$fimgpath);
   $fl=fileOpen("$fconf","w");
   fwrite($fl,$pconf);
   fclose($fl);
@@ -127,6 +110,8 @@ ps2wToPlain($CONFIG);
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //FILE PROPERTIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//COUNT NUMBER OF COLUMNS
+$ncols=systemCmd("grep -v '^#' $fpath | head -n 1 | awk '{print NF}'");
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //CHECK PLOTTING DIRECTORY
@@ -255,7 +240,6 @@ submitForm
    )
 AJAX;
 //*/
-$BaseDir=basename($PHP["Dir"]);
 $content.=<<<CONTENT
 <!-- ---------------------------------------------------------------------- -->
 <!-- FORM								    -->
@@ -277,42 +261,15 @@ $content.=<<<CONTENT
     <!-- -------------------------------------------------- -->
     <tr>
       <td class="field">
-	Directory
+	File
       </td>
       <td class="value">
 	<input type="hidden" name="Dir_Submit" value="$PHP[Dir]">
-	<b onmouseover="explainThis(this)" explanation="$PHP[Dir]">
-	  $BaseDir
-	</b>
-      </td>
-    </tr>
-    <tr>
-      <td class="field">
-	Image
-      </td>
-      <td class="value">
-        <input type="hidden" name="ImageFile_Submit" value="$fimg">
-	<b onmouseover="explainThis(this)" explanation="Image file">
-	  $fimg
-	</b>
-      </td>
-    </tr>
-    <tr>
-      <td class="field">
-	Files
-      </td>
-      <td class="value">
 	<input type="hidden" name="File_Submit" value="$PHP[File]">
+	<input type="hidden" name="DataFiles_Submit" value="$fpath">
+        <input type="hidden" name="ImageFile_Submit" value="$fimgpath">
         <input type="hidden" name="ConfFile_Submit" value=".$fname.ps2w">
-	<input type="hidden" name="DataFiles_Submit" value="$CONFIG[DataFiles]">
-	<input type="text" name="DataFiles" value="$CONFIG[DataFiles]" 
-	       onchange="popOutHidden(this)" 
-	       onfocus="$('#explanationf').toggle('fast',null);"
-	       onblur="$('#explanationf').toggle('fast',null);">
-	<br/>
-	<div id="explanationf" class="explanationtxt" style="display:none">
-	  Give the name of the files separated by ','
-	</div>
+	<a href="JavaScript:$file_link">$PHP[File]</a>
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -331,7 +288,8 @@ $content.=<<<CONTENT
 	<input type="text" name="XCols" value="$CONFIG[XCols]" 
 	       onchange="popOutHidden(this)" 
 	       onfocus="$('#explanationx').toggle('fast',null);"
-	       onblur="$('#explanationx').toggle('fast',null);">
+	       onblur="$('#explanationx').toggle('fast',null);"
+
 	<br/>
 	<div id="explanationx" class="explanationtxt" style="display:none">
 	  Indicate the column(s) with the value of the abcisas.<br/>
@@ -352,7 +310,7 @@ $content.=<<<CONTENT
 	       onblur="$('#explanationy').toggle('fast',null);"
 	<br/>
 	<div id="explanationy" class="explanationtxt" style="display:none">
-	  Column(s) with the value of the ordinates. Use brackets to
+	  Column(s) with the value of the oordinates. Use brackets to
 	  group columns for multiple files<br/> Ex.: '[1]' (single
 	  file, single column), '[1,2]' (multiple columns, single
 	  file), '[1,2],[3]' (multiple files).
@@ -401,14 +359,7 @@ $content.=<<<CONTENT
       <td class="field">X range</td>
       <td class="value">
 	<input type="hidden" name="XRange_Submit" value="$CONFIG[XRange]">
-	<input type="text" name="XRange" value="$CONFIG[XRange]" 
-	       onchange="popOutHidden(this)"
-	       onfocus="$('#explanationxr').toggle('fast',null);"
-	       onblur="$('#explanationxr').toggle('fast',null);">
-	<br/>
-	<div id="explanationxr" class="explanationtxt" style="display:none">
-	  Range for abcisas.<br/>Ex.:'Auto' (auto range), (2,3) (custom range)
-	</div>
+	<input type="text" name="XRange" value="$CONFIG[XRange]" onchange="popOutHidden(this)">
       </td>
     </tr>
     <!-- -------------------------------------------------- -->
@@ -418,14 +369,7 @@ $content.=<<<CONTENT
       <td class="field">Y range</td>
       <td class="value">
 	<input type="hidden" name="YRange_Submit" value="$CONFIG[YRange]">
-	<input type="text" name="YRange" value="$CONFIG[YRange]" 
-	       onchange="popOutHidden(this)"
-	       onfocus="$('#explanationxr').toggle('fast',null);"
-	       onblur="$('#explanationxr').toggle('fast',null);">
-	<br/>
-	<div id="explanationxr" class="explanationtxt" style="display:none">
-	  Range for ordinates.<br/>Ex.:'Auto' (auto range), (2,3) (custom range)
-	</div>
+	<input type="text" name="YRange" value="$CONFIG[YRange]" onchange="popOutHidden(this)">
       </td>
     </tr>
     <!-- -------------------------------------------------- -->

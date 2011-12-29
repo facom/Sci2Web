@@ -667,15 +667,17 @@ function filesTable($dir,$options="",$target="Blank"){
   global $PHP,$PROJ,$BUTTONS;
   $dirhash=md5($dir);
   $id="file_$dirhash";
+  $rid=genRandom(4);
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //TABLE HEADER
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+  $imgload=genLoadImg("animated/loader-circle.gif");
 $ajax_filelist=<<<AJAX
+search=$('#searchfile$rid').attr('value');
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0&LinkTarget=$target',
+   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$dir&$options&Start=0&LinkTarget=$target&Search='+search,
    'listfiles',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -683,7 +685,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
-     element.innerHTML='Loading...';
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -729,6 +731,8 @@ $onload
     <td colspan=4>
       <div style="position:relative">
 	<div style="position:absolute;float:right;top:0px;right:0px">
+	  Search: 
+	  <input id="searchfile$rid" type="text" value="">
 	  <a href="JavaScript:$ajax_filelist">$BUTTONS[Update]</a>
 	</div>
 	<div style="position:relative;float:left;top:0px;left:0px;">
@@ -763,13 +767,15 @@ $onload
        onclick="selectAll('formfiles',this)">
 </td>
 <td >
-Filename
+File
 </td>
+<!--
 <td>
 Properties
 </td>
-<td>
-Action
+-->
+<td width="20%">
+Actions
 </td>
 </tr>
 </thead>
@@ -1088,14 +1094,14 @@ REPLACE;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GENERATE BLANK PLOT CONFIGURATION
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function genPlotConf($datafile,$imgfile)
+function genPlotConf($datafiles,$imgfile)
 {
   global $PHP,$PROJ;
   blankFunc();
 
 $conf=<<<CONF
 ImageFile='$imgfile'
-DataFiles=['$datafile']
+DataFiles=[$datafiles]
 
 XCols=[1]
 YCols=[[2]]
@@ -1156,12 +1162,11 @@ function savePlotConf($confpath)
 function ps2wToPlain(&$vector)
 {
   global $PHP,$PROJ,$PS2W;
-
+  
   foreach($PS2W as $field){
-    $vector[$field]=preg_replace("/[\[\]]/","",$vector[$field]);
-    /*
-    $vector[$field]=preg_replace("/\s*r'/","",$vector[$field]);
-    */
+    //$vector[$field]=preg_replace("/[\[\]]/","",$vector[$field]);
+    $vector[$field]=preg_replace("/^\[/","",$vector[$field]);
+    $vector[$field]=preg_replace("/\]$/","",$vector[$field]);
   }
   return 0;
 }
@@ -1173,18 +1178,11 @@ function plainTops2w(&$vector)
 {
   global $PHP,$PROJ,$PS2W;
 
-  foreach($PS2W as $field){
-    /*
-    $vector[$field]=
-      preg_replace("/([,\(\)\s]*)([^,\(\)]+)([,\(\)\s]*)/",
-		   "$1r'$2'$3",$vector[$field]);
-    */
-  }
   $vector["ImageFile"]="'$vector[ImageFile]'";
-  $vector["DataFiles"]="['$vector[DataFiles]']";
+  $vector["DataFiles"]="[$vector[DataFiles]]";
   $vector["XCols"]="[$vector[XCols]]";
-  $vector["YCols"]="[[$vector[YCols]]]";
-  $vector["LinesInformation"]="[[$vector[LinesInformation]]]";
+  $vector["YCols"]="[$vector[YCols]]";
+  $vector["LinesInformation"]="[$vector[LinesInformation]]";
 
   return 0;
 }

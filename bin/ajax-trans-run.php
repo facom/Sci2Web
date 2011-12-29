@@ -102,8 +102,35 @@ continue;
 */
 
 //////////////////////////////////////////////////////////////////////////////////
-//ACTION
+//ACTIONS
 //////////////////////////////////////////////////////////////////////////////////
+if($PHP["Action"]=="DownloadResults" or $PHP["Action"]=="DownloadSources")
+{
+  $download="results";
+  if($PHP["Action"]=="DownloadSources") $download="sources";
+
+  $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
+			 0,"run_hash");
+  $rundir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname/$runhash";
+  $runpath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname/$runhash";
+  $result="Downloading $download for run $runcode...<br/>";
+  systemCmd("cd $runpath;perl $PROJ[PROJPATH]/bin/sci2web.pl down --$download --rundir .");
+  if($PHP["?"]){
+    $error="<a href='$PROJ[TMPDIR]/phpout-$PHP[PAGEBASENAME]-$PHP[SESSID]' target='_blank'>Error generating file</a>";
+    $qerror=true;
+    goto end;
+  }
+  $tarball="$_SESSION[App]_$_SESSION[VersionId]-$download-run_$runcode.tar.gz";
+  if(file_exists("$PROJ[TMPDIR]/$tarball")){
+    $error="<a href='$PROJ[TMPDIR]/phpout-$PHP[PAGEBASENAME]-$PHP[SESSID]' target='_blank'>Error obtaining file</a>";
+    $qerror=true;
+    goto end;
+  }
+$result.=<<<RESULT
+<a href="JavaScript:Open('$PROJ[BINDIR]/file.php?Dir=$PROJ[TMPDIR]&File=$tarball&Mode=View','Files $download','$PROJ[SECWIN]')">Get the tarball</a>
+RESULT;
+  goto end;
+}
 if($PHP["Action"]=="RemoveTemplate")
 {
   if($PHP["Template"]=="Default"){
@@ -577,4 +604,5 @@ if($qerror){
   echo $result;
 }
 
+finalizePage();
 ?>

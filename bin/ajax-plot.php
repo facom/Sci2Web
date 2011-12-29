@@ -48,14 +48,17 @@ $fconfpath="$imgpath/$PHP[ConfFile]";
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //SAVE CONFIGURATION INFORMATION
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($PHP["PlotAction"]=="Update"){
-  savePlotConf($fconfpath);
+//printArray($PHP,"PHP");
+if(isset($PHP["PlotAction"])){
+  if($PHP["PlotAction"]=="Update"){
+    savePlotConf($fconfpath);	
+  }
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //EXECUTE PYTHON PLOTTING SCRIPT
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-systemCmd("MPLCONFIGDIR='$PROJ[TMPPATH]' python $PROJ[BINPATH]/sci2web-plot $fconfpath");
+systemCmd("cd $path;MPLCONFIGDIR='$PROJ[TMPPATH]' python $PROJ[BINPATH]/sci2web-plot $fconfpath");
 if($PHP["?"]){
   $notification="Error";
   $style="background-color:pink";
@@ -76,4 +79,6 @@ echo<<<PLOT
 <div id="imgnot" class="notification" style="display:none;$style"></div>
 <img src="$img" height="100%" onload="notDiv('imgnot','$notification')"/>
 PLOT;
+
+finalizePage();
 ?>

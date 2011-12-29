@@ -21,6 +21,13 @@ function Close()
 }
 
 /*
+ */
+function Reload()
+{
+    window.location.reload();
+}
+
+/*
   ////////////////////////////////////////////////////////////////////////////////
   FORMS
   ////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +40,17 @@ function clickRow(row)
 	row.parentNode.parentNode.style.backgroundColor=unchecked;
     }else{
 	row.parentNode.parentNode.style.backgroundColor=checked;
+    }
+}
+
+function clickRow2(row)
+{
+    unchecked=$(row).attr('color_unchecked');
+    checked=$(row).attr('color_checked');
+    if(!row.checked){
+	$(row.parentNode.parentNode).css('background-color',unchecked);
+    }else{
+	$(row.parentNode.parentNode).css('background-color',checked);
     }
 }
 
@@ -72,6 +90,26 @@ function popOutHidden(field)
       }
     }
     //alert("Element "+$(hfield).attr("name")+" Changed from "+value+" to "+newvalue);
+    hfield.attr("value",newvalue);
+}
+
+function popOutHidden2(field)
+{
+    var sname=$(field).attr("name")+'_Submit';
+    var hfield=$('input[name="'+sname+'"]');
+
+    //alert("Name:"+$('input[name="'+sname+'"]').attr('name'));
+
+    newvalue=$(field).attr("value");
+    if($(field).attr("type")=="checkbox"){
+      if(field.checked){
+	newvalue="on";
+ 	$(field).attr("value","on"); 
+      }else{
+	newvalue="off";
+ 	$(field).attr("value","off"); 
+      }
+    }
     hfield.attr("value",newvalue);
 }
 
@@ -223,6 +261,7 @@ function submitForm(formid,script,
   qstring="";
   while(formel=form.elements[i]){
       if(esname=$(formel).attr("name")){
+	  //alert(esname);
 	  if(esname.search("_Submit")>=0){
 	      ename=esname.split("_")[0];
 	      qstring+=ename+"="+$(formel).attr("value")+"&";
@@ -232,7 +271,7 @@ function submitForm(formid,script,
   }
   script=script+"&"+qstring;
   //alert(script);
-
+  
   x.onreadystatechange=function(){
     rtext=x.responseText;
     if(x.readyState==4){

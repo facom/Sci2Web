@@ -39,6 +39,7 @@ $result="";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function genListCmd($dir,$id,$start){
   global $PROJ;
+  $imgload=genLoadImg("animated/loader-circle.gif");
 $cmd=<<<AJAX
 loadContent
   (
@@ -50,6 +51,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
+     $(element).html('$imgload');
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -66,9 +68,11 @@ AJAX;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$dpath="$PHP[ROOTPATH]/$Dir";
-$flink="$Dir/$File";
-$fpath="$PHP[ROOTPATH]/$flink";
+if(isset($Dir)){
+  $dpath="$PHP[ROOTPATH]/$Dir";
+  $flink="$Dir/$File";
+  $fpath="$PHP[ROOTPATH]/$flink";
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //ACTION
@@ -107,7 +111,7 @@ if($Action=="DownloadFiles"){
     $tardir="$PROJ[TMPDIR]/$tarfile";
     $tarpath="$PROJ[TMPPATH]/$tarfile";
     $objslist=join(" ",$objs);
-    systemCmd("cd $dirpath;tar zcf $tarpath $objslist");
+    systemCmd("cd $dirpath;tar zcf $tarpath $objslist .s2wfiles");
     $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
 $result=<<<RESULT
 Packed $nobjs objects. 
@@ -136,7 +140,8 @@ if($Action=="DownloadResults"){
     $tardir="$PROJ[TMPDIR]/$tarfile";
     $tarpath="$PROJ[TMPPATH]/$tarfile";
     $resultslist=join(" ",$results);
-    systemCmd("cd $dpath;tar zcf $tarpath $resultslist");
+    systemCmd("cd $dpath;echo '*.tar.gz' > .s2wfiles");
+    systemCmd("cd $dpath;tar zcf $tarpath $resultslist .s2wfiles");
     $tarlink=fileWebOpen($PROJ["TMPDIR"],$tarfile,'View');
 $result=<<<RESULT
 <a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
@@ -227,7 +232,7 @@ if($Action=="GetList"){
     goto end;
   }
   $criterium="";
-  if(isset($PHP["Criterium"])) $criterium=$PHP["Criterium"];
+  if(isset($PHP["Criterium"])) $criterium="$PHP[Criterium]";
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //CHECK FOR PERMISSIONS 
@@ -254,12 +259,15 @@ if($Action=="GetList"){
       $criterium.=" $crit ";
     }
   }
+  $search="*";
+  if(isset($PHP["Search"])) $search="$PHP[Search]";
+  if(isBlank($criterium)) $criterium="*";
   /*
   echo "CRITERIUM:$criterium";br();
+  echo "SEARCH:$search";br();
   echo "EXCLUDE:$exclude";br();
-  */
-  if(isBlank($criterium)) $criterium="*";
-  $files=listFiles($path,$criterium,"",$exclude);
+  //*/
+  $files=listFiles($path,$criterium,"",$exclude,$search);
   $result.="";
   $i=0;
   if(file_exists("$path/../.s2wfiles")){
@@ -360,7 +368,10 @@ CONTROLS;
     //::::::::::::::::::::::::::::::::::::::::
 $checkcol=<<<CHECK
 <input type="checkbox" name="obj$seli"
-       onchange="popOutHidden(this)" onclick="deselectAll('objall')">
+       onchange="popOutHidden(this)" 
+       onclick="deselectAll('objall')"
+       color_unchecked="$COLORS[clear]"
+       color_checked="$COLORS[text]">
 <input type="hidden" name="obj${seli}_Submit" value="off">
 <input type="hidden" name="objfile${seli}_Submit" value="$file">
 CHECK;
@@ -380,7 +391,7 @@ CHECK;
 $ajax_subdir=<<<AJAX
 loadContent
   (
-   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$Dir/$file&Start=0',
+   '$PROJ[BINDIR]/ajax-trans-file.php?Action=GetList&Dir=$Dir/$file&Start=0&Search=$search',
    'listfiles',
    function(element,rtext){
      element.innerHTML=rtext;
@@ -402,7 +413,7 @@ AJAX;
       $flink="JavaScript:$ajax_subdir";
       $extraaction="onclick=$('input[name=DownloadDir_Submit]').attr('value','$Dir/$file')";
       break;
-    case "TEXT":case "SCRIPT":
+    case "TEXT":case "SCRIPT":case "IMAGE":
       //##############################
       //TEXT FILE
       //##############################
@@ -436,7 +447,7 @@ AJAX;
       //DIRECTORY
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a>
+$BUTTONS[Results]<a href="JavaScript:$flink_view">View</a><br/>
 ACTIONS;
       break;
     case "TEXT":case "SCRIPT":
@@ -444,9 +455,9 @@ ACTIONS;
       //TEXT FILE
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a> | 
-<a href="JavaScript:$flink_edit">Edit</a> | 
-<a href="JavaScript:$flink_plot">Plot</a>
+$BUTTONS[Results] <a href="JavaScript:$flink_view">View</a><br/>
+$BUTTONS[Configure] <a href="JavaScript:$flink_edit">Edit</a><br/>
+$BUTTONS[Plot] <a href="JavaScript:$flink_plot">Plot</a><br/>
 ACTIONS;
       break;
     case "IMAGE":case "TGZ":
@@ -454,7 +465,7 @@ ACTIONS;
       //TEXT FILE
       //##############################
 $actions=<<<ACTIONS
-<a href="JavaScript:$flink_view">View</a>
+$BUTTONS[Results] <a href="JavaScript:$flink_view">View</a>
 ACTIONS;
       break;
     default:
@@ -486,21 +497,62 @@ $checkcol
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE NAME     							    -->
 <!-- ---------------------------------------------------------------------- -->
-<td class="field">
-  $iconimg<a href="$flink" $explanation $extraaction>$fileshort<!--($ftype)--></a>
+<td class="field" colspan="2"
+    onmouseover="
+		 $('#actionarrow$i').css('display','block');
+		 $(this).css('background-color','$COLORS[text]');
+		 "
+    onmouseout="
+		$('#actionarrow$i').css('display','none');
+		$(this).css('background-color','$COLORS[clear]');
+		">
+  <div style="position:relative">
+    $iconimg
+    <a href="$flink" $explanation $extraaction>$fileshort<!--($ftype)--></a>
+    <br/>
+    <span style="font-size:10px">$metadata</span>
+    <div id="actionarrow$i" 
+	 style="display:none;
+		position:absolute;
+		right:0px;bottom:0px">
+      <a href="JavaScript:void(null)" 
+	 onclick="
+		  toggleElement('runactions$i');
+		  ">
+	$BUTTONS[Down]
+      </a>
+    </div>
+    <div id="runactions$i"
+	 class="contextual"
+	 style="position:absolute;
+		right:0px;
+		display:none;
+		text-align:left;
+		font-size:12px;"
+	 onmouseover="$('#runactions$i').css('display','block');"
+	 onmouseout="$('#runactions$i').css('display','none');"
+	 >
+      $actions
+    </div>
+
+  </div>
 </td>
 <!-- ---------------------------------------------------------------------- -->
 <!-- FILE METADATA 							    -->
 <!-- ---------------------------------------------------------------------- -->
+<!--
 <td class="field">
 $metadata
 </td>
+-->
 <!-- ---------------------------------------------------------------------- -->
 <!-- ACTIONS         							    -->
 <!-- ---------------------------------------------------------------------- -->
+<!--
 <td class="field">
 $actions
 </td>
+-->
 </tr>
 TABLE;
      $seli++;
@@ -523,6 +575,7 @@ CONTROLS;
 //RESULT
 //////////////////////////////////////////////////////////////////////////////////
 end:
-//echo "<textarea>$result</textarea>";
 echo $result;
+
+finalizePage();
 ?>

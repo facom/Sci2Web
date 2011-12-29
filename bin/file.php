@@ -182,7 +182,7 @@ CONTENT;
    $tmpdir="$PROJ[TMPDIR]/dir-$File-$PHP[SESSID]";
    $tmppath="$PROJ[TMPPATH]/dir-$File-$PHP[SESSID]";
    systemCmd("mkdir -p $tmppath");
-   systemCmd("mkdir -p $tmppath/.root");
+   systemCmd("echo '*' > $tmppath/.s2wfiles");
    systemCmd("tar -zxvf $fpath -C $tmppath");
    $ftable=filesTable("$tmpdir","","Parent");
 $fcontent.=<<<CONTENT
@@ -252,6 +252,18 @@ FOOTER;
 //==================================================
 //HEADER
 //==================================================
+$back="";
+if(preg_match("/file\.php/",$PHP[REFERER])){
+$back=<<<BACK
+  <div class="actionbutton">
+    <a href="$PHP[REFERER]" class="image" 
+       onmouseover="explainThis(this)" explanation="Back">
+      $BUTTONS[Back]
+    </a>
+  </div>
+BACK;
+}
+
 $header.=<<<HEADER
 <!-- -------------------- RUN NAME -------------------- -->
 <div class="actionbutton">
@@ -273,12 +285,7 @@ $header.=<<<HEADER
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">
-  <div class="actionbutton">
-    <a href="$PHP[REFERER]" class="image" 
-       onmouseover="explainThis(this)" explanation="Back">
-      $BUTTONS[Back]
-    </a>
-  </div>
+  $back
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" 
        onclick="window.location.reload()"

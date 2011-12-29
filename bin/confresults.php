@@ -102,3 +102,6 @@ echo<<<CONTENT
   </body>
 </html>
 CONTENT;
+
+finalizePage();
+?>

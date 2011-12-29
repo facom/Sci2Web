@@ -154,5 +154,7 @@ QUEUE;
 
 echo "<input type='hidden' name='NumberRuns' value='$i'>";
 end:
+
+finalizePage();
 return 0;
 ?>

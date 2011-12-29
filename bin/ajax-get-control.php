@@ -80,3 +80,6 @@ echo<<<CONTROL
 $links
 <p><i id="result"></i></p>
 CONTROL;
+
+finalizePage();
+?>

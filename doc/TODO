@@ -10,20 +10,16 @@
 
 To Do:
 
-- Test everything is running in Firefox
+Dreams:
 
-- Plot using a preexistent ps2w file
+- Show errors in Control Buttons of Configure Window
+
+- Test everything is running in Firefox
 
 - Create page to get information about remote "Sci2Web server sites"
 
 - Give access to developers and contributors to the configuration
   files of a given application on-line
-
-- Clean temporal
-
-- Minimum and maximum
-
-Dreams:
 
 - Attention to changes in sci2web.conf.  Update changes in the
   doc/install template file.
@@ -309,3 +305,22 @@ Completed:
   + Show submit status and allow to see how is in the queue system
 
   DONE. SCRIPT WATCH.PHP CREATED.
+
+- Clean temporal.  DONE.  USING FINALIZEPAGE() NO EXTRA TEMPORAL FILES
+  ARE CREATED.
+
+- Minimum and maximum. DONE.
+
+- Improve file browsing interface.  IMPROVED.  ACTIONS WERE PLACED IN
+  A CONTEXTUAL DISPLAYABLE WINDOW.
+
+- Plot using a preexistent ps2w file.  DONE.
+
+- Make errors in control panel runs and Debugging option independent
+  of phplib. DONE. PHPOUT FILE WILL BE GENERATED EVEN ALTOUGH THE
+  PHPLIB DEBUG VARIABLE IS SET TO FALSE.
+
+- Add download results and download sources to run actions. DONE.
+
+- Incompatibility between output in getruns and output in run control
+  panel. CLOSE CONTROL PANEL.

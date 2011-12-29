@@ -37,7 +37,7 @@ $extrastyle="margin-left:10px;margin-right:10px;height:82%;";
 //////////////////////////////////////////////////////////////////////////////////
 //PROCEED
 //////////////////////////////////////////////////////////////////////////////////
-if(isset($PHP[RunCode])){
+if(isset($PHP["RunCode"])){
   $runhash=mysqlGetField("select * from runs where run_code='$PHP[RunCode]'",0,"run_hash");
   if(isBlank($runhash)){$error="Run '$PHP[RunCode]' does not exist.";$qerror=true;goto error;}
   $runpath="$runspath/$runhash";
@@ -67,12 +67,12 @@ loadContent
    'watch',
    function(element,rtext){
      element.innerHTML=rtext;
-     $('#DIVBLANKET$id').css('display','none');
-     $('#DIVOVER$id').css('display','none');
+     $('#DIVBLANKET').css('display','none');
+     $('#DIVOVER').css('display','none');
    },
    function(element,rtext){
-     $('#DIVBLANKET$id').css('display','block');
-     $('#DIVOVER$id').css('display','block');
+     $('#DIVBLANKET').css('display','block');
+     $('#DIVOVER').css('display','block');
    },
    function(element,rtext){
    },
@@ -154,4 +154,6 @@ echo<<<CONTENT
 </html>
 
 CONTENT;
+
+finalizePage();
 ?>

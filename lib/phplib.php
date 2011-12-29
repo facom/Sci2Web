@@ -70,10 +70,11 @@ $PHP["SQLFILE"]="phpsql-$PHP[SESPAGEPREFIX]";
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DEBUGGING MODE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+shell_exec("(date;echo -e 'Output File:\n') > $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
+$PHP["SYSCOUNTER"]=1;
 if($PHP["DEBUG"]){
   $PHP["DBCOUNTER"]=$PHP["SQLCOUNTER"]=1;
   $PHP["FL"]=fopen("$PHP[TMPPATH]/$PHP[DBFILE]","w");
-  shell_exec("(date;echo -e 'Output File:\n') > $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
   shell_exec("(date;echo -e 'SQL File:\n') > $PHP[TMPPATH]/$PHP[SQLFILE]");
 }
 
@@ -159,12 +160,11 @@ function systemCmd($cmd,$preserve=false)
   $ocmd=$cmd;
   $PHP["?"]=0;
 
-  if($PHP["DEBUG"]){
+  if($PHP["DEBUG"] or true){
 $dbout=<<<DBOUT
 ================================================================================
-Command $PHP[DBCOUNTER]:
+Command $PHP[SYSCOUNTER]:
     $ocmd
-Output:
 DBOUT;
     blankFunc();
     shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
@@ -187,7 +187,7 @@ DBOUT;
   //========================================
   //SAVE COMMAND INFORMATION
   //========================================
-  if($PHP["DEBUG"]){
+  if($PHP["DEBUG"] or true){
     $eout=implode("\n",$outs);
 $dbout=<<<DBOUT
 Output:
@@ -195,7 +195,7 @@ $eout
 DBOUT;
     blankFunc();
     shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
-    $PHP["DBCOUNTER"]++;
+    $PHP["SYSCOUNTER"]++;
   }
   
   return $out;
@@ -204,7 +204,7 @@ DBOUT;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET LIST OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function listFiles($path,$criterium="*",$opts="",$exclude="")
+function listFiles($path,$criterium="*",$opts="",$exclude="",$search="*")
 {
   global $PHP;
 
@@ -218,12 +218,18 @@ function listFiles($path,$criterium="*",$opts="",$exclude="")
     if(isBlank($excludecond)) continue;
     $excl.="|egrep -v '$excludecond\$'";
   }
+  $srch="";
+  foreach(preg_split("/\s+/",$search) as $searchcond){
+    if(isBlank($searchcond)) continue;
+    $srch.="|egrep '$searchcond\$'";
+  }
   /*
   echo "LIST: $lcmd";br();
   echo "EXCLUDE: $excl";br();
-  */
+  echo "SEARCH: $srch";br();
+  //*/
   //COMMAND TO SORT DIRS, FILES, LINKS
-  $cmd="($lcmd | grep '^d' $excl;$lcmd | grep '^-' $excl;$lcmd | grep '^l' $excl)  | $scol";
+  $cmd="($lcmd | grep '^d' $excl;$lcmd | grep '^-' $excl $srch;$lcmd | grep '^l' $excl $srch) | $scol";
   //echo "COMMAND: $cmd";br();
   //EXECUTE COMMAND
   $out=systemCmd("cd $path;$cmd",true);
@@ -456,7 +462,7 @@ function loadFile($file)
 function finalizePage()
 {
   global $PHP;
-  shell_exec("rm $PHP[TMPPATH]/*.$PHP[RANDID]");
+  shell_exec("find $PHP[TMPPATH] -name '*$PHP[RANDID]*' -exec rm -rf {} \\;");
   return 0;
 }
 

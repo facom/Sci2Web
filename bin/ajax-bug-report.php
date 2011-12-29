@@ -70,4 +70,5 @@ $email="sci2web-bug@googlegroups.com";
 sendMail($email,$subject,$msg,$from,$replyto);
 
 sleep(1);
+finalizePage();
 ?>

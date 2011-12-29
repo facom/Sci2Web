@@ -123,12 +123,38 @@ foreach($runs as $run){
   //==================================================
   $conflink="$PROJ[BINDIR]/configure.php?RunCode=$run_code&HeightWindow=68%";
   $conflink="Open('$conflink','Configure','$PROJ[SECWIN]')";
+
   $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code&HeightWindow=75%";
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
+
   $confreslink="$PROJ[BINDIR]/confresults.php?RunCode=$run_code";
   $confreslink="Open('$confreslink','Configure & Results','$PROJ[PLOTWIN]')";
+
   $fullstatuslink="$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$run_code";
   $fullstatuslink="Open('$fullstatuslink','Full job Status','$PROJ[SECWIN]')";
+
+$ajax_down=<<<AJAX
+action=$('#actiondown').attr('value');
+loadContent
+  (
+   '$PROJ[BINDIR]/ajax-trans-run.php?RunCode=$run_code&Action='+action,
+   'notaction_error',
+   function(element,rtext){
+     $(element).html(rtext);
+     $(element).fadeIn(2000,null);
+   },
+   function(element,rtext){
+   },
+   function(element,rtext){
+   }
+   -1,
+   true
+   );
+AJAX;
+
+  $downresultslink="$('#actiondown').attr('value','DownloadResults');$ajax_down";
+  $downsourceslink="$('#actiondown').attr('value','DownloadSources');$ajax_down";
+
   $removelink=genRunLink($run_code,"Remove");
 
   //==================================================
@@ -186,17 +212,37 @@ $row_name=<<<ROW
 	 onmouseover="$('#runactions$i').css('display','block');"
 	 onmouseout="$('#runactions$i').css('display','none');"
 	 >
+      $BUTTONS[Configure] 
       <a href="JavaScript:$conflink">
-	$BUTTONS[Configure]Configure 
+	Configure 
       </a>
-      <br/><a href="JavaScript:$reslink">
-	$BUTTONS[Results]Results 
+      <br/>
+      $BUTTONS[Results] 
+      <a href="JavaScript:$reslink">
+	Results
       </a>
-      <br/><a href="JavaScript:$confreslink">
-	$BUTTONS[ConfigureResults]Control panel 
+      <br/>
+      $BUTTONS[ConfigureResults] 
+      <a href="JavaScript:$confreslink">
+	Control panel 
       </a>
-      <br/><a href="JavaScript:$fullstatuslink">
-	$BUTTONS[Open]Run status
+      <br/>
+      $BUTTONS[Open] 
+      <a href="JavaScript:$fullstatuslink">
+	Run status
+      </a>
+      <br/>
+      $BUTTONS[Down] 
+      <input id="actiondown" type="hidden" value="">
+      <a href="JavaScript:void(null)" 
+	 onclick="$downresultslink;">
+	Download results (press once)
+      </a>
+      <br/>
+      $BUTTONS[Compile] 
+      <a href="JavaScript:void(null)" 
+	 onclick="$downsourceslink">
+	Download sources (press once)
       </a>
     </div>
   </div>
@@ -248,5 +294,7 @@ echo<<<RUNS
 <input type="hidden" name="RunNum_Submit" value="$i">
 <input type="hidden" name="RunCodes_Submit" value="$runcodes">
 RUNS;
+
+finalizePage();
 return 0;
 ?>

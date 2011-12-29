@@ -18,6 +18,8 @@ include("$RELATIVE/lib/sci2web.php");
 //////////////////////////////////////////////////////////////////////////////////
 //VARIABLES
 //////////////////////////////////////////////////////////////////////////////////
+$bugbut="";
+$bugform="";
 $PATH="$PHP[PROJPATH]/pages/main/content";
 $FHASH=md5($FILE);
 $LINK="";
@@ -48,10 +50,12 @@ LINK;
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    if(isset($PHP["SaveContent"])){
      //echo "Saving:$PHP[CONTENT_$FHASH]";br();
-     if(!isBlank($PHP["CONTENT_$FHASH"])){
-       $fl=fileOpen("$PATH/$FILE","w");
-       fwrite($fl,$PHP["CONTENT_$FHASH"]);
-       fclose($fl);
+     if(isset($PHP["CONTENT_$FHASH"])){
+       if(!isBlank($PHP["CONTENT_$FHASH"])){
+	 $fl=fileOpen("$PATH/$FILE","w");
+	 fwrite($fl,$PHP["CONTENT_$FHASH"]);
+	 fclose($fl);
+       }
      }
    }
 }

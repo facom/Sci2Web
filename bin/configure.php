@@ -496,10 +496,29 @@ CONF;
      if(isBlank($vardesc)) $vardesc="$varname";
      $extra="class='confinput' onmouseover='explainThis(this)' 
              explanation='$vardesc' $protected style='$inputstyle'";
+
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //SINGLE VALUE:SIMPLE INPUT
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      $input="<input type='text' name='$varn' value='$val' $extra size='30%'>";
+
+     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+     //CONSTRAINED VALUE:SIMPLE INPUT
+     //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+     if(preg_match("/<</",$defval)){
+       list($ranges,$defval)=preg_split("/==/",$defval);
+       $parts=preg_split("/<</",$ranges);
+       $min=$parts[0];
+       $max=$parts[1];
+$input=<<<INPUT
+<input id="$varn" type="text" name="$varn" value="$val" 
+       $extra size='30%' 
+       max="$max" min="$min" 
+       onchange="checkInputValue('$varn','minmax',{min:$min,max:$max})"
+       >
+INPUT;
+     }
+
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //RANGE: SCROLLABLE
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -636,6 +655,8 @@ loadContent
    function(element,rtext){
    },
    function(element,rtext){
+     $('#ELBLANKET').css('display','none');
+     $('.ELOVER').css('display','none');
    },
    1000,
    true
@@ -788,4 +809,6 @@ echo<<<CONTENT
 </html>
 
 CONTENT;
+
+finalizePage();
 ?>

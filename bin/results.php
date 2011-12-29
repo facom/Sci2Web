@@ -30,6 +30,7 @@ $TabNum=1;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $header="";
 $content="";
+$title="";
 $errors="";
 $onload="";
 $extrastyle="margin-left:10px;margin-right:10px;";
@@ -328,10 +329,11 @@ $header.=<<<HEADER
       $bugbutton
     </div>
     <div class="actionbutton">
-      <button href="JavaScript:void(null)" class="image" 
-	      onmouseover="explainThis(this)" explanation="Results">
+      <a href="JavaScript:void(null)" class="image" 
+	 onclick="Reload()"
+	 onmouseover="explainThis(this)" explanation="Results">
 	$BUTTONS[Update]
-      </button>
+      </a>
     </div>
     $closebutton
   </div>
@@ -353,7 +355,6 @@ echo<<<CONTENT
   </head>
 
   <body>
-    <form action="?" method="get">
     <div style="position:relative">
       <!-- -------------------------------------------------------- -->
       <!-- HEADER AREA -->
@@ -374,10 +375,11 @@ echo<<<CONTENT
 	</div>
       </div>
     </div>
-    </form>
     $bugform
 </body>
 </html>
 
 CONTENT;
+
+finalizePage();
 ?>

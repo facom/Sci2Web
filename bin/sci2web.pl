@@ -68,6 +68,9 @@ switch($Action){
     case "saveresult" {
 	push(@cmdopt,("rundir|r=s"));
     }
+    case "down" {
+	push(@cmdopt,("results|R","sources|s","rundir|r=s"));
+    }
     else {
     	Error "Action '$Action' not recognized";
     }
@@ -88,16 +91,6 @@ switch($Action){
 	rprint "Cleaning Sci2Web server site","=";
 	$qclean=0;
 	$ans="n";
-	if($options{db} or $options{all}){
-	    rprint "Resetting databases...";
-	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
-	    if($ans=~/[ya]/i){
-		print "Provide the MySQL root password:\n\t";
-		`mysql -u root -p < $ROOTDIR/doc/install/sci2web.sql`;
-		die("Failed authentication") if($?);
-		$qclean=1;
-	    }
-	}
 	if($options{tmp} or $options{all}){
 	    rprint "Cleaning tmp directory...";
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
@@ -137,18 +130,29 @@ switch($Action){
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		#CLEANING APPLICATION TABLES
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-		$apps=sysCmd("ls $ROOTDIR/apps | grep -v template");
+		$apps=sysCmd("ls $ROOTDIR/apps | grep -v template | grep -v licenses");
 		foreach $app (split /\s+/,$apps){
 		    $vers=sysCmd("ls -d $ROOTDIR/apps/$app/*/sci2web");
 		    foreach $verdir (split /\s+/,$vers){
 			$ver=sysCmd("basename \$(dirname $verdir)");
 			$tbname="${app}_${ver}";
 			print "Removing entries in table $tbname...\n";
-			sysCmd("echo 'truncate table $tbname;' > /tmp/db.$$");
+			sysCmd("echo 'truncate table `$tbname`;' > /tmp/db.$$");
 			`mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/db.$$`;
 			die("Failed authentication") if($?);
 		    }
 		}
+		$qclean=1;
+	    }
+	}
+	if($options{db} or $options{all}){
+	    rprint "Resetting databases...";
+	    rprint "NOTE: If you have created applications or versions you should remove it from the apps dir";
+	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
+	    if($ans=~/[ya]/i){
+		print "Provide the MySQL root password:\n\t";
+		`mysql -u root -p < $ROOTDIR/doc/install/sci2web.sql`;
+		die("Failed authentication") if($?);
 		$qclean=1;
 	    }
 	}
@@ -402,14 +406,13 @@ Consider to create a new version of the application.
 	print fa "#T:Default template\n";
 	print fa "#$b1\n#DEFAULT CONFIGURATION FILE\n#$b1\n";
 	foreach $vartab (@vartabs){
-	    next if($vartab eq "Results");
 	    print "\tTab: $vartab\n";
-	    print fa "#$b2\n#TAB $vartab\n#$b2\n";
+	    print fa "#$b2\n#TAB $vartab\n#$b2\n" if($vartab ne "Results");
 	    print fv "#TAB:$vartab\n";
 	    $vtgroups="${vartab}_groups";
 	    foreach $vargroup (@{$vtgroups}){
 		print "\t\tGroup: $vargroup\n";
-		print fa "#$b3\n#GROUP $vargroup\n#$b3\n";
+		print fa "#$b3\n#GROUP $vargroup\n#$b3\n" if($vartab ne "Results");
 		print fv "#GROUP:$vargroup\n";
 		$vtivars="${vartab}_${vargroup}_ivar";
 		foreach $j (@{$vtivars}){
@@ -427,7 +430,7 @@ Consider to create a new version of the application.
 			$defval=$1;
 			vprint "\tNew defval: $defval\n";
 		    }
-		    print fa "#Variable $varname\n$var = $defval\n";
+		    print fa "#Variable $varname\n$var = $defval\n" if($vartab ne "Results");
 		    print fv "\n";
 		    print "\t\t\tVariable: $var ($varname,$datatype)\n";
 		}
@@ -1006,7 +1009,7 @@ apps_code='$appname'
 	rprint "Run instance created","=";
     }
     #======================================================================
-    #REMOVE APPLICATION
+    #SAVE RESULTS OF APPLICATION
     #======================================================================
     case "saveresult" {
 	rprint "Save result","=";
@@ -1031,13 +1034,13 @@ apps_code='$appname'
 	$runcode=$conf_run{"run_code"};
 	$author=$conf_run{"run_author"};
 	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
-	
+	$rundate=sysCmd("date +'%Y-%m-%d %H:%M:%S'");
 $sql=<<SQL;
 replace into `$tbname` set
 dbrunhash='$runhash',
 runs_runcode='$runcode',
 dbauthor='$author',
-dbdate=date(now()),
+dbdate='$rundate',
 SQL
 
         for $field (keys(%conf_conf)){
@@ -1053,7 +1056,7 @@ SQL
 	mysqlDo($sql);
 
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	#READ RUN PROPERTIES
+	#SAVING RESULTS FILES
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Storing results files...";
 	$dbdir="$RUNSDIR/db/$appname/$vername";
@@ -1070,6 +1073,53 @@ SQL
 
 	rprint "Result $runhash saved","=";
     }
+    #======================================================================
+    #DOWNLOAD COMPONENT OF RUN
+    #======================================================================
+    case "down" {
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK OPTIONS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$rundir=noBlank($options{rundir},"Run Directory");
+	Error "Run directory not valid" 
+	    if(!-d "$rundir/sci2web");
+	%conf_app=readConfig("$rundir/sci2web/version.conf");
+	%conf_run=readConfig("$rundir/run.info");
+	$runcode=$conf_run{"run_code"};
+
+	if($options{results}){
+	    rprint "Downloading results","=";
+	    $tgt="$conf_app{Application}_$conf_app{Version}-results-run_$runcode";
+	    sysCmd("rm -rf $TMPDIR/$tgt") if(-d "$TMPDIR/$tgt");
+	    rprint "Creating download directory '$TMPDIR/$tgt'...";
+	    sysCmd("mkdir -p $TMPDIR/$tgt");
+	    rprint "Creating permissions file...";
+	    sysCmd("echo -e '*' > $TMPDIR/$tgt/.s2wfiles");
+	    rprint "Copying results files into download directory...";
+	    sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $TMPDIR/$tgt");
+	    sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $TMPDIR/$tgt");
+	}
+	if($options{sources}){
+	    rprint "Downloading sources","=";
+	    rprint "Downloading results","=";
+	    $tgt="$conf_app{Application}_$conf_app{Version}-sources-run_$runcode";
+	    sysCmd("rm -rf $TMPDIR/$tgt") if(-d "$TMPDIR/$tgt");
+	    rprint "Creating download directory '$TMPDIR/$tgt'...";
+	    sysCmd("mkdir -p $TMPDIR/$tgt");
+	    rprint "Creating permissions file...";
+	    sysCmd("echo -e '*' > $TMPDIR/$tgt/.s2wfiles");
+	    rprint "Copying sources files into download directory...";
+	    sysCmd("cd $rundir;tar chf - * .[a-zA-Z]* | tar xf - -C $TMPDIR/$tgt");
+	    rprint "Removing extra files...";
+	    sysCmd("cd $TMPDIR/$tgt;make cleanall");
+	    sysCmd("cd $TMPDIR/$tgt;rm -rf sci2web *.oxt *.sig .*.temp");
+	}
+	rprint "Packing results...";
+	sysCmd("cd $TMPDIR;tar zcf $tgt.tar.gz $tgt");
+	sysCmd("rm -rf $TMPDIR/$tgt");
+	rprint "Download complete","=";
+    }
+    
 }
 
 ################################################################################

@@ -12,6 +12,7 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import sys
 import os
+from time import strftime
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GLOBAL VARIABLES
@@ -176,11 +177,22 @@ except SyntaxError as error:
     exit(1)
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#WATER MARK
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ax.text(1.02,1.0,'ps2w:'+strftime('%Y%m%dT%H%M%S'),
+        color='gray',
+        fontsize=8,
+        rotation='vertical',
+        verticalalignment='top',
+        horizontalalignment='center',
+        transform=ax.transAxes,);
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #SAVE
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 print "Saving plot in '%s'..."%conf.ImageFile
 plt.savefig(conf.ImageFile)
-
+os.system("rm -rf fontList.cache");
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #DOCUMENTATION
