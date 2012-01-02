@@ -62,7 +62,7 @@ $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
 $runspath="$PROJ[RUNSPATH]/$_SESSION[User]/$appname";
 $savedbpath="$PROJ[RUNSPATH]/db/$appname";
 
-//RUNS PIPELINE
+//VERSION CONFIG
 readConfig("$apppath/sci2web/version.conf");
 $VERCONFIG=$CONFIG;
 

@@ -43,7 +43,7 @@ $PHP["TabNum"]=$PHP["TabId"]+1;
 $apppath="$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[Version]";
 if(!file_exists("$apppath/sci2web/version.conf") and !$qexpire){
   $qexpire=true;
-  $msg="Application $_SESSION[AppVersion] not found.";
+  $msg="Application $_SESSION[AppVersion] $_SESSION[VersionId] not found.";
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //PERLIMINARIES
@@ -70,7 +70,9 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //HEADER
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$header=genHeader($PAGELOGO,"","Version $_SESSION[Version]");
+$header=genHeader
+  ($PAGELOGO,"",
+   "<a href='$PROJ[PROJDIR]/main.php?TabId=4'>Version $_SESSION[Version]</a><br/><a href='$PROJ[APPSDIR]/licenses/LICENSE.$_SESSION[License]' style='font-size:60%'>License $_SESSION[License]</a>");
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //BODY DECLARATION

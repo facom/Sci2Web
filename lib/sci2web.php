@@ -475,8 +475,7 @@ $header.=<<<HEADER
   <a href="$PROJ[PROJDIR]">
   <img src="$logo" class="mainlogo"/>  
   </a>
-  <div class="version">
-  <a href="$PROJ[PROJDIR]/main.php?TabId=4">
+  <div class="subtitle">
     $extratext
   </a>
   </div>
@@ -661,6 +660,14 @@ function readParamModel($varsconf)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//GALLERY OF IMAGES
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function imagesGallery($dir)
+{
+  return "Gallery";
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //TABLE OF FILES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function filesTable($dir,$options="",$target="Blank"){
@@ -730,10 +737,14 @@ $onload
   <tr class="buttons">
     <td colspan=4>
       <div style="position:relative">
-	<div style="position:absolute;float:right;top:0px;right:0px">
+	<div style="position:absolute;float:right;top:0px;right:0px"
+	     onmouseover="explainThis(this)"
+	     explanation="Use ls-style strings, e.g. '*.c', 'plot*.ps2w'">
 	  Search: 
 	  <input id="searchfile$rid" type="text" value="">
-	  <a href="JavaScript:$ajax_filelist">$BUTTONS[Update]</a>
+	  <a href="JavaScript:$ajax_filelist"
+	     onmouseover="explainThis(this)"
+	     explanation="Update & Search">$BUTTONS[Update]</a>
 	</div>
 	<div style="position:relative;float:left;top:0px;left:0px;">
 	  <button id="downbut" class="image" name="Action"
@@ -1056,9 +1067,10 @@ function toggleButtons2($status)
   if($status=="end" or
      $status=="fail" or
      $status=="stop" or
-     $status=="kill"){
+     $status=="kill" or
+     $status=="finish"){
     $display["Clean"]=$disp;
-    $display["Compile"]=$disp;
+    //$display["Compile"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -1307,7 +1319,7 @@ function statusIcon($status,$width="")
     $status_color="white";
     $status_bg="black";
     break;
-  case "end":
+  case "end":case "finish":
     $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
     $status_text="Ended";
     $status_color="white";
@@ -1316,7 +1328,9 @@ function statusIcon($status,$width="")
   }
   if(isset($status_link)){
 $status_text=<<<STATUS
-$status_text <a href="$status_link" target="_blank">$BUTTONS[Open]</a>
+$status_text <a href="$status_link" target="_blank" 
+		onmouseover="explainThis(this)"
+		explanation="Run information">$BUTTONS[Open]</a>
 STATUS;
   }
 

@@ -303,13 +303,26 @@ function explainThis(object)
   boxclass="explanation";
   boxref='.'+boxclass;
 
-  boxwidth=strLength(explanation);
-  boxheight=15;
+  lexpl=strLength(explanation);
+  if(lexpl>1000){
+      boxwidth=lexpl/2;
+      boxheight=(lexpl/50)*7;
+  }else{
+      boxwidth=lexpl;
+      boxheight=15;
+  }
   elheight=$(object).height();
   elwidth=$(object).width();
   if(elheight>15) elheight=15;
+
   boxtop=-elheight;
-  boxleft=elwidth+5;
+  winwidth=$(window).width();
+  posexpl=$(object).offset().left;
+  if(posexpl<winwidth/2){
+      boxleft=elwidth+5;
+  }else{
+      boxleft=-lexpl-5;
+  }
   
   unheight="px";
   unwidth="px";

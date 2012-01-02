@@ -60,12 +60,14 @@ if(!preg_match("/,/",$PHP["File"]) and
   $fpath="$path/$PHP[File]";
   readConfig("$fpath");
   //DATA FILES
-  $fdatafiles=$CONFIG["ImageFile"];
+  $fdatafiles=$CONFIG["DataFiles"];
   $fdatafiles=preg_replace("/[\"\']/","",$fdatafiles);
   //GET THE IMAGE NAME
   $fimgfile=$CONFIG["ImageFile"];
   $fimgfile=preg_replace("/[\"\']/","",$fimgfile);
-  list($fname,$fext)=preg_split("/\./",$fimgfile);
+  echo "IMAGE: $fimgfile";br();
+  list($fname,$fext)=preg_split("/\.\w+$/",$fimgfile);
+  //$fname=$fimgfile;
   //COPY PS2W AS SCI2WEB PLOTTING SCRIPT
   systemCmd("cp -rf $fpath $imgpath/.$fname.ps2w");
   //REPLACE " BY '
@@ -87,7 +89,8 @@ if(!preg_match("/,/",$PHP["File"]) and
       $content.="<div class='tabbertab sectab'><h2>Error</h2><p>File '$fpath' does not exist.</p>";
       goto end;
     }
-    list($tfname,$fext)=preg_split("/\./",$file);
+    //list($tfname,$fext)=preg_split("/(.+)\.\w+/",$file);
+    $tfname=$file;
     $fname.="${tfname}_";
     $datafiles.="'$file',";
   }

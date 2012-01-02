@@ -65,7 +65,7 @@ function checkJob
 function killJob
 {
     atrm $(cat jobid.oxt)
-    kill -9 $(cat pid.oxt)
+    kill -9 $(cat pid.oxt) 2> /dev/null
 }
 
 #==================================================

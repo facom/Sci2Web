@@ -240,6 +240,34 @@ sub mysqlCmd
     return @result;
 }
 
+sub mysqlCSV
+{
+    my $sql=shift;
+    vprint "\tSQL:\n\t\t$sql\n";
+
+    my $query=$DB->prepare($sql);
+    my $nres=$query->execute or die("Database query failed.");
+    vprint "\tNRES:\n\t\t$nres\n";
+
+    my $data;
+    my $resultcsv="";
+    my $col,$fields="";
+    my $i=0;
+    while($data=$query->fetchrow_hashref()){
+	foreach $col (keys(%{$data})){
+	    if($i==0){
+		$fields.="$col,";
+	    }
+	    $resultcsv.=$$data{$col}.",";
+	}
+	$resultcsv.="\n";
+	$i++;
+    }
+    $resultcsv="$fields\n$resultcsv";
+    $query->finish();
+    return $resultcsv;
+}
+
 sub mysqlDo
 {
     my $sql=shift;
@@ -257,6 +285,32 @@ sub noBlank
     $name="Variables" if($name!~/\w/);
     Error "$name must be not null" if(length($var)<1);
     return $var;
+}
+
+sub formatSqlOut
+{
+    my $resultcsv=shift;
+    my @rows=split /\n/,$resultcsv;
+    my $row,@fields;
+
+    $i=1;
+    foreach $row (@rows){
+	@fields=split /,/,$row;
+	$j=1;
+	if($i==1){
+	    print "Fields:\n";
+	}else{
+	    print "Entries:\n";
+	}
+	print "| ";
+	foreach $field (@fields){
+	    print "$j:$field | ";
+	    $j++;
+	}
+	print "\n";
+	print "\n" if($i==1);
+	$i++;
+    }
 }
 
 1;

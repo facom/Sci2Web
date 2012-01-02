@@ -375,8 +375,8 @@ if($VERSION["RunTab"]=="true"){
 //GNERAL PROPERTIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //array_unshift($tabs,"General");
-$tabs[]="General";
-$groups["General"][]="Buttons";
+$tabs[]="Run";
+$groups["Run"][]="Buttons";
 if(isset($PHP["template"])){
   $tempname=str_replace("_"," ",$PHP["template"]);
   $tempname=str_replace(".conf","",$tempname);
@@ -410,7 +410,7 @@ BUTTON;
 //==================================================
 //ADD PROPERTIES
 //==================================================
-$groups["General"][]="Global";
+$groups["Run"][]="General";
 foreach(array_keys($DATABASE["Runs"]) as $runfield){
   $var=$runfield;
   if($var=="run_name") continue;
@@ -426,7 +426,7 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
   //FOR PERMISSIONS SELECT FROM A LIST
   if($var=="permissions") $val="rw;;rx;;xw;;xx==rw";
   
-  $vars["General"]["Global"][]="$var::$val::$vartype::$varname::$varname::$protected::";
+  $vars["Run"]["General"][]="$var::$val::$vartype::$varname::$varname::$protected::";
 }
 }
 
@@ -494,8 +494,14 @@ CONF;
      }    					
 
      if(isBlank($vardesc)) $vardesc="$varname";
-     $extra="class='confinput' onmouseover='explainThis(this)' 
-             explanation='$vardesc' $protected style='$inputstyle'";
+     $toggle="$('#explanation_$varn').toggle('fast',null);";
+
+$extra=<<<EXTRA
+class="confinput"
+onfocus="$toggle"
+onblur="$toggle"
+$protected style="$inputstyle"
+EXTRA;
 
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //SINGLE VALUE:SIMPLE INPUT
@@ -594,6 +600,8 @@ $content.= <<<CONF
   <td class="varname" valign="top">$varname</td>
   <td class="varval">
   $input
+  <div id="explanation_$varn" class="explanationtxt"
+       style="display:none">$vardesc</div>
   </td>
 </tr>
 CONF;
@@ -691,7 +699,7 @@ $closebutton=<<<CLOSE
   <!-- -------------------- CLOSE BUTTON -------------------- -->
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" onclick="window.close()"
-       onmouseover="explainThis(this)">
+       onmouseover="explainThis(this)" explanation="Close">
       $BUTTONS[Cancel]
     </a>
   </div>

@@ -228,7 +228,7 @@ if($Action=="GetList"){
   $path="$PHP[ROOTPATH]/$Dir";
   if(isset($PHP["SubDir"])) $path.="/$PHP[SubDir]";
   if(!is_dir($path)){
-    $result="<tr><td colspan=10>No directory '$Dir'</td></tr>";
+    $result="<tr><td colspan=2>No directory '$Dir'</td></tr>";
     goto end;
   }
   $criterium="";
@@ -241,7 +241,7 @@ if($Action=="GetList"){
   systemCmd("echo '(IFS=/;for dir in \$PWD;do if [ -e \"\$PWD/$pfile\" ];then echo \"\$PWD\"/$pfile;exit 0;fi;cd ..;done;exit 1)' &> $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
   $pfile=systemCmd("cd $path;bash $PROJ[TMPPATH]/cmd.$PHP[RANDID];rm -rf $PROJ[TMPPATH]/cmd.$PHP[RANDID]");
   if(isBlank($pfile)){
-    echo "<tr><td colspan=10>Directory has not reading permissions.</td></tr>";
+    echo "<tr><td colspan=2>Directory has not reading permissions.</td></tr>";
     return;
   }
 
@@ -305,7 +305,7 @@ if($Action=="GetList"){
   
 $result.=<<<CONTROLS
 <tr style="background-color:$COLORS[text];text-align:center">
-  <td colspan="4" style="font-size:12px">
+  <td colspan="3" style="font-size:12px">
   <a href="JavaScript:$prev">< Prev <!--($nprev)--></a> |
   <a href="JavaScript:$all">All</a> |
   <a href="JavaScript:$next">Next <!--($end)--> ></a><br/>

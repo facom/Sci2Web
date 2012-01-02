@@ -79,7 +79,7 @@ $PROJ["STYLES"]=<<<STYLES
     margin-left:$PROJ[BODYMARGIN]%;
     background-color:$COLORS[back];
     }
-    div.version{
+    div.subtitle{
     font-size:20px;
     font-weight:bold;
     }

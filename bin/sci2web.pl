@@ -68,8 +68,14 @@ switch($Action){
     case "saveresult" {
 	push(@cmdopt,("rundir|r=s"));
     }
+    case "changestatus" {
+	push(@cmdopt,("rundir|r=s","status|s=s"));
+    }
     case "down" {
 	push(@cmdopt,("results|R","sources|s","rundir|r=s"));
+    }
+    case "showdb" {
+	push(@cmdopt,("describe|d","entries|e","table|t=s","show|s"));
     }
     else {
     	Error "Action '$Action' not recognized";
@@ -214,10 +220,10 @@ $config=<<CONFIG;
 Application = $appname
 AppCompleteName = Complete name of the application
 AppBrief = Brief description of the application
+
 #------------------------------------------------------------
 #VERSION PROPERTIES
 #------------------------------------------------------------
-
 #Name of this version.  Do not modify in installed applications.
 Version = $vername
 #Emails of the contributors. User with permissions to edit app.
@@ -238,6 +244,7 @@ ResultsDatabase = true
 #Actions not valid for this version of your application
 #Valid actions:Clean,Compile,Run,Pause,Stop,Kill,Resume
 InvalidActions=
+
 #------------------------------------------------------------
 #CONFIGURATION WINDOW PROPERTIES
 #------------------------------------------------------------
@@ -247,6 +254,13 @@ RunTab = true
 FilesTab = false
 #Do you want to include control panel in the conf. window?
 ControlButtons = true
+
+#------------------------------------------------------------
+#DEFAULT RUN PROPERTIES
+#------------------------------------------------------------
+#Default run name
+DefaultRunName = Two body system
+
 CONFIG
 	print fl $config;
 	close(fl);
@@ -280,8 +294,10 @@ CONFIG
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#SEARCH FOR TEMPLATE FILES
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	$list=`find $basedir -name ".\*.temp" 2> /dev/null`;chop $list;
+	$list=`find $basedir -name ".\*.temp" | grep -v ".variables.info" | grep -v ".results.info" 2> /dev/null`;chop $list;
 	@files=split /\s+/,$list;
+	unshift(@files,("sci2web/.variables.info.temp",
+			"sci2web/.results.info.temp"));
 	if($#files<0){
 	    print "There is no file to change in directory '$basedir'.\n";
 	    exit(0);
@@ -300,6 +316,8 @@ CONFIG
 	    open(fl,"<$file");
 	    @lines=<fl>;chomp @lines;
 	    foreach $line (@lines){
+		vprint "LINE: $line\n";
+		next if($line=~/^#/);
 		@parts=split /\[/,$line;
 		foreach $part (@parts){
 		    if($part=~/^([^\]]+)\]\]/gi){
@@ -666,9 +684,19 @@ SQL
     #======================================================================
     case "install" {
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK OPTIONS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$appdir=noBlank($options{appdir},"Application directory");
+	Error "Application directory '$appdir' not valid"
+	    if(!-d "$appdir/sci2web");
+
+	Error "Please call the script using the absolute path"
+	    if(!-e "$ROOTDIR/lib/sci2web.conf");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#READ VERSION CONFIGURATION
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%CONFIG=readConfig("sci2web/version.conf");
+	%CONFIG=readConfig("$appdir/sci2web/version.conf");
 	$appname=$CONFIG{Application};
 	$appver=$CONFIG{Version};
 
@@ -684,7 +712,7 @@ SQL
 	    #COPY TEMPLATE FILES
             #========================================
 	    $tempdir="$APPSDIR/template";
-	    $files=sysCmd("cd $tempdir;find . -type f -o -type l | grep -v sci2web");
+	    $files=sysCmd("cd $tempdir;find . -type f -o -type l | grep -v sci2web | grep -v bench");
 	    foreach $file (split /\s+/,$files){
 		$tgtfile=$file;
 		$tgtfile=~s/application-/$appname-/gi;
@@ -972,8 +1000,9 @@ apps_code='$appname'
 	#COPY APPLICATION FILES
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Copying files...";
-	$links=sysCmd("cat $root/$appdir/sci2web/sharedfiles.info");
-	@list_links=split /\n/,$links;
+	$links=sysCmd("cd $root/$appdir;ls -md \$(cat sci2web/sharedfiles.info)");
+	rprint "LINKS:\n$links\n";
+	@list_links=split /\s*,\s*/,$links;
 	$exclude.=" --exclude='$_' " foreach ("sci2web",".gitignore");
 	$exclude.=" --exclude='$_' " foreach (@list_links);
 	$out=sysCmd("((cd $root/$appdir;tar cvf - $exclude * .[a-zA-Z]*)| tar xf - -C $root/$rundir) &> /tmp/src.$$");
@@ -1009,6 +1038,45 @@ apps_code='$appname'
 	rprint "Run instance created","=";
     }
     #======================================================================
+    #CHANGE STATUS OF THE APPLICATION
+    #======================================================================
+    case "changestatus" {
+	rprint "Changing run status","=";
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK INPUT
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	$rundir=noBlank($options{rundir},"Rundir");
+	Error "Run directory not valid" 
+	    if(!-d "$rundir/sci2web");
+	$status=noBlank($options{status},"Status");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#READ RUN PROPERTIES
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Reading configuration files...";
+	%conf_run=readConfig("$rundir/run.info");
+	$runcode=$conf_run{"run_code"};
+	$tbname=$conf_run{"apps_code"}."_".$conf_run{"versions_code"};
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK IF APPLICATION EXISTS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	sysCmd("echo 'describe `$tbname`;' > /tmp/db.$$");
+	`mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/db.$$ &> /dev/null`;
+	if(!$?){
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    #CHANGE STATUS AT THE DATABASE LEVEL
+	    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    rprint "Changing status at the database...";
+	    $sql="update runs set run_status='$status' where run_code='$runcode'";
+	    mysqlDo($sql);
+	    rprint "Status changed","=";
+	}else{
+	    rprint "Application does not exist at database";
+	}
+    }
+    #======================================================================
     #SAVE RESULTS OF APPLICATION
     #======================================================================
     case "saveresult" {
@@ -1035,6 +1103,10 @@ apps_code='$appname'
 	$author=$conf_run{"run_author"};
 	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
 	$rundate=sysCmd("date +'%Y-%m-%d %H:%M:%S'");
+
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#SAVE RESULTS IN DATABASE
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $sql=<<SQL;
 replace into `$tbname` set
 dbrunhash='$runhash',
@@ -1119,7 +1191,29 @@ SQL
 	sysCmd("rm -rf $TMPDIR/$tgt");
 	rprint "Download complete","=";
     }
-    
+    #======================================================================
+    #DOWNLOAD COMPONENT OF RUN
+    #======================================================================
+    case "showdb" {
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	#CHECK OPTIONS
+	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	rprint "Database information","=";
+	if($options{describe}){
+	    $table=noBlank($options{table},"Table");
+	    rprint "Describing table '$table'","-";
+	    $resultscsv=mysqlCSV("describe `$table`");
+	}elsif($options{entries}){
+	    $table=noBlank($options{table},"Table");
+	    rprint "Entries in table '$table'","-";
+	    $resultscsv=mysqlCSV("select * from `$table`");
+	}elsif($options{show}){
+	    rprint "Show tables","-";
+	    $resultscsv=mysqlCSV("show tables");
+	}
+	formatSqlOut($resultscsv);
+	rprint "Done","=";
+    }
 }
 
 ################################################################################

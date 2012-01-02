@@ -339,6 +339,11 @@ ul.auto-toc {
 //////////////////////////////////////////////////////////////////////
 . -->
 <style>.red{color:red}</style><!-- See more at: http://docutils.sourceforge.net/docs/ref/rst/definitions.html -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//EXTERNAL FILES
+//////////////////////////////////////////////////////////////////////
+. -->
 <!-- This data file has been placed in the public domain. -->
 <!-- Derived from the Unicode character mappings available from
 <http://www.w3.org/2003/entities/xml/>.
@@ -370,16 +375,23 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <li><a class="reference internal" href="#developer-guide" id="id1">Developer Guide</a><ul>
 <li><a class="reference internal" href="#abstract" id="id2">Abstract</a></li>
 <li><a class="reference internal" href="#presenting-sci2web" id="id3">Presenting Sci2Web</a></li>
-<li><a class="reference internal" href="#quick-start-summary" id="id4">Quick start (Summary)</a></li>
-<li><a class="reference internal" href="#testing-your-application-in-the-command-line" id="id5">Testing your application in the command line</a></li>
-<li><a class="reference internal" href="#preparing-the-application" id="id6">Preparing the application</a><ul>
-<li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id7">Initialize your application as a Sci2Web application</a></li>
-<li><a class="reference internal" href="#select-the-control-variables" id="id8">Select the <em>control variables</em></a></li>
-<li><a class="reference internal" href="#configure-your-application" id="id9">Configure your application</a></li>
+<li><a class="reference internal" href="#porting-an-application-to-sci2web" id="id4">Porting an application to Sci2Web</a><ul>
+<li><a class="reference internal" href="#quick-start-summary" id="id5">Quick start (Summary)</a></li>
+<li><a class="reference internal" href="#testing-your-application-in-the-command-line" id="id6">Testing your application in the command line</a></li>
+<li><a class="reference internal" href="#preparing-the-application" id="id7">Preparing the application</a><ul>
+<li><a class="reference internal" href="#initialize-your-application-as-a-sci2web-application" id="id8">Initialize your application as a Sci2Web application</a></li>
+<li><a class="reference internal" href="#select-the-control-variables" id="id9">Select the <em>control variables</em></a></li>
+<li><a class="reference internal" href="#configure-your-application" id="id10">Configure your application</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#installing-your-application-in-your-sci2web-server-site" id="id10">Installing your application in your Sci2Web server site</a></li>
-<li><a class="reference internal" href="#testing-your-newly-ported-application" id="id11">Testing your newly ported application</a></li>
+<li><a class="reference internal" href="#installing-your-application-in-your-sci2web-server-site" id="id11">Installing your application in your Sci2Web server site</a></li>
+<li><a class="reference internal" href="#testing-your-newly-ported-application" id="id12">Testing your newly ported application</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sci2web-server-site-anatomy" id="id13">Sci2Web server site anatomy</a><ul>
+<li><a class="reference internal" href="#directory-structure" id="id14">Directory structure</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -393,19 +405,36 @@ server where it will be installed.  You need to be sure that your
 application runs properly from the command line before trying to
 configure and control it from a web interface.  If the application
 depends on third party software (libraries, languages, external
-packages, etc.) they could be installed in the web server or simply
+packages, etc.) they should be installed in the web server or simply
 copied among the application files.  By porting an application to
 <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> minor modifications should be done on the application source
 files (if available) and no web or graphical programming is required
-at all.  This is the most important advantage of using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to
-create a friendly interface to your applications.  Many properties of
-the web interface and the mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the
-preparation and running of the application can be configured and
-customized as will be explained here.  If you have already ported an
-application and want to test it read the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
+at all.  This is the most important advantage of using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  It
+allows you to create a friendly interface to your applications with a
+minimum effort.  Many properties of the web interface and the
+mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the preparation and running of
+the application can be configured and customized as will be explained
+here.  For the developer other details of the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> such as the
+directory structure of the server site or a brief list of critical
+scripts are provided at the end of this document.</p>
+<p>If you have already ported an application and want to test it read
+instead the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
 </div>
 <div class="section" id="presenting-sci2web">
 <h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
+<!-- .
+////////////////////////////////////////////////////////////////////////
+//           _ ___               _                                    //
+//          (_)__ \             | |                                   //
+//  ___  ___ _   ) |_      _____| |                                   //
+// / __|/ __| | / /\ \ /\ / / _ \ '_ \                                //
+// \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
+// |___/\___|_|____| \_/\_/ \___|_.__/                                //
+//                                                                    //
+// Bringing naturally developed scientific applications to the web    //
+// Jorge Zuluaga (2011)                                               //
+////////////////////////////////////////////////////////////////////////
+. -->
 <p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a tool to provide graphical web interfaces to <em>Naturally
 Developed Scientific Applications</em> (NDSAs).  NDSAs is a generic name
 we use to call those programs developed or adapted by scientist and
@@ -440,8 +469,10 @@ now to the <a class="reference external" href="http://www.google.com">Diffusion 
 provides the required tools to configure and run NDSA applications
 using the web.</p>
 </div>
+<div class="section" id="porting-an-application-to-sci2web">
+<h2><a class="toc-backref" href="#id4">Porting an application to Sci2Web</a></h2>
 <div class="section" id="quick-start-summary">
-<h2><a class="toc-backref" href="#id4">Quick start (Summary)</a></h2>
+<h3><a class="toc-backref" href="#id5">Quick start (Summary)</a></h3>
 <p>If you have not enough patience to read the rest of this document and
 think that you can <em>interpolate</em> many of the details regarding the
 configuration of a new <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application, follow the next steps and
@@ -457,11 +488,22 @@ properly solving all the potential dependencies.</p>
 <pre class="literal-block">
 % perl SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorEmails&gt; --changeslog &lt;ShortDescription&gt;
 </pre>
+<p>For the first version of the newly ported application we recommend
+to use the name &quot;dev&quot; (development).  This version could be used by
+the developer to develop new improvements and will change in a
+rutinary way.</p>
 </li>
-<li><p class="first">Identify those files containing the <em>control variables</em> (variables
-the final user could change using the web interface), create
-templates for each of them and replace the variable for a
-substitution rule:</p>
+<li><p class="first">Edit the application configuration file <tt class="docutils literal">sci2web/version.conf</tt>
+and set the most important properties of the application and this
+first version as desired.</p>
+</li>
+<li><p class="first">Identify the control <em>variables</em> (variables the final user could
+change using the web interface) and describe them in the
+<tt class="docutils literal"><span class="pre">.sci2web/.variables.info.temp</span></tt> template file.</p>
+</li>
+<li><p class="first">Identify those files containing the <em>control variables</em>, create
+templates for each of them and replace the control variables for
+the respective <em>substitution rule</em>.  Example:</p>
 <pre class="literal-block">
 % cp parameters.ini .parameters.ini.temp
 </pre>
@@ -473,24 +515,24 @@ substitution rule:</p>
 </pre>
 <p>New content:</p>
 <pre class="literal-block">
-[[NumberParticles::10000::int::Total number of particules]]
-[[MeanFreePath::0.1::float::Mean free path]]
-[[Width::3::float]] [[Heigh::5::float]]
+[[NumberParticles]]
+[[MeanFreePath]]
+[[Width]] [[Heigh]]
 </pre>
 </li>
-<li><p class="first">Identify the results variables and describe it using substitution
-rules in the file <tt class="docutils literal">.results.info.temp</tt> (a copy of this file could
-be found in the <tt class="docutils literal">sci2web</tt> directory but it is recommended to copy
-it into the root directory of the application.</p>
+<li><p class="first">Identify the <em>results variables</em> and describe them using
+substitution rules in the file <tt class="docutils literal"><span class="pre">sci2web/.results.info.temp</span></tt>.</p>
 </li>
 <li><p class="first">(optative) Modify the code to allow pausing, stopping and resuming
 actions.  Also include code to check the status of the execution.</p>
 </li>
-<li><p class="first">Compile the control and result variables and fill automatically
-other configuration files for the application:</p>
+<li><p class="first">Compile information about the control and result variables and fill
+automatically other configuration files for the application:</p>
 <pre class="literal-block">
 % perl sci2web/bin/sci2web.pl contvars --appdir .
 </pre>
+<p>If an error occur or you want to change the parametrization remove
+the file <tt class="docutils literal"><span class="pre">sci2web/.hashvars</span></tt> and run again the previous command.</p>
 </li>
 <li><p class="first">Check the generation of source files from template files using the
 default value of control variables:</p>
@@ -498,15 +540,31 @@ default value of control variables:</p>
 % perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
 </pre>
 </li>
-<li><p class="first">Configure your application.  To perform this task edit the
-following files following the instructions outlined in their
-templates (we assume that all the files are in the <tt class="docutils literal">sci2web</tt>
-subdirectory): <tt class="docutils literal">version.conf</tt>, <tt class="docutils literal">runpipeline.conf</tt>,
-<tt class="docutils literal">resultswindows.conf</tt>, <tt class="docutils literal">sharedfiles.info</tt>, <tt class="docutils literal">outfiles.info</tt></p>
+</ol>
+<blockquote>
+Check that the source files of your project has been properly
+generated and test again your application from the command line.</blockquote>
+<ol class="arabic">
+<li><p class="first">Further configuration of your application. Edit the following files
+following the instructions outlined in their templates (we assume
+that all the files are in the <tt class="docutils literal">sci2web</tt> subdirectory):
+<tt class="docutils literal">runpipeline.conf</tt>, <tt class="docutils literal">resultswindows.conf</tt>,
+<tt class="docutils literal">sharedfiles.info</tt>, <tt class="docutils literal">outfiles.info</tt></p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">A very important step you should perform before to
+test your application. The run pipeline of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> requires
+that the application creates an empty <em>signal file</em> with the
+name <tt class="docutils literal">end.sig</tt> when it has successfully finished.  You can
+include the command to create this file in your source codes, in
+a run script or in your makefile.</p>
+</div>
 </li>
 <li><p class="first">Test the <em>run pipeline</em>:</p>
 <pre class="literal-block">
-% bash sci2web/bin/sci2web.sh test
+% bash sci2web/bin/sci2web.sh clean
+% bash sci2web/bin/sci2web.sh compile
+% bash sci2web/bin/sci2web.sh submit
 </pre>
 </li>
 <li><p class="first">Install your application version in a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site:</p>
@@ -514,12 +572,34 @@ subdirectory): <tt class="docutils literal">version.conf</tt>, <tt class="docuti
 % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
 </pre>
 </li>
-<li><p class="first">Test it!</p>
+<li><p class="first">Test it in the web!</p>
 </li>
 </ol>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>With this procedure you have installed the development
+version, <tt class="docutils literal">dev</tt>.  This version will be only visible to the
+application authors and the version contributors.  In order to
+<em>release</em> your application and allow other users to use it you need
+to create a public version from a copy of the just created
+developmente version.  Run this command (we use here the names of
+the sample application):</p>
+<pre class="literal-block">
+% perl SCI2WEB_PATH/bin/sci2web.pl newversion --appname TestDiffusion --tempver dev --newver 1.0
+</pre>
+<p class="last">where <tt class="docutils literal">1.0</tt> is the code name of the new version.  Each time you
+create a new version from an existing one it is strongly
+recommended to edit the configuration file <tt class="docutils literal">version.conf</tt> and
+change several properties that the automatic procedure will not
+modify (e.g. ChangesLog or version brief description).</p>
+</div>
+<p>If you appreciate the details of the procedure outlined before and
+want to know more precisely why all the previous command are used and
+how can they be modified, you can read in the following sections a
+detailed description of the application porting procedure.</p>
 </div>
 <div class="section" id="testing-your-application-in-the-command-line">
-<h2><a class="toc-backref" href="#id5">Testing your application in the command line</a></h2>
+<h3><a class="toc-backref" href="#id6">Testing your application in the command line</a></h3>
 <p>The scenario: you have just finished to debug a piece of sofware you
 have been using in your research.  The software seems interesting
 enough for other scientists working in your field and you finally
@@ -560,7 +640,7 @@ is to see if the program at run time is able to load <em>share libraries</em>
 an issue not always easy to solve.</p>
 </div>
 <div class="section" id="preparing-the-application">
-<h2><a class="toc-backref" href="#id6">Preparing the application</a></h2>
+<h3><a class="toc-backref" href="#id7">Preparing the application</a></h3>
 <p>It is time to configure your application in order to use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> as
 the web interface to control it.  In the following we will call this
 procedure <em>application porting</em>.  To illustrate how to port an
@@ -609,7 +689,7 @@ directory where <a class="reference external" href="http://localhost/user/Sci2We
 in your path to simplify the following steps.  In other case you will
 have to invoque the scripts using the complete path.</p>
 <div class="section" id="initialize-your-application-as-a-sci2web-application">
-<h3><a class="toc-backref" href="#id7">Initialize your application as a Sci2Web application</a></h3>
+<h4><a class="toc-backref" href="#id8">Initialize your application as a Sci2Web application</a></h4>
 <p>All the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> configuration information about your application is
 stored in specially formatted files that should be copied and edited
 in the directory of your application.  You can initialize all those
@@ -668,7 +748,7 @@ configuration files.  Several files are automatically filled using the
 utility scripts by other ones should be eidted manually.</p>
 </div>
 <div class="section" id="select-the-control-variables">
-<h3><a class="toc-backref" href="#id8">Select the <em>control variables</em></a></h3>
+<h4><a class="toc-backref" href="#id9">Select the <em>control variables</em></a></h4>
 <p>The first step to configure a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> ported application, is to
 select the variables that could be controlled by the user.  We will
 call them the <em>control variables</em>.  The value of the control variables
@@ -911,6 +991,8 @@ instances of the application.  To perform this important step run:</p>
 <pre class="literal-block">
 % perl sci2web/bin/sci2web.pl contvars --appdir .
 </pre>
+<p>If an error occur or you want to change the parametrization remove the
+file <tt class="docutils literal"><span class="pre">sci2web/.hashvars</span></tt> and run again the previous command.</p>
 <p>Here we are using the symbolic link to the utility script binary
 directory created in the sci2web subdirectory already installed after
 the initialization of the application.</p>
@@ -966,7 +1048,7 @@ application compiles and run as expected.</p>
 to proceed with the following steps.</p>
 </div>
 <div class="section" id="configure-your-application">
-<h3><a class="toc-backref" href="#id9">Configure your application</a></h3>
+<h4><a class="toc-backref" href="#id10">Configure your application</a></h4>
 <p>Control variables are the most important component of a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
 ported applications.  At this point you have initialized your
 application and configured how a running instance will be parametrized
@@ -1082,6 +1164,14 @@ POSTCMD=&quot;gnuplot plot-out.gpl&quot;
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 STATUSSCR=&quot;stat.sh&quot;
 STATUSCMD=&quot;echo -1&quot;
+
+
+.. Important:: A very important step you should perform before to
+   test your application. The run pipeline of Sci2Web_ requires
+   that the application creates an empty *signal file* with the
+   name ``end.sig`` when it has successfully finished.  You can
+   include the command to create this file in your source codes,
+   in a run script or in your makefile.
 </pre>
 <p>It should be mentioned that the <tt class="docutils literal">&lt;ACTION&gt;SCR</tt> value overrides the
 <tt class="docutils literal">&lt;ACTION&gt;CMD</tt> command.  Thus for example in the last part of the
@@ -1119,6 +1209,11 @@ set of <tt class="docutils literal">.oxt</tt> files are generated: <tt class="do
 others.  These files contain critical information about the running
 instance used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to display information related to your
 run.</p>
+<p>If the application runs succesfully the <em>signal file</em> <tt class="docutils literal">end.sig</tt>
+will be generated.  If instead you get the file <tt class="docutils literal">fail.sig</tt>
+something wrong has happened with the application.  Please verify
+the output files <tt class="docutils literal">stdout.oxt</tt> and <tt class="docutils literal">stderr.oxt</tt> or the running
+script automatically generated by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> <tt class="docutils literal">run.sh</tt>.</p>
 <p>If any problem is detected please check the <tt class="docutils literal">runpipeline.conf</tt>
 configuration file and other scripts you are using to run your
 application.</p>
@@ -1385,7 +1480,7 @@ modify the relative sizes of the frames.</p>
 </div>
 </div>
 <div class="section" id="installing-your-application-in-your-sci2web-server-site">
-<h2>Installing your application in your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site</h2>
+<h3>Installing your application in your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site</h3>
 <p>The last steps in order to have your application succesfully installed
 in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site is to copy the application files in the
 server directory and register your application in the master database.
@@ -1405,7 +1500,7 @@ install your application:</p>
 </div>
 </div>
 <div class="section" id="testing-your-newly-ported-application">
-<h2><a class="toc-backref" href="#id11">Testing your newly ported application</a></h2>
+<h3><a class="toc-backref" href="#id12">Testing your newly ported application</a></h3>
 <p>If everything has been ran smoothly up to this point you are ready to
 start using your application with a brand new web interface!</p>
 <p>But, wait a minute! Your work has not ended here.  Probably it has
@@ -1421,8 +1516,120 @@ the user community using your application will start to send you.</p>
 your <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site.  Only the changes performed there will be
 reflected in the running instances created from the web interface.</p>
 <p>Good luck!</p>
+</div>
+</div>
+<div class="section" id="sci2web-server-site-anatomy">
+<h2><a class="toc-backref" href="#id13">Sci2Web server site anatomy</a></h2>
+<div class="section" id="directory-structure">
+<h3><a class="toc-backref" href="#id14">Directory structure</a></h3>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site is a complete and functional website.  Its
+structure is similar to similar web project but it has additional
+features that allow it to work as a portal for on-line applications
+and data repository.</p>
+<p>His main directories and subdirectories are:</p>
+<blockquote>
+<p><strong>bin</strong></p>
+<blockquote>
+Directory containing the utility and <em>cgi</em> scripts.  Almost every
+functionality in the server site is coded there.</blockquote>
+<p><strong>lib</strong></p>
+<blockquote>
+Libraries of routines and global variables for the <em>cgi</em>
+scripts.  It contains the main configuration file
+<tt class="docutils literal">sci2web.conf</tt> and the <em>cascade style sheet</em> file for the
+site <tt class="docutils literal">sci2web.css</tt>.</blockquote>
+<p><strong>js</strong></p>
+<blockquote>
+<dl class="docutils">
+<dt><em>JavaScript</em> files and third party libraries.  Specially</dt>
+<dd>important is the <tt class="docutils literal">sci2web.js</tt> file containing the routines
+specific of the site.  Third party JavaScript libraries used
+with <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> includes <em>jquery</em>, <em>ckeditor</em>, <em>ckfinder</em>,
+<em>tabber</em> and <em>domwindow</em>.</dd>
+</dl>
+</blockquote>
+<p><strong>tmp</strong></p>
+<blockquote>
+Temporal directory.</blockquote>
+<p><strong>log</strong></p>
+<blockquote>
+Directory with log files.  Specially important is the mail.log
+file containing the messages generated by the site when it is
+installed in a server without the e-mail service.</blockquote>
+<p><strong>images</strong></p>
+<blockquote>
+Directory with images.</blockquote>
+<p><strong>doc</strong></p>
+<blockquote>
+Documentation, installation and example files.  It contains
+two important subdirectories: <tt class="docutils literal">install</tt> (installation
+related files) and <tt class="docutils literal">examples</tt> (example applications).</blockquote>
+<p><strong>pages</strong></p>
+<blockquote>
+Source files for the page contents.  The server site have one
+static page <tt class="docutils literal">main.php</tt> and a dynamic one <tt class="docutils literal">app.php</tt> that is
+populated with the information of a given application.  The
+<tt class="docutils literal">pages</tt> directory contains the php scripts required to build
+both pages.</blockquote>
+</blockquote>
+<p>The applications and all the data associated to them are installed in
+two critical directories:</p>
+<blockquote>
+<p><strong>apps</strong></p>
+<blockquote>
+<p>This is the directory where the apps are installed.  It
+contains three default subdirectories: <tt class="docutils literal">template</tt> (template
+files required to install a new application), <tt class="docutils literal">bench</tt> (blank
+subdirectory that can be used to prepare new applications or
+perform any sort of tests) and <tt class="docutils literal">licenses</tt> (full text of
+licenses that could be used with the ported applications).</p>
+<p>An installed application has a subdirectory named after the
+short name of the application.  Inside this directory every
+version of the application is located in a separated
+subdirectory.  Other files related to the application such as
+the global configuration file of the application <tt class="docutils literal">app.conf</tt>,
+the editable html files describing the application properties
+(brief description, documentation, downloads), the logotype
+and other files common to all versions are also located there.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p>It is important to notice that an application
+is installed in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> if there is a subdirectory in the
+<tt class="docutils literal">apps</tt> directory with its name, <strong>BUT ALSO</strong> if it has
+been properly created at the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> database level.  You
+can check the content of any table of the database from the
+command line using the command:</p>
+<pre class="literal-block">
+% perl bin/sci2web.pl showdb --describe --table &lt;table&gt;
+% perl bin/sci2web.pl showdb --entries --table &lt;table&gt;
+</pre>
+<p>where <tt class="docutils literal">&lt;table&gt;</tt> could be <tt class="docutils literal">users</tt>, <tt class="docutils literal">apps</tt>,
+<tt class="docutils literal">versions</tt>, <tt class="docutils literal">runs</tt> or <tt class="docutils literal">&lt;app&gt;_&lt;version&gt;</tt>.  To check
+which applications and versions exists run:</p>
+<pre class="last literal-block">
+% perl bin/sci2web.pl showdb --entries --table apps
+% perl bin/sci2web.pl showdb --entries --table versions
+</pre>
+</div>
+</blockquote>
+<p><strong>runs</strong></p>
+<blockquote>
+<p>This directory contains all the critical data resulting from
+the interaction of users with the server site.  It contains
+one default directory, <tt class="docutils literal">db</tt>, where the results of all the
+successfully executed instances of the served applications are
+stored.  This information is very important for one of the
+central purposes of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> as is to share data coming from
+executing speciallized scientific software.</p>
+<p>Each user registered in the server site has here a
+subdirectory identified with the e-mail of the user and where
+all the run instances of every application ran by the user are
+stored.</p>
+</blockquote>
+</blockquote>
 <hr class="docutils" />
 <p>Copyright (C) 2011 Jorge I. Zuluaga</p>
+</div>
 </div>
 </div>
 </div>

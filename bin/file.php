@@ -113,12 +113,19 @@ switch($ftype){
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    //DIRECTORY
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+   if($Mode=="Gallery"){
+     $fgallery=imagesGallery("$Dir/$File");
+$fcontent.=<<<CONTENT
+$fgallery
+CONTENT;
+   }else{
    $ftable=filesTable("$Dir/$File","","Parent");
 $fcontent.=<<<CONTENT
+Hola
 $ftable
 CONTENT;
+   }
    break;
-
  case "TEXT":
    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
    //TEXT FILE
@@ -209,11 +216,6 @@ CONTENT;
 //CONTENT
 //==================================================
 divBlanketOver($id);
-/*
-$cmd="cd $PHP[ROOTPATH]/$Dir;stat '$File'";
-$cmd="cd $PHP[ROOTPATH]/$Dir && ls -ld /tmp/a";
-$metadata=systemCmd($cmd,true);
-*/
 $content.=<<<CONTENT
 <div class="tabbertab sectab">
   <h2>$Fileshort</h2>
@@ -227,15 +229,6 @@ $content.=<<<CONTENT
     $fcontent
   </div>
 </div>
-<!--
-<div class="tabbertab sectab">
-  <h2>Metadata</h2>
-  Stat
-  <div class="plainarea">
-  $metadata
-  </div>
-</div>
--->
 CONTENT;
 if(!isset($PHP["HeightWindow"])){
   $PHP["HeightWindow"]="77%";

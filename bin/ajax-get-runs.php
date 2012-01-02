@@ -124,6 +124,9 @@ foreach($runs as $run){
   $conflink="$PROJ[BINDIR]/configure.php?RunCode=$run_code&HeightWindow=68%";
   $conflink="Open('$conflink','Configure','$PROJ[SECWIN]')";
 
+  $browselink="$PROJ[BINDIR]/file.php?Dir=$runsdir&File=$run_hash&Mode=View";
+  $browselink="Open('$browselink','Configure','$PROJ[SECWIN]')";
+
   $reslink="$PROJ[BINDIR]/results.php?RunCode=$run_code&HeightWindow=75%";
   $reslink="Open('$reslink','Results','$PROJ[SECWIN]')";
 
@@ -243,6 +246,12 @@ $row_name=<<<ROW
       <a href="JavaScript:void(null)" 
 	 onclick="$downsourceslink">
 	Download sources (press once)
+      </a>
+      <br/>
+      $BUTTONS[Browse] 
+      <a href="JavaScript:void(null)" 
+	 onclick="$browselink">
+	Browse run
       </a>
     </div>
   </div>

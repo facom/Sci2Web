@@ -8,8 +8,10 @@ XCols=[2]
 YCols=[[3]]
 LinesInformation=[[("Output","red","",5,"o",6)]]
 
-XRange=YRange="Auto"
-XScale=YScale="linear"
+XRange="Auto"
+YRange="Auto"
+XScale="linear"
+YScale="linear"
 
 Title="Output Points"
 XLabel="X"

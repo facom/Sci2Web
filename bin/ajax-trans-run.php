@@ -36,6 +36,10 @@ $actionresult="";
 $result="";
 $error="";
 
+//VERSION CONFIG
+readConfig("$apppath/sci2web/version.conf");
+$VERCONFIG=$CONFIG;
+
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //LIST OF RUNS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -200,7 +204,7 @@ if($PHP["Action"]=="New")
   //==================================================
   $PHP["run_code"]="$runcode";
   $PHP["run_hash"]="$runhash";
-  $PHP["run_name"]="New Run";
+  $PHP["run_name"]="$VERCONFIG[DefaultRunName]";
   $PHP["configuration_date"]=
     getToday("%year-%mon-%mday %hours:%minutes:%seconds");
   $PHP["run_status"]=$S2C["configured"];

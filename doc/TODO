@@ -10,7 +10,43 @@
 
 To Do:
 
+- Create a "gallery" module for the results window.
+
+- Complete help of sci2web.pl.
+
+- Change names for utility scripts sci2web.pl sci2web.sh.
+
+- Create complete documentation for sample app Diffusion.
+
+- Improve presentation pages.
+
+- Create template for presentation pages different from the main
+  server pages.
+
+- Improve brief of application in Served Applications pages.
+
+- Test the configure form 
+
+- A log system for each running instance
+
+- Browse files from the Queue
+
+- Check for errors detection at the compile time
+
+- Change status in database when run is completed
+
+- No store results if user has not selected in version.conf
+
+- Clean and compile together
+
+- Sort the tabs, groups and variables as desired
+
+- Allows the execution of multiple application solving the SESSION
+  variables problem.
+
 Dreams:
+
+- Create script to get bugs from other servers
 
 - Show errors in Control Buttons of Configure Window
 
@@ -324,3 +360,5 @@ Completed:
 
 - Incompatibility between output in getruns and output in run control
   panel. CLOSE CONTROL PANEL.
+
+- Add the license below the logo of the application. DONE.

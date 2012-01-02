@@ -30,8 +30,6 @@ $bugbut="";
 //DYNAMIC CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 $content.=<<<APPS
-<form method="get" action="app.php" enctype="multipar/form-data" target="_blank">
-<input type="hidden" name="SetApp" value="true">
 <table class="apps">
 <tr>
 <td width="10%"></td><td width="40%"></td>
@@ -91,6 +89,8 @@ $content.=<<<APPS
 <!-- $appcode APP						  -->
 <!-- ------------------------------------------------------------ -->
 <td class="button" valign="top">
+<form method="get" action="app.php" enctype="multipar/form-data" target="_blank">
+<input type="hidden" name="SetApp" value="true">
 <button class="image" name="App" value="$appcode"
 onmouseover="this.style.border='solid $COLORS[dark] 2px';explainThis(this)"
 onmouseout="this.style.border='solid $COLORS[dark] 0px'"
@@ -113,10 +113,12 @@ $appcomplete
 $appdesc
 </div>
 <b>Version</b>:
-<select name="VersionId">
+<input type="hidden" name="VersionNum" value="$i">
+<select name="VersionId_$i">
 $verstr
 </select>
 $bugbut
+</form>
 </td>
 APPS;
  $i++;
@@ -133,7 +135,6 @@ CONTENT;
 $content.=<<<APPS
 </tr>
 </table>
-</form>
 APPS;
 foreach($bugforms as $bugform){
   echo $bugform;

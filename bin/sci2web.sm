@@ -25,6 +25,66 @@ function NOW
 ###################################################
 #CHECK STATUS FOR EXECUTE A GIVEN ACTION
 ###################################################
+function setStatus
+#0,error; 1,configured; 2,clean; 3,compiled; 4,ready; 5,submitted;
+#6,running; 7,paused; 8,resumed; 9,stopped; 10,failed; 11,ended;
+#12,finished; 13,killed
+{
+    status=$1;shift
+    cmd="perl sci2web/bin/sci2web.pl changestatus --rundir . --status "
+    case $status in
+	error)
+	    $cmd 0
+	    ;;
+	configured)
+	    $cmd 1
+	    ;;
+	clean)
+	    $cmd 2
+	    ;;
+	compiled)
+	    $cmd 3	    
+	    ;;
+	ready)
+	    $cmd 4
+	    ;;
+	submitted)
+	    $cmd 5
+	    ;;
+	running)
+	    $cmd 6
+	    ;;
+	paused)
+	    $cmd 7
+	    ;;
+	resumed)
+	    $cmd 8
+	    ;;
+	stopped)
+	    $cmd 9
+	    ;;
+	failed)
+	    $cmd 10
+	    ;;
+	ended)
+	    $cmd 11
+	    ;;
+	finished)
+	    $cmd 12
+	    ;;
+	killed)
+	    $cmd 13
+	    ;;
+	*)
+	    echo "Status '$status' not recognized"
+	    exit 1
+	    ;;
+    esac
+}
+
+###################################################
+#CHECK STATUS FOR EXECUTE A GIVEN ACTION
+###################################################
 #Signals:clean,compile,pre,submit,run,start,fail,end,pause,resume,stop,post
 function checkSig
 {
@@ -94,7 +154,7 @@ function checkSig
 	"end");;
 	"kill")
 	    if [ ! -e "start.sig" -a ! -e "submit.sig" ];then 
-		echo "$signal:application not started"
+		echo "$signal:application not submitted"
 		exit 1
 	    fi
 	    if [ -e "end.sig" ];then 
@@ -196,53 +256,63 @@ function setSig
 	"run")
 	    echo $(NOW) > pre.sig
 	    echo $(NOW) > start.sig
+	    setStatus "running"
 	    ;;
 	"clean")
+	    setStatus "clean"
 	    ;;
 	"compile")
 	    echo $(NOW) > pre.sig
+	    setStatus "compiled"
 	    ;;
 	"pre")
 	    echo $(NOW) > pre.sig
+	    setStatus "ready"
 	    ;;
 	"submit")
 	    echo $(NOW) > pre.sig
-	    ;;
-	"run")
-	    echo $(NOW) > pre.sig
+	    setStatus "submitted"
 	    ;;
 	"start")
 	    if [ ! -e time_start.oxt ];then 
 		echo $(NOW) > time_start.oxt
 	    fi
 	    echo $(NOW) > pre.sig
+	    setStatus "running"
 	    ;;	
 	"fail")
 	    echo $(NOW) > pre.sig
+	    setStatus "failed"
 	    ;;
 	"end")
 	    echo $(NOW) > time_end.oxt
 	    echo $(NOW) > pre.sig
+	    setStatus "ended"
 	    ;;
 	"pause")
 	    echo $(NOW) >> time_pause.oxt
 	    echo $(NOW) > pre.sig
 	    echo $(NOW) > start.sig
+	    setStatus "paused"
 	    ;;
 	"resume")
 	    echo $(NOW) >> time_resume.oxt
 	    echo $(NOW) > pre.sig
+	    setStatus "resumed"
 	    ;;
 	"stop")
 	    echo $(NOW) > pre.sig
 	    echo $(NOW) > start.sig
+	    setStatus "stopped"
 	    ;;
 	"kill")
 	    echo $(NOW) > pre.sig
+	    setStatus "killed"
 	    ;;
 	"post")
 	    echo $(NOW) > pre.sig
 	    echo $(NOW) > end.sig
+	    setStatus "finished"
 	    ;;
     esac
     echo $(NOW) > $signal.sig

@@ -151,7 +151,7 @@ TAB;
       //::::::::::::::::::::::::::::::
       //STATUS MODULE
       //::::::::::::::::::::::::::::::
-      else if(preg_match("/^Status(.*)/",$module,$matches)){
+      elseif(preg_match("/^Status(.*)/",$module,$matches)){
 	
 $ajax_status=<<<AJAX
 loadContent
@@ -189,14 +189,99 @@ STATUS;
       //::::::::::::::::::::::::::::::
       //LIST OF FILES
       //::::::::::::::::::::::::::::::
-      else if(preg_match("/^ListFiles(.*)/",$module,$matches)){
+      elseif(preg_match("/^ListFiles(.*)/",$module,$matches)){
 	$opts=preg_replace("/\?/","",$matches[1]);
 	$ftable=filesTable($rundir,$opts,"Blank");
 $tabcont.=<<<TAB
 $ftable
 TAB;
       }
-    }
+      //::::::::::::::::::::::::::::::
+      //GALLERY MODULE
+      //::::::::::::::::::::::::::::::
+      elseif(preg_match("/^Gallery(.*)/",$module,$matches)){
+	$opts=preg_replace("/\?/","",$matches[1]);
+	$imgload=genLoadImg("animated/loader-circle.gif");
+	
+	//========================================
+	//GET IMAGE
+	//========================================
+$ajax_gallery_image=<<<AJAX
+loadimgnum=$('#loadimgnum').attr('value');
+loadContent
+  ('$PROJ[BINDIR]/ajax-gallery.php?Get=Image&Dir=$rundir&$opts&ImgNum='+loadimgnum,
+   'gallery_image',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     $(element).html('$imgload');
+   },
+   function(element,rtext){
+     element.innerHTML='ERROR';
+   },
+   $tabrefresh,
+   true
+   )
+AJAX;
+	blankFunc();
+	$onload_gallery_image=genOnLoad($ajax_gallery_image,'load');
+
+$tabcont.=<<<TAB
+$onload_gallery_image
+<input type="hidden" id="loadimgcmd" value="$ajax_gallery_image">
+<input type="hidden" id="loadimgnum" value="0">
+<div id="gallery_image" 
+     style="
+	    position:relative;
+	    height:80%;
+	    background-color:$COLOR[back];
+	    text-align:center;
+	    "
+     >
+</div>
+TAB;
+
+	//========================================
+	//GET THUMBS
+	//========================================
+$ajax_gallery_thumbs=<<<AJAX
+loadContent
+  ('$PROJ[BINDIR]/ajax-gallery.php?Get=Thumbnails&Dir=$rundir&$opts',
+   'gallery_thumbnails',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     $(element).html('$imgload');
+   },
+   function(element,rtext){
+     element.innerHTML='ERROR';
+   },
+   $tabrefresh,
+   true
+   )
+AJAX;
+	blankFunc();
+	$onload_gallery_thumbs=genOnLoad($ajax_gallery_thumbs,'load');
+
+	blankFunc();
+$tabcont.=<<<TAB
+$onload_gallery_thumbs
+<div id="gallery_thumbnails" 
+     style="
+	    position:relative;
+	    height:18%;
+	    overflow:auto;
+	    background-color:$COLORS[back];
+	    border-top:solid $COLORS[dark] 1px;
+	    text-align:center;
+	    "
+     >
+</div>
+TAB;
+      }
+   }
     //==================================================
     //FILE
     //==================================================

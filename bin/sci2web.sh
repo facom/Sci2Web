@@ -38,8 +38,8 @@ case $action in
     "cleanall")
 	echo "Executing action $action:"
 	checkSig "clean"
-	bash sci2web/bin/sci2web.sh clean
 	rm -rf *.sig *.oxt fontList.cache
+	bash sci2web/bin/sci2web.sh clean
 	echo "Cleaned."
 	;;
 #############################################################
@@ -76,14 +76,15 @@ case $action in
 #############################################################
     "pause"|"stop")
 	echo "Executing action $action:"
-	checkSig $action
 	if notBlank ${!SCR};then . ${!SCR}
 	else
 	    if notBlank ${!CMD};then
+		checkSig $action
 		${!CMD}
 		setSig $action
 	    else
 		#IF PAUSE OR STOP CMD IS BLANK EXECUTE KILL
+		echo "$action not implemented.  Switching to kill..."
 		bash sci2web/bin/sci2web.sh kill
 	    fi
 	fi

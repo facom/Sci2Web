@@ -11,7 +11,7 @@
    // Jorge Zuluaga (2011)	   	      		      	  	 //
    ////////////////////////////////////////////////////////////////////////
    .
-.. include:: util.txt
+.. include:: util.ixt
 
 .. image:: ../images/sci2web-mainlogo.jpg 
    :height: 100px
@@ -41,42 +41,7 @@ are prepared to port an application to your server site read the
 Presenting Sci2Web_
 ~~~~~~~~~~~~~~~~~~~
 
-Sci2Web_ is a tool to provide graphical web interfaces to *Naturally
-Developed Scientific Applications* (NDSAs).  NDSAs is a generic name
-we use to call those programs developed or adapted by scientist and
-used in scientific research.  Although today you can find powerful
-scientific software providing advanced graphical and user interfaces
-(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
-depend on programs developed in low level programming languages (C,
-fortran).  Even although a growing number of scientist are using
-powerful and modern languajes (C++, Java, Python) their programs still
-have simplified user interfaces and most of them lack of a proper
-graphical interface (in most cases these interfaces are simply not
-required or not important in the scientific work).  
-
-Most of the time scientists restrict their programs just for their
-personal use or share it only with close colleagues.  But from time to
-time a *good piece of code* arises having the potential to become a
-publickly available program.  The decision to share a program and
-allows other to use it is a wise decision that in some cases have a
-very positive impact on the visibility of the developer scientific
-work.  However the development of software intended for *final users*,
-even although they could be experts, could be a challenge even for a
-skillful scientific developer.  Many skills are required ranging from
-operating system programming to advanced graphical interfaces
-development. 
-
-Sci2Web_ is a solution created for those scientist who desire to share
-the software they developed with a wider scientific community but to
-the lowest developing cost.  Imagine to have an *active web page* (a
-web page whose content changes according to the user input) able to
-configure and control the execution of your programs?  This is exactly
-what Sci2Web_ provides you.  If you want to see a living example go
-now to the `Diffusion application <http://www.google.com>`_.
-
-Sci2Web_ is not a content or a version management software.  It simply
-provides the required tools to configure and run NDSA applications
-using the web.
+.. include:: presentation.ixt
 
 Install Sci2Web in a new server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
