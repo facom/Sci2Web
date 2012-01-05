@@ -14,7 +14,8 @@ EPOCH=[[Epoch]]
 
 TIME_UNIT="[[TimeUnits]]"
 TIME_START=[[TimeStart]]
-TIME_STOP=[[TimeStop]]
+TIME_ELAPSED=[[TimeElapsed]]
+TIME_STOP=TIME_START+TIME_ELAPSED
 TIME_STEP=[[TimeStep]]
 
 DT_OUTPUT=[[DtOutput]]

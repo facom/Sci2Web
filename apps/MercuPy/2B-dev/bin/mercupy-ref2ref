@@ -136,6 +136,8 @@ for opos in odata:
             try:
                 r=bdata[it][1:4]
                 v=bdata[it][4:7]
+                ephys=bdata[it][7:11]
+                print ephys
                 rp=r-ro
                 vp=v-vo
             except:
@@ -157,13 +159,28 @@ for opos in odata:
             elstr=System("bin/state2elem %s"%xyz,out=True).strip(" ")
             els=[float(e) for e in elstr.split()]
             #CONVERTING TO SEMIMAJOR AXIS
+            qel=els[0]
             els[0]=els[0]/(1-els[1])
+            tmp=els[3]
+            els[3]=els[4]
+            els[4]=tmp
             
+            #========================================
+            #ADDITIONAL ELEMENTS
+            #========================================
+            adels=[0]*5
+            adels[0]=mod(rpp)
+            adels[1]=qel
+            adels[2]=els[0]*(1+els[1])
+            try:adels[4]=np.acos(els[0]*(1-els[1]**2)/adels[0])
+            except:adels[4]=0.0
+            adels[3]=adels[4]+els[4]
+
             #========================================
             #STORE RESULTS
             #========================================
-            nbdata[bname]+=[[t]+xpp]
-            nbedata[bname]+=[[t]+els[0:6]]
+            nbdata[bname]+=[[t]+xpp+ephys.tolist()]
+            nbedata[bname]+=[[t]+els[0:6]+adels[0:5]]
             #raw_input()
             
 for bname in bshow:

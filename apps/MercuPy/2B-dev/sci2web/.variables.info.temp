@@ -128,8 +128,8 @@ Show#Format:
 #GROUP: ELEMENTS
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [[ElementsStyles::('b','-',3,'s',2)::varchar::Plot style::Plot::Elements::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s']]
-[[ElementsCoordinates::'a','e','i','M'::varchar::Elements::Plot::Elements::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)]]
-[[ElementsYLims::'Auto',(0,1),(0,90),(0,360)::varchar::Y limits::Plot::Elements::Limits for elements plots]]
-[[ElementsScales::'linear','log','linear','linear'::varchar::Y scales::Plot::Elements::Scale for elements plots]]
+[[ElementsCoordinates::'r','f','l'::varchar::Elements::Plot::Elements::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)]]
+[[ElementsYLims::'Auto',(0,360),(0,360)::varchar::Y limits::Plot::Elements::Limits for elements plots]]
+[[ElementsScales::'linear','linear','linear'::varchar::Y scales::Plot::Elements::Scale for elements plots]]
 [[ElementsTimeIni::state.TIME_START::varchar::Initial time::Plot::Elements::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM]]
 [[ElementsTimeEnd::state.TIME_STOP::varchar::Final time::Plot::Elements::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM]]

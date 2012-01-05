@@ -272,7 +272,7 @@ $onload_gallery_thumbs
 <div id="gallery_thumbnails" 
      style="
 	    position:relative;
-	    height:18%;
+	    height:20%;
 	    overflow:auto;
 	    background-color:$COLORS[back];
 	    border-top:solid $COLORS[dark] 1px;

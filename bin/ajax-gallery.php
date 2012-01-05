@@ -134,7 +134,7 @@ $result.=<<<RESULT
 	 onclick="$('#loadimgnum').attr('value','$i');
 		  loadcmd=$('#loadimgcmd').attr('value');
 		  setTimeout(loadcmd,0);">
-	<img src="$imgsrc" width="90%">
+	<img src="$imgsrc" width="100%">
       </a>
     </div>
 RESULT;

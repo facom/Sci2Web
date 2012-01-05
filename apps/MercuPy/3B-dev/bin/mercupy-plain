@@ -77,7 +77,7 @@ for body in state.BODIES:
             #READ DATA
             data=np.loadtxt(ftmp)
             times=data[:,0]
-            elements=data[:,1:-1]
+            elements=data[:,1:]
 
             #SELECT DATA ACCORDING TO TIMELAPSE
             itless=times<=timelapse[1]
