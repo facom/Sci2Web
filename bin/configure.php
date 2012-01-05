@@ -226,8 +226,8 @@ if(isset($PHP["Action"])){
       //CLEAN AND GENERATE NEW FILES
       //==================================================
       //CLEAN
-      $out=systemCmd("cd $oldrunpath;bash sci2web/bin/sci2web.sh cleanall");
-      if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Clean failed.</p>";goto error;}
+      //$out=systemCmd("cd $oldrunpath;bash sci2web/bin/sci2web.sh cleanall");
+      //if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Clean failed.</p>";goto error;}
 
       //GENERATE FILES ACCORDING TO NEW CONFIGURATION FILE
       $out=systemCmd("perl $PROJ[BINPATH]/sci2web.pl genfiles --runconf $oldrunpath/.app.conf --rundir $oldrunpath");
@@ -238,18 +238,15 @@ if(isset($PHP["Action"])){
       //==================================================
       $out=systemCmd("mv $oldrunpath $runpath");
       if($PHP["?"]){$qerror=true;$notmsg=$errors.="<p>Directory could not be moved</p>";goto error;}
-
-      //==================================================
-      //RESET STATUS TO CONFIGURE
-      //==================================================
-      $PHP["run_status"]=$S2C["configured"];
-      $actionresult.="<p>Status changed</p>";
     }
     $actionresult.="<p>Run saved...</p>\n";
 
     //==================================================
     //SAVE IN DATABASE
     //==================================================
+    $PHP["run_status"]=
+      mysqlGetField("select * from runs where run_code='$PHP[run_code]'",
+		    0,"run_status");
     $PHP["run_hash"]=$runhash;
     $PHP["configuration_date"]=
       getToday("%year-%mon-%mday %hours:%minutes:%seconds");
@@ -363,6 +360,7 @@ $VERSION=$CONFIG;
 $CONFIG=array();
 $numconf=readConfig("$runfile");
 $RUNCONFIG=array_merge($RUNCONFIG,$CONFIG);
+//printArray($RUNCONFIG,"RUN");
 
 //////////////////////////////////////////////////////////////////////////////////
 //GENERATE CONTENT
@@ -370,7 +368,6 @@ $RUNCONFIG=array_merge($RUNCONFIG,$CONFIG);
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //BLOCK ACCORDING TO STATUS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-if($VERSION["RunTab"]=="true"){
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GNERAL PROPERTIES
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -427,7 +424,6 @@ foreach(array_keys($DATABASE["Runs"]) as $runfield){
   if($var=="permissions") $val="rw;;rx;;xw;;xx==rw";
   
   $vars["Run"]["General"][]="$var::$val::$vartype::$varname::$varname::$protected::";
-}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -506,7 +502,9 @@ EXTRA;
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //SINGLE VALUE:SIMPLE INPUT
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     $input="<input type='text' name='$varn' value='$val' $extra size='30%'>";
+$input=<<<INPUT
+<input type="text" name="$varn" value="$val" $extra size="30%">
+INPUT;
 
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //CONSTRAINED VALUE:SIMPLE INPUT
@@ -514,14 +512,19 @@ EXTRA;
      if(preg_match("/<</",$defval)){
        list($ranges,$defval)=preg_split("/==/",$defval);
        $parts=preg_split("/<</",$ranges);
-       $min=$parts[0];
-       $max=$parts[1];
+       if(!isBlank($parts[0]))
+	 $min=$parts[0];
+       else $min="-1E+100";
+       if(!isBlank($parts[1]))
+	 $max=$parts[1];
+       else $max=1E+100;
 $input=<<<INPUT
 <input id="$varn" type="text" name="$varn" value="$val" 
        $extra size='30%' 
        max="$max" min="$min" 
        onchange="checkInputValue('$varn','minmax',{min:$min,max:$max})"
        >
+<i style="font-size:8px">Min: $min, Max: $max</i>
 INPUT;
      }
 
@@ -533,7 +536,7 @@ INPUT;
        $parts=preg_split("/--/",$ranges);
        $min=$parts[0];
        $max=$parts[1];
-       if(!isset($parts[2])){
+       if(isBlank($parts[2])){
 	 $delta=($max-$min)/100;
        }else $delta=$parts[2];
        $input=scrollableInput("$varn",$extra,$val,$min,$max,$delta);
@@ -551,15 +554,21 @@ INPUT;
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      if($datatype=="boolean"){
        $checked="";
-       if(!isBlank($val)){
+       if($val==1)
 	 $checked="checked";
-	 $val=1;
-       }else{
+       else
 	 $checked="";
-	 $val=0;
-       }
-       $input="<input type='checkbox'
-                name='$varn' value='$val' $checked $extra>";
+$input=<<<INPUT
+<input id="${varn}_check"
+       type="checkbox" 
+       onclick="
+		if(this.checked) value='1';
+		else value='0';
+		$('#$varn').attr('value',value);
+		"
+       $checked $extra>
+<input type="hidden" id="$varn" name="$varn" value="$val">
+INPUT;
      }
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      //TEXT:TEXTAREA
@@ -601,7 +610,9 @@ $content.= <<<CONF
   <td class="varval">
   $input
   <div id="explanation_$varn" class="explanationtxt"
-       style="display:none">$vardesc</div>
+       style="display:none;width:50%;">
+    $vardesc
+  </div>
   </td>
 </tr>
 CONF;
@@ -651,7 +662,8 @@ loadContent
      }
      if($('#statusicon').attr('status')=='run' ||
 	$('#statusicon').attr('status')=='submit' ||
-	$('#statusicon').attr('status')=='resume'
+	$('#statusicon').attr('status')=='resume' ||
+	$('#statusicon').attr('status')=='end'
 	){
        $('#ELBLANKET').css('display','block');
        $('.ELOVER').css('display','block');

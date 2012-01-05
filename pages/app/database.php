@@ -173,20 +173,24 @@ Database specification to know the available search variables.
 $bugform
 </div>
 
-<p>SQL Results:</p>
-
-<div id="sqlresults"
-     style="width:98%;
-	    position:relative;
-	    background-color:$COLORS[clear];
-	    padding:1%;
-	    font-size:14px;
-	    border:dashed $COLORS[dark] 2px">
+<div style="position:relative">
+  <p>SQL Results:</p>
+  <div id="sqlresults"
+       style="width:98%;
+	      position:relative;
+	      background-color:$COLORS[clear];
+	      padding:1%;
+	      font-size:14px;
+	      border:dashed $COLORS[dark] 2px">
   $PROJ[DIVBLANKET]
   $PROJ[DIVOVER]
   <big>No results</big>
+  </div>
+  <br/>
+  <div style="position:aboslute;top:10px;right:0px">
+    <button onclick="$('#sqlresults').html('')">Clean</button>
+  </div>
 </div>
-
 RUNS;
 end:
 echo $result;

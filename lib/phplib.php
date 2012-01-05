@@ -371,8 +371,16 @@ function readConfig($config)
     if(preg_match("/=/",$line) and
        !preg_match("/^\/\//",$line) and
        !preg_match("/^#/",$line)){
+      $fields=array();
       $fields=preg_split("/\s*=\s*/",$line);
-      $CONFIG[$fields[0]]=$fields[1];
+      $i=1;
+      $value="";
+      while(isset($fields[$i])){
+	$value.=$fields[$i]."=";
+	$i++;
+      }
+      $value=rtrim($value,"=");
+      $CONFIG[$fields[0]]=$value;
       //echo "Reading $fields[0] = ".$CONFIG[$fields[0]];br();
       $i++;
     }else if(preg_match("/\w+/",$line) and

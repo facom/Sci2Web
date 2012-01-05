@@ -73,6 +73,7 @@ ax=fig.add_subplot(111);
 #PLOT EACH FILE
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 nfiles=len(conf.DataFiles)
+qlegend=False
 for i in range(0,nfiles):
     print "Plotting '%s'..."%conf.DataFiles[i]
     #==================================================
@@ -109,7 +110,11 @@ for i in range(0,nfiles):
                   markeredgecolor=LinesInformationPrev[j][1],
                   markersize=int(LinesInformationPrev[j][5]),
                   )
-        ax.plot(x,y,label=LinesInformationPrev[j][0],**pars)
+        if LinesInformationPrev[j][0] is not "":
+            qlegend=True
+            ax.plot(x,y,label=LinesInformationPrev[j][0],**pars)
+        else:
+            ax.plot(x,y,**pars)
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #EXTRA CODE
@@ -155,7 +160,8 @@ ax.set_ylabel(conf.YLabel)
 #==================================================
 #LEGEND
 #==================================================
-legs=ax.legend(loc=conf.LegendLocation)
+if qlegend:
+    legs=ax.legend(loc=conf.LegendLocation)
 
 #==================================================
 #GRID

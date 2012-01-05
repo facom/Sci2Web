@@ -102,7 +102,7 @@ loadContent
     if(hash!=hex_md5(rtext)){
       $(element).attr('hash',hex_md5(rtext));
       element.innerHTML=rtext;
-      if(hash && $('#statusicon').attr('status')=='end'){
+      if(hash && $('#statusicon').attr('status')=='finish'){
 	window.location.reload();
       }
     }
@@ -267,6 +267,7 @@ AJAX;
 
 	blankFunc();
 $tabcont.=<<<TAB
+<input type="hidden" id="loadthumbscmd" value="$ajax_gallery_thumbs">
 $onload_gallery_thumbs
 <div id="gallery_thumbnails" 
      style="

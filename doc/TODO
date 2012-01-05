@@ -10,6 +10,30 @@
 
 To Do:
 
+- STOP post.sh execution
+
+- Allows to sort as desired the control variables
+
+- Not store in database after change minor variables.  How to know it?.  DONE.
+
+- Kill run before remove
+
+- If status is -1 show a loading bar. DONE.
+
+- Add modify in browse mode when and image has a ps2w file
+
+- Change database of results after modifyng results vars
+
+- Define order of variables according to controlvars.info
+
+- Use thumbnail instead of icon when an image in browse mode
+
+- Remove the RunTab option
+
+- Add a post button
+
+- Include a wgeteable type of variable
+
 - Create a "gallery" module for the results window.
 
 - Complete help of sci2web.pl.

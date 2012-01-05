@@ -624,6 +624,14 @@ control variables that will be used to generate the files for a given
 run.  In this case the values are the default ones defined when the
 control variables were described using the substitution rule.
 
+.. Important:: The order of tabs, groups and variables in the
+   ``controlvars.info`` file will determine the order at which those
+   tabs, groups and variables are displayed in the configuration
+   window.  When this file is generated the order is practically
+   arbitrary.  It is strongly recommended to check this file and if
+   required change the order to fullfil your expectations about how
+   the web interface of your application should looks like.
+
 At this point you can try to generate the files for your application
 using the template files and the default *run configuration file*
 (``sci2web/templates/Default.conf``) just created.  To perform this

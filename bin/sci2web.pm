@@ -85,11 +85,13 @@ sub error
 sub unique
 {
     my @list=@_;
-    @list=sort(@list);
+    #SORT WILL ALTER THE ORDERING OF THE TABS
+    #@list=sort(@list);
     my %seen=();
     @uniq=grep{!$seen{$_}++} @list;
     return @uniq;
 }
+
 sub bar
 {
     my $char=shift;

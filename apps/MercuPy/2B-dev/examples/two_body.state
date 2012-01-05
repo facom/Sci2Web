@@ -1,0 +1,106 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#DESCRIPTION
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+DOCSTRING=\
+"""
+
+This is a simple two-body system: star and planet.  The properties of
+the planet are as those of the Earth and the Star is the Sun.
+
+You can change the initial state of the planet and check the output.  
+
+This system is useful to study the properties of Keplerian orbits.
+
+"""
+
+from mercupy import *
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GLOBAL PROPERTIES OF SIMULATION
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EPOCH=0.0
+
+TIME_UNIT="days"
+TIME_START=0.0
+TIME_STOP=365.0*0.95
+TIME_STEP=1E-5*YEARS/DAYS
+
+DT_OUTPUT=1.0
+DT_OUTPUTELEM=1.0
+DT_DATADUMPS=10.0
+
+COORDINATES[CENTRAL]="Cartesian"
+COORDINATES[BIG]="Asteroidal"
+COORDINATES[SMALL]="Asteroidal"
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#BODIES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BODIES=[
+#####################
+#BODY0: STAR
+#####################
+body(
+Type=CENTRAL,
+Name="STAR",
+Mass=1*MSUN,
+ObjectClass=NORMALSTAR,
+Density=0.0,
+Radius=0.0,
+Frame="STAR",
+Units=ORBITAL,
+Ep=EPOCH,
+State="0.0 0.0 0.0 0.0 0.0 0.0",
+Cartesian=np.array([0.0,0.0,0.0,0.0,0.0,0.0]),
+J2=0.0,J4=0.0,J6=0.0,
+CloseEncounter=1.0,
+ShowObject=True,
+),#COMMA MANDATORY
+#####################
+#BODY1: PLANET
+#####################
+body(
+Type=BIG,
+Name="EARTH",
+Mass=1*MEARTH,
+ObjectClass=SOLIDROCKY,
+Density=0.0,
+Radius=0.0,
+Ep=EPOCH,
+Frame="STAR",
+Units=MERCURY,
+State="1.0 0.0167 0.0 0.0 0.0 0.0",
+As="a1=0.0 a2=0.0 a3=0.0",
+Spin="0 0 0",
+CloseEncounter=1.0E-4,
+ShowObject=True,
+),#COMMA MANDATORY
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#END BODIES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+]#THIS LINE IS MANDATORY
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GENERAL BEHAVIOR OF THE INTEGRATOR
+#Modify only if you know what are you doing
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#STOP INTEGRATION AFTER A CLOSE ENCOUNTER
+STOPINTEG="no"
+#ALLOW COLLISIONS TO OCCUR
+COLLISIONS="no"
+#INCLUDE COLLISIONAL FRAGMENTATION = NO
+FRAGMENTATION="no"
+#ALGORITHM (MVS, BS, BS2, RADAU, HYBRID ETC)
+INTEGRATION_ALGORITHM="hyb"
+#ACCURACY
+INTEGRATION_ACCURACY=1E-12
+#OUTPUT PRECISION = MEDIUM
+INTEGRATION_PRECISION="medium"
+#HYBRID INTEGRATOR CHANGEOVER (HILL RADII) = 3.
+INTEGRATION_CHANGEOVER=3.0
+#REFERENCE FRAME FOR OUTPUT ELEMENTS: CENTRAL, BARYCENTRIC, JACOBI
+OUT_ELEMENTS="Cen"
+#NUMBER OF TIMESTEPS BETWEEN PERIODIC EFFECTS 
+DSTEP_PERIODIC=100
+#EXPRESS TIME RELATIVE TO INTEGRATION START TIME
+TIME_RESPINTEGRATION="yes"

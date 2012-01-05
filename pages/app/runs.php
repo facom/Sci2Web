@@ -112,7 +112,7 @@ AJAX;
 $ajax_runtable=runTable();
 $onload_runtable=genOnLoad(runTable(),'load');
 
-$errfile="$PHP[TMPDIR]/phpout-ajax-trans-run-$PHP[SESSID]";
+$errfile="$PHP[TMPDIR]/error.$PHP[SESSID]";
 $ajax_action=<<<AJAX
 submitForm
   ('formqueue',
@@ -424,42 +424,42 @@ $tablehead.=<<<RUNS
 RUNS;
 
 //////////////////////////////////////////////////////////////////////////////////
+//BLOCK IF ADMINISTRATIVE ACTIONS ARE BEING PERFORMED
+//////////////////////////////////////////////////////////////////////////////////
+if(file_exists("$apppath/.block")){
+$result.=<<<RUNS
+<h1>Runs</h1>
+<p style="
+	  font-size:20px;
+	  background-color:lightgray;
+	  padding:20px;
+	  text-align:center
+	  ">
+
+The developers have blocked the creation of runs for this version.
+Please contact them to know the reasons.
+
+</p>
+RUNS;
+ goto end;  
+}
+
+//////////////////////////////////////////////////////////////////////////////////
 //CONTENT
 //////////////////////////////////////////////////////////////////////////////////
 $newcode=genRandom(8);
 
-echo<<<RUNS
+$result.=<<<RUNS
 <div id="notactions" class="notification" style="display:none"></div>
-
-
-<!--
-<div style="width:29%;
-	    padding:2%;
-	    background-color:lightgreen;
-	    display:inline-block">
-  <center>
-  <big style="font-size:40px">
-    Run
-  </big>
-  </center>
-  <p>
-    Create now a new run, configure and run it!
-  </p>
-</div>
--->
 
 <h1>Runs</h1>
 
 <p>In this page you will be able to 
 
-run the application on the fly (<a href="#RunNow">run now</a>), 
-
-create single or multiple instances of the application from predefined
+run the application on the fly (<a href="#RunNow">run now</a>),  create single or multiple instances of the application from predefined
 or custom templates and control the running of these instances
 (<a href="#History"
-onclick="$('#controlpanel').toggle('slow',null)">control panel</a>) or
-
-simply check out the list of runs commited by you
+onclick="$('#controlpanel').toggle('slow',null)">control panel</a>) or simply check out the list of runs commited by you
 (<a href="#History">history</a>).
 
 </p>
@@ -515,6 +515,7 @@ $bugform_new
 $bugform_control
 $bugform_filter
 RUNS;
+
 end:
 echo $result;
 ?>

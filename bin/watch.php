@@ -50,10 +50,17 @@ if($PHP["Watch"]=="RunStatus"){
   $cmd="cd $runpath;bash sci2web/bin/sci2web.sh qstatus";
   $watch_title="Status of run $PHP[RunCode]";
 }
-
 if($PHP["Watch"]=="FullStatus"){
   $cmd="cd $runpath;bash sci2web/bin/sci2web.sh fullinfo";
   $watch_title="Full status of run $PHP[RunCode]";
+}
+if($PHP["Watch"]=="SessionErrors"){
+  $cmd="cat $PROJ[TMPPATH]/error.$PHP[SESSID]";
+  $watch_title="Errors for Session $PHP[SESSID]";
+}
+if($PHP["Watch"]=="File"){
+  $cmd="cat $PHP[ROOTPATH]/$PHP[Dir]/$PHP[File]";
+  $watch_title="File $PHP[File]";
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

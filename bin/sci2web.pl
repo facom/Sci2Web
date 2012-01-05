@@ -248,8 +248,6 @@ InvalidActions=
 #------------------------------------------------------------
 #CONFIGURATION WINDOW PROPERTIES
 #------------------------------------------------------------
-#Do you want to include a tab with run internal information?
-RunTab = true
 #Do you want to include a tab with a list of run files
 FilesTab = false
 #Do you want to include control panel in the conf. window?
@@ -259,7 +257,7 @@ ControlButtons = true
 #DEFAULT RUN PROPERTIES
 #------------------------------------------------------------
 #Default run name
-DefaultRunName = Two body system
+DefaultRunName = New Run
 
 CONFIG
 	print fl $config;
@@ -298,6 +296,7 @@ CONFIG
 	@files=split /\s+/,$list;
 	unshift(@files,("sci2web/.variables.info.temp",
 			"sci2web/.results.info.temp"));
+	rprint "@files";
 	if($#files<0){
 	    print "There is no file to change in directory '$basedir'.\n";
 	    exit(0);
@@ -373,7 +372,9 @@ CONFIG
 	    push(@vts,$vartab);
 	    push(@{$vtivars},$j);
 	}
+	vprint "VARTABS NOT UNIQUE: @vts\n";
 	@vartabs=unique(@vts);
+	vprint "VARTABS UNIQUE: @vartabs\n";
 	foreach $vartab (@vartabs){
 	    vprint "Variable tab: $vartab\n";
 	    $vtgs="${vartab}_gs";
@@ -426,12 +427,12 @@ Consider to create a new version of the application.
 	foreach $vartab (@vartabs){
 	    print "\tTab: $vartab\n";
 	    print fa "#$b2\n#TAB $vartab\n#$b2\n" if($vartab ne "Results");
-	    print fv "#TAB:$vartab\n";
+	    print fv "#$b1\n#TAB:$vartab\n#$b1\n";
 	    $vtgroups="${vartab}_groups";
 	    foreach $vargroup (@{$vtgroups}){
 		print "\t\tGroup: $vargroup\n";
 		print fa "#$b3\n#GROUP $vargroup\n#$b3\n" if($vartab ne "Results");
-		print fv "#GROUP:$vargroup\n";
+		print fv "#$b2\n#GROUP:$vargroup\n#$b2\n";
 		$vtivars="${vartab}_${vargroup}_ivar";
 		foreach $j (@{$vtivars}){
 		    foreach $compvar (@VARSCOMP){
@@ -460,7 +461,7 @@ Consider to create a new version of the application.
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#COPY DEFAULT CONF FILE TO RUNS DIRS
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	#sysCmd("find $RUNSDIR -name $appname' -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
+	sysCmd("find $RUNSDIR -name $appname -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
 	
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CREATE THE SQL DATABASE TABLE SCRIPT
@@ -552,7 +553,7 @@ SQL
 		for($j=0;$j<=$#lines;$j++){
 		    vprint "\tLine: ".$lines[$j]."\n";
 		    vprint "\t\tTesting line against -$var-\n";
-		    if($lines[$j]=~s/\[\[$var[^\]]*\]\]/$val/gi){
+		    if($lines[$j]=~s/\[\[$var\]\]/$val/gi){
 			vprint "\t\t\tNEW LINE: $lines[$j]\n";
 		    }
 		}
@@ -663,7 +664,7 @@ SQL
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Reconfiguring new version...";
 	rprint "Changing version name from '$tempver' to '$newver'...";
-	sysCmd("sed -i.save -e 's/\\s*=\\s*dev\$/ = 1.0/gi' $tgtdir/$tempver/sci2web/version.conf");
+	sysCmd("sed -i.save -e 's/\\s*=\\s*$tempver\$/ = $newver/gi' $tgtdir/$tempver/sci2web/version.conf");
 	if($options{emails}){
 	    rprint "Changing version contributor...";
 	    sysCmd("sed -i.save -e 's/EmailsContributors\\s*=\\s*.*/EmailsContributors = $emails/gi' $tgtdir/$tempver/sci2web/version.conf");
@@ -674,7 +675,7 @@ SQL
 	#INSTALLING NEW VERSION
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Installing new version...";
-	$out=sysCmd("basepwd=\$(pwd);cd $tgtdir/$tempver;perl \$basepwd/$BASEDIR/sci2web.pl install");
+	$out=sysCmd("basepwd=\$(pwd);cd $tgtdir/$tempver;perl \$basepwd/$BASEDIR/sci2web.pl install --appdir .");
 	rprint $out;
 
 	rprint "New version installed","=";
@@ -1117,11 +1118,11 @@ SQL
 
         for $field (keys(%conf_conf)){
 	    next if($conf_conf{"$field"}!~/\w/);
-	    $sql.="$field='".$conf_conf{"$field"}."',\n";
+	    $sql.="$field=\"".$conf_conf{"$field"}."\",\n";
         }
         for $field (keys(%conf_results)){
 	    next if($conf_results{"$field"}!~/\w/);
-	    $sql.="$field='".$conf_results{"$field"}."',\n";
+	    $sql.="$field=\"".$conf_results{"$field"}."\",\n";
         }
 	$sql=~s/,$//;
 	rprint "Storing result in database...";

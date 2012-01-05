@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+"""
+################################################################################
+MercuPy Wrap
+Jorge Zuluaga (C) 2011
+################################################################################
+Usage:
+
+  mercupy-plain [tini,tend] [n]
+
+Where:
+  
+  tini: initial time for selection (default: 1E+100)
+  tend: final time for selection (default: -1E+100)
+  n: number of slice (default: null)
+
+Output:
+
+  <OBJECT>.xyz.dat[.n], <OBJECT>.xyz.dat[.n]
+
+"""
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#IMPORT UTILITIES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+from mercupy import *
+conf=loadconf("%s/mercupy.conf"%ROOTDIR)
+inifile="system.state"
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#LOAD CONFIGURATION FILE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+state=loadconf(inifile)
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GET TIME INTERVAL
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+try:timelapse=[float(x) for x in argv[1].split(",")]
+except:timelapse=[-1E100,+1E100]
+
+#NEGATIVE TIMELAPSE INDICATE...
+if timelapse[1]<0:
+    #TAKE A PIECE OF THE LAST PART
+    if timelapse[0]>=0:
+        timelapse[0]=state.TIME_STOP+timelapse[1]
+        timelapse[1]=state.TIME_STOP
+    #TAKE A FRACTION OF THE LAST PART
+    else:
+        frac=abs(timelapse[0])
+        dt=state.TIME_STOP/frac
+        timelapse[0]=state.TIME_STOP-dt
+        timelapse[1]=state.TIME_STOP
+
+#FILE SUFFIX
+try:sufx="."+argv[2]
+except:sufx=""
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#LOAD THE AEI DATA FROM FILES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShowObjects=[]
+BID=dict()
+cbody=state.BODIES[0]
+for body in state.BODIES:
+    if not body['ShowObject']:continue
+    print "Converting %s files to plain format..."%body["Code"]
+    for ext in ["els","xyz"]:
+        print "\tConverting file %s..."%ext
+        if body["ShowObject"] and body["Type"]!=CENTRAL:
+            bname=body["Code"]
+            fname=bname+"."+ext
+            fplain=fname+".dat"+sufx
+            ftmp="tmp/"+fname+".tmp"
+            
+            #CONVERT FILE TO PLAIN FORMAT
+            System("sed -e 's/\\*/0/gi' %s | grep -v '^$' | grep -v '%s' | grep -v 'Time' > %s"%(fname,bname,ftmp))
+            
+            #READ DATA
+            data=np.loadtxt(ftmp)
+            times=data[:,0]
+            elements=data[:,1:-1]
+
+            #SELECT DATA ACCORDING TO TIMELAPSE
+            itless=times<=timelapse[1]
+            tless=times[itless]
+            eless=elements[itless]
+
+            itgreat=tless>=timelapse[0]
+            tsel=tless[itgreat]
+            esel=eless[itgreat]
+            
+            #SAVE RESULT
+            ntimes=tsel.shape[0]
+            nels=esel.shape[1]
+            datsel=np.zeros((ntimes,nels+1))
+            for i in range(0,ntimes):
+                datsel[i,0]=tsel[i]
+                for j in range(1,nels+1):
+                    datsel[i,j]=esel[i,j-1]
+            np.savetxt(fplain,datsel,fmt=('%10.7e'))

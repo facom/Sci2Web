@@ -25,10 +25,10 @@ function NOW
 ###################################################
 #CHECK STATUS FOR EXECUTE A GIVEN ACTION
 ###################################################
-function setStatus
 #0,error; 1,configured; 2,clean; 3,compiled; 4,ready; 5,submitted;
 #6,running; 7,paused; 8,resumed; 9,stopped; 10,failed; 11,ended;
 #12,finished; 13,killed
+function setStatus
 {
     status=$1;shift
     cmd="perl sci2web/bin/sci2web.pl changestatus --rundir . --status "
@@ -253,6 +253,10 @@ function setSig
     echo "Set $signal"
     rm -rf *.sig
     case $signal in
+	"error")
+	    echo $(NOW) > error.sig
+	    setStatus "error"
+	    ;;
 	"run")
 	    echo $(NOW) > pre.sig
 	    echo $(NOW) > start.sig
@@ -324,4 +328,14 @@ function setSig
 function notBlank
 {
   test "x$1" != "x"
+}
+
+###################################################
+#CHECK NOT BLANK
+###################################################
+function calc
+{
+    op=$1;shift
+    opn=$(echo $op | sed 's/E/\*10\^/' | sed 's/+//')
+    echo "scale=10;$opn" | bc -l 
 }

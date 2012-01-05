@@ -30,7 +30,7 @@ $path="$PHP[ROOTPATH]/$dir";
 //////////////////////////////////////////////////////////////////////////////////
 
 if(!isset($PHP["Criterium"])){
-  $criterium="*.png *.jpg *.gif *.tiff *.txt";
+  $criterium="*.png *.jpg *.gif *.tiff";
 }else{
   $criterium=$PHP["Criterium"];
 }
@@ -95,6 +95,17 @@ RESULT;
 if($PHP["Get"]=="Thumbnails"){
   $i=0;
   $width=15;
+$result.=<<<RESULT
+<div style="position:absolute;top:10px;right:10px">
+  <a href="JavaScript:void(null)"
+     onmouseover="explainThis(this)"
+     explanation="Reload"
+     onclick="loadcmd=$('#loadthumbscmd').attr('value');
+	      setTimeout(loadcmd,0);">
+    $BUTTONS[Update]
+  </a>
+</div>
+RESULT;
   foreach($images as $image){
     if(!file_exists("$path/$image")) continue;
     $type=systemCmd("file $path/$image");
@@ -107,7 +118,7 @@ if($PHP["Get"]=="Thumbnails"){
       systemCmd("cd $path;echo $imghash > .$image.hash");
     }
     $imgsrc="$dir/.$image.thumb";
-    $pos=$width*$i;
+    $pos=$width*$i+2*$i;
 $result.=<<<RESULT
     <div style="
 		position:absolute;
@@ -116,6 +127,9 @@ $result.=<<<RESULT
 		border:solid black 1px;
 		width:${width}%;
 		">
+      <a href="JavaScript:Open('$imgsrc','Image','$PROJ[SECWIN]')">
+	$image
+      </a>
       <a href="JavaScript:void(null)"
 	 onclick="$('#loadimgnum').attr('value','$i');
 		  loadcmd=$('#loadimgcmd').attr('value');

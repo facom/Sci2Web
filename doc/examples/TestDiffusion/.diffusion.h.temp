@@ -1,9 +1,0 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-#define CUSTOM_UNITS [[CustomUnits]]
-
-#define TWOPI 2*M_PI
-
-#define SLEEP [[IdleTime]]

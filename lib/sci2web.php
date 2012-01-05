@@ -150,7 +150,7 @@ listButtons();
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //ACTIONS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Kill","Resume");
+$PROJ["Actions"]=array("Clean","Compile","Run","Pause","Stop","Kill","Resume","Post");
 
 //////////////////////////////////////////////////////////////////////////////////
 //AUTHENTICATION
@@ -427,7 +427,10 @@ HEADER;
     $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
 
 $header.=<<<HEADER
-  User <i><b>$name</b></i> | 
+ <div id="sessid" style="display:none">$PHP[SESSID]</div>
+ User <i><b onclick="$('#sessid').css('display','inline-block')">
+     $name
+ </b></i> | 
   <div style="display:inline">
   <a href="#" onclick="toggleElement('changepass')">
   Your account
@@ -640,7 +643,7 @@ function readParamModel($varsconf)
   $lines=loadFile($varsconf);
   $it=0;
   foreach($lines as $line){
-    if(isBlank($line)){
+    if(isBlank($line) or preg_match("/^#[^T^G]/",$line)){
       continue;
     }else if(preg_match("/^#TAB:/",$line)){
       $ig=0;
@@ -926,6 +929,8 @@ loadContent
      $('#DIVOVER$id').css('display','block');
    },
    function(element,rtext){
+     $('#DIVBLANKET$id').css('display','none');
+     $('#DIVOVER$id').css('display','none');
    },
    -1,
    true
@@ -974,6 +979,9 @@ function toggleButtons($status)
 		 "Configure"=>$none,
 		 "Kill"=>$none
 		 );
+  if($status=="error"){
+    $display["Clean"]=$disp;
+  }
   if($status=="clean"){
     $display["Compile"]=$disp;
     $display["Remove"]=$disp;
@@ -1029,9 +1037,22 @@ function toggleButtons2($status)
 		 "Resume"=>$none,
 		 "Remove"=>$none,
 		 "Configure"=>$none,
-		 "Kill"=>$none
+		 "Kill"=>$none,
+		 "Post"=>$none
 		 );
+  if($status=="error"){
+    $display["Clean"]=$disp;
+    $display["Compile"]=$disp;
+    $display["Configure"]=$disp;
+    $display["Run"]=$disp;
+    $display["Pause"]=$disp;
+    $display["Stop"]=$disp;
+    $display["Resume"]=$disp;
+    $display["Kill"]=$disp;
+    $display["Post"]=$disp;
+  }
   if($status=="clean"){
+    $display["Clean"]=$disp;
     $display["Compile"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
@@ -1064,16 +1085,20 @@ function toggleButtons2($status)
   if($status=="submit"){
     $display["Kill"]=$disp;
   }
-  if($status=="end" or
-     $status=="fail" or
+  if($status=="end"){
+  }
+  if($status=="fail" or
      $status=="stop" or
      $status=="kill" or
      $status=="finish"){
     $display["Clean"]=$disp;
-    //$display["Compile"]=$disp;
+    $display["Compile"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;
+  }
+  if($status=="finish"){
+    $display["Post"]=$disp;
   }
   return $display;
 }
@@ -1271,6 +1296,12 @@ function statusIcon($status,$width="")
 
   $icon="";
   switch($status){
+  case "error":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=SessionErrors','Watch Errors','$PROJ[SECWIN]')";
+    $status_text="Error";
+    $status_color="yellow";
+    $status_bg="red";
+    break;
   case "configured":
     $status_text="Configured";
     $status_color="black";
@@ -1319,11 +1350,23 @@ function statusIcon($status,$width="")
     $status_color="white";
     $status_bg="black";
     break;
-  case "end":case "finish":
+  case "end":
     $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
-    $status_text="Ended";
+    $status_text="Finishing...";
     $status_color="white";
     $status_bg="blue";
+    break;
+  case "finish":
+    $runcode=$PHP["RunCode"];
+    $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
+			   0,"run_hash");
+    $appname="$_SESSION[AppVersion]";
+    $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
+    $rundir="$runsdir/$runhash";
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=File&Dir=$rundir&File=post.oxt','Watch Post File','$PROJ[SECWIN]')";
+    $status_text="Finished";
+    $status_color="white";
+    $status_bg="green";
     break;
   }
   if(isset($status_link)){
@@ -1354,7 +1397,7 @@ ICON;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //GET CONTROL BUTTONS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function getControlButtons($run_code,$status,$id="",$exclude=array())
+function getControlButtons($run_code,$status,$id="",$exclude=array(),$bstatus="-1")
 {
   global $PHP,$PROJ,$BUTTONS;
 
@@ -1381,11 +1424,18 @@ $BUTTONS[$action]
 </div>
 LINKS;
   }
+  $statusbar="";
+  /*
+  if($status=="run" or $status=="pause"){
+    $statusbar=statusBar($bstatus);
+  }
+  */
   $status_icon=statusIcon($status); 
 $controls=<<<CONTROLS
   <div class="actionbutton" style="position:relative">
   $PROJ[DIVBLANKET]
   $PROJ[DIVOVER]
+  $statusbar
   <div class="actionbutton">$status_icon</div>
   $links
   </div>
@@ -1708,6 +1758,9 @@ MSG;
 function statusBar($bstatus,$width="30%")
 {
   global $PROJ,$PHP,$COLORS;
+
+  if($bstatus>=0){
+    $bstatus=round($bstatus,1);
 $status=<<<STATUS
 <div id="status_text" 
      style="display:inline-block;
@@ -1728,6 +1781,13 @@ $status=<<<STATUS
   </div>
 </div>
 STATUS;
+ }else{
+$status=<<<STATUS
+<div class="actionbutton">
+  <img src="$PROJ[IMGDIR]/animated/loader-bar.gif" height="30px">
+</div>
+STATUS;
+ }
  return $status;
 }
 

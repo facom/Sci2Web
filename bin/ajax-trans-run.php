@@ -285,6 +285,8 @@ if($PHP["Action"]=="Clean")
   $status=$S2C["clean"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status clean for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Clean $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Compile")
@@ -301,6 +303,7 @@ if($PHP["Action"]=="Compile")
   //COMPILING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh compile");
+  shell_exec("echo Compile error ".$PHP["?"]." &> /tmp/g");
   if($PHP["?"]){$qerror=true;$error.="$runcode not compiled.";goto next;}
   $status=$S2C["compiled"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
@@ -313,6 +316,8 @@ if($PHP["Action"]=="Compile")
   $status=$S2C["ready"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status preparing for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Compile $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Remove")
@@ -339,6 +344,8 @@ if($PHP["Action"]=="Run")
   $status=$S2C["submit"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status submit for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Run $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Stop")
@@ -351,6 +358,8 @@ if($PHP["Action"]=="Stop")
   $status=$S2C["stop"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status stop for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Stop $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Kill")
@@ -363,6 +372,8 @@ if($PHP["Action"]=="Kill")
   $status=$S2C["kill"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status kill for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Kill $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Pause")
@@ -375,6 +386,8 @@ if($PHP["Action"]=="Pause")
   $status=$S2C["pause"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status pause for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Pause $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
 if($PHP["Action"]=="Resume")
@@ -387,8 +400,23 @@ if($PHP["Action"]=="Resume")
   $status=$S2C["resume"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status resume for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Resume $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
 }
 
+if($PHP["Action"]=="Post")
+{
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  //RESUMING
+  //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh post");
+  if($PHP["?"]){$qerror=true;$error.="$runcode not post executed.";goto next;}
+  $status=$S2C["finish"];
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  if($PHP["?"]){$qerror=true;$error.="Failed status post for $runcode";goto next;}
+  $rid=genRandom(4);
+  systemCmd("echo Post $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
+}
 
 if($PHP["Action"]=="BlockStatus")
 {
@@ -462,6 +490,8 @@ if($PHP["Action"]=="GetControls")
   if(isset($PHP["ExcludeActions"])){
     $exclude=preg_split("/,/",$PHP["ExcludeActions"]);
   }
+  $rid=systemCmd("cat $PROJ[TMPPATH]/ridaction.$run_code.$PHP[SESSID]");
+  echo "<!--$rid-->";
   echo getControlButtons($run_code,$status,"controls",$exclude);
   return 0;
 }
@@ -603,6 +633,11 @@ next:
 end:
 
 if($qerror){
+  shell_exec("cp -rf $PHP[TMPPATH]/$PHP[CMDOUTFILE] $PHP[TMPPATH]/error.$PHP[SESSID]");
+  $status=$S2C["error"];
+  mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
+  $rid=genRandom(4);
+  systemCmd("echo Error $rid > $PROJ[TMPPATH]/ridaction.$runcode.$PHP[SESSID]");
   echo "<i>An error has occurred:</i><br/>$error";
 }else{
   echo $result;

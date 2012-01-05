@@ -112,10 +112,10 @@ foreach($runs as $run){
   //==================================================
   //STATUS BAR
   //==================================================
-  $bstatus="";
+  $statusbar="";
   if($status=="run" or $status=="pause"){
     $bstatus=systemCmd("cd $runpath;bash sci2web/bin/sci2web.sh status")*100;
-    $bstatus=getStatusBar($bstatus);
+    $statusbar=statusBar($bstatus,"100px");
   }
 
   //==================================================
@@ -276,7 +276,10 @@ ROW;
   //STATUS
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $row_status=<<<ROW
-<td>$status_icon</td>
+<td>
+  $status_icon
+  <div style="display:inline-block">$statusbar</div>
+</td>
 ROW;
 
 $queue.=<<<QUEUE

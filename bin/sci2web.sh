@@ -48,7 +48,22 @@ case $action in
     "clean"|"compile"|"pre")
 	echo "Executing action $action:"
 	checkSig $action
-	if notBlank ${!SCR};then . ${!SCR};else ${!CMD};fi
+	if notBlank ${!SCR}
+	then 
+	    . ${!SCR}
+	    ecode=$?
+	    if [ $ecode -gt 0 ];then 
+		setSig "error"
+		exit $ecode
+	    fi
+	else 
+	    ${!CMD}
+	    ecode=$?
+	    if [ $ecode -gt 0 ];then 
+		setSig "error"
+		exit $ecode
+	    fi
+	fi
 	setSig $action
 	;;
 #############################################################
@@ -58,7 +73,22 @@ case $action in
 	echo "Executing action $action:"
 	{
 	    checkSig $action
-	    if notBlank ${!SCR};then . ${!SCR};else ${!CMD};fi
+	    if notBlank ${!SCR}
+	    then 
+		. ${!SCR}
+		ecode=$?
+		if [ $ecode -gt 0 ];then 
+		    setSig "error"
+		    exit $ecode
+		fi
+	    else 
+		${!CMD}
+		ecode=$?
+		if [ $ecode -gt 0 ];then 
+		    setSig "error"
+		    exit $ecode
+		fi
+	    fi
 	    #========================================
             #STORE RESULTS IN RESULTS DATABASE
 	    #========================================
@@ -76,11 +106,27 @@ case $action in
 #############################################################
     "pause"|"stop")
 	echo "Executing action $action:"
-	if notBlank ${!SCR};then . ${!SCR}
+	if notBlank ${!SCR};then 
+	    if [ ${!SCR} = "kill" ];then
+		killJob
+		setSig $action
+	    else
+		. ${!SCR}
+		ecode=$?
+		if [ $ecode -gt 0 ];then 
+		    setSig "error"
+		    exit $ecode
+		fi
+	    fi
 	else
 	    if notBlank ${!CMD};then
 		checkSig $action
 		${!CMD}
+		ecode=$?
+		if [ $ecode -gt 0 ];then 
+		    setSig "error"
+		    exit $ecode
+		fi
 		setSig $action
 	    else
 		#IF PAUSE OR STOP CMD IS BLANK EXECUTE KILL
@@ -140,9 +186,10 @@ fi
 #############################################################
 bash sci2web/bin/sci2web.sh post
 " > run.sh
-
-	submitJob
+	
 	setSig $action
+	sleep 1
+	submitJob
 	;;
 #############################################################
 #RESUME

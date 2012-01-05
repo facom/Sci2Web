@@ -33,7 +33,7 @@ function submitJob
 #$QSYSTEM
 "
 	cat $script
-    } >> submit.sh
+    } > submit.sh
     if [ $QSYSTEM = "at" ];then cmd="$QSYSTEM now"
     else cmd="$QSYSTEM"
     fi
@@ -116,7 +116,7 @@ function submitJob
 cd \$PBS_O_WORKDIR
 "
 	cat $script
-    } >> submit.sh
+    } > submit.sh
     if ! qsub submit.sh &> /tmp/jobinfo.$$;then
 	echo "Error submitting your job:"
 	cat /tmp/jobinfo.$$
