@@ -93,29 +93,6 @@ create table runs (
        users_email varchar(255)
 );
 
-create table Diffusion_dev (
-       dbrunhash char(32) not null,
-       dbauthor varchar(255),
-       dbdate datetime not null,
-       
-       PeriodOutput int(11),
-       BaseUnits float,
-       OutputBasename varchar(100),
-       PlotFile varchar(255),
-       MeanDispersions float,
-       Height float,
-       Width float,
-       NumberParticles int(11),
-       MeanFreePath float,
-       DelayTime float,
-       QuerySleep tinyint(1),
-       GeneralComments text,
-
-       primary key (dbrunhash),
-       #LINKS
-       runs_runcode char(8)
-);
-
 ###################################################
 #POPULATE TABLES
 ###################################################
@@ -128,10 +105,16 @@ insert into users
 insert into apps 
        (app_code,users_emails_author,creation_date,versions_codes)
        values
-       ('Diffusion','test@sci2web.org;',date(now()),'dev;');
+       ('MercuPy','test@sci2web.org;',date(now()),'2B-dev;3B-dev;');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
 	apps_code)
        values
-       ('dev',date(now()),'test@sci2web.org;','Diffusion');
+       ('2B-dev',date(now()),'test@sci2web.org;','MercuPy');
+
+insert into versions
+       (version_code,release_date,users_emails_contributor,
+	apps_code)
+       values
+       ('3B-dev',date(now()),'test@sci2web.org;','MercuPy');

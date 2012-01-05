@@ -12,7 +12,7 @@ CustomUM::1.0*MSUN::varchar::Custom Mass Units::Units of mass in MKS.  Available
 TimeUnits::hours;;days;;months;;years==days::varchar::Time Units::Enter the units for times in simulation::::variables.info,system.state,
 Epoch::0.0::float::Epoch::Enter the initial epoch of the simulation::::variables.info,system.state,
 TimeStart::0<<==0.0::float::Time of start::In Time Units::::variables.info,system.state,stat.sh,
-TimeEnd::0<<==365.25::float::Time of end::In Time Units::::variables.info,system.state,
+TimeStop::0<<==365.25::float::Time of end::In Time Units::::variables.info,system.state,stat.sh,
 TimeStep::0<<==1E-3::float::Time step::In Time Units::::variables.info,system.state,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Input/Output
@@ -109,10 +109,3 @@ ElementsTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in te
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ChangeEnergy::0::float::Fractional change in energy due to integrator::Fractional change in energy due to integrator::::results.info,
 ChangeMomentum::0::float::Fractional change in angular momentum::Fractional change in angular momentum::::results.info,
-#######################################################################
-#TAB:All
-#######################################################################
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#GROUP:General
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TimeStop::::::::::::stat.sh,
