@@ -25,7 +25,7 @@ include_once("phplib.php");
 if(!file_exists("$PHP[PROJPATH]/lib/sci2web.conf")){
   echo "<img src='images/sci2web-mainlogo.jpg' height='100px'/>";
   echo "<p>Sci2Web configuration file not present</p>";
-  echo "<p>Check <a href='doc/install.html'>installation guide</a></p>";
+  echo "<p>Check the <a href='doc/install.html'>installation guide</a></p>";
   exit(1);
 }
 include_once("sci2web.conf");
@@ -381,7 +381,19 @@ HEADER;
   //==================================================
   $header.="<form method='post' class='inline' action='?' enctype='multipart/form-data'>";
 
-  if(!isset($_SESSION["User"])){
+  $quser=false;
+  if(isset($_SESSION["User"])){
+    $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
+    if(!isBlank($name))
+      $quser=true;
+    else{
+      unset($_SESSION["User"]);
+      $onload=
+	genOnLoad("notDiv('notlogin','Your user account doesn't exist anymore')");
+    }
+  }
+
+  if(!$quser){
 $header.=<<<HEADER
   <!-- BASIC LINKS -->
   <a href="$PROJ[PROJDIR]">Home</a> 
@@ -424,8 +436,7 @@ $header.=<<<HEADER
 HEADER;
 
   }else{
-    $name=mysqlGetField("select username from users where email='$_SESSION[User]'",0,"username");
-
+    
 $header.=<<<HEADER
  <div id="sessid" style="display:none">$PHP[SESSID]</div>
  User <i><b onclick="$('#sessid').css('display','inline-block')">
@@ -1733,8 +1744,9 @@ function sendMail($emails,$subject,$text,$from,$replyto)
     if(isBlank($email)) continue;
     if($PROJ["ENABLEMAIL"]){
       $status=mail($email,$subject,$text,$headers);
-    }else{
-      $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
+    }
+    //SAVE THE E-MAIL TEXT INTO THE MAIL LOG
+    $now=getToday("%year-%mon-%mday %hours:%minutes:%seconds");
 $msg=<<<MSG
 Date: $now
 ${headers}To: $email
@@ -1748,7 +1760,6 @@ MSG;
     $fl=fopen("$PROJ[LOGPATH]/mail.log","a");
     fwrite($fl,"$msg");
     fclose($fl);
-    }//END IF ENABLEMAIL
   }//END FOREACH LISTEMAILS
 }
 

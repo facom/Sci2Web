@@ -316,7 +316,7 @@ ul.auto-toc {
 // \__ \ (__| |/ /_ \ V  V /  __/ |_) |                               //
 // |___/\___|_|____| \_/\_/ \___|_.__/                                //
 //                                                                    //
-// Bringing naturally developed scientific applications to the web    //
+// Bringing scientific applications to the web                        //
 // Jorge Zuluaga (2011)                                               //
 ////////////////////////////////////////////////////////////////////////
 . -->
@@ -398,27 +398,28 @@ Processed by unicode2rstsubs.py, part of Docutils:
 </div>
 <div class="section" id="abstract">
 <h2><a class="toc-backref" href="#id2">Abstract</a></h2>
-<p>This document explains how to port an application to a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server
-site.  The process of porting a <em>Naturally Developed Scientific
-Application (NDSA)</em> starts by testing your application at the web
-server where it will be installed.  You need to be sure that your
-application runs properly from the command line before trying to
-configure and control it from a web interface.  If the application
-depends on third party software (libraries, languages, external
-packages, etc.) they should be installed in the web server or simply
-copied among the application files.  By porting an application to
-<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> minor modifications should be done on the application source
-files (if available) and no web or graphical programming is required
-at all.  This is the most important advantage of using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.  It
-allows you to create a friendly interface to your applications with a
-minimum effort.  Many properties of the web interface and the
-mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the preparation and running of
-the application can be configured and customized as will be explained
-here.  For the developer other details of the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> such as the
-directory structure of the server site or a brief list of critical
-scripts are provided at the end of this document.</p>
-<p>If you have already ported an application and want to test it read
-instead the <a class="reference external" href="user.txt">Sci2Web user guide</a>.</p>
+<p>This document explains how to port a scientific application (SA) to a
+<a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site.  The process of porting a SA starts by testing
+your application at the web server where it will be installed.  You
+need to be sure that your application runs properly from the command
+line before trying to configure and control it from a web interface.
+If the application depends on third party software (libraries,
+languages, external packages, etc.) they should be installed in the
+web server or simply copied among the application files.  By porting
+an application to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> minor modifications should be done on the
+application source files (if available) and no web or graphical
+programming is required at all.  This is the most important advantage
+of using <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>: it allows you to create a friendly interface to
+your applications with a minimum effort.  Many properties of the web
+interface and the mechanisms used by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> to control the
+preparation and running of the application can be configured and
+customized as will be explained here.  For the developer other details
+of the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> such as the directory structure of the server site or
+a brief list of critical scripts are provided at the end of this
+document.  If you want to install a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site at your own
+computer please read the <a class="reference external" href="install.html">Installation guide</a>.  On the
+other hand if you have already ported an application and want to test
+it read the <a class="reference external" href="user.html">Sci2Web user guide</a>.</p>
 </div>
 <div class="section" id="presenting-sci2web">
 <h2>Presenting <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a></h2>
@@ -435,39 +436,46 @@ instead the <a class="reference external" href="user.txt">Sci2Web user guide</a>
 // Jorge Zuluaga (2011)                                               //
 ////////////////////////////////////////////////////////////////////////
 . -->
-<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a tool to provide graphical web interfaces to <em>Naturally
-Developed Scientific Applications</em> (NDSAs).  NDSAs is a generic name
-we use to call those programs developed or adapted by scientist and
-used in scientific research.  Although today you can find powerful
-scientific software providing advanced graphical and user interfaces
-(e.g. Reduce, SAGE, Mathematica, Matlab) many scientific work still
-depend on programs developed in low level programming languages (C,
-fortran).  Even although a growing number of scientist are using
-powerful and modern languajes (C++, Java, Python) their programs still
-have simplified user interfaces and most of them lack of a proper
-graphical interface (in most cases these interfaces are simply not
-required or not important in the scientific work).</p>
-<p>Most of the time scientists restrict their programs just for their
-personal use or share it only with close colleagues.  But from time to
-time a <em>good piece of code</em> arises having the potential to become a
-publickly available program.  The decision to share a program and
-allows other to use it is a wise decision that in some cases have a
-very positive impact on the visibility of the developer scientific
-work.  However the development of software intended for <em>final users</em>,
-even although they could be experts, could be a challenge even for a
-skillful scientific developer.  Many skills are required ranging from
-operating system programming to advanced graphical interfaces
-development.</p>
+<p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a <em>web framework</em> intended to provide web interfaces to
+<em>Scientific Applications</em> (SAs).  A Scientific Application is a piece
+of software developed or adapted by scientist to solve scientific
+problems.  Although it is common today to find powerful software
+providing advanced graphical and user interfaces (e.g. Reduce, SAGE,
+Mathematica, Matlab), a huge fraction of the specific software
+developed and/or used by scientist still relies on programs developed
+in low level programming languages (C, fortran).  Even although a
+growing number of scientist are using powerful and modern programming
+languajes (C++, Java, Python) their programs still have simplified
+user interfaces and most of them lack of a proper graphical interface.</p>
+<p>In most cases SAs simply does not require to have such advanced user
+or graphical interfaces.  Most of the time scientists restrict their
+programs just for their personal use or share it only with close
+colleagues and students.  But from time to time a <em>good piece of code</em>
+arises having the potential to become a publickly available SA.  The
+decision to share a SA and allows other to use it is a wise decision
+that in some cases have a very positive impact on the visibility of
+scientific work.  However the development of software intended for
+what we can call <em>final users</em> and although they could be experts, is
+challenging even for a skillful scientific developer.  Many skills are
+required ranging from operating system programming to advanced
+graphical interfaces development.</p>
 <p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is a solution created for those scientist who desire to share
 the software they developed with a wider scientific community but to
-the lowest developing cost.  Imagine to have an <em>active web page</em> (a
-web page whose content changes according to the user input) able to
-configure and control the execution of your programs?  This is exactly
-what <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> provides you.  If you want to see a living example go
-now to the <a class="reference external" href="http://www.google.com">Diffusion application</a>.</p>
+the lowest developing cost.  It provides the means to configure a
+fully albeit simple web interface even to very complex scientific
+applications without the burden of change the original software or
+develop advanced graphical interfaces.  But <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is much more than
+that.  It provides you a platform to publish your application in the
+web, automatically generate properly prepared tarballs of your
+software, give access to related papers and other information
+important for the visibility of your scientific work, among other
+features.  To know many of the advantages offered by <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> read the
+<a class="reference external" href="white-paper.pdf">white paper</a>.</p>
+<p>If you want to see a living example go now to the <a class="reference external" href="http://astronomia.udea.edu.co/Sci2Web/app.php?SetApp=true&amp;App=MercuPy&amp;VersionNum=0&amp;VersionId_0=2B-dev">MercuPy</a>,
+the sample application served in <a class="reference external" href="http://sci2web.org">the home site of the project</a>.</p>
 <p><a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is not a content or a version management software.  It simply
-provides the required tools to configure and run NDSA applications
-using the web.</p>
+provides the required tools to configure and run SA applications in
+the web.</p>
 </div>
 <div class="section" id="porting-an-application-to-sci2web">
 <h2><a class="toc-backref" href="#id4">Porting an application to Sci2Web</a></h2>
@@ -1020,6 +1028,16 @@ is a sample <em>run configuration file</em> containing the value of the
 control variables that will be used to generate the files for a given
 run.  In this case the values are the default ones defined when the
 control variables were described using the substitution rule.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">The order of tabs, groups and variables in the
+<tt class="docutils literal">controlvars.info</tt> file will determine the order at which those
+tabs, groups and variables are displayed in the configuration
+window.  When this file is generated the order is practically
+arbitrary.  It is strongly recommended to check this file and if
+required change the order to fullfil your expectations about how
+the web interface of your application should looks like.</p>
+</div>
 <p>At this point you can try to generate the files for your application
 using the template files and the default <em>run configuration file</em>
 (<tt class="docutils literal">sci2web/templates/Default.conf</tt>) just created.  To perform this

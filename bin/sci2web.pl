@@ -136,7 +136,7 @@ switch($Action){
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		#CLEANING APPLICATION TABLES
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-		$apps=sysCmd("ls $ROOTDIR/apps | grep -v template | grep -v licenses");
+		$apps=sysCmd("ls $ROOTDIR/apps | grep -v template | grep -v licenses | grep -v bench");
 		foreach $app (split /\s+/,$apps){
 		    $vers=sysCmd("ls -d $ROOTDIR/apps/$app/*/sci2web");
 		    foreach $verdir (split /\s+/,$vers){
@@ -157,7 +157,8 @@ switch($Action){
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
 		print "Provide the MySQL root password:\n\t";
-		`mysql -u root -p < $ROOTDIR/doc/install/sci2web.sql`;
+		sysCmd("cat $ROOTDIR/doc/install/sci2web.sql $ROOTDIR/apps/MercuPy/2B-dev/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/3B-dev/sci2web/controlvars.sql > /tmp/db.$$");
+		`mysql -u root -p < /tmp/db.$$`;
 		die("Failed authentication") if($?);
 		$qclean=1;
 	    }

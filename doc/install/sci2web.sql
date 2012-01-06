@@ -14,7 +14,7 @@
 #CREATE USER
 ###################################################
 #In order to create data base user run:
-# create user 'sci2web'@'localhost' identified by 'WebPoweredNDSA'
+# create user 'sci2web'@'localhost' identified by 'WebPoweredSAs'
 # grant all privileges on sci2web.* to 'sci2web'@'localhost'
 # flush privileges
 ###################################################

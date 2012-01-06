@@ -31,6 +31,27 @@ if(file_exists($LIBFILE)){
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//CHECK CONFIGURATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$report.="<p class='testsession'>Configuration files test</p>";
+foreach(array("sci2web.conf","sci2web.db") as $confile){
+  systemCmd("ls $PROJ[PROJPATH]/lib/$confile");
+  if($PHP["?"]){
+    $report.="<p class='testerror'>Configuration file $confile does not exist</p>";
+    $nerror++;
+  }else{
+    $report.="<p class='testsuccess'>Configuration file $confile checked</p>";
+  }
+  systemCmd("chmod og-rwx $PROJ[PROJPATH]/lib/$confile");
+  if($PHP["?"]){
+    $report.="<p class='testerror'>Permissions for configuration file $confile not set properly</p>";
+    $nerror++;
+  }else{
+    $report.="<p class='testsuccess'>Permissions of file $confile checked</p>";
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //CHECK VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $report.="<p class='testsession'>Variables test</p>";
@@ -38,7 +59,7 @@ if(!isset($PROJ) or !isset($PHP)){
 $report.=<<<REPORT
 <p class="testerror">Critical variables not load</p>
 REPORT;
-$error++;
+$nerror++;
 goto report;
 }else{
   $proj_critvars=array("PROJBASE","PROJNAME","ENTRYPAGE");
@@ -94,16 +115,41 @@ $report.="<p class='testsession'>Permissions test</p>";
 $dirs=array("$PROJ[TMPPATH]/test",
 	    "$PROJ[APPSPATH]/template/application-desc.html",
 	    "$PROJ[JSPATH]/ckfinder/userfiles/test",
-	    "$PROJ[RUNSPATH]/test");
+	    "$PROJ[RUNSPATH]/test",
+	    "$PROJ[PAGESPATH]/main",
+	    "$PROJ[PAGESPATH]/main/content");
 	    
 foreach($dirs as $dir){
   systemCmd("touch $dir");
   if($PHP["?"]){
     $report.="<p class='testerror'>Error accessing '$dir'</p>";
-    $error++;
+    $nerror++;
   }else{
     $report.="<p class='testsuccess'>Success accessing '$dir'</p>";
     systemCmd("rm $dir");
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//CHECK APPLICATION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$report.="<p class='testsession'>Sample Application</p>";
+$sampleapp="MercuPy";
+foreach(array("2B-dev","3B-dev") as $version){
+  systemCmd("ls $PROJ[APPSPATH]/$sampleapp/$version/bin/elem2state");
+  if($PHP["?"]){
+    $report.="<p class='testerror'>Version '$version' of the sample application not compiled yet</p>";
+    $nerror++;
+  }else{
+    $report.="<p class='testsuccess'>Version '$version' of the sample application compiled</p>";
+  }
+  $dbname="${sampleapp}_${version}";
+  mysqlCmd("describe `$dbname`");
+  if($PHP["?"]){
+    $report.="<p class='testerror'>Database for results of version '$version' of the sample application not created</p>";
+    $nerror++;
+  }else{
+    $report.="<p class='testsuccess'>Database $dbname found</p>";
   }
 }
 

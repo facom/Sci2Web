@@ -26,5 +26,5 @@ if [ ! -e .installed ];then
 	echo "$qerror errors occur.  Please check."
     fi
 else
-    echo "MercuPy has been already installed in your server site"
+    echo "MercuPy has been already installed in your server site.  If you want to force the installation remove the '.installed' file"
 fi

@@ -32,9 +32,11 @@ $cdir="$PROJ[PAGESDIR]/$PHP[PAGEBASENAME]";
 require_once("$cpath/page.conf");
 if(!isset($PHP["TabId"])) $PHP["TabId"]=$DEFTAB-1;
 else $PHP["TabId"]--;
+/*
 if(!isset($_SESSION["User"])){
   $PHP["TabId"]=0;
 }
+*/
 $PHP["TabNum"]=$PHP["TabId"]+1;
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +110,12 @@ foreach($files as $file)
   //GET INDEX VALUE
   list($fname,$fid)=preg_split("/:/",$file);
   $file="$fname.php";
+
+  //CREATE THE MAIN PAGE TAB CONTENT THE FIRST TIME
+  if(!file_exists("$PROJ[PROJPATH]/pages/main/$file")){
+    systemCmd("cp -rf $PROJ[PROJPATH]/doc/install/$file $PROJ[PROJPATH]/pages/main");
+    systemCmd("cp -rf $PROJ[PROJPATH]/doc/install/*.html $PROJ[PROJPATH]/pages/main/content");
+  }
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");

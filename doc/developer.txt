@@ -29,28 +29,28 @@ Developer Guide
 Abstract
 ~~~~~~~~
 
-This document explains how to port an application to a Sci2Web_ server
-site.  The process of porting a *Naturally Developed Scientific
-Application (NDSA)* starts by testing your application at the web
-server where it will be installed.  You need to be sure that your
-application runs properly from the command line before trying to
-configure and control it from a web interface.  If the application
-depends on third party software (libraries, languages, external
-packages, etc.) they should be installed in the web server or simply
-copied among the application files.  By porting an application to
-Sci2Web_ minor modifications should be done on the application source
-files (if available) and no web or graphical programming is required
-at all.  This is the most important advantage of using Sci2Web_.  It
-allows you to create a friendly interface to your applications with a
-minimum effort.  Many properties of the web interface and the
-mechanisms used by Sci2Web_ to control the preparation and running of
-the application can be configured and customized as will be explained
-here.  For the developer other details of the Sci2Web_ such as the
-directory structure of the server site or a brief list of critical
-scripts are provided at the end of this document.  
-
-If you have already ported an application and want to test it read
-instead the `Sci2Web user guide <user.txt>`_.
+This document explains how to port a scientific application (SA) to a
+Sci2Web_ server site.  The process of porting a SA starts by testing
+your application at the web server where it will be installed.  You
+need to be sure that your application runs properly from the command
+line before trying to configure and control it from a web interface.
+If the application depends on third party software (libraries,
+languages, external packages, etc.) they should be installed in the
+web server or simply copied among the application files.  By porting
+an application to Sci2Web_ minor modifications should be done on the
+application source files (if available) and no web or graphical
+programming is required at all.  This is the most important advantage
+of using Sci2Web_: it allows you to create a friendly interface to
+your applications with a minimum effort.  Many properties of the web
+interface and the mechanisms used by Sci2Web_ to control the
+preparation and running of the application can be configured and
+customized as will be explained here.  For the developer other details
+of the Sci2Web_ such as the directory structure of the server site or
+a brief list of critical scripts are provided at the end of this
+document.  If you want to install a Sci2Web_ server site at your own
+computer please read the `Installation guide <install.html>`_.  On the
+other hand if you have already ported an application and want to test
+it read the `Sci2Web user guide <user.html>`_.
 
 Presenting Sci2Web_
 ~~~~~~~~~~~~~~~~~~~
@@ -66,7 +66,9 @@ Quick start (Summary)
 If you have not enough patience to read the rest of this document and
 think that you can *interpolate* many of the details regarding the
 configuration of a new Sci2Web_ application, follow the next steps and
-get an usable web interface to your NDSA in a couple of minutes:
+get an usable web interface to your SA in a couple of minutes.
+
+.. Important::
 
 #. Place all your application files and any other third party files in
    a single directory.

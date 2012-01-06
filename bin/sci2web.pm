@@ -13,12 +13,7 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #DATABASE INFORMATION
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-$DBNAME="sci2web";
-$DBSERVER="localhost";
-$DBUSER="sci2web";
-$DBPASS="WebPoweredNDSA";
-$APACHEUSER="www-data";
-$APACHEGROUP="www-data";
+require "$ROOTDIR/lib/sci2web.db";
 %CONFIG={};
 
 #################################################################################
