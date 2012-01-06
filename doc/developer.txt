@@ -7,7 +7,7 @@
    // \__ \ (__| |/ /_ \ V  V /  __/ |_) |				 //
    // |___/\___|_|____| \_/\_/ \___|_.__/				 //
    // 		     	    						 //
-   // Bringing naturally developed scientific applications to the web	 //
+   // Bringing scientific applications to the web	 		 //
    // Jorge Zuluaga (2011)	   	      		      	  	 //
    ////////////////////////////////////////////////////////////////////////
    .
