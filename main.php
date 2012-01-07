@@ -102,6 +102,9 @@ $files=preg_split("/;/",$PROJ["MAINTABS"]);
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DISPLAY THE CONTENT OF EACH FILE
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(!file_exists("$PROJ[PROJPATH]/pages/main/content")){
+    systemCmd("mkdir -p $PROJ[PROJPATH]/pages/main/content");
+}
 $i=1;
 foreach($files as $file)
 {
@@ -114,7 +117,6 @@ foreach($files as $file)
   //CREATE THE MAIN PAGE TAB CONTENT THE FIRST TIME
   if(!file_exists("$PROJ[PROJPATH]/pages/main/$file")){
     systemCmd("cp -rf $PROJ[PROJPATH]/doc/install/$file $PROJ[PROJPATH]/pages/main");
-    systemCmd("cp -rf $PROJ[PROJPATH]/doc/install/*.html $PROJ[PROJPATH]/pages/main/content");
   }
 
   //LOAD THE CONTENT
