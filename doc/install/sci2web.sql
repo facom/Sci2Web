@@ -117,4 +117,16 @@ insert into versions
        (version_code,release_date,users_emails_contributor,
 	apps_code)
        values
+       ('2B-1.0',date(now()),'test@sci2web.org;','MercuPy');
+
+insert into versions
+       (version_code,release_date,users_emails_contributor,
+	apps_code)
+       values
        ('3B-dev',date(now()),'test@sci2web.org;','MercuPy');
+
+insert into versions
+       (version_code,release_date,users_emails_contributor,
+	apps_code)
+       values
+       ('3B-1.0',date(now()),'test@sci2web.org;','MercuPy');

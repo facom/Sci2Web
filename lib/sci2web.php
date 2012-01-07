@@ -201,8 +201,8 @@ function checkAuthentication()
       $actcode=mysqlGetField("select * from users where email='$PHP[SignupEmail]'",0,"actcode");
       if($actcode==$PHP["ActivationCode"]){
 	mysqlCmd("update users set activate='1' where email='$PHP[SignupEmail]'");
-	$_SESSION["User"]=$PHP["SignupEmail"];
-	$onload=genOnLoad("notDiv('notlogin','Your account has been activated')");
+	//$_SESSION["User"]=$PHP["SignupEmail"];
+	$onload=genOnLoad("notDiv('notlogin','Your account has been activated. Please login.')");
 	echo "$onload";
       }else{
 	$onload=genOnLoad("notDiv('notlogin','Invalid activation code')");

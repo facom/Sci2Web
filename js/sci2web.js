@@ -294,6 +294,7 @@ function notDiv(notid,text)
     $('#'+notid).html(text);
     $('#'+notid).fadeIn(1000,null);
     setTimeout("$('#"+notid+"').fadeOut(3000,null)",2000);
+    alert(text);
 }
 
 function explainThis(object)
