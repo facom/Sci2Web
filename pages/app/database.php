@@ -144,6 +144,9 @@ Database specification to know the available search variables.
 	    <td class="term">Version:</td><td class="definition">$_SESSION[Version]</td>
 	  </tr>
 	  <tr>
+	    <td class="term">dbauthor:</td><td class="definition">Author of the run</td>
+	  </tr>
+	  <tr>
 	    <td class="term" style="text-align:center;border-bottom:solid $COLORS[dark] 1px" 
 		colspan="2">
 	      Variables

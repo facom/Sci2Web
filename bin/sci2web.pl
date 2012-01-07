@@ -85,6 +85,7 @@ GetOptions(\%options,@cmdopt) or pod2usage(2);
 pod2usage(1) if $options{help};
 pod2usage(-verbose => 2) if $options{man};
 $VERBOSE=1 if($options{verbose});
+vprint "ROOTDIR: $ROOTDIR\n";
 
 ################################################################################
 #ACTIONS
@@ -450,6 +451,7 @@ Consider to create a new version of the application.
 			$defval=$1;
 			vprint "\tNew defval: $defval\n";
 		    }
+		    $varname=$var if($varname!~/\w/);
 		    print fa "#Variable $varname\n$var = $defval\n" if($vartab ne "Results");
 		    print fv "\n";
 		    print "\t\t\tVariable: $var ($varname,$datatype)\n";
@@ -462,7 +464,7 @@ Consider to create a new version of the application.
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#COPY DEFAULT CONF FILE TO RUNS DIRS
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	sysCmd("find $RUNSDIR -name $appname -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\;");
+	sysCmd("find $RUNSDIR -name $appname -exec cp -rf $basedir/sci2web/templates/Default.conf {}/$vername/templates \\; &> /dev/null");
 	
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CREATE THE SQL DATABASE TABLE SCRIPT
@@ -676,7 +678,7 @@ SQL
 	#INSTALLING NEW VERSION
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Installing new version...";
-	$out=sysCmd("basepwd=\$(pwd);cd $tgtdir/$tempver;perl \$basepwd/$BASEDIR/sci2web.pl install --appdir .");
+	$out=sysCmd("cd $tgtdir/$tempver;perl $ROOTDIR/bin/sci2web.pl install --appdir .");
 	rprint $out;
 
 	rprint "New version installed","=";
@@ -1056,6 +1058,10 @@ apps_code='$appname'
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#READ RUN PROPERTIES
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	if(!-e "$rundir/run.info"){
+	    rprint "This is a test run","=";
+	    next;
+	}
 	rprint "Reading configuration files...";
 	%conf_run=readConfig("$rundir/run.info");
 	$runcode=$conf_run{"run_code"};
@@ -1095,6 +1101,11 @@ apps_code='$appname'
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Reading configuration files...";
 	%conf_app=readConfig("$rundir/sci2web/version.conf");
+	if($conf_app{"ResultsDatabase"}=~/false/){
+	    rprint "Your application does not support database storing";
+	    rprint "Skipping","=";
+	    next;
+	}
 	$appname=$conf_app{"Application"};
 	$vername=$conf_app{"Version"};
 	%conf_conf=readConfig("$rundir/run.conf");
@@ -1102,7 +1113,7 @@ apps_code='$appname'
 	%conf_results=readConfig("$rundir/sci2web/results.info");
 	$tbname=$conf_run{"run_app"}."_".$conf_run{"run_version"};
 	$runcode=$conf_run{"run_code"};
-	$author=$conf_run{"run_author"};
+	$author=$conf_run{"users_email"};
 	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
 	$rundate=sysCmd("date +'%Y-%m-%d %H:%M:%S'");
 

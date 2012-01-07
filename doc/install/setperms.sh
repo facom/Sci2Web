@@ -9,4 +9,5 @@ chown -R $APACHE_USER.$APACHE_GROUP pages/*
 chown -R $APACHE_USER.$APACHE_GROUP js/ckfinder/userfiles
 chown $APACHE_USER.$APACHE_GROUP lib/sci2web.{conf,db}
 chmod og-rw lib/sci2web.{conf,db}
+chmod a+x bin/*
 echo "Done."

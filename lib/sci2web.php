@@ -1722,9 +1722,10 @@ function checkSuperUser()
 {
   global $PROJ;
   $condition=(isset($_SESSION["User"]) and 
-	      strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]"));
+	      (strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]") or
+	       strstr("$_SESSION[Contributors]","$_SESSION[User]"))
+	      );
   return $condition;
-	      
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

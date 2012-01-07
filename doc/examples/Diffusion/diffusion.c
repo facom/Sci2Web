@@ -4,12 +4,13 @@
 main(int argc,char *argv[])
 {
   int ini=1;
+  double ndisp=0;
   double x,y,lambda,h,l,d,theta;
   int i,j,N,condition;
   int per=100;
 
   time_t *t;
-  FILE *fl,*fp,*fs,*ft,*fr;
+  FILE *fl,*fp;
   char fname[100];
   char mode[]="w";
   srand48(time(NULL));
@@ -23,44 +24,14 @@ main(int argc,char *argv[])
   //////////////////////////////////////////
   //RESUME
   //////////////////////////////////////////
-  if((fr=fopen("resume.dat","r"))!=NULL){
-    strcpy(mode,"a");
-    fscanf(fr,"%d",&ini);
-    fclose(fr);
-    printf("Resumming at %d\n",ini);
-  }
   fl=fopen(argv[1],mode);
-  fs=fopen("status.dat",mode);
   for(i=ini;i<=N;i++){
     condition=((i%per)==0 || i==ini);
     x=l*drand48();
     y=h*drand48();
     if(condition){
-      //////////////////////////////////////////
-      //STOP
-      //////////////////////////////////////////
-      if((ft=fopen("stop.sig","r"))!=NULL){
-	printf("Stopping at %d\n",i);
-	system("rm -rf resume.dat");
-	exit(0);
-      }
-      //////////////////////////////////////////
-      //PAUSE
-      //////////////////////////////////////////
-      if((ft=fopen("pause.sig","r"))!=NULL){
-	printf("Pausing at %d\n",i);
-	exit(0);
-      }
       sprintf(fname,"scratch/path-%d.dat",i);
       fp=fopen(fname,"w");
-      fprintf(fs,"%d %d\n",i,N);
-      fflush(fs);
-      //////////////////////////////////////////
-      //RESUMING INFORMATION
-      //////////////////////////////////////////
-      fr=fopen("resume.dat","w");
-      fprintf(fr,"%d\n",i);
-      fclose(fr);
     }
     j=0;
     do{
@@ -71,6 +42,8 @@ main(int argc,char *argv[])
       if(condition) fprintf(fp,"%d %e %e\n",j,x,y);
       j++;
     }while(x*(x-l)<=0 && y*(y-h)<=0);
+    ndisp+=j;
+
     fprintf(fl,"%d\t%e\t%e\n",i,x,y);
     if(condition){
       fprintf(stdout,"i = %d, (x,y) = (%.2e,%.2e)\n",i,x,y);
@@ -78,7 +51,11 @@ main(int argc,char *argv[])
     }
   }
   fclose(fl);
-  fclose(fs);
-  system("rm -rf resume.dat");
+  ndisp=ndisp/N;
+  FILE *fr;
+  fr=fopen("sci2web/results.info","w");
+  fprintf(fr,"MeanDispersions=%lf\n",ndisp);
+  fclose(fr);
+
   system("date +%s.%N > end.sig");
 }

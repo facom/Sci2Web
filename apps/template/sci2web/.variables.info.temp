@@ -1,0 +1,23 @@
+#Format:
+#  VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly
+#
+#Where:
+#
+#  VariableName: Name of variable
+#
+#  DefaultValue: Single value 'min<<max==value', selection value
+#  'val1,val2,...==def.val', scrollable value
+#  'min--max--delta==def.val.'
+#
+#  TypeOfVariable: Available types: int, float, varchar, char, file,
+#  boolean, text
+#
+#  CompleteName: Complete name used for prompt the value.
+#
+#  Tab: Tab name.
+#
+#  Group: Group in the tab.
+#
+#  HelpText: Help text for the variable.
+#
+#  ReadOnly: Use 'readonly' if the value cannot be input.

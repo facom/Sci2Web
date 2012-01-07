@@ -29,7 +29,59 @@ User Guide
 Abstract
 ~~~~~~~~
 
+This document presents a complete guide to use Sci2Web_.  You will
+learn here how to run Scientific Applications ported to Sci2Web_
+server sites and how to get previously computed results obtained by
+you or any other users using the same applications.  To start using
+Sci2Web_ in a given server site you have to signup for an account.
+Sci2Web_ have a rather simple interface for creation and management of
+user accounts albeit ensuring the security and privacy of the user
+data.  Once you have created your account you will be able to select
+any available versions of the Scientific Applications ported to the
+Sci2Web_ server site.  In the application page you will be able to
+create, run and control instances of the selected application.
+Results from already finished instances of the application ran by you
+or any other user could be retrieved and download from the application
+page, giving Sci2Web_ the additional power of a dynamic scientific
+database.  Since many scientific applications are sources of tabular
+data, Sci2Web_ includes a simple albeit powerful *web plotting tool*
+able to produce high quality scientific plots.  These and other user
+operations will be explained in detail in the following sections.
+
 Presenting Sci2Web_
 ~~~~~~~~~~~~~~~~~~~
 
 .. include:: presentation.ixt
+
+Creating and managing an account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Selecting the application
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Creating a run
+~~~~~~~~~~~~~~
+
+Controlling the run
+~~~~~~~~~~~~~~~~~~~
+
+Creating templates
+~~~~~~~~~~~~~~~~~~
+
+Creating and running multiple runs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Searching for results 
+~~~~~~~~~~~~~~~~~~~~~
+
+Downloading results
+~~~~~~~~~~~~~~~~~~~
+
+The plotting interface
+~~~~~~~~~~~~~~~~~~~~~~
+
+Plot.
+
+-----------------------
+
+Copyright (C) 2011 Jorge I. Zuluaga

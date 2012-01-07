@@ -1,0 +1,2 @@
+ChangeEnergy=[[ChangeEnergy::0::float::Fractional change in energy due to integrator::Results::General::Fractional change in energy due to integrator]]
+ChangeMomentum=[[ChangeMomentum::0::float::Fractional change in angular momentum::Results::General::Fractional change in angular momentum]]

@@ -10,8 +10,12 @@
 
 To Do:
 
+- Sort database searches by different criteria
+
+- If a run is repeated avoid to create it again
 
 - STOP post.sh execution
+  + Include the post execution in the at
 
 - Allows to sort as desired the control variables
 

@@ -68,30 +68,53 @@ think that you can *interpolate* many of the details regarding the
 configuration of a new Sci2Web_ application, follow the next steps and
 get an usable web interface to your SA in a couple of minutes.
 
-.. Important::
+.. Important:: You can test this procedure using the example
+   application, ``Diffusion``, coming along with the documentation of
+   the server site.  The example application files are located at
+   ``doc/examples``.  To start copy the application to the
+   ``apps/bench`` directory to work in a clean directory::
+   
+     % cp -rf doc/examples/Diffusion apps/bench    
 
 #. Place all your application files and any other third party files in
-   a single directory.
+   a single directory.  For the example application the directory will
+   be ``apps/bench/Diffusion``.
 
 #. Test your application in the command line and be sure it runs
    properly solving all the potential dependencies.
 
 #. Initialize your application as a Sci2Web_ application::
 
-   % perl SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorEmails> --changeslog <ShortDescription>
+   % SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorEmails> --changeslog <ShortDescription>
 
    For the first version of the newly ported application we recommend
    to use the name "dev" (development).  This version could be used by
    the developer to develop new improvements and will change in a
-   rutinary way.
+   rutinary way.  For the example application::
+
+   % SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
+
+   .. Important:: At this point you can add the ``SCI2WEB_PROJPATH``
+      path to your system path in order to make simpler the call to
+      the *sci2web utility scripts* such as ``sci2web.pl``.  Perform
+      this by adding to your ``.bashrc`` file or any other equivalent
+      session file the line::
+
+       % export PATH=$PATH:SCI2WEB_PROJPATH
+
+      where ``SCI2WEB_PROJPATH`` is the directory where Sci2Web_
+      server site has been installed (e.g. /var/www/html/Sci2Web).
+
+   This procedure will create the Sci2Web_ configuration directory
+   ``sci2web`` at your application.
 
 #. Edit the application configuration file ``sci2web/version.conf``
-   and set the most important properties of the application and this
-   first version as desired.
+   and set the most important properties of the application as
+   desired.
 
 #. Identify the control *variables* (variables the final user could
    change using the web interface) and describe them in the
-   ``.sci2web/.variables.info.temp`` template file.
+   ``sci2web/.variables.info.temp`` template file.
 
 #. Identify those files containing the *control variables*, create
    templates for each of them and replace the control variables for
@@ -111,7 +134,7 @@ get an usable web interface to your SA in a couple of minutes.
        [[MeanFreePath]]
        [[Width]] [[Heigh]]
    
-#. Identify the *results variables* and describe them using
+#. (optative) Identify the *results variables* and describe them using
    substitution rules in the file ``sci2web/.results.info.temp``.
 
 #. (optative) Modify the code to allow pausing, stopping and resuming
@@ -120,7 +143,11 @@ get an usable web interface to your SA in a couple of minutes.
 #. Compile information about the control and result variables and fill
    automatically other configuration files for the application::
    
-       % perl sci2web/bin/sci2web.pl contvars --appdir .
+       % sci2web/bin/sci2web.pl contvars --appdir .
+
+   Before continue check the ``sci2web/controlvars.info`` file and
+   check that the variable substitution rules and the tabs/group
+   classification are as you expected.
 
    If an error occur or you want to change the parametrization remove
    the file ``sci2web/.hashvars`` and run again the previous command.
@@ -128,24 +155,24 @@ get an usable web interface to your SA in a couple of minutes.
 #. Check the generation of source files from template files using the
    default value of control variables::
 
-       % perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+       % sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
 
   Check that the source files of your project has been properly
   generated and test again your application from the command line.
 
-#. Further configuration of your application. Edit the following files
-   following the instructions outlined in their templates (we assume
-   that all the files are in the ``sci2web`` subdirectory):
+#. For further configuration of your application edit the following
+   files following the instructions outlined in their templates (we
+   assume that all the files are in the ``sci2web`` subdirectory):
    ``runpipeline.conf``, ``resultswindows.conf``,
    ``sharedfiles.info``, ``outfiles.info``
 
-
    .. Important:: A very important step you should perform before to
-      test your application. The run pipeline of Sci2Web_ requires
-      that the application creates an empty *signal file* with the
-      name ``end.sig`` when it has successfully finished.  You can
-      include the command to create this file in your source codes, in
-      a run script or in your makefile.
+      test your application is to properly *signalize* the execution
+      of your program. The run pipeline of Sci2Web_ requires that the
+      application creates a *signal file* with the name ``end.sig``
+      when it has successfully finished.  You can include the command
+      to create this file in your source codes, in a run script or in
+      your makefile.
 
 #. Test the *run pipeline*::
 
@@ -153,71 +180,71 @@ get an usable web interface to your SA in a couple of minutes.
       % bash sci2web/bin/sci2web.sh compile
       % bash sci2web/bin/sci2web.sh submit
 
-#. Install your application version in a Sci2Web_ server site::
+#. Install your application version in the Sci2Web_ server site::
 
-      % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+      % SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+
+#. Create a release of the application (public version)::
+
+      % SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
 
 #. Test it in the web!   
 
-.. Important:: With this procedure you have installed the development
-   version, ``dev``.  This version will be only visible to the
-   application authors and the version contributors.  In order to
-   *release* your application and allow other users to use it you need
-   to create a public version from a copy of the just created
-   developmente version.  Run this command (we use here the names of
-   the sample application)::
+Detailed procedure
+==================
 
-      % perl SCI2WEB_PATH/bin/sci2web.pl newversion --appname TestDiffusion --tempver dev --newver 1.0
-
-   where ``1.0`` is the code name of the new version.  Each time you
-   create a new version from an existing one it is strongly
-   recommended to edit the configuration file ``version.conf`` and
-   change several properties that the automatic procedure will not
-   modify (e.g. ChangesLog or version brief description).
-
-If you appreciate the details of the procedure outlined before and
-want to know more precisely why all the previous command are used and
-how can they be modified, you can read in the following sections a
-detailed description of the application porting procedure.
-
-Testing your application in the command line
-============================================
+The problem
+-----------
 
 The scenario: you have just finished to debug a piece of sofware you
 have been using in your research.  The software seems interesting
 enough for other scientists working in your field and you finally
-decided to share it with colleagues.
+decided to share it with colleagues.  Our example application,
+``Diffusion`` for example simulates the diffusion of dust particles
+inside a 2-D box and determines where at the box walls the dust
+particles emerge.
 
 Your software is a bunch of source files written probably in different
 languages, data files, scripts and third party tools (binaries,
-libraries, header files, etc.) included or not among your files.  
+libraries, header files, etc.) included or not among your files.  For
+example ``Diffusion`` is a simple application consisting of a C source
+file (``diffusion.c``), a header file (``diffusion.h``) a plain text
+configuration file (``parameters.ini``) and a gnuplot script
+(``plot-out.gpl``).  Additionally a ``Makefile`` is provided to
+simplify the compilation of the C program.
 
 The user interacts with your program in different ways.  It is
-probably that your software uses specially formatted input files to
-set up the program and takes other input data, on which probably the
-action occurs, from other data files.  It is also possible that some
-information enters to your programs and scripts through the command
-line.  More strange is that your software depends on some input given
-from the keyboard.  In that case and as a general rule of thumb we
-recommend to avoid any interactive input since it will make harder to
-run the program in batch mode (unsupervised runs).
+probably that your software uses specially formatted input files
+(e.g. the ``parameters.ini`` file) to set up the program and takes
+other input data, on which probably the action occurs, from other data
+files.  It is also possible that some information enters to your
+programs and scripts through the command line (e.g. the program
+diffusion.out should be invoked with the name of the output file,
+``./diffusion.out salida.txt``).  More strange is that your software
+depends on some input given from the keyboard.  In that case and as a
+general rule of thumb we recommend to avoid any interactive input
+since it will make harder to run the program in batch mode
+(unsupervised runs).
 
 The output of the program can be also diverse ranging from data going
 to the standard output and standard error, new data files and why not
 a figure or a plot produced by some plotting program (e.g. gnuplot).
 Again we recommend that all plots produced by your software be
 redirected to an image file eliminating any dependence of an available
-X connection.
+X connection.  Our example application puts in the standard output a
+summary report of the diffusion of selected dust particles and creates
+files for those particles with the coordinates of the particle at each
+step in a ``scratch`` directory.
 
 If you are organized enough your application includes also a simple
 documentation prepared in some kind of readable format (text or html
-files).
+files).  ``Diffusion`` for example includes a README file.
 
 All these features are typical of most of the applications developed
 by scientist as part of their research.  We are calling here this type
-of software *Naturally Developed Scientific Applications, NDSA*.  A
-pictorial model of the structure and interface of a generic NDSA is
-depicted in figure 1.
+of software *Scientific Applications, SA*.  A pictorial model of the
+structure and interface of a generic SA is depicted in the following
+figure.
 
 .. image:: images/NDSA-interface-model.jpg
 
@@ -230,21 +257,11 @@ is to see if the program at run time is able to load *share libraries*
 an issue not always easy to solve.
 
 Preparing the application
-=========================
+-------------------------
 
-It is time to configure your application in order to use Sci2Web_ as
-the web interface to control it.  In the following we will call this
-procedure *application porting*.  To illustrate how to port an
-application to Sci2Web_ we will work with the sample application
-already installed in the Sci2Web_ server site you have installed.  A
-fresh copy of the example application is found at ``doc/examples``.  
-
-Try to follow the procedure described below using your own
-application.
-
-Our sample application has been copied and tested in a directory
-called ``Diffusion``.  This directory could be placed anywhere in your
-server.
+It is time to configure your application in order to use Sci2Web_ as a
+web interface to control it.  In the following we will call this
+procedure *Application Porting*.  
 
 Our example application has the following components:
 
@@ -268,7 +285,7 @@ line::
    % ./diffusion.out salida.txt
 
 The application computes the trajectory in a random walk of a given
-number of *dust* particles (by default 10000) inside a twi dimensional
+number of *dust* particles (by default 5000) inside a two dimensional
 rectangular box.  The purpose is to compute several statistical
 properties of the system such as the average number of dispersions and
 the final distribution of dust particles in the box walls.
@@ -285,8 +302,12 @@ the **Sci2Web utility scripts**.  The scripts are located in the
 directory ``SCI2WEB_PROJPATH/bin`` where ``SCI2WEB_PROJPATH`` is the
 directory where Sci2Web_ was installed in your server
 (e.g. ``/var/www/Sci2Web``).  You may want to include this directory
-in your path to simplify the following steps.  In other case you will
-have to invoque the scripts using the complete path.
+in your path to simplify the following steps::
+
+  % export PATH=$PATH:SCI2WEB_PROJPATH
+
+In other case you will have to invoque the scripts using the complete
+path.
 
 Initialize your application as a Sci2Web application
 ....................................................
@@ -297,16 +318,16 @@ in the directory of your application.  You can initialize all those
 files with a single command using the perl *utility script*
 ``sci2web.pl``::
 	
-  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorsEmails> --changeslog <ShortDescription>
+  % SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorsEmails> --changeslog <ShortDescription>
 
 where ``<ApplicationName>`` is the name of your application and
 ``<VersionName>`` is the name of the version you are presently
 configuring.  ``<ContributorsEmails>`` is a list of the ``;``
 separated e-mails of the contributors of this version of the
 application.  The contributors emails will be used to identify which
-users has super user grants on the version webpage.
+users has administrative grants on the version web page.
 ``<ShortDescription>`` is a short description of this version and how
-it is different from previous ones.
+it is different from previous versions.
 
 .. Important:: Applications in Sci2Web should have proper names that
    will be used to identify them not only in the database, the
@@ -324,34 +345,31 @@ it is different from previous ones.
    the developer takes *snapshot* of its work and release static
    versions of the application.  If new changes must be done on a
    given version of your application is better to create a new version
-   instead of change an existing one.  To reduce the burden of create
-   versions for any change you make on your applications (actually not
-   all changes will require the creation of completely new versions,
-   the most critical changes involve the control variables defined in
-   the next section) we recommend the creation of an initial version
-   of any application called the ``dev`` version intended to be
-   continuously modified.  Final users will not be able to see that
-   version.
+   instead of changing an existing one.  To reduce the burden of
+   create versions for any change you make on your applications
+   (actually not all changes will require the creation of completely
+   new versions being the most critical those that involve the control
+   variables defined in the next section) we recommend the creation of
+   an initial version identified as the ``dev`` version.  This version
+   could be continuously modified.  Final users will not be able to
+   see that version.
 
 To initialize our sample application the command will be::
 
-  % perl SCI2WEB_PROJPATH/sci2web.pl init --appname TestDiffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
-
-Please notice that we are using the name ``TestDiffusion`` instead of
-``Diffusion`` simply because an application with that name has been
-already installed with the initial files of the server site.  
+  % SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
 
 As has been said before the initialization step creates all the
 configuration files required to set up a Sci2Web application and
-gather them in a single subdirectory named ``sci2web``.  Do not move
+gather them into a single subdirectory named ``sci2web``.  Do not move
 or change the name of this subdirectory.
 
 Once your application has been initialized you have to fill out the
 configuration files.  Several files are automatically filled using the
-utility scripts by other ones should be eidted manually.
+utility scripts by other ones should be eidted manually.  We will
+explain below which files and how should be edited.
 
-Select the *control variables*
-..............................
+Identifying the *control variables*
+...................................
 
 The first step to configure a Sci2Web_ ported application, is to
 select the variables that could be controlled by the user.  We will
@@ -359,8 +377,8 @@ call them the *control variables*.  The value of the control variables
 will be passed by the user using a web form in the Sci2Web_ interface.
 
 The most natural source of control variables are the input files.  In
-our sample application case this role is played by the
-``parameters.ini`` file::
+our example application this role is played by the ``parameters.ini``
+file::
 
    10000
    0.1
@@ -379,13 +397,13 @@ create a copy of this file with the name ``.parameters.ini.temp``
    [[MeanFreePath::0.1::float::Mean free path]]
    [[Width::3::float]] [[Heigh::5::float]]
 
-The code between double square brackets is called *substitution rules*
-and have two functions: 1) *tag* the place in a file where a control
-variable should be replaced by the value given by the user and 2)
-provide complete information to Sci2Web_ about the control variables
-itself, such as the internal name of the variable, the *numeric* type
-and even the help text that will appear close to the input element in
-the web form (see below).
+The code between double square brackets is called a *substitution
+rule* and have two functions: 1) *tag* the place in a file where a
+control variable should be replaced by the value given by the user and
+2) provide complete information to Sci2Web_ about the control
+variables itself, such as the internal name of the variable, the
+*numeric* type and even the help text that will appear close to the
+input element in the web form (see below).
 
 The general syntax of a substitution rule is::
     
@@ -404,10 +422,15 @@ Where:
      
   - *Single value* (e.g. 3): the input is a simple text box.
 
-  - *Range of values* (e.g. 0--10==5): double dash separated range of
-    values plus the default value assumed in that range.  In this case
-    the input is performed using a simple text box plus a scroll bar.
-    This method is strongly recommended when certain values of a
+  - *Constrained value* (e.g. 0<<10==3): the input is a simple text
+     box.  The values between the ``<<`` symbols are the minimum and
+     maximum values.  If no minimum (maximum) value is provided it
+     will be assumed as ``-1E+100`` (``+1E+100``).
+
+  - *Range of values* (e.g. 0--10--1==5): double dash separated range
+    of values plus the default value assumed in that range.  In this
+    case the input is performed using a simple text box plus a scroll
+    bar.  This method is strongly recommended when certain values of a
     variable should be avoided.
 
   - *List of values* (e.g. Yes;;No==Yes): double comma separated set
@@ -427,13 +450,13 @@ Where:
   .. important:: The input method determined by the variable type
      overrides the DefaultValue specification.  For example if you
      create a variable with Default value ``Yes;;No==Yes`` of type
-     ``text`` the input will be through a textarea element instead of
-     a select element as expected from the default value
+     ``text`` the input will be performed using a textarea element
+     instead of a select element as expected from the default value
      specification.
 
 * **Type of variable**: most of the types follows the mysql convention
   without modifiers (e.g. int instead of int(8)).  Other types are
-  specific to Sci2Web_ (text,bool,file).  Valida datatypes are: int,
+  specific to Sci2Web_ (text,bool,file).  Valid datatypes are: int,
   float, varchar, bool, file and text.
 
 * **Complete name of the variable**.  This name will be used as the
@@ -446,8 +469,8 @@ Where:
   the value of physical properties of your applications and variables
   controlling numerical attributes.  The Tab field in the substitution
   rule allows you to classify you control variables.  Variables
-  without a Tab attribute will be classified in a ``Control
-  Variables`` default tab.
+  without a Tab attribute will be classified in an ``All`` default
+  tab.
 
 * **Group**: in each tab variables are organized by groups.  This a
   second level of organization introduced specially to be used with
@@ -486,13 +509,13 @@ substitute a single numeric value but in the ``plot-out.gpl`` example
 substitute part of a string.
 
 .. Important:: to simplify the parametrization of complex applications
-   we recommend to create a master template file
-   ``.defaultvalues.conf.temp`` containing the full substitution rules
-   for all the control variables in your application.  Using this file
-   you will avoid to fill your application template files with long
-   substitution rules that will be made those file probably prune to
-   errors.  In our sample application this master template file could
-   be have the following lines::
+   we recommend to edit a *master template file*
+   ``sci2web/.variables.conf.temp`` containing the full substitution
+   rules for all the control variables in your application.  Using
+   this file will avoid you the burden of filling your application
+   template files with long substitution rules that will be made those
+   file probably prune to errors.  In our sample application this
+   master template file could be have the following lines::
 
     NumberParticles=[[NumberParticles::10000::int::Total number of particules]]
     MeanFreePath=[[MeanFreePath::0.1::float::Mean free path]]
@@ -501,7 +524,7 @@ substitute part of a string.
     OutputFile=[[OutputFile::salida::varchar::Name of the output file]]
    
    Once this file is created the application template files
-   ``.parameters.ini.temp`` and ``.plot.gpl.temp`` will just contain
+   ``.parameters.ini.temp`` and ``.plot.gpl.temp`` could just contain
    simplified versions of the substitution rules.  For example the
    ``.parameters.ini.temp`` will now look much readable::
 
@@ -509,24 +532,27 @@ substitute part of a string.
     [[MeanFreePath]]
     [[Width]] [[Heigh]]
 
+   More importantly about the use of a master file to gather the
+   information about the control variables is that you can control
+   there the exact order on which the variables will be organized in
+   the web interface. 
+
 There are finally a set of very important variables that should be set
 up to complete the *parametrization* of your application. They are
-called the *results variables*.  These variables are set up using an
-already created template file ``sci2web/.results.info.temp``.  Copy
-this file to the main directory of the application and edit it to add
-the results variables associated to your application.  For our example
-application we define a result variable called ``MeanDispersions``
-that will be set after the execution of the application with the
-average number of dispersions suffered by the dust particles::
+called the *results variables*.  
+
+These variables are set up using an already created template file
+``sci2web/.results.info.temp``.  For our example application we define
+a result variable called ``MeanDispersions`` that will be set after
+the execution of the application with the average number of
+dispersions suffered by the dust particles::
 
    sci2web/.results.info.temp:
 
    MeanDispersions=[[MeanDispersions::0::float::Average number of dispersions::Results::General::This is a result variable::readonly]]
 
-   % cp sci2web/.results.info.temp .
-
 The ``tab`` and ``group`` for the results variables should not be
-modified.  
+modified.
 
 .. Important:: In order to use properly the results variable feature
    of Sci2Web_ you should configure your application to write down the
@@ -570,7 +596,9 @@ modified.
 	if(condition) fprintf(fp,"%d %e %e\n",j,x,y);
 	j++;
       }while(x*(x-l)<=0 && y*(y-h)<=0);
+      //-------------------->START NEW CODE<--------------------
       ndisp+=j;
+      //-------------------->END NEW CODE<--------------------
       
       fprintf(fl,"%d\t%e\t%e\n",i,x,y);
       if(condition){
@@ -578,11 +606,13 @@ modified.
 	sleep((int)SLEEP);
       }
     }
+    //-------------------->NEW CODE<--------------------
     ndisp=ndisp/N;
     FILE *fr;
-    fr=fopen("results.info","w");
+    fr=fopen("sci2web/results.info","w");
     fprintf(fr,"MeanDispersions=%lf\n",ndisp);
     fclose(fr);
+    //-------------------->END NEW CODE<--------------------
 
    If you cannot change your source file or simply does not want to do
    it we recommend to use external scripts able to extract the results
@@ -595,7 +625,7 @@ are ready to test the generation of source files for your runs from
 those templates.  This a critical step in the generation of new
 instances of the application.  To perform this important step run::
 
-    % perl sci2web/bin/sci2web.pl contvars --appdir .
+    % sci2web/bin/sci2web.pl contvars --appdir .
 
 If an error occur or you want to change the parametrization remove the
 file ``sci2web/.hashvars`` and run again the previous command.
@@ -609,7 +639,7 @@ the initialization of the application.
    already created in Sci2Web_ you should use the absolute path of the
    utility script::
 
-     % perl SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
+     % SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
 
 This command create three files in the ``sci2web`` subdirectory:
 ``controlvars.info``, ``controlvars.sql`` and
@@ -624,7 +654,7 @@ the edition of this file.  The third and last file, ``Default.conf``
 is a sample *run configuration file* containing the value of the
 control variables that will be used to generate the files for a given
 run.  In this case the values are the default ones defined when the
-control variables were described using the substitution rule.
+control variables were described using the substitution rules.
 
 .. Important:: The order of tabs, groups and variables in the
    ``controlvars.info`` file will determine the order at which those
@@ -639,7 +669,7 @@ using the template files and the default *run configuration file*
 (``sci2web/templates/Default.conf``) just created.  To perform this
 run::
 
-    % perl sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+    % sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
 
 This command will create the run files corresponding to each template
 you have previously created.  In our sample they correspond to the
@@ -652,7 +682,7 @@ used in a particular run.
 You can play around modifying ``run.conf`` and generating again the
 run files::
 
-    % perl sci2web/bin/sci2web.pl genfiles --runconf run.conf --rundir .
+    % sci2web/bin/sci2web.pl genfiles --runconf run.conf --rundir .
 
 This exercise will give you an idea if your template files and control
 variable configuration files are properly prepared.
@@ -670,13 +700,13 @@ Configure your application
 Control variables are the most important component of a Sci2Web_
 ported applications.  At this point you have initialized your
 application and configured how a running instance will be parametrized
-and generated through the control variables you have just defined.
+and generated.
 
 There are other important aspects of your application that need to be
 configured before to install it at the Sci2Web server site.  Please
 follow carefully the next procedure to complete your configuration:
 
-#. **The running pipeline**.  In real life every NDSA is normally ran
+#. **The running pipeline**.  In real life every SA is normally ran
    following a fixed set of system commands, a.k.a. the *running
    pipeline*.  For example you could start by cleaning the run
    directory, then you compile your source files, run your
@@ -716,7 +746,7 @@ follow carefully the next procedure to complete your configuration:
      running instance and resume it exactly where the computation be
      when the instance was interrupted.  Not all the applications
      could be paused but if you can program this feature in your
-     source files it could be a very useful property.  Leave blanck
+     source files it could be a very useful property.  Leave blank
      both ``PAUSESCR`` and ``PAUSECMD`` variables if the application
      is not *pausable*.  In this case the action *Pause* will trigger
      the *Kill* action on the application.
@@ -727,7 +757,7 @@ follow carefully the next procedure to complete your configuration:
    * *Post*.  Commands to be executed after the running instance of
      the application has finished.
 
-   * *Status*.  Check the status of the run.  The commands configure
+   * *Status*.  Check the status of the run.  The command configured
      here should be able to return a number between 0 and 1 with the
      degree of advance of your run.  If you are not able to check this
      return a -1 value as the running status.
@@ -738,6 +768,11 @@ follow carefully the next procedure to complete your configuration:
     #######################################################################
     #RUN PIPELINE
     #######################################################################
+
+    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    #QUEUE SYSTEM: at, batch, pbs
+    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    QSYSTEM="at"
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #CUSTOM CLEAN COMMAND OR SCRIPT
@@ -793,13 +828,15 @@ follow carefully the next procedure to complete your configuration:
     STATUSSCR="stat.sh"
     STATUSCMD="echo -1"
 
+    .. Important:: The run pipeline of Sci2Web_ requires that the
+       application creates an empty *signal file* with the name
+       ``end.sig`` when it has successfully finished.  You can include
+       the command to create this file in your source codes, in a run
+       script or in your makefile.  For our example application you
+       could add at the end of the ``diffusion.c`` file the following
+       line::
 
-    .. Important:: A very important step you should perform before to
-       test your application. The run pipeline of Sci2Web_ requires
-       that the application creates an empty *signal file* with the
-       name ``end.sig`` when it has successfully finished.  You can
-       include the command to create this file in your source codes,
-       in a run script or in your makefile.
+          system("dat +%s.%N > end.sig");
 
    It should be mentioned that the ``<ACTION>SCR`` value overrides the
    ``<ACTION>CMD`` command.  Thus for example in the last part of the
@@ -812,19 +849,19 @@ follow carefully the next procedure to complete your configuration:
    will use when trying to control your application.  Test it by
    running::
 
-     % bash sci2web/bin/sci2web.sh clean
+     % sci2web/bin/sci2web.sh clean
 
-   If it works as expected, executing the Clean command or script you
-   have configured in the ``runpipeline.conf`` file try to run other
-   and more complex actions:
+   If it works as expected by executing the command or script
+   you have configured in the ``runpipeline.conf`` file, try to run
+   other and more complex actions:
    
-     % bash sci2web/bin/sci2web.sh compile
-     % bash sci2web/bin/sci2web.sh pre
+     % sci2web/bin/sci2web.sh compile
+     % sci2web/bin/sci2web.sh pre
 
    The most critical action is the *Submit* one.  Verify that it works
    as expected::
 
-     % bash sci2web/bin/sci2web.sh submit
+     % sci2web/bin/sci2web.sh submit
      Executing action submit:
      Signal: submit
      Set submit
@@ -856,47 +893,62 @@ follow carefully the next procedure to complete your configuration:
       only if you are using Sci2Web_ for personal purposes.
 
       If you want to work with a different batch execution system the
-      Sci2Web_ site server manager should change the ``sci2web.sh``
-      script to prepare the job submission accordingly. 
+      Sci2Web_ server site manager should add to the
+      ``SCI2WEB_PROJPATH/bin/queues.sm`` file the set of routines
+      describing how to submit, check the status and kill the job in
+      the respective execution system.  The ``queues.sm`` file
+      provided with the present version of Sci2Web_ contains the
+      routines for the at, batch and torque/pbs execution system.  You
+      can write down your version of this routines for different
+      resource managers and schedulers (e.g. LFS, GE, Condor, etc.)
 
-      For example if you want to change ``at`` for ``batch`` (which
-      launches proccesses only if the server load is low enough) you
-      should replace the ``at now`` command for the ``bacth`` command
-      in the following part of the ``sci2web.sh`` script::
-       
-	#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	#THESE LINES CAN BE CHANGED ACCORDING TO YOUR QUEUE SYSTEM 
-	#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	if ! at now < /tmp/apprun.$$ &> /tmp/jobinfo.$$;then
-	    echo "Error submitting your job:"
-	    cat /tmp/jobinfo.$$
-	    rm -rf /tmp/*.$$
-	    exit 1
-	fi
-	cat /tmp/jobinfo.$$
-	jobid=$(tail -n 1 /tmp/jobinfo.$$ | cut -f 2 -d ' ')
-	echo $jobid > jobid.oxt
-	#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+      In public servers we strongly recommend to use torque/pbs as the
+      batch execution system.  In the `Appendixes`_ we have included a
+      complete albeit simple guide to install torque/pbs at a linux
+      server.  You could also try to use this system even if you are
+      working on a private server.
+
+      The sample application installed with the Sci2Web_ server site
+      uses by default the ``at`` system.  You can override this
+      behavior (and we strongly recommend to do it) by changing
+      manually the ``runpipeline.conf`` file of every version of this
+      application or override the ``at`` submission routines at the
+      ``queue.sm`` file.  As an example you could tell Sci2Web_ about
+      changing all the runs submitted with ``at`` to do it instead
+      with ``pbs`` changing the line::
+
+         at|batch)
+
+      by::
    
+	 batch)
+
+      and the line::
+
+         pbs)
+	 
+      by this other one::
+
+         at|pbs)
+
    The utility script ``sci2web.sh`` includes another actions that
    could be useful for other purposes: **cleanall**, cleans all the
    run directory including files generated by the control script;
    **test**, performs a complete test on the running instance
    including pause, stop and resume commands; **kill**, kills the
    presently running instance; **status** check the status of the
-   running instance.  You can run several action in tandem::
+   running instance.  You can run several action "in tandem"::
 
-     % bash sci2web/bin/sci2web.sh cleanall compile pre submit
+     % sci2web/bin/sci2web.sh cleanall compile pre submit
 
    This is the recommended way to test the running pipeline.
 
 #. **Select common files**.  When Sci2Web_ creates a new instance of
    an application many files could be duplicated what compromises the
-   storage capacity of tou web server.  Many of those duplicated files
-   could be shared among different running instances reducing the
-   space required to have an active Sci2Web_ application.  You can
-   list the files that will be shared using the
+   storage capacity of your web server.  Many of those duplicated
+   files could be shared among different running instances reducing
+   the space required to have an active Sci2Web_ application.  You can
+   enumerate the files that will be shared using the
    ``sci2web/sharedfiles.info`` file.  One object should be listed per
    line in this file.  For our example application if you want to
    share the files ``Makefile`` and all the files having the name
@@ -930,14 +982,14 @@ follow carefully the next procedure to complete your configuration:
    * *The information web pages*.  This is a set of editable web pages
      containing information about your application.  These pages could
      be freely edit by the creator of the application and the
-     crontibutors of the respective version.  These are the pages that
-     any visitor will be first see when openning the page of your
-     application.  It is strongly recommended to include in the web
-     pages information as ecomplete as possible about your application
-     including links to possible documentation (that could be also
-     stored in the server site), download options (if applicable) or
-     links to the Sci2Web_ documentation (specially to the user
-     guide).
+     crontibutors of the respective version.  These pages will be the
+     first thing that a visitor will see when openning the page of
+     your application.  It is strongly recommended to include in the
+     web pages information as complete as possible about your
+     application including links to possible documentation (that could
+     be also stored in the server site), download options (if
+     applicable) or links to the Sci2Web_ documentation (specially to
+     the user guide).
 
      You can disable the information web pages by editing the
      configuration file ``sci2web/version.conf`` and changing the
@@ -968,7 +1020,7 @@ follow carefully the next procedure to complete your configuration:
        QueueMode = RunHistory
 
      You can turn back to the queue system changing the name of the
-     variable to ``QueueList`` (default choice).
+     variable to ``QueueList`` (default choice)::
 
        QueueMode = QueueList
 
@@ -987,11 +1039,11 @@ follow carefully the next procedure to complete your configuration:
      complete parameter space exploration an user could store results
      that will be useful for others desiring to explore the same or an
      overlapping region of the parameter space.  With the results
-     database all they have to do is search for the results already
+     database all they have to do is to search for the results already
      computed for that part of the parameter space and compute only
      new results in the unexplored region.
 
-     Sci2Web_ provide to any application with a special designed page
+     Sci2Web_ provide any application with a specially designed page
      to search for results stored in the database.
 
      If your application is very simple or you do not want to store a
@@ -1011,14 +1063,6 @@ follow carefully the next procedure to complete your configuration:
      instance and control the execution of your application.  There
      are several attributes of the configuration window that can be
      customized:
-
-      - TabHeight (value given in ``px`` or ``%``, default 80%):
-        Height of the configuration tabs used to display the input
-        forms for the control variables.
-	
-      - RunTab (boolean, default ``true``): Determines if a special
-        tab is included to input potential editable information about
-        the run.
 
       - FilesTab (boolean, default ``true``): Determines if a tab with
         the list of files associated to the run are displayed or not.
@@ -1047,14 +1091,14 @@ follow carefully the next procedure to complete your configuration:
        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        Tab=Status
        Content=Module:Status
-       RefreshTime=5000
+       RefreshTime=-1
 
        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        #STANDARD OUTPUT AND STANDARD ERROR
        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        Tab=Output
        Content=File:stdout.oxt;File:stderr.oxt
-       RefreshTime=1000
+       RefreshTime=-1
 
        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        #FILES TAB
@@ -1089,44 +1133,86 @@ follow carefully the next procedure to complete your configuration:
       + *ListFiles*: list of files of a given subdirectory in the run
         directory.  Parameters: ``SubDir``, ``Filter``.
 
+      + *Gallery*: an image gallery.  Parameters: ``Criterium``.
+
       Parameters are given to modules using the same syntax as ``php``
       scripts using an initial ``?`` and ``&`` to separate different
       module parameters.
 
     The ``RefreshTime`` is given in milliseconds.  You should be
-    carefull to not set a very small refresh time for your tabs
-    because it could load your web server with apache2 zombie
-    processes.
+    careful to not set a very small refresh time for your tabs because
+    it could load your web server with apache2 zombie processes.
 
     At the end of this configuration file you will be able to set up
     the properties of a framed version of the configuration and
     results windows.  For small applications it is more comfortable to
     have a single window where the configuration form and the results
     are displayed together.  This is the function of this tabbed
-    window.  You can select here if you want to stack the
-    configuration and results frames stacked horizontally (``cols``,
-    this is the default) or vertically (``rows``).  You can also
-    modify the relative sizes of the frames.
+    window.  You can select here if you want that the configuration
+    and results frames be stacked horizontally (``cols``, this is the
+    default) or vertically (``rows``).  You can also modify the
+    relative sizes of the frames.
 
 Installing your application in your Sci2Web_ server site
-========================================================
+--------------------------------------------------------
 
 The last steps in order to have your application succesfully installed
 in the Sci2Web_ server site is to copy the application files in the
 server directory and register your application in the master database.
-These steps could be executed with a single command::
+Before to perform this last and critical step be sure that the
+application directory is cleaned for all temporal files generated
+during the testing phases::
 
-   % perl SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+   % sci2web/bin/sci2web.sh cleanall
+
+To install the application automatically use the utility script::
+
+   % SCI2WEB_PATH/bin/sci2web.pl install --appdir .
 
 .. Important:: Notice that you should call the utility script
    ``sci2web.pl`` using the absolute path instead of using the
    symbolic link to the ``bin`` directory.  This command will fail to
    install your application::
 
-     % perl sci2web/bin/sci2web.pl install --appdir .
+     % sci2web/bin/sci2web.pl install --appdir .
+
+If accidentally you have installed your application including a lot of
+temporal files you will still be able to clean the application of the
+extra files by going directly to the installed application,
+e.g. ``apps/Diffusion/dev``, and running there the ``cleanall``
+command.  
+
+If something has gone wrong with the installation you can always
+remove the application, correct the problems and reinstall it.  Remove
+the application using the command::
+
+    % SCI2WEB_PATH/bin/sci2web.pl remove --appname <Application>
+
+.. Important:: With this procedure you have installed the development
+   version, ``dev``.  This version will be only visible to the
+   application authors and the version contributors.  In order to
+   *release* your application and allow other users to use it you need
+   to create a public version from a copy of the just created
+   developmente version.  Run this command (we use here the names of
+   the example application)::
+
+      % SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
+
+   where ``1.0`` is the code name of the new version.  Each time you
+   create a new version from an existing one it is strongly
+   recommended to edit the configuration file ``version.conf`` and
+   change several properties that the automatic procedure will not
+   modify (e.g. ChangesLog or version brief description).
+
+If you really appreciate to know what are the details of the procedure
+outlined before and/or want to know more precisely why all the
+previous command are used and how can they be modified, you can read
+in the following subsections a detailed description of the application
+porting procedure.
+
 
 Testing your newly ported application
-=====================================
+-------------------------------------
 
 If everything has been ran smoothly up to this point you are ready to
 start using your application with a brand new web interface!
@@ -1236,15 +1322,15 @@ two critical directories:
  	   can check the content of any table of the database from the
  	   command line using the command::
 
-	     % perl bin/sci2web.pl showdb --describe --table <table>
-	     % perl bin/sci2web.pl showdb --entries --table <table>
+	     % bin/sci2web.pl showdb --describe --table <table>
+	     % bin/sci2web.pl showdb --entries --table <table>
 
 	   where ``<table>`` could be ``users``, ``apps``,
 	   ``versions``, ``runs`` or ``<app>_<version>``.  To check
 	   which applications and versions exists run::
 
-	     % perl bin/sci2web.pl showdb --entries --table apps
-	     % perl bin/sci2web.pl showdb --entries --table versions
+	     % bin/sci2web.pl showdb --entries --table apps
+	     % bin/sci2web.pl showdb --entries --table versions
 	   
   **runs**
   
@@ -1260,6 +1346,118 @@ two critical directories:
 	subdirectory identified with the e-mail of the user and where
 	all the run instances of every application ran by the user are
 	stored.
+
+Appendixes
+~~~~~~~~~~
+
+Installing and configuring TORQUE/PBS
+=====================================
+
+One of the most popular systems to manage a set of computational
+resources and schedule jobs to use them is the TORQUE/PBS system.  In
+this section we will explain how to install and configure TORQUE in a
+linux server and a set of execution nodes connected to them through
+the network.  
+
+You can find detailed description of TORQUE and further details about
+the configuration of this system in the Administrator Manual at the
+official site of the project
+`<http://www.clusterresources.com/torquedocs>`_.
+
+* Get the sources:
+  `<http://www.adaptivecomputing.com/resources/downloads/torque>`_.
+
+* Unpack and install the package in the server::
+  
+  # tar zxvf torque-<version>.tar.gz -C /usr/local/src
+  # cd /usr/local/src/torque-<version>
+  # ./configure && make && make install
+  # make packages
+
+* Create daemons initialization scripts: for each <service> in
+  ``pbs_server``, ``pbs_sched``, ``pbs_mom`` do::
+
+    # cp contrib/init.d/debian.<service> /etc/init.d/<service>
+    # update-rc.d <service> defaults
+  
+* Configure:
+
+  + Create pbs database and basic queue::
+
+    # ./torque.setup root
+
+  + Configure nodes::
+
+    # nano /var/spool/torque/server_priv/nodes
+
+    <node1> np=<np>
+    <node2> np=<np>
+
+  + Configure mom::
+
+    # nano /var/spool/torque/mom_priv/config
+
+    $pbsserver <head_node>
+
+    .. NOTE:: You have to be sure that the server and the nodes IPs,
+       names and aliases are properly configured in the /etc/hosts
+       file.  Example::
+
+	      192.168.0.1  headnode.net headnode
+	      192.168.0.2  node1.net node1
+	      192.168.0.3  node1.net node1
+
+* Start services: for each <service> in ``pbs_server``, ``pbs_sched``,
+  ``pbs_mom`` do::
+
+  # service <service> start
+
+* In the compute nodes:
+
+  + Get Torque/PBS sources.
+  
+  + Configure, compile and install::
+
+    # ./configure --disable-server
+    # make && make install
+
+  + Copy /var/spool/mom_priv/config from the head node to each compute
+    node.
+
+  + Configure and start the ``pbs_mom`` daemon.
+
+* Test:
+
+  + Check nodes::
+  
+    # pbsnodes -a 
+    
+  + Check run::
+
+    # su -l <user>
+
+    Create a file ``test-pbs.sh``::
+
+    	   #!/bin/bash
+	   #PBS -j oe
+    	   #PBS -o /tmp/test-job.out
+    	   #PBS -N Test
+    	   env | grep PBS
+    	   cd /tmp
+    	   date
+    	   ls -R / &> /tmp/test-ls.out
+    	   date
+
+    Submit and check the job::
+
+      $ qsub test-pbs.sh
+      $ qstat -a
+      $ qstat -q
+      $ qdel <jobid>
+
+    Where jobid is the id of the job you have just submitted.
+
+Enjoy!
 
 -----------------------
 

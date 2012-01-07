@@ -50,7 +50,23 @@ You have to signup before to access the application queue
 </center>
 RUNS;
 goto end;
+}else{
+  if(preg_match("/dev/",$_SESSION["VersionId"]) and
+     !checkSuperUser()){
+$result=<<<RUNS
+<center>
+<p class="error">
+You cannot submit runs of a development version.<br/>
+Please check if a
+release version of the application is available or contact the
+developers.
+</p>
+</center>
+RUNS;
+     goto end;
+  }
 }
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DIRECTORIES
@@ -298,6 +314,22 @@ list($bugbut,$bugform_filter)=
 	      "Problems filtering",
 	      $VERCONFIG["EmailsContributors"]);
 
+$contpanel=<<<CONTROL
+<div class="actionbutton">
+  <a href="JavaScript:void(null)"
+     onclick="$('#controlpanel').toggle('slow',null)"
+     onmouseover="explainThis(this)"
+     explanation="Click to show control panel"
+     >
+    Control Panel
+  </a>
+</div>
+CONTROL;
+
+if($VERCONFIG["QueueMode"]=="RunsHistory"){
+  $contpanel="";
+}
+
 $tablehead.=<<<HEADER
 <tr><td colspan=10>
     <div style="position:relative">
@@ -313,15 +345,7 @@ $tablehead.=<<<HEADER
 	  $BUTTONS[Remove]
 	</button>
       </div>
-      <div class="actionbutton">
-	<a href="JavaScript:void(null)"
-	   onclick="$('#controlpanel').toggle('slow',null)"
-	   onmouseover="explainThis(this)"
-	   explanation="Click to show control panel"
-	   >
-	  Control Panel
-	</a>
-      </div>
+      $contpanel
       <div style="position:absolute;top:0px;right:0px">
 	<div class="actionbutton">
 	  <label><big>

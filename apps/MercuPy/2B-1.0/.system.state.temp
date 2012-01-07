@@ -1,0 +1,100 @@
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#DESCRIPTION
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DOCSTRING=\
+"""
+[[SystemDescription]]
+"""
+
+from mercupy import *
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GLOBAL PROPERTIES OF INTEGRATION
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EPOCH=[[Epoch]]
+
+TIME_UNIT="[[TimeUnits]]"
+TIME_START=[[TimeStart]]
+TIME_STOP=[[TimeStop]]
+TIME_STEP=[[TimeStep]]
+
+DT_OUTPUT=[[DtOutput]]
+DT_OUTPUTELEM=[[DtOutputElements]]
+DT_DATADUMPS=[[DtDataDumps]]
+
+COORDINATES[CENTRAL]="[[CoordinatesCentral]]"
+COORDINATES[BIG]="[[CoordinatesBig]]"
+COORDINATES[SMALL]="[[CoordinatesSmall]]"
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#BODIES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BODIES=[
+#####################
+#CENTRAL BODY:
+#####################
+body(
+Type=CENTRAL,
+Code="CENTRAL",
+Name="[[CentralName]]",
+Mass=[[CentralMass]],
+ObjectClass=[[CentralClass]],
+Density=[[CentralDensity]],
+Radius=[[CentralRadius]],
+Frame="CENTRAL",
+Units=[[CentralUnits]],
+Ep=EPOCH,
+State="[[CentralState]]",
+Cartesian=np.array([0.0,0.0,0.0,0.0,0.0,0.0]),
+J2=[[CentralJ2]],J4=[[CentralJ4]],J6=[[CentralJ6]],
+CloseEncounter=1.0,
+ShowObject=False,
+),#COMMA MANDATORY
+#####################
+#SECONDARY BODY
+#####################
+body(
+Type=BIG,
+Code="BODY",
+Name="[[BodyName]]",
+Mass=[[BodyMass]],
+ObjectClass=[[BodyClass]],
+Density=[[BodyDensity]],
+Radius=[[BodyRadius]],
+Ep=EPOCH,
+Frame="CENTRAL",
+Units=[[BodyUnits]],
+State="[[BodyState]]",
+As="[[BodyAs]]",
+Spin="[[BodySpin]]",
+CloseEncounter=[[BodyClose]],
+ShowObject=True,
+),#COMMA MANDATORY
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#END BODIES
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+]#THIS LINE IS MANDATORY
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GENERAL BEHAVIOR OF THE INTEGRATOR
+#Modify only if you know what are you doing
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#STOP INTEGRATION AFTER A CLOSE ENCOUNTER
+STOPINTEG="[[StopIntegration]]"
+#ALLOW COLLISIONS TO OCCUR
+COLLISIONS="[[Collisions]]"
+#INCLUDE COLLISIONAL FRAGMENTATION
+FRAGMENTATION="no"
+#ALGORITHM (MVS, BS, BS2, RADAU, HYBRID ETC)
+INTEGRATION_ALGORITHM="[[IntegrationAlgorithm]]"
+#ACCURACY
+INTEGRATION_ACCURACY=[[IntegrationAccuracy]]
+#OUTPUT PRECISION = MEDIUM
+INTEGRATION_PRECISION="[[IntegrationPrecision]]"
+#HYBRID INTEGRATOR CHANGEOVER (HILL RADII) = 3.
+INTEGRATION_CHANGEOVER=[[IntegrationChangeOver]]
+#REFERENCE FRAME FOR OUTPUT ELEMENTS: CENTRAL, BARYCENTRIC, JACOBI
+OUT_ELEMENTS="[[CentralReference]]"
+#NUMBER OF TIMESTEPS BETWEEN PERIODIC EFFECTS 
+DSTEP_PERIODIC=[[DStepPeriodic]]
+#EXPRESS TIME RELATIVE TO INTEGRATION START TIME
+TIME_RESPINTEGRATION="[[TimeRelativeIntegration]]"
