@@ -173,14 +173,14 @@ function checkAuthentication()
 	  systemCmd("rm -rf $PROJ[TMPPATH]/*$PHP[SESSID]*");
 	  session_unset();
 	  $onload=genOnLoad("notDiv('notlogin','Password changed<br/>You need to activate your account again')");
-	  echo "$onload";
+	  return $onload;
 	}else{
 	  $onload=genOnLoad("notDiv('notlogin','Passwords does not match')");
-	  echo "$onload";
+	  return $onload;
 	}
       }else{
 	$onload=genOnLoad("notDiv('notlogin','Old password invalid')");
-	echo "$onload";
+	return $onload;
       }
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +191,7 @@ function checkAuthentication()
       systemCmd("rm -rf $PROJ[TMPPATH]/*$PHP[SESSID]*");
       session_unset();
       $onload=genOnLoad("notDiv('notlogin','¡Hasta la vista!')");
-      echo "$onload";
+      return $onload;
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //ACTIVATE ACCOUNT
@@ -203,10 +203,10 @@ function checkAuthentication()
 	mysqlCmd("update users set activate='1' where email='$PHP[SignupEmail]'");
 	//$_SESSION["User"]=$PHP["SignupEmail"];
 	$onload=genOnLoad("notDiv('notlogin','Your account has been activated. Please login.')");
-	echo "$onload";
+	return $onload;
       }else{
 	$onload=genOnLoad("notDiv('notlogin','Invalid activation code')");
-	echo "$onload";
+	return $onload;
       }
       //$_SESSION["User"]=$PHP["SignupEmail"];
     }
@@ -222,7 +222,7 @@ function checkAuthentication()
 	$onload=
 	  genOnLoad("notDiv('notlogin','Check your e-mail for a new password')");
       }
-      echo "$onload";
+      return $onload;
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //LOGIN
@@ -235,14 +235,14 @@ function checkAuthentication()
 	if($codepass==$pass){
 	  $_SESSION["User"]=$PHP["LoginEmail"];
 	  $onload=genOnLoad("notDiv('notlogin','Welcome')");
-	  echo "$onload";
+	  return $onload;
 	}else{
 	  $onload=genOnLoad("notDiv('notlogin','Password invalid')");
-	  echo "$onload";
+	  return $onload;
 	}
       }else{
 	$onload=genOnLoad("notDiv('notlogin','Your account has not been activated.<br/>Check your e-mail')");
-	echo "$onload";
+	return $onload;
       }	
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -279,14 +279,14 @@ TEXT;
 	  sendMail($email,$subject,$text,$from,$replyto);
 	  //NOTIFICATION
 	  $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
-	  echo "$onload";
+	  return $onload;
 	}else{
 	  $onload=genOnLoad("notDiv('notlogin','Passwords does not match')");
-	  echo "$onload";
+	  return $onload;
 	}
       }else{
 	$onload=genOnLoad("notDiv('notlogin','User already exists')");
-	echo "$onload";
+	return $onload;
       }
     }//END SIGNUP
   }//END IF USER OPERATION

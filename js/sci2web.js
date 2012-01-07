@@ -291,7 +291,6 @@ function submitForm(formid,script,
 
 function notDiv(notid,text)
 {
-    alert(text);
     $('#'+notid).html(text);
     $('#'+notid).fadeIn(1000,null);
     setTimeout("$('#"+notid+"').fadeOut(3000,null)",2000);
