@@ -104,6 +104,7 @@ $files=preg_split("/;/",$PROJ["MAINTABS"]);
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(!file_exists("$PROJ[PROJPATH]/pages/main/content")){
     systemCmd("mkdir -p $PROJ[PROJPATH]/pages/main/content");
+    systemCmd("cp -rf $PROJ[PROJPATH]/doc/install/*.html $PROJ[PROJPATH]/pages/main/content");
 }
 $i=1;
 foreach($files as $file)
