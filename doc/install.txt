@@ -292,19 +292,22 @@ To install a Sci2Web_ server site in your server follow these steps:
    If after load the mainpage all the tabs appear blank check the
    permissions of the ``PROJPATH/pages/main`` directory.
 
-#. **Create an user account**.  To start using the tool you have to
-   sign up for an account.  If you sign up for an account with the
-   e-mail ``test@sci2web.org`` you will be able to edit and perform
-   other administrative operations under the example application.  It
-   is recommended to create this account as soon as you complete the
-   installation to avoid that an anonymous user gain access to
-   administrative permissions on the example application.
+#. **Create basic user accounts**.  To start using the tool you have
+   to sign up for an account.  There are two basic user accounts: the
+   WEBMASTER account and the test account (``test@sci2web.org``).
+   Using the WEBMASTER account (as configured in the ``sci2web.conf``
+   configuration file) you will be able to manage every aspect of the
+   server site.  With the test account you will be able to edit and
+   perform other administrative operations under the example
+   application.  It is recommended to create this account as soon as
+   you complete the installation to avoid that an anonymous user gain
+   access to administrative permissions on the example application.
 
    After signup for this account and if you have not enabled the
    sending of e-mail, the link to activate it will be found in the log
    file ``log/mail.log``.  Copy the link from this file and paste it
    into your browser.
-
+   
 At this point you have a new Sci2Web_ **server site** and can start
 porting your SAs into it and sharing with the scientific community.
 
