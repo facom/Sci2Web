@@ -105,7 +105,7 @@ insert into users
 insert into apps 
        (app_code,users_emails_author,creation_date,versions_codes)
        values
-       ('MercuPy','test@sci2web.org;',date(now()),'2B-dev;3B-dev;');
+       ('MercuPy','test@sci2web.org;',date(now()),'2B-dev;3B-dev;2B-1.0;3B-1.0;');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
