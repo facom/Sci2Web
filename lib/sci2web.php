@@ -219,8 +219,32 @@ function checkAuthentication()
 	$onload=
 	  genOnLoad("notDiv('notlogin','Your e-mail is not recognized')");
       }else{
-	$onload=
-	  genOnLoad("notDiv('notlogin','Check your e-mail for a new password')");
+	$newpass=genRandom(4);
+	$codepass=md5($newpass);
+	mysqlCmd("update users set password='$codepass' where email='$PHP[LoginEmail]'");
+$text=<<<TEXT
+<p>Sci2Web Recovering Password</p>
+<p>
+You have retrieved a new password from the <b>Sci2Web</b> at
+the <b>$PROJ[SCI2WEBSITE]</b>.</p> 
+<p>
+  Your new password is: $newpass
+</p>
+<p>Please try to login again</p>
+TEXT;
+	$email=$PHP["LoginEmail"];
+	$subject="[Sci2Web] Recovering password";
+	$from=$replyto=$PROJ["ROOTEMAIL"];
+	sendMail($email,$subject,$text,$from,$replyto);
+        if($PROJ["ENABLEMAIL"]){
+	  $onload=
+	    genOnLoad(
+		"notDiv('notlogin','Check your e-mail for a new password')");
+	}else{
+	  $onload=
+	    genOnLoad(
+		"notDiv('notlogin','This server does not support e-mail notifications.<br/>Contact the web master to know your new password')");
+	}
       }
       return $onload;
     }
@@ -241,7 +265,7 @@ function checkAuthentication()
 	  return $onload;
 	}
       }else{
-	$onload=genOnLoad("notDiv('notlogin','Your account has not been activated.<br/>Check your e-mail')");
+	$onload=genOnLoad("notDiv('notlogin','Your account has not been activated.<br/>Please login')");
 	return $onload;
       }	
     }
@@ -271,6 +295,10 @@ the <b>$PROJ[SCI2WEBSITE]</b>.  If you are who is trying to get an
 account use the following link to activate it:
 </p>
 <a href="$acturl">Activation link</a>
+
+<p style="font-weight:bold;color:red;">Do not erase this message.  It
+will be required to reactivate your account in the case that your
+password is recovered or changes</p>
 TEXT;
           blankFunc();
 	  $email=$PHP["SignupEmail"];
@@ -278,7 +306,11 @@ TEXT;
 	  $from=$replyto=$PROJ["ROOTEMAIL"];
 	  sendMail($email,$subject,$text,$from,$replyto);
 	  //NOTIFICATION
-	  $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
+	  if($PROJ["ENABLEMAIL"]){
+	    $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
+	  }else{
+	    $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>This server does not support e-mail notifications.<br/>Contact the web master to activate your account.')");
+	  }
 	  return $onload;
 	}else{
 	  $onload=genOnLoad("notDiv('notlogin','Passwords does not match')");
@@ -480,7 +512,7 @@ $header.=<<<HEADER
   <div style="position:relative;display:inline-block">$bugbut$bugform</div>
   <div style="position:absolute;top:2em;right:0px;z-index:8000">
   <a href="http://sci2web.org">
-  <img src="$PROJ[IMGDIR]/sci2web-poweredby.jpg"/>
+  <img src="$PROJ[IMGDIR]/sci2web-poweredby.jpg" height="80px"/>
   </a>
   </div>
   </div>
@@ -509,6 +541,10 @@ HEADER;
 function genFooter()
 {
   global $PHP,$PROJ,$COLORS;
+  
+  $webmaster=$PROJ[WEBMASTER];
+  $webmaster=preg_replace("/\./"," dot ",$webmaster);
+  $webmaster=preg_replace("/@/"," at ",$webmaster);
 
 $footer=<<<FOOTER
   <div class="footer_container">
@@ -529,6 +565,7 @@ $footer=<<<FOOTER
       </a>
     </div>
   <div class="footer_contain">
+  Contact the webmaster: <i>$webmaster</i><br/><br/>
   <img src="$PROJ[PROJDIR]/images/sci2web-logo.jpg" height="30px" style="border-right:solid $COLORS[dark] 1px;padding-right:5px;margin-right:5px"/>
   <div style="display:inline-block">
   <a href="http://sci2web.org">

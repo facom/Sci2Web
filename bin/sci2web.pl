@@ -205,6 +205,7 @@ switch($Action){
 	}else{
 	    rprint "Directory already initialized...";
 	}
+	sysCmd("chown $APACHEUSER.$APACHEGROUP sci2web");
 
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	#CREATE THE BASIC CONFIGURATION FILE

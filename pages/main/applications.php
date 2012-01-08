@@ -72,18 +72,60 @@ CONTENT;
   $vers=preg_split("/;/",$appvers);
   $verstr="";
   $ivers=arrayInvert($vers);
+  $verchlog="";
+  $showchlog=1;
+  $i=1;
   foreach($ivers as $ver){
     if(isBlank($ver)) continue;
     $version=getRow(mysqlCmd("select * from versions where version_code='$ver' and apps_code='$appcode' order by release_date"),0);
     $opsel="";
-    /*
-    if($version["version_code"]=="dev"){
-      if(!isset($_SESSION["User"]))
-      $opsel="selected";
-    }
-    */
-    $verstr.="<option $opsel value='$version[version_code]'>Version $version[version_code] ($version[release_date])";
+    readConfig("$PROJ[APPSPATH]/$appcode/$ver/sci2web/version.conf");
+    $changeslog=$CONFIG["ChangesLog"];
+    $appvercode="${appcode}_$version[version_code]";
+$verstr.=<<<VERSION
+<option id="${appcode}_$i" $opsel value="$version[version_code]">Version $version[version_code] ($version[release_date])
+VERSION;
+  $onload="";
+  if($showchlog){
+    $showchlog=0;
+    $onload=genOnLoad(
+	     "$('#changeslog_$appcode').attr('explanation','$changeslog');
+              $('#changeslog_$appcode').attr('url','$PROJ[APPSDIR]/$appcode/$version[version_code]/sci2web/changeslog.html');
+              $('#changeslog_$appcode').attr('dir','$PROJ[APPSDIR]/$appcode/$version[version_code]');
+             ",
+	     "loadchlog");
   }
+$verchlog.=<<<VERSION
+$onload
+<input type="hidden" id="${appcode}_${i}_changeslog" 
+       value="$changeslog" version="$version[version_code]">
+VERSION;
+    $i++;
+  }
+  $editconfigure="";
+  if(isset($_SESSION["User"])){
+    if(strstr("$version[users_emails_contributor]","$_SESSION[User]") or
+       strstr("$PROJ[ROOTEMAIL]","$_SESSION[User]") or
+       strstr("$PROJ[WEBMASTER]","$_SESSION[User]")){
+$editconfigure=<<<EDIT
+(
+<a href="JavaScript:void(null)"
+   onclick="dir=$('#changeslog_$appcode').attr('dir');
+	    Open('$PROJ[BINDIR]/file.php?Dir='+dir+'&File=sci2web/changeslog.html&Mode=EditHtml','Edit Changes Log','$PROJ[SECWIN]');
+	    ">
+Edit
+</a> |
+<a href="JavaScript:void(null)"
+   onclick="dir=$('#changeslog_$appcode').attr('dir');
+	    Open('$PROJ[BINDIR]/file.php?Dir='+dir+'&File=sci2web&Mode=View','Configure Application','$PROJ[SECWIN]');
+	    ">
+Configure
+</a>
+)
+EDIT;
+    }
+  }
+  
 $content.=<<<APPS
 <!-- ------------------------------------------------------------ -->
 <!-- $appcode APP						  -->
@@ -101,7 +143,9 @@ explanation="Open application web page"
 </td>
 <td class="description">
 <a href="JavaScript:Open('$appdir/$appcode-desc.html','Application description','$PROJ[SECWIN]')">
-<b onmouseover="explainThis(this)"
+<b
+   style="font-size:20px"
+   onmouseover="explainThis(this)"
    explanation="See a brief of the application">$appname</b>
 </a><br/>
 $appcomplete
@@ -112,12 +156,28 @@ $appcomplete
 <div class="quote">
 $appdesc
 </div>
+$verchlog
+<a href="JavaScript:openThis('changeslog_$appcode','Changes Log','$PROJ[SECWIN]')"
+   url="http://google.com"
+   dir="$PROJ[PROJDIR]"
+   id="changeslog_$appcode"
+   onmouseover="explainThis(this)" explanation="Explain">Changes log</a> $editconfigure<br/>
 <b>Version</b>:
 <input type="hidden" name="VersionNum" value="$i">
-<select name="VersionId_$i">
+<select id="select_${appcode}" name="VersionId_$i" 
+	onchange="
+		  option=this.options[this.selectedIndex];
+		  id=$(option).attr('id');
+		  vercode=$(option).attr('value');
+		  explan=$('#'+id+'_changeslog').attr('value');
+		  $('#changeslog_$appcode').attr('explanation',explan);
+		  $('#changeslog_$appcode').attr('url','$PROJ[APPSDIR]/$appcode/'+vercode+'/sci2web/changeslog.html');
+		  $('#changeslog_$appcode').attr('dir','$PROJ[APPSDIR]/$appcode/'+vercode);
+		  "
+	>
 $verstr
 </select>
-$bugbut
+$bugbut<br/>
 </form>
 </td>
 APPS;

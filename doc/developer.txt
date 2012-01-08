@@ -246,7 +246,7 @@ of software *Scientific Applications, SA*.  A pictorial model of the
 structure and interface of a generic SA is depicted in the following
 figure.
 
-.. image:: images/NDSA-interface-model.jpg
+.. image:: images/SA-interface-model.jpg
 
 The first condition you have to meet in order to configure and control
 your application with Sci2Web_ is that the application compiles and

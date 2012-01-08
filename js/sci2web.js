@@ -12,6 +12,12 @@ function Open(url,name,options)
     window.open(url,name,options);
 }
 
+function openThis(linkid,name,options)
+{
+    url=$('#'+linkid).attr('url');
+    window.open(url,name,options);
+}
+
 /*
   CLOSE WINDOWS
  */

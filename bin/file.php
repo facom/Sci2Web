@@ -93,7 +93,7 @@ loadContent
      $('#DIVOVER$id').css('display','none');
    },
    function(element,rtext){
-     element.innerHTML='Loading';
+     element.innerHTML='Loading...';
      $('#DIVBLANKET$id').css('display','block');
      $('#DIVOVER$id').css('display','block');
    },
@@ -121,7 +121,6 @@ CONTENT;
    }else{
    $ftable=filesTable("$Dir/$File","","Parent");
 $fcontent.=<<<CONTENT
-Hola
 $ftable
 CONTENT;
    }
@@ -152,10 +151,25 @@ $fcontent.=<<<CONTENT
 </div>
 <textarea id="filecontent" class="filearea" name="FileContent"></textarea>
 CONTENT;
+   }else if($Mode=="EditHtml"){
+     $editionaction="toggleToEdition('filecontent','filecontent','editlink_$RID','$COLORS[text]','$PROJ[PROJDIR]/lib/ckfinder')";
+     $onloadedit=genOnLoad($editionaction,'loadedition');
+     $iniform="<form action='?' method='get' enctype='multipart/form-data'>";
+     $endform="";
+
+     $optfrm="";
+$fcontent.=<<<CONTENT
+<div class="actionbutton">
+  <a href="?$PHP[QSTRING]&Mode=View">View</a>
+</div>
+$onloadedit
+<textarea id="filecontent" class="filearea" name="FileContent"></textarea>
+CONTENT;
    }else{
 $fcontent.=<<<CONTENT
 <div class="actionbutton">
-  <a href="?$PHP[QSTRING]&Mode=Edit">Edit</a>
+  <a href="?$PHP[QSTRING]&Mode=Edit">Edit</a> 
+  <a href="?$PHP[QSTRING]&Mode=EditHtml">Html</a>
 </div>
 <div id="filecontent" class="plainarea"></div>
 CONTENT;

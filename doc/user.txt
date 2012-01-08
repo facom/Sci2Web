@@ -56,8 +56,62 @@ Presenting Sci2Web_
 Creating and managing an account
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Creating an account in a Sci2Web_ server site is a simple process: you
+just have to Press the Sign Up link at the top right of the page and
+fill the sign up form.
+
+Once the form is submitted a notification message is sent to your
+e-mail.  You have to use the activation link sent in the notification
+message to activate your new account.
+
+.. Important:: If the server site does not support e-mail
+   notifications you have to contact the web master to activate your
+   new account. The e-mail of the web master is found in the footer
+   area.
+
+Once the account is activated you can login and start to enjoy the
+applications served in the Sci2Web_ site.
+
+Recovering the user password
+============================
+
+If you forget your password you can retrieve it using the login form.
+A new password will be sent you by e-mail.  No re activation of the
+account is required. 
+
+Changing the user password
+==========================
+
+You can change your old password using the link *Your account*.  When
+you retrieve a change of password the system will logout you
+automatically and you will need to reactivate your account using the
+same activation link send it when the account was first created.  
+
+.. Important:: Sci2Web_ uses a simple albeit secure method to
+   manipulate the user information.  The password is never known by
+   the web master and is stored encrypted in the site database.  The
+   user e-mail account is the only way an user could perform
+   operations on its account.
+
 Selecting the application
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the main page of a Sci2Web_ server site you will find a list of the
+served applications (generally under the tab *Served Applications*).
+For each application you will find a box containing basic information:
+the application icon (that is also a button to open the application),
+the short and complete name of the application (including a link to
+the complete description of the application), author, date of creation
+and brief description.
+
+.. image:: images/application-brief.jpg
+
+Using the deployable list you can select the version of the
+application you want to explore.  Versions having the prefix ``dev``
+are reserved for development purposes and altough they can be browsed
+you will not be able to create new instances of them.  Only the
+application author and their contributors have permissions to create
+and run new instances of this version.
 
 Creating a run
 ~~~~~~~~~~~~~~
