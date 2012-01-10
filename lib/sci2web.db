@@ -1,7 +1,0 @@
-$DBNAME="sci2web";
-$DBSERVER="localhost";
-$DBUSER="sci2web";
-$DBPASS="WebPoweredSAs";
-$APACHEUSER="www-data";
-$APACHEGROUP="www-data";
-1;
