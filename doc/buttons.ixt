@@ -1,0 +1,68 @@
+.. |AddButton| image:: ../images/icons/actions/Add.gif
+   :height: 20px
+.. |BackButton| image:: ../images/icons/actions/Back.gif
+   :height: 20px
+.. |BrowseButton| image:: ../images/icons/actions/Browse.gif
+   :height: 20px
+.. |BugButton| image:: ../images/icons/actions/Bug.gif
+   :height: 20px
+.. |CancelButton| image:: ../images/icons/actions/Cancel.gif
+   :height: 20px
+.. |CleanButton| image:: ../images/icons/actions/Clean.gif
+   :height: 20px
+.. |CloseButton| image:: ../images/icons/actions/Close.gif
+   :height: 20px
+.. |CompileButton| image:: ../images/icons/actions/Compile.gif
+   :height: 20px
+.. |ConfigureButton| image:: ../images/icons/actions/Configure.gif
+   :height: 20px
+.. |ConfigureResultsButton| image:: ../images/icons/actions/ConfigureResults.gif
+   :height: 20px
+.. |DownButton| image:: ../images/icons/actions/Down.gif
+   :height: 20px
+.. |DownRightButton| image:: ../images/icons/actions/DownRight.gif
+   :height: 20px
+.. |HappyButton| image:: ../images/icons/actions/Happy.gif
+   :height: 20px
+.. |KillButton| image:: ../images/icons/actions/Kill.gif
+   :height: 20px
+.. |LeftButton| image:: ../images/icons/actions/Left.gif
+   :height: 20px
+.. |LessButton| image:: ../images/icons/actions/Less.gif
+   :height: 20px
+.. |MoreButton| image:: ../images/icons/actions/More.gif
+   :height: 20px
+.. |OpenButton| image:: ../images/icons/actions/Open.gif
+   :height: 20px
+.. |PauseButton| image:: ../images/icons/actions/Pause.gif
+   :height: 20px
+.. |PlotButton| image:: ../images/icons/actions/Plot.gif
+   :height: 20px
+.. |PostButton| image:: ../images/icons/actions/Post.gif
+   :height: 20px
+.. |RemoveButton| image:: ../images/icons/actions/Remove.gif
+   :height: 20px
+.. |ResultsButton| image:: ../images/icons/actions/Results.gif
+   :height: 20px
+.. |ResumeButton| image:: ../images/icons/actions/Resume.gif
+   :height: 20px
+.. |RightButton| image:: ../images/icons/actions/Right.gif
+   :height: 20px
+.. |RunButton| image:: ../images/icons/actions/Run.gif
+   :height: 20px
+.. |SaveButton| image:: ../images/icons/actions/Save.gif
+   :height: 20px
+.. |ScrollButton| image:: ../images/icons/actions/Scroll.gif
+   :height: 20px
+.. |SearchButton| image:: ../images/icons/actions/Search.gif
+   :height: 20px
+.. |SortButton| image:: ../images/icons/actions/Sort.gif
+   :height: 20px
+.. |SourcesButton| image:: ../images/icons/actions/Sources.gif
+   :height: 20px
+.. |StopButton| image:: ../images/icons/actions/Stop.gif
+   :height: 20px
+.. |UpdateButton| image:: ../images/icons/actions/Update.gif
+   :height: 20px
+.. |WaitButton| image:: ../images/icons/actions/Wait.gif
+   :height: 20px

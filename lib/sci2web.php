@@ -1113,6 +1113,7 @@ function toggleButtons2($status)
   }
   if($status=="ready"){
     $display["Clean"]=$disp;
+    $display["Compile"]=$disp;
     $display["Run"]=$disp;
     $display["Remove"]=$disp;
     $display["Configure"]=$disp;

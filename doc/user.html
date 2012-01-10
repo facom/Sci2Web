@@ -354,6 +354,21 @@ Processed by unicode2rstsubs.py, part of Docutils:
 .. include:: <isoamso.txt>
 .. include:: <isoamsr.txt>
 .. include:: <isogrk1.txt> -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//MACROS
+//////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//LINKS
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+. -->
+<!-- .
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//IMAGES
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+. -->
 <img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
 <div class="section" id="user-guide">
 <h1><a class="toc-backref" href="#id1">User Guide</a></h1>
@@ -382,12 +397,10 @@ Processed by unicode2rstsubs.py, part of Docutils:
 </li>
 <li><a class="reference internal" href="#selecting-the-application" id="id7">Selecting the application</a></li>
 <li><a class="reference internal" href="#creating-a-run" id="id8">Creating a run</a></li>
-<li><a class="reference internal" href="#controlling-the-run" id="id9">Controlling the run</a></li>
-<li><a class="reference internal" href="#creating-templates" id="id10">Creating templates</a></li>
-<li><a class="reference internal" href="#creating-and-running-multiple-runs" id="id11">Creating and running multiple runs</a></li>
-<li><a class="reference internal" href="#searching-for-results" id="id12">Searching for results</a></li>
-<li><a class="reference internal" href="#downloading-results" id="id13">Downloading results</a></li>
-<li><a class="reference internal" href="#the-plotting-interface" id="id14">The plotting interface</a></li>
+<li><a class="reference internal" href="#controlling-your-runs" id="id9">Controlling your runs</a></li>
+<li><a class="reference internal" href="#working-with-templates" id="id10">Working with templates</a></li>
+<li><a class="reference internal" href="#searching-for-results" id="id11">Searching for results</a></li>
+<li><a class="reference internal" href="#the-plotting-tool" id="id12">The plotting tool</a></li>
 </ul>
 </li>
 </ul>
@@ -518,28 +531,377 @@ the short and complete name of the application (including a link to
 the complete description of the application), author, date of creation
 and brief description.</p>
 <img alt="images/application-brief.jpg" src="images/application-brief.jpg" />
+<p>Using the deployable list you can select the version of the
+application you want to explore.  Versions having the prefix <tt class="docutils literal">dev</tt>
+are reserved for development purposes and altough they can be browsed
+you will not be able to create new runs.  Only the application author
+and their contributors have permissions to create and run new
+instances of this versions.</p>
+<p>Once you have selected a version you can click the <em>Changes log</em> link
+and read a brief description of what makes this version different from
+the others.  Clicking on the icon will open a new window with the
+application site configured for the particular version you have
+selected.  In the header region of the application page you will find
+the application logo, the name of the version you have selected and a
+link to the license of this particular version.</p>
+<img alt="images/application-logo-information.jpg" src="images/application-logo-information.jpg" />
+<p>The application page is divided in a set of tabs configurable by the
+application authors and version contributors.  By default the
+application page tabs are:</p>
+<ul class="simple">
+<li><em>Description</em>: complete description of the application.</li>
+<li><em>Downloads</em>: If the application has been released by authors or
+contributors you will find here the links to download the release
+version of the application.</li>
+<li><em>Runs</em>: This is the most important tab for the purposes of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>.
+There you will be able to create new instances of the application,
+run and control them.  You will be able also to access there the
+history of the runs created by you of this particular version of the
+application.</li>
+<li><em>Database</em>: In this section you will be able to search into the
+database of results of this version of the application.  Each time a
+user runs an instance of the application and the run is successful
+its results will be stored in a huge database.  You can retrieve
+those results using the form provided in this section using
+different searching criteria.</li>
+</ul>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">It is important to say that not all the applications
+ported to a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site should have public rights to
+download, run or search in their database of results.  Authors and
+contributors could limit by different reasons the acces that any
+user has to the application.  For example an application could be
+downloaded but the users could not create new runs or search into
+the database.  In this case the application page becomes simply a
+public information and downloading site for the application
+(lossing most of the potential of Sci2Web).  In other case the
+authors could allow to create runs but does not allow to download
+the application.  The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application web page becomes in this
+case a <em>testing platform</em> without the option to get a copy of the
+application.  Finally authors or contributors could use <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a>
+application page just to give access to the database of results
+that have been computed only by authorized users.  In this case the
+users could not download a copy of the application or create new
+runs but they have access to a valuable database of results
+obtained with the application.</p>
+</div>
 </div>
 <div class="section" id="creating-a-run">
 <h2><a class="toc-backref" href="#id8">Creating a run</a></h2>
+<p>To create a run you must first log in into the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server.</p>
+<p>The most simple way to create a new run of a served application is go
+to the run tab and press the big Run button.</p>
+<p>This action will trigger the openning of a control window for the run
+(see figure below)</p>
+<img alt="images/run-control-window.jpg" src="images/run-control-window.jpg" style="width: 90%;" />
+<p>The control window is the web interface of the served application.
+Here you will be able to configure your run, submit it and see the
+results, among other important actions to control the application.</p>
+<p>The control window is actually a bundle of two single components: the
+configuration (left frame) and the results window (right frame).  The
+configuration window has a series of tabs where different types of
+input parameters for the application can be set it up.  Values by
+default are loaded in the forms when a new run is created.  To get
+information about each parameter you just have to focus into the
+respective input element (i.e. place the cursor inside the input box
+as if you want to modify it).</p>
+<p>In the lowest part of the configuration frame you will find a control
+box suited with different buttons able to trigger different actions on
+the run.  Place the mouse over any of these buttons to check which
+action it will trigger.  In the control box you will also found a big
+rounded inner box with the status of the run.  When a new run is
+created the default status will be <em>Configured</em> meaning that the run
+has been properly configured and ready to be <em>Compiled</em> or <em>Submitted</em>.</p>
+<p>The action buttons will be activated or deactivated according to the
+status of the Run.  For example if the run has not been compiled yet
+you will not be able to submit it (<em>play</em> button <img alt="RunButton" src="../images/icons/actions/Run.gif" style="height: 20px;" />).  The
+number and type of control buttons you will find in the control box
+will depend on the type of control actions that the
+authors/contributors has set up for the application.</p>
+<p>In the example run shown in the previous figure you have to press the
+compile button <img alt="CompileButton" src="../images/icons/actions/Compile.gif" style="height: 20px;" /> to get your run compiled and ready to
+be submitted.</p>
+<p>Each time you perform a control action on your run the status will
+change.  There is a fixed set of run status: Configured, Ready,
+Submitted, Running, Paused, Stopped, Killed, Finishing, Finished and
+Error.  They are self explanatory.  When your run is at the Submitted,
+Running, Paused or Finishing status the configuration frame will be
+blocked out to avoid the reconfiguration of a run that is in the
+middle of a computation.  In these cases however you will be able to
+perform special actions (Stop <img alt="StopButton" src="../images/icons/actions/Stop.gif" style="height: 20px;" />, Kill <img alt="KillButton" src="../images/icons/actions/Kill.gif" style="height: 20px;" /> or
+Resume <img alt="ResumeButton" src="../images/icons/actions/Resume.gif" style="height: 20px;" />) to change the status of your run.</p>
+<p>Once your run is finished the results frame is reloaded showing the
+last status of your results.  You can use the reload buttons
+<img alt="UpdateButton" src="../images/icons/actions/Update.gif" style="height: 20px;" /> placed at the upper-right corner of the results
+elements to update their content at any time during the execution of
+your run.</p>
+<p>A special action, the Post Action <img alt="PostButton" src="../images/icons/actions/Post.gif" style="height: 20px;" />, could be used to
+perform post-execution actions on the results of your run without to
+submit it again.  This is a very useful feature when you want for
+example to regenerate the plots for a given result without recomputing
+again the data.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last">Not all the applications have the same set of action
+buttons.  Authors/Contributors could limit the number and type of
+control actions you can perform on your runs.</p>
 </div>
-<div class="section" id="controlling-the-run">
-<h2><a class="toc-backref" href="#id9">Controlling the run</a></h2>
+<p>The second way to create and control new runs is using the control
+panel provided with most of the application in the runs history
+section of the <em>Run Tab</em>.  This is an advanced way of creating and
+controling your runs and we will explain it in detail in the next
+section.</p>
 </div>
-<div class="section" id="creating-templates">
-<h2><a class="toc-backref" href="#id10">Creating templates</a></h2>
+<div class="section" id="controlling-your-runs">
+<h2><a class="toc-backref" href="#id9">Controlling your runs</a></h2>
+<p>In the Run tab of the application page, just below the big Run button,
+you will find the history of the runs prepared and sumitted by you.</p>
+<img alt="images/application-run-history.jpg" src="images/application-run-history.jpg" />
+<p>In general the history maintains a record of what runs you have
+prepared and submitted of a given application.  It allows you
+additionally to search, configure, download, resubmmit and remove old
+runs.</p>
+<p>In most of the applications, however, the history section could be
+also used to create, control and follow the status of bunches of runs.
+These additional capabilities are included in a tool called the
+<em>Control Panel</em>.  Pressing the Control Panel link located at the
+header of the History table you can toggle the control panel box.</p>
+<img alt="images/control-panel-box.jpg" src="images/control-panel-box.jpg" />
+<p>Using this panel you will be able to:</p>
+<ul class="simple">
+<li>Create at once one or multiple runs from a given configuration
+template (<em>New from template</em> <img alt="AddButton" src="../images/icons/actions/Add.gif" style="height: 20px;" />).</li>
+<li>Remove an existing configuration template (remove button
+<img alt="RemoveButton" src="../images/icons/actions/Remove.gif" style="height: 20px;" /> at the New from template section)</li>
+<li>Perform a given action to one or multiple runs (<em>Valid actions</em>
+section).</li>
+</ul>
+<p>The latter feature is particularly interesting since with a single
+click allows you to perform complex actions over multiple runs.  For
+example you can submit a lot of pre configured runs.  This is a very
+useful feature when working with parametric type of runs.</p>
+<p>Each run in your history has a contextual menu with a complete set of
+additional actions.  To deploy this menu you just have to mouse over
+the table box with the run name and press the down button
+<img alt="DownButton" src="../images/icons/actions/Down.gif" style="height: 20px;" />:</p>
+<img alt="images/run-contextual-menu.jpg" src="images/run-contextual-menu.jpg" />
+<p>Not all the actions shown in the previous figures will be available
+for runs of any application.  For example the Download Sources action
+<img alt="CompileButton" src="../images/icons/actions/Compile.gif" style="height: 20px;" /> could be restricted by the authors/contributors of the
+application.  The same applies for the Browse action <img alt="SourcesButton" src="../images/icons/actions/Sources.gif" style="height: 20px;" />.</p>
+<p>The actions available in the contextual menu are:</p>
+<ul>
+<li><p class="first"><em>Configure</em>: Open the configuration window.</p>
+</li>
+<li><p class="first"><em>Results</em>: Open the results window.</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>Control Panel</em>: Open the control window (configuration and results</dt>
+<dd><p class="first last">in a single window).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>Run status</em>: See the status of a submitted run.</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>Download Results</em>: Download the results file of the run (if</dt>
+<dd><p class="first last">available).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Download Sources</em>: Download the complete set of source files</dt>
+<dd><p class="first last">associated to this run.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>Browse</em>: Browse the run directory.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is equipped with a
+simple albeit functional file manager.  It allows you to browse
+directories listing files and subdirectories with the right
+permissions allowing authors, contributors or web masters to
+maintain safe critical files.  In the case of the directory of a run
+the list of files includes only certain configuration and result
+files.  If you want to have access to other files use the Download
+Sources link if available.</p>
+</li>
+</ul>
 </div>
-<div class="section" id="creating-and-running-multiple-runs">
-<h2><a class="toc-backref" href="#id11">Creating and running multiple runs</a></h2>
+<div class="section" id="working-with-templates">
+<h2><a class="toc-backref" href="#id10">Working with templates</a></h2>
+<p>A <em>configuration template</em> is a file containing the configuration of a
+typical run of a given application.  When a new run is created the
+Default template is used by default.  Users can create their own
+templates and use them to generate other runs.</p>
+<p>To create a new template use the configuration window of the run you
+want to use as a model and go to the <em>run tab</em>.</p>
+<img alt="images/application-template-creation.jpg" src="images/application-template-creation.jpg" />
+<p>There you will find and input box and two buttons, an <img alt="AddButton" src="../images/icons/actions/Add.gif" style="height: 20px;" /> and
+a <img alt="SaveButton" src="../images/icons/actions/Save.gif" style="height: 20px;" /> that allow you to create a new template and save an
+existing one respectively.  You have to give a name to the template.
+Here you can use blank spaces though the use of special characters is
+not recommended.  Once your new template is created and after
+reloading the run history page you will find in the control panel the
+option to create new runs from the recently created template.  You can
+use also the control panel options to remove an existing template.</p>
+<p>But why should you use templates?  One of the most interesting
+features of <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> as a tool to control on-line scientific
+applications is the possibility to create bunches of instances of an
+application, change systematically certain input parameters and run
+all them with a single click.  This kind of operations are frequently
+called <em>parametric studies</em>.  To create a <em>parametric study</em> you can
+use templates to generate the set of similar runs that conforms the
+study.</p>
+<p>Let us give you an example using the sample application <strong>MercuPy</strong>
+and its version <tt class="docutils literal"><span class="pre">3B-1.0</span></tt>.  This version of MercuPy allows you to
+simulate the dynamic of a three body system where one of them is much
+more massive than the other two.  That is the case of the
+Sun-Earth-Moon system.  Imagine you want to investigate the effect
+that the eccentricity of the Moon orbit respect to the Earth has in
+its dynamical evolution.  You want to simulate a 10 years period for 5
+different synthetic Sun-Earth-Moon systems with Moon geocentric
+eccentricities of 0.0, 0.2, 0.4 and 0.8.</p>
+<p>The first step is to create a new run with the Default template.  Then
+open the configure window for this run and set all the input
+parameters for the simulation including an initial eccentricity.
+Using the configuration window for this model run create a new
+template with the name <em>Sun-Earth-Moon system</em>.  We can also to assign
+a easy to identify name to this model run.  Something like <em>SEM: e=0</em>
+could be appropiate.  Changing the name of the run will require that
+you save the run before to continue.</p>
+<p>Once the run has been saved and the new template has been created
+close the configuration window and reload the run history page.  Open
+the control panel and creates with the <em>Sun-Earth-Moon system</em>
+template four new runs.</p>
+<img alt="images/template-example-SEM-runs-creation.jpg" src="images/template-example-SEM-runs-creation.jpg" />
+<p>Now you have to reconfigure each run assigning them the respective
+eccentricity.  Give to each run a proper name following the same rule
+as that used for the name of the model run.  Once all the runs in the
+parametric study has been configured, select all in the history table,
+compile and then submit them.</p>
+<img alt="images/template-example-SEM-history.jpg" src="images/template-example-SEM-history.jpg" />
+<p>If all the runs complete successfully now you have the results of your
+parametric study.  You can retrieve those results using two methods:
+1) downloading the results of each run one by one with the respective
+option in the contextual menu and 2) using the database search tool.
+In the following section we will explain in detail how to search for
+results in the database of an application.</p>
 </div>
 <div class="section" id="searching-for-results">
-<h2><a class="toc-backref" href="#id12">Searching for results</a></h2>
+<h2><a class="toc-backref" href="#id11">Searching for results</a></h2>
+<p>Most of the scientific applications ported to <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> have a database
+containing the properties and results of each run succesfully
+completed in the web interface. In general these results can be
+retrieved by any visitor of the application page using a specially
+designed interface.  You can access the database interface in the
+<em>database</em> tab of the application page.</p>
+<img alt="images/application-database-interface.jpg" src="images/application-database-interface.jpg" />
+<p>The results are retrieved using an sql <em>select</em> command.  In the
+textarea input element you have write the criteria matching the runs
+you want to recover.  You have to use the internal name of the input
+variables that are listed clicking at the Database Specification link.
+The following operators can be used in the query:</p>
+<ul class="simple">
+<li>Numeric comparison: <tt class="docutils literal">=</tt>, <tt class="docutils literal">&lt;&gt;</tt>, <tt class="docutils literal">&lt;</tt>, <tt class="docutils literal">&gt;</tt>, <tt class="docutils literal">&lt;=</tt>, <tt class="docutils literal">&gt;=</tt>.
+Example: <tt class="docutils literal"><span class="pre">Field1&gt;=0</span></tt></li>
+<li>BETWEEN: Between an inclusive range.  Example: <tt class="docutils literal">Field1 between 1 and 10</tt></li>
+<li>LIKE: Search for a pattern.  Use '%' as the wildcard.  Example:
+<tt class="docutils literal">Field1 like '%Sun%'</tt></li>
+<li>IN: The exact value of the field is in a list of values.  Example:
+<tt class="docutils literal">Field1 in <span class="pre">('Star','Planet','Moon')</span></tt></li>
+<li>AND, OR: logical operators. Example: <tt class="docutils literal">Field1&lt;1E2 AND Field2&gt;0</tt></li>
+<li>(): Group operators.  Example: <tt class="docutils literal">Field1 like '%0.2%' and (Field2&gt;0
+or Field3&lt;100)</tt></li>
+</ul>
+<p>Following the example developed in the previous section you can
+retrieve the results of the runs in the parametric study using the
+query shown in the figure below.</p>
+<img alt="images/application-database-query.jpg" src="images/application-database-query.jpg" />
+<p>Once you have the table with the list of results matching your query
+you can perform two basic actions on them: download a big tarball
+containing a set of compressed files with the results of the runs in
+separated directories.  Or join all the results in a single directory
+and return the corresponding tarball.</p>
+<p>The second option is best suited if you want to compare results from
+different runs using for example plots or statistical tools.  In this
+case the file names for each run have an unique suffix identifying the
+run.  Additionally a table matching the run suffix and its
+characteristics are listed in a text file <tt class="docutils literal">allruns.oxt</tt> included in
+the join directory.</p>
 </div>
-<div class="section" id="downloading-results">
-<h2><a class="toc-backref" href="#id13">Downloading results</a></h2>
-</div>
-<div class="section" id="the-plotting-interface">
-<h2><a class="toc-backref" href="#id14">The plotting interface</a></h2>
-<p>Plot.</p>
+<div class="section" id="the-plotting-tool">
+<h2><a class="toc-backref" href="#id12">The plotting tool</a></h2>
+<p>One of the most common task once a set of results are obtained after
+running a scientific application is try to plot some of the data
+obtained.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> is equipped with a basic albeit complete tool to
+generate plots from the data produced by a run.  This feature allows
+you to create images from computed data without download the results.</p>
+<p>The <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> tool uses the Matplotlib python package.  Those
+familiarized with Matplotlib will find common the syntax of the
+commands and the options of the plotting tool.</p>
+<p>To use the plotting tool browse the results directory of a finished
+run and find the data file you want to plot.</p>
+<img alt="images/run-browse-results.jpg" src="images/run-browse-results.jpg" />
+<p>Select the plot option in the contextual menu of the datafile and wait
+until the plotting tool is openned in a new window.  It could takes
+some time while the tool generates the a default image from the data
+file.</p>
+<img alt="images/plotting-tool.jpg" src="images/plotting-tool.jpg" />
+<p>The tool is rather intuitive.  In the left panel you have a form where
+the basic information about the plot should be input.  There you have
+to select the data file or data files you want to plot, the number of
+the column(s) in the data file(s) with the values of the abscisas (X
+Column), the number of the column(s) with the ordinates (Y Column),
+the line style(s) and the range of the x- and y-axis (X Range and Y
+Range).  In the right panel you will find other input boxes to set the
+labels of the axes and the title of the plot.</p>
+<p>There are different type of plots you could generate with this tool:</p>
+<ul>
+<li><p class="first">Single file, single y-column.  This is the most simple type of
+column.  The plotting options are as shown in the previous figure.</p>
+</li>
+<li><p class="first">Single file, multiple columns.  If you want to plot multiple columns
+of the same file add the numbers of the other columns to the Y
+Columns input field always between brackets.  Example: <tt class="docutils literal">[2,9]</tt>.
+The linestyle for each column will be by default the same.  If you
+want to customize the line styles of each column add a new style
+parametrization for the new column in the Styles field.  Example:
+<tt class="docutils literal"><span class="pre">[('a','blue','-',1,'</span> <span class="pre">',2),('q','red','-',1,'</span> ',2)]</tt>.</p>
+<img alt="images/plotting-multiple-columns.jpg" src="images/plotting-multiple-columns.jpg" />
+</li>
+<li><p class="first">Multiple file, simple x- and y-column specification.  You can also
+include in the same plot, data coming from multiple files.  To do
+this add the name of the additional files into the Files field.  If
+you do not modify the X Column and Y Column fields the same X and Y
+columns specification will be used for both filesq.</p>
+</li>
+<li><p class="first">Multiple file, complex x- and y-column specification.  When
+including multiple files you can specify the x- and y-columns and
+their respective styles in very complex ways.  The Styles field used
+to generate the ploto shown below is:</p>
+<blockquote>
+<p>[(r'$a_{oplus}$','blue','-',1,'+',2),(r'$q_{oplus}$','blue','--',1,'+',2),(r'$Q_{oplus}$','blue','-.',1,'+',2)],[(r'$a_{moon}$','red','-',1,'+',2),(r'$q_{moon}$','red','--',1,'+',2)]</p>
+</blockquote>
+<img alt="images/plotting-multiple-columns-complex.jpg" src="images/plotting-multiple-columns-complex.jpg" />
+<p>Notice the use of LaTeX to specify the labels (the <tt class="docutils literal">r</tt> before any
+label or text tag in LaTeX format is mandatory).</p>
+</li>
+</ul>
+<p>Using the Extra code field you can add other elements to the plot. In
+this case you need to know Matplotlib and python and realize that the
+axes object for the plot is internally called <tt class="docutils literal">ax</tt>.  In the
+following example a horizontal line with a text has been added to the
+figure using the Extra code:</p>
+<pre class="literal-block">
+'
+ax.axhline(0.95,color=&quot;black&quot;,linewidth=3);
+ax.text(30,0.955,&quot;inner boundary&quot;,horizontalalignment=&quot;right&quot;);
+'
+</pre>
+<p>Notice that each line of the Extra code should be end in ';'.</p>
+<img alt="images/plotting-extra-code.jpg" src="images/plotting-extra-code.jpg" />
+<p>More properties of the plot could be modified expanding the plot
+properties form (<img alt="AddButton" src="../images/icons/actions/Add.gif" style="height: 20px;" /> button at the end of the form).</p>
 <hr class="docutils" />
 <p>Copyright (C) 2011 Jorge I. Zuluaga</p>
 </div>

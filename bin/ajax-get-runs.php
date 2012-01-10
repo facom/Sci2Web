@@ -242,7 +242,7 @@ $row_name=<<<ROW
 	Download results (press once)
       </a>
       <br/>
-      $BUTTONS[Compile] 
+      $BUTTONS[Sources] 
       <a href="JavaScript:void(null)" 
 	 onclick="$downsourceslink">
 	Download sources (press once)

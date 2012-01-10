@@ -25,6 +25,11 @@ include("$RELATIVE/lib/sci2web.php");
 $onloadauth=checkAuthentication();
 
 //////////////////////////////////////////////////////////////////////////////////
+//VARIABLES
+//////////////////////////////////////////////////////////////////////////////////
+$defcontent="";
+
+//////////////////////////////////////////////////////////////////////////////////
 //PARTICULAR CONFIGURATION
 //////////////////////////////////////////////////////////////////////////////////
 $cpath="$PROJ[PAGESPATH]/$PHP[PAGEBASENAME]";
@@ -133,23 +138,38 @@ CONTENT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 readConfig("$PROJ[APPSPATH]/$_SESSION[App]/$_SESSION[VersionId]/sci2web/version.conf");
 $files=preg_split("/;/",$CONFIG["VerTabs"]);
-if(strstr($PROJ["ROOTEMAIL"],$_SESSION["User"]) or 
-   strstr($PROJ["ContributorsEmails"],$_SESSION["User"])
-   ){
-  //$files[]="configuration:Configuration";
-}
-
 $i=1;
+
 foreach($files as $file)
 {
   if(isBlank($file)) continue;
 
   //GET INDEX VALUE
-  list($fname,$fid)=preg_split("/:/",$file);
+  $mode="";
+  list($fname,$fid,$mode)=preg_split("/:/",$file);
+  
   $file="$fname.php";
 
   //LOAD THE CONTENT
   $imgload=genLoadImg("animated/loader-circle.gif");
+
+  if($mode=="private"
+     and
+     (!isset($_SESSION["User"]) or
+      !strstr($CONFIG["EmailsContributors"],$_SESSION["User"]))
+     ){
+    /*
+    $onload="";
+$defcontent=<<<CONTENT
+<center>
+<p class="error">
+The authors/contributors has restricted the access to this page.
+</p>
+</center>
+CONTENT;
+    */
+    continue;
+  }else{
 $ajaxcmd=<<<AJAX
 loadContent
   (
@@ -170,17 +190,17 @@ loadContent
 AJAX;
    blankFunc();
    $onload=genOnLoad($ajaxcmd,'load');
-
    //BUILT THE CONTENT
 echo <<<CONTENT
   $onload
   <div class="tabbertab maintab">
   <h2>$fid</h2>
-  <div class="tabcontent" id="$fid"></div>
+  <div class="tabcontent" id="$fid">$defcontent</div>
   </div>
 
 CONTENT;
   $i++;
+  }
 }
 $TabNum=$i-1;
 echo<<<CONTENT

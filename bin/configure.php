@@ -283,7 +283,7 @@ if(isset($PHP["Action"])){
 	genConfig("$apppath/sci2web/controlvars.info",
 		  "$tempdir/$template.conf",
 		  "#T:$PHP[NewTemplate]");
-	mysqlCmd("update runs set run_template='$PHP[NewTemplate]' where run_code='$PHP[RunCode]'");
+	mysqlCmd("update runs set run_template='$template' where run_code='$PHP[RunCode]'");
 	$notmsg="<p>Template $PHP[NewTemplate] created...</p>";
 	if($PHP["Action"]=="SaveTemplate")
 	  $notmsg="<p>Template $PHP[NewTemplate] saved...</p>";
@@ -382,7 +382,7 @@ if(isset($PHP["template"])){
 //==================================================
 //ADD INPUT AND BUTTON FOR A NEW TEMPLATE
 //==================================================
-$vars["General"]["Buttons"][]=<<<BUTTON
+$vars["Run"]["Buttons"][]=<<<BUTTON
 <div class="actionbutton">
   Template:<input type="text" name="NewTemplate" value="$tempname">
 </div>

@@ -103,16 +103,28 @@ for i in range(0,nfiles):
     for j in range(0,ncols):
         print "\t\tPlotting column %d"%YColsPrev[j]
         y=data[:,YColsPrev[j]-1]
-        pars=dict(color=LinesInformationPrev[j][1],
-                  linestyle=LinesInformationPrev[j][2],
-                  linewidth=int(LinesInformationPrev[j][3]),
-                  marker=LinesInformationPrev[j][4],
-                  markeredgecolor=LinesInformationPrev[j][1],
-                  markersize=int(LinesInformationPrev[j][5]),
+        qcol=False
+        k=j
+        while not qcol:
+            try:
+                color=LinesInformationPrev[k][1]
+                qcol=True
+            except:
+                k-=1
+            if k<0:
+                print >>sys.stderr,"You have not provided styles for the plot"
+                exit(1)
+
+        pars=dict(color=LinesInformationPrev[k][1],
+                  linestyle=LinesInformationPrev[k][2],
+                  linewidth=int(LinesInformationPrev[k][3]),
+                  marker=LinesInformationPrev[k][4],
+                  markeredgecolor=LinesInformationPrev[k][1],
+                  markersize=int(LinesInformationPrev[k][5]),
                   )
-        if LinesInformationPrev[j][0] is not "":
+        if LinesInformationPrev[k][0] is not "":
             qlegend=True
-            ax.plot(x,y,label=LinesInformationPrev[j][0],**pars)
+            ax.plot(x,y,label=LinesInformationPrev[k][0],**pars)
         else:
             ax.plot(x,y,**pars)
 
@@ -133,19 +145,6 @@ except SyntaxError as error:
 #SCALE
 ax.set_xscale(str(conf.XScale))
 ax.set_yscale(str(conf.YScale))
-
-#RANGE
-if conf.XRange is not "Auto":
-    print "\tX range:",conf.XRange
-    ax.set_xlim([int(r) for r in conf.XRange])
-else:
-    print "Automatic x-axis"
-
-if conf.YRange is not "Auto":
-    print "\tY range:",conf.YRange
-    ax.set_ylim([int(r) for r in conf.YRange])
-else:
-    print "Automatic y-axis"
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #DECORATION
@@ -192,6 +191,21 @@ ax.text(1.02,1.0,'ps2w:'+strftime('%Y%m%dT%H%M%S'),
         verticalalignment='top',
         horizontalalignment='center',
         transform=ax.transAxes,);
+
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+#RANGE
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if conf.XRange is not "Auto":
+    print "\tX range:",conf.XRange
+    ax.set_xlim([float(r) for r in conf.XRange])
+else:
+    print "Automatic x-axis"
+
+if conf.YRange is not "Auto":
+    print "\tY range:",conf.YRange
+    ax.set_ylim([float(r) for r in conf.YRange])
+else:
+    print "Automatic y-axis"
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #SAVE

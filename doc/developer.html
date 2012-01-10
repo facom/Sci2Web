@@ -1399,14 +1399,23 @@ applicable) or links to the <a class="reference external" href="http://localhost
 the user guide).</p>
 <p>You can disable the information web pages by editing the
 configuration file <tt class="docutils literal">sci2web/version.conf</tt> and changing the
-variable <tt class="docutils literal">VerTabs</tt>.  This variable controls what tabs and in
+variable <tt class="docutils literal">VerTabs</tt>.  This variable controls which tabs and in
 which order will be displayed in the application web page.  There
 are five fixed tabs: <tt class="docutils literal">description</tt>, <tt class="docutils literal">documentation</tt>,
-<tt class="docutils literal">downloads</tt>, <tt class="docutils literal">runs</tt>, <tt class="docutils literal">database</tt>.  To disable the
-information pages the version tabs variable should be:</p>
+<tt class="docutils literal">downloads</tt>, <tt class="docutils literal">runs</tt>, <tt class="docutils literal">database</tt>.  To disable for example
+the documentation and download tabs, the <tt class="docutils literal">VerTabs</tt> should be:</p>
 <pre class="literal-block">
-VerTabs = runs:Runs;database:Database
+VerTabs = description:Description;runs:Runs;database:Database
 </pre>
+<p>As a special feature you could preserve a given tab but give
+access to its content just to authorized users (authors and
+contributors).  In this case you just have to add to the tab
+specification the <tt class="docutils literal">:private</tt> suffix:</p>
+<pre class="literal-block">
+VerTabs = description:Description;runs:Runs:private;database:Database
+</pre>
+<p>In this case only authors and contributors will see the <tt class="docutils literal">run</tt>
+tab.</p>
 </li>
 <li><p class="first"><em>The queue system</em>.  <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> manages the execution of running
 instances of the mutiple applications installed in a server site

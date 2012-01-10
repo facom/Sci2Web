@@ -2,6 +2,8 @@ drop table if exists `MercuPy_2B-1.0`;
 create table `MercuPy_2B-1.0` (
 dbrunhash char(32) not null,
 dbauthor varchar(255),
+dbname varchar(255),
+dbtemplate varchar(255),
 dbdate datetime not null,
 CustomUL varchar(255),
 CustomUM varchar(255),

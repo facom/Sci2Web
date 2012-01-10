@@ -152,6 +152,48 @@ RESULT;
   goto end;
 }
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//JOIN RESULTS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+if($Action=="JoinResults"){
+  $results=array();
+  $nresults=$PHP["NumResults"];
+  for($i=0;$i<$nresults;$i++){
+    if($PHP["result$i"]=="on"){
+      $results[]=$PHP["reshash$i"].".tar.gz";
+    }
+  }
+  $nresults=count($results);
+  if($nresults>0){
+    $tarhash=md5(join(";",$results));
+    $tdir="joinedruns-$tarhash-$PHP[SESSID]";
+    $tarfile="$tdir.tar.gz";
+    $tardir="$PROJ[TMPDIR]/$tdir";
+    $tarpath="$PROJ[TMPPATH]/$tdir";
+    if(is_dir($tarpath)){
+      systemCmd("rm -rf $tarpath*");
+    }
+    systemCmd("mkdir -p $tarpath/tmp");
+    systemCmd("echo '*' > $tarpath/.s2wfiles");
+    foreach($results as $result){
+      list($rname,$ext1,$ext2)=preg_split("/\./",$result);
+      $rsubs=substr($rname,0,5);
+      systemCmd("tar zxvf $dpath/$result -C $tarpath/tmp");
+      systemCmd("cd $tarpath/tmp/$rname;echo Run $rsubs:>>../../allruns.oxt;cat run.info>>../../allruns.oxt;echo>>../../allruns.oxt;cat run.conf>>../../allruns.oxt;echo>>../../allruns.oxt;echo>>../../allruns.oxt;for file in *;do mv \$file ../../\${file}_$rsubs;done");
+    }
+    systemCmd("cd $PROJ[TMPPATH];rm -rf $tdir/tmp");
+    systemCmd("cd $PROJ[TMPPATH];tar zcvf $tarfile $tdir");
+    systemCmd("cd $PROJ[TMPPATH];rm -rf $tdir");
+
+    $tarlink=fileWebOpen($PROJ["TMPDIR"],"$tarfile","View");
+$result=<<<RESULT
+<a id="down_link" href="JavaScript:$tarlink">Click to get tarball</a>
+RESULT;
+  }else{
+    $result.="<i>No files selected</i>";
+  }
+  goto end;
+}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //REMOVE RESULTS
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 if($Action=="RemoveResults"){

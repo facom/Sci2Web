@@ -81,6 +81,7 @@ if(!preg_match("/,/",$PHP["File"]) and
   $fname="";
   $datafiles="";
   $ncols=array();
+  $i=0;
   foreach(preg_split("/,/",$PHP["File"]) as $file){
     //COUNT NUMBER OF COLUMNS
     $fpath="$path/$file";
@@ -93,13 +94,21 @@ if(!preg_match("/,/",$PHP["File"]) and
     $tfname=$file;
     $fname.="${tfname}_";
     $datafiles.="'$file',";
+    $i++;
   }
+  if($i>1) $qmultfile=1;
+  else $qmultfile=0;
   $fname=preg_replace("/_$/","",$fname);
   $datafiles=preg_replace("/,$/","",$datafiles);
   //PLOT CONFIGURATION FILE
   $fconf="$imgpath/.$fname.ps2w";
 }
 $fimg="$fname.png";
+if(!$qmultfile){
+$viewlink=<<<VIEW
+<a href="JavaScript:Open('$PROJ[BINDIR]/file.php?Dir=$PHP[Dir]&File=$file&Mode=View','Data File','$PROJ[SECWIN]');">View</a>
+VIEW;
+}else $viewlink="";
 
 //==================================================
 //FILE & IMAGE DIR AND PATH
@@ -295,9 +304,11 @@ $content.=<<<CONTENT
       </td>
       <td class="value">
         <input type="hidden" name="ImageFile_Submit" value="$fimg">
-	<b onmouseover="explainThis(this)" explanation="Image file">
-	  $fimg
-	</b>
+	<!--<input type="text" name="ImageFile" 
+	       onchange="popOutHidden(this)"
+	       onmouseover="explainThis(this)" explanation="Image file"
+	       value="$fimg">-->
+	<b>$fimg</b>
       </td>
     </tr>
     <tr>
@@ -311,7 +322,7 @@ $content.=<<<CONTENT
 	<input type="text" name="DataFiles" value="$CONFIG[DataFiles]" 
 	       onchange="popOutHidden(this)" 
 	       onfocus="$('#explanationf').toggle('fast',null);"
-	       onblur="$('#explanationf').toggle('fast',null);">
+	       onblur="$('#explanationf').toggle('fast',null);"> $viewlink
 	<br/>
 	<div id="explanationf" class="explanationtxt" style="display:none">
 	  Give the name of the files separated by ','

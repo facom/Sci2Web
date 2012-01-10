@@ -476,6 +476,8 @@ $sql.=<<SQL;
 create table `${appname}_${vername}` (
 dbrunhash char(32) not null,
 dbauthor varchar(255),
+dbname varchar(255),
+dbtemplate varchar(255),
 dbdate datetime not null,
 SQL
         foreach $vartab (@vartabs){
@@ -1115,6 +1117,8 @@ apps_code='$appname'
 	$tbname=$conf_run{"run_app"}."_".$conf_run{"run_version"};
 	$runcode=$conf_run{"run_code"};
 	$author=$conf_run{"users_email"};
+	$runname=$conf_run{"run_name"};
+	$template=$conf_run{"run_template"};
 	$runhash=sysCmd("md5sum $rundir/run.info | cut -f 1 -d ' '");
 	$rundate=sysCmd("date +'%Y-%m-%d %H:%M:%S'");
 
@@ -1126,6 +1130,8 @@ replace into `$tbname` set
 dbrunhash='$runhash',
 runs_runcode='$runcode',
 dbauthor='$author',
+dbname='$runname',
+dbtemplate='$template',
 dbdate='$rundate',
 SQL
 

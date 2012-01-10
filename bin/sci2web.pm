@@ -189,7 +189,7 @@ sub cleanConfig
 
 sub readConfig {
     my $envfile=shift;
-    my %CONFIG;
+    my %CONFIG,@fields;
 
     Error "File: $envfile does not exist." if(!-e $envfile);
 
@@ -199,7 +199,10 @@ sub readConfig {
     foreach $line (@lines){
 	next if($line=~/^\#/ or
 		$line=~/^$/);
-	($var,$val)=split(/\s*=\s*/,$line);
+	@fields=split(/\s*=\s*/,$line);
+	$var=$fields[0];
+	$val=join "=",@fields[1..$#fields];
+
 	#vprint "VAR: $var\nVAL: $val\n";
 	$CONFIG{"$var"}=$val;
     }

@@ -129,10 +129,17 @@ RESULT;
   //GENERATE HEADER
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $result.=<<<RESULT
-<td>Run hash</td>
-<td>Run code</td>
-<td>Author</td>
+<td>
+  <input type="checkbox" 
+	 name="resultall" 
+	 value="all"
+	 onchange="popOutHidden(this)" 
+	 onclick="selectAll('formdbres',this)">
+</td>
 <td>Date</td>
+<td>Author</td>
+<td>Template</td>
+<td>Name</td>
 <td>Input parameters</td>
 RESULT;
 
@@ -145,13 +152,6 @@ RESULT;
   }
 
 $result.=<<<RESULT
-<td>
-  <input type="checkbox" 
-	 name="resultall" 
-	 value="all"
-	 onchange="popOutHidden(this)" 
-	 onclick="selectAll('formdbres',this)">
-</td>
 <td>Run Files</td>
 RESULT;
 
@@ -170,10 +170,16 @@ RESULT;
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     $runhash=$row['dbrunhash'];
 $result.=<<<RESULT
-<td>$row[dbrunhash]</td>
-<td>$row[runs_runcode]</td>
-<td>$row[dbauthor]</td>
+<td>
+  <input type="checkbox" name="result$i" 
+	 onchange="popOutHidden(this)" onclick="deselectAll('resultall')">
+  <input type="hidden" name="result${i}_Submit" value="off">
+  <input type="hidden" name="reshash${i}_Submit" value="$row[dbrunhash]">
+</td>
 <td>$row[dbdate]</td>
+<td>$row[dbauthor]</td>
+<td>$row[dbtemplate]</td>
+<td>$row[dbname]</td>
 RESULT;
     blankFunc();
 
@@ -205,12 +211,6 @@ RESULT;
     $file="$row[dbrunhash].tar.gz";
 $result.=<<<RESULT
 <td>
-  <input type="checkbox" name="result$i" 
-	 onchange="popOutHidden(this)" onclick="deselectAll('resultall')">
-  <input type="hidden" name="result${i}_Submit" value="off">
-  <input type="hidden" name="reshash${i}_Submit" value="$row[dbrunhash]">
-</td>
-<td>
   <a href="JavaScript:Open('$PROJ[BINDIR]/file.php?Mode=View&Dir=$savedbdir&File=$row[dbrunhash].tar.gz','Results for $runhash','$PROJ[SECWIN]')">Browse</a>
 </td>
 RESULT;
@@ -240,9 +240,9 @@ $result.=<<<RESULT
 </tbody>
 <tfooter>
 <tr>
-<td colspan="8" style="text-align:right">
+<td colspan="9" style="text-align:left">
   <div style="position:relative">
-    <div style="float:right">
+    <div style="float:left">
       <input id="action" type="hidden" name="Action_Submit" value="None">
       $removeopt
       <div class="actionbutton">
@@ -254,18 +254,26 @@ $result.=<<<RESULT
       </button>
       </div>
       <div class="actionbutton">
+      <button  id="downbut" class="image" name="Button" value="JoinResults"
+	       onclick="$('#action').attr('value','JoinResults');$ajax_down;"
+	       onmouseover="explainThis(this)"
+	       explanation="Join and download results">
+	$BUTTONS[Join]
+      </button>
+      </div>
+      <div class="actionbutton">
       $bugbut
       </div>
       <input id="action" type="hidden" name="NumResults_Submit" value="$i">
     </div>
     <div id="down_wait" 
-	 style="border:solid black 0px;float:right;position:relative;top:15px;
-		margin-right:20px;display:none">
+	 style="border:solid black 0px;float:left;position:relative;top:15px;
+		margin-left:20px;display:none">
       $BUTTONS[Wait]
     </div>
     <div id="down_divlink"
-	 style="border:solid black 0px;float:right;position:relative;top:15px;
-		margin-right:20px;display:block">
+	 style="border:solid black 0px;float:left;position:relative;top:15px;
+		margin-left:20px;display:block">
     </div>
   </div>
 </td>
