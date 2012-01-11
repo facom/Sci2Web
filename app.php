@@ -55,13 +55,16 @@ if(!file_exists("$apppath/sci2web/version.conf") and !$qexpire){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $refresh="";
 $head="";
+$pageref="$PROJ[PROJDIR]/$PHP[PAGENAME]";
 if(isset($PHP["SaveContent"]) or
+   isset($PHP["Cancel"]) or
    isset($PHP["SetApp"])){
   $refresh=0;
+  $pageref.="?TabId=$PHP[TabNum]";
 }
-$head.=genHead("$PROJ[PROJDIR]/$PHP[PAGENAME]",$refresh);
+$head.=genHead($pageref,$refresh);
 if($qexpire){
-  $head.=genHead("$PROJ[PROJDIR]","0");
+  $head=genHead("$PROJ[PROJDIR]","0");
 echo<<<CONTENT
 <html>
 $head

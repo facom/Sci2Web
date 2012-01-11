@@ -51,11 +51,4 @@ main(int argc,char *argv[])
     }
   }
   fclose(fl);
-  ndisp=ndisp/N;
-  FILE *fr;
-  fr=fopen("sci2web/results.info","w");
-  fprintf(fr,"MeanDispersions=%lf\n",ndisp);
-  fclose(fr);
-
-  system("date +%s.%N > end.sig");
 }
