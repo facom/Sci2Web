@@ -33,6 +33,11 @@ $optfrm="style='opacity:0.6' disabled";
 $extrastyle="margin-left:10px;margin-right:10px;";
 $metadata="";
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//GENERATE BUG FORM
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+list($bugbutton,$bugform)=genBugForm2("FileInterface","File interface",$PROJ["ROOTEMAIL"]);
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //INPUT VARIABLES
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,6 +297,9 @@ $header.=<<<HEADER
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">
+  <div class="actionbutton">
+  $bugbutton
+  </div>
   $back
   <div class="actionbutton">
     <a href="JavaScript:void(null)" class="image" 
@@ -361,6 +369,7 @@ $content=<<<CONTENT
 	</div>
       </div>
     $endform
+    $bugform
   </body>
 </html>
 

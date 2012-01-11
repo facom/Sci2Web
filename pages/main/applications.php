@@ -74,7 +74,7 @@ CONTENT;
   $ivers=arrayInvert($vers);
   $verchlog="";
   $showchlog=1;
-  $i=1;
+  $j=1;
   foreach($ivers as $ver){
     if(isBlank($ver)) continue;
     $version=getRow(mysqlCmd("select * from versions where version_code='$ver' and apps_code='$appcode' order by release_date"),0);
@@ -83,7 +83,7 @@ CONTENT;
     $changeslog=$CONFIG["ChangesLog"];
     $appvercode="${appcode}_$version[version_code]";
 $verstr.=<<<VERSION
-<option id="${appcode}_$i" $opsel value="$version[version_code]">Version $version[version_code] ($version[release_date])
+<option id="${appcode}_$j" $opsel value="$version[version_code]">Version $version[version_code] ($version[release_date])
 VERSION;
   $onload="";
   if($showchlog){
@@ -97,10 +97,10 @@ VERSION;
   }
 $verchlog.=<<<VERSION
 $onload
-<input type="hidden" id="${appcode}_${i}_changeslog" 
+<input type="hidden" id="${appcode}_${j}_changeslog" 
        value="$changeslog" version="$version[version_code]">
 VERSION;
-    $i++;
+    $j++;
   }
   $editconfigure="";
   if(isset($_SESSION["User"])){
