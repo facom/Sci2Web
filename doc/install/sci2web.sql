@@ -99,7 +99,7 @@ create table runs (
 insert into users 
        (email,username,password,activate,complete_information)
        values 
-       ('sci2web@gmail.com','Super User',
+       ('sci2web@eciencia-colombia.net','Super User',
 	'75cdf1233f0c840d49178f55cfe397d2','1','Sci2Web Organization');
 
 insert into apps 
