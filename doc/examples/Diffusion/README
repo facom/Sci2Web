@@ -30,25 +30,3 @@ You can clean all the files using:
 
     make cleanall
 
-This application can be paused, stopped and resumed using specially
-designed ".sig" files.  If you want to pause the application create a
-blank file called pause.sig:
-
-    touch pause.sig
-
-It also applies for the stopping case:
-
-    touch stop.sig
-
-To resume the running (only in the case it was paused) remove the
-pause.sig files and run again:
-	   
-    rm -rf pause.sig
-    ./diffusion.out salida.txt
-
-it will start where it went when the pause signal was delivered.
-
-You can also check the advance of the program using the bash script
-"stat.sh".  It gives you the degree of completion of the computation
-in a 0 to 1 scale.
-
