@@ -320,19 +320,6 @@ function uploadFile($tgtpath)
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-//CHECK OWNER
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function checkPermissions($file)
-{
-  global $PHP;
-  $user=shell_exec("stat -c %U $file");
-  $user=rtrim($user);
-  if($PHP["WEBUSER"]==$user)
-    return true;
-  return false;
-}
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //CREATE TEMPORAL FILE
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function tempFile($tmpdir)

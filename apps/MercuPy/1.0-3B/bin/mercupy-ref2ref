@@ -137,7 +137,7 @@ for opos in odata:
                 r=bdata[it][1:4]
                 v=bdata[it][4:7]
                 ephys=bdata[it][7:11]
-                print ephys
+                #print ephys
                 rp=r-ro
                 vp=v-vo
             except:

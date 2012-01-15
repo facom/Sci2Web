@@ -12,7 +12,7 @@
 ###################################################
 #GET THE RIGHT PATH
 ###################################################
-BIN=$(stat -c %N sci2web/bin | awk -F' -> ' '{print $2}'  | sed -e "s/['\`]//g")
+BIN=$(ls -ld sci2web/bin | awk -F' -> ' '{print $2}')
 
 ###################################################
 #TIME ROUTINE
@@ -154,11 +154,11 @@ function checkSig
 	"fail");;
 	"end");;
 	"kill")
-	    if [ ! -e "start.sig" -a ! -e "submit.sig" ];then 
+	    if [ ! -e "start.sig" -a ! -e "submit.sig" -a ! -e "posting.sig" ];then 
 		echo "$signal:application not submitted"
 		exit 1
 	    fi
-	    if [ -e "end.sig" ];then 
+	    if [ -e "end.sig" -a ! -e "posting.sig" ];then 
 		echo "$signal:application is executed"
 		exit 1
 	    fi

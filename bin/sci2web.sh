@@ -70,6 +70,7 @@ case $action in
 #post
 #############################################################
     "post")
+	echo $(NOW) > posting.sig
 	echo "Executing action $action:"
 	{
 	    checkSig $action
@@ -291,3 +292,6 @@ bash sci2web/bin/sci2web.sh post
 esac
 shift
 done
+
+chmod -R g+rw * &> /dev/null
+echo "Done."

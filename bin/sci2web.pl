@@ -1164,6 +1164,7 @@ SQL
 	    sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $dbdir/$runhash");
 	    sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $dbdir/$runhash");
 	    sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");
+	    sysCmd("chmod g+rw $dbdir/$runhash.tar.gz");
 	    sysCmd("rm -rf $dbdir/$runhash");
 	}else{
 	    rprint "Database directory $dbdir not found.";

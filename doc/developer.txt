@@ -85,18 +85,18 @@ get an usable web interface to your SA in a couple of minutes.
 
 #. Initialize your application as a Sci2Web_ application::
 
-   % SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorEmails> --changeslog <ShortDescription>
+   % SCI2WEB_PROJPATH/sci2web-admin init --appname <ApplicationName> --vername <VersionName> --emails <ContributorEmails> --changeslog <ShortDescription>
 
    For the first version of the newly ported application we recommend
    to use the name "dev" (development).  This version could be used by
    the developer to develop new improvements and will change in a
    rutinary way.  For the example application::
 
-   % SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
+   % SCI2WEB_PROJPATH/sci2web-admin init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
 
    .. Important:: At this point you can add the ``SCI2WEB_PROJPATH``
       path to your system path in order to make simpler the call to
-      the *sci2web utility scripts* such as ``sci2web.pl``.  Perform
+      the *sci2web utility scripts* such as ``sci2web-admin``.  Perform
       this by adding to your ``.bashrc`` file or any other equivalent
       session file the line::
 
@@ -143,7 +143,7 @@ get an usable web interface to your SA in a couple of minutes.
 #. Compile information about the control and result variables and fill
    automatically other configuration files for the application::
    
-       % sci2web/bin/sci2web.pl contvars --appdir .
+       % sci2web/bin/sci2web-admin contvars --appdir .
 
    Before continue check the ``sci2web/controlvars.info`` file and
    check that the variable substitution rules and the tabs/group
@@ -155,7 +155,7 @@ get an usable web interface to your SA in a couple of minutes.
 #. Check the generation of source files from template files using the
    default value of control variables::
 
-       % sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+       % sci2web/bin/sci2web-admin genfiles --runconf sci2web/templates/Default.conf --rundir .
 
   Check that the source files of your project has been properly
   generated and test again your application from the command line.
@@ -176,17 +176,17 @@ get an usable web interface to your SA in a couple of minutes.
 
 #. Test the *run pipeline*::
 
-      % bash sci2web/bin/sci2web.sh clean
-      % bash sci2web/bin/sci2web.sh compile
-      % bash sci2web/bin/sci2web.sh submit
+      % bash sci2web/bin/sci2web-control clean
+      % bash sci2web/bin/sci2web-control compile
+      % bash sci2web/bin/sci2web-control submit
 
 #. Install your application version in the Sci2Web_ server site::
 
-      % SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+      % SCI2WEB_PATH/bin/sci2web-admin install --appdir .
 
 #. Create a release of the application (public version)::
 
-      % SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
+      % SCI2WEB_PATH/bin/sci2web-admin newversion --appname Diffusion --tempver dev --newver 1.0
 
 #. Test it in the web!   
 
@@ -316,9 +316,9 @@ All the Sci2Web_ configuration information about your application is
 stored in specially formatted files that should be copied and edited
 in the directory of your application.  You can initialize all those
 files with a single command using the perl *utility script*
-``sci2web.pl``::
+``sci2web-admin``::
 	
-  % SCI2WEB_PROJPATH/sci2web.pl init --appname <ApplicationName> --vername <VersionName> --emails <ContributorsEmails> --changeslog <ShortDescription>
+  % SCI2WEB_PROJPATH/sci2web-admin init --appname <ApplicationName> --vername <VersionName> --emails <ContributorsEmails> --changeslog <ShortDescription>
 
 where ``<ApplicationName>`` is the name of your application and
 ``<VersionName>`` is the name of the version you are presently
@@ -356,7 +356,7 @@ it is different from previous versions.
 
 To initialize our sample application the command will be::
 
-  % SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
+  % SCI2WEB_PROJPATH/sci2web-admin init --appname Diffusion --vername dev --emails test@sci2web.org --changeslog "Development version"
 
 As has been said before the initialization step creates all the
 configuration files required to set up a Sci2Web application and
@@ -625,7 +625,7 @@ are ready to test the generation of source files for your runs from
 those templates.  This a critical step in the generation of new
 instances of the application.  To perform this important step run::
 
-    % sci2web/bin/sci2web.pl contvars --appdir .
+    % sci2web/bin/sci2web-admin contvars --appdir .
 
 If an error occur or you want to change the parametrization remove the
 file ``sci2web/.hashvars`` and run again the previous command.
@@ -639,7 +639,7 @@ the initialization of the application.
    already created in Sci2Web_ you should use the absolute path of the
    utility script::
 
-     % SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
+     % SCI2WEB_PATH/sci2web/bin/sci2web-admin contvars --appdir .
 
 This command create three files in the ``sci2web`` subdirectory:
 ``controlvars.info``, ``controlvars.sql`` and
@@ -669,7 +669,7 @@ using the template files and the default *run configuration file*
 (``sci2web/templates/Default.conf``) just created.  To perform this
 run::
 
-    % sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+    % sci2web/bin/sci2web-admin genfiles --runconf sci2web/templates/Default.conf --rundir .
 
 This command will create the run files corresponding to each template
 you have previously created.  In our sample they correspond to the
@@ -682,7 +682,7 @@ used in a particular run.
 You can play around modifying ``run.conf`` and generating again the
 run files::
 
-    % sci2web/bin/sci2web.pl genfiles --runconf run.conf --rundir .
+    % sci2web/bin/sci2web-admin genfiles --runconf run.conf --rundir .
 
 This exercise will give you an idea if your template files and control
 variable configuration files are properly prepared.
@@ -845,23 +845,23 @@ follow carefully the next procedure to complete your configuration:
 
    It is strongly recommended to test the running pipeline
    configuration by trying to use the Sci2Web_ utility script
-   ``sci2web.sh``.  This is the script that the Sci2Web_ web tools
+   ``sci2web-control``.  This is the script that the Sci2Web_ web tools
    will use when trying to control your application.  Test it by
    running::
 
-     % sci2web/bin/sci2web.sh clean
+     % sci2web/bin/sci2web-control clean
 
    If it works as expected by executing the command or script
    you have configured in the ``runpipeline.conf`` file, try to run
    other and more complex actions:
    
-     % sci2web/bin/sci2web.sh compile
-     % sci2web/bin/sci2web.sh pre
+     % sci2web/bin/sci2web-control compile
+     % sci2web/bin/sci2web-control pre
 
    The most critical action is the *Submit* one.  Verify that it works
    as expected::
 
-     % sci2web/bin/sci2web.sh submit
+     % sci2web/bin/sci2web-control submit
      Executing action submit:
      Signal: submit
      Set submit
@@ -931,7 +931,7 @@ follow carefully the next procedure to complete your configuration:
 
          at|pbs)
 
-   The utility script ``sci2web.sh`` includes another actions that
+   The utility script ``sci2web-control`` includes another actions that
    could be useful for other purposes: **cleanall**, cleans all the
    run directory including files generated by the control script;
    **test**, performs a complete test on the running instance
@@ -939,7 +939,7 @@ follow carefully the next procedure to complete your configuration:
    presently running instance; **status** check the status of the
    running instance.  You can run several action "in tandem"::
 
-     % sci2web/bin/sci2web.sh cleanall compile pre submit
+     % sci2web/bin/sci2web-control cleanall compile pre submit
 
    This is the recommended way to test the running pipeline.
 
@@ -1173,18 +1173,18 @@ Before to perform this last and critical step be sure that the
 application directory is cleaned for all temporal files generated
 during the testing phases::
 
-   % sci2web/bin/sci2web.sh cleanall
+   % sci2web/bin/sci2web-control cleanall
 
 To install the application automatically use the utility script::
 
-   % SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+   % SCI2WEB_PATH/bin/sci2web-admin install --appdir .
 
 .. Important:: Notice that you should call the utility script
-   ``sci2web.pl`` using the absolute path instead of using the
+   ``sci2web-admin`` using the absolute path instead of using the
    symbolic link to the ``bin`` directory.  This command will fail to
    install your application::
 
-     % sci2web/bin/sci2web.pl install --appdir .
+     % sci2web/bin/sci2web-admin install --appdir .
 
 If accidentally you have installed your application including a lot of
 temporal files you will still be able to clean the application of the
@@ -1196,7 +1196,7 @@ If something has gone wrong with the installation you can always
 remove the application, correct the problems and reinstall it.  Remove
 the application using the command::
 
-    % SCI2WEB_PATH/bin/sci2web.pl remove --appname <Application>
+    % SCI2WEB_PATH/bin/sci2web-admin remove --appname <Application>
 
 .. Important:: With this procedure you have installed the development
    version, ``dev``.  This version will be only visible to the
@@ -1206,7 +1206,7 @@ the application using the command::
    developmente version.  Run this command (we use here the names of
    the example application)::
 
-      % SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
+      % SCI2WEB_PATH/bin/sci2web-admin newversion --appname Diffusion --tempver dev --newver 1.0
 
    where ``1.0`` is the code name of the new version.  Each time you
    create a new version from an existing one it is strongly
@@ -1332,15 +1332,15 @@ two critical directories:
  	   can check the content of any table of the database from the
  	   command line using the command::
 
-	     % bin/sci2web.pl showdb --describe --table <table>
-	     % bin/sci2web.pl showdb --entries --table <table>
+	     % bin/sci2web-admin showdb --describe --table <table>
+	     % bin/sci2web-admin showdb --entries --table <table>
 
 	   where ``<table>`` could be ``users``, ``apps``,
 	   ``versions``, ``runs`` or ``<app>_<version>``.  To check
 	   which applications and versions exists run::
 
-	     % bin/sci2web.pl showdb --entries --table apps
-	     % bin/sci2web.pl showdb --entries --table versions
+	     % bin/sci2web-admin showdb --entries --table apps
+	     % bin/sci2web-admin showdb --entries --table versions
 	   
   **runs**
   

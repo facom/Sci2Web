@@ -94,6 +94,7 @@ $PROJ["CANCELBUTTON"]="<a href='#'><img class='cancel' src='$PROJ[IMGDIR]/icons/
 
 //SCI2WEB MACRO
 $SCI2WEB="<a class='sci2web' href='http://google.com'>Sci2Web</a>";
+$PROJ["SCI2WEBUSER"]="sci2web";
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //DATABASE
@@ -323,6 +324,21 @@ TEXT;
     }//END SIGNUP
   }//END IF USER OPERATION
 }
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//CHECK PERMISSIONS
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function checkPermissions($file)
+{
+  global $PHP,$PROJ;
+  $user=shell_exec("stat -c %U $file");
+  $user=rtrim($user);
+  if($PHP["WEBUSER"]==$user or
+     $PROJ["SCI2WEBUSER"]==$user)
+    return true;
+  return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 //ROUTINES
 //////////////////////////////////////////////////////////////////////////////////
@@ -1839,6 +1855,17 @@ $status=<<<STATUS
 STATUS;
  }
  return $status;
+}
+
+function sci2webCmd($cmd)
+{
+  global $PROJ,$PHP;
+
+  $getpasscmd="grep DBPASS $PROJ[LIBPATH]/sci2web.db | awk -F'=' '{print \$2}' | sed -e 's/[\";]//gi'"; 
+
+  $out=systemCmd("echo \$($getpasscmd) | sudo -u sci2web -S bash -c '$cmd'");
+
+  return $out;
 }
 
 

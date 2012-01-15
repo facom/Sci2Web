@@ -109,16 +109,36 @@ REPORT;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//CHECK SCI2WEB USER AND PERMISSION
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$report.="<p class='testsession'>Testing Sci2Web User</p>";
+
+$out=sci2webCmd("id sci2web");
+if($PHP["?"]){
+  $report.="<p class='testerror'>User 'sci2web' not found</p>";
+  $nerror++;
+}else{
+  $report.="<p class='testsuccess'>User sci2web found: $out</p>";
+}
+
+sci2webCmd("pwd");
+if($PHP["?"]){
+  $report.="<p class='testerror'>Error executing command as 'sci2web' user</p>";
+  $nerror++;
+}else{
+  $report.="<p class='testsuccess'>Success executing command</p>";
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //CHECK PERMISSIONS
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $report.="<p class='testsession'>Permissions test</p>";
 $dirs=array("$PROJ[TMPPATH]/test",
 	    "$PROJ[APPSPATH]/template/application-desc.html",
-	    "$PROJ[JSPATH]/ckfinder/userfiles/test",
 	    "$PROJ[RUNSPATH]/test",
 	    "$PROJ[PAGESPATH]/main",
 	    "$PROJ[PAGESPATH]/main/content");
-	    
+
 foreach($dirs as $dir){
   systemCmd("touch $dir");
   if($PHP["?"]){
@@ -135,7 +155,7 @@ foreach($dirs as $dir){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $report.="<p class='testsession'>Sample Application</p>";
 $sampleapp="MercuPy";
-foreach(array("2B-dev","3B-dev") as $version){
+foreach(array("1.0-2B","1.0-3B") as $version){
   systemCmd("ls $PROJ[APPSPATH]/$sampleapp/$version/bin/elem2state");
   if($PHP["?"]){
     $report.="<p class='testerror'>Version '$version' of the sample application not compiled yet</p>";
