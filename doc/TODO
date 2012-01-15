@@ -10,6 +10,8 @@
 
 To Do:
 
+- Block ajax scripts when a special input parameters not has been passed
+
 - Block runs when adminsitrative tasks are being performed
 
 - Block always newly created version
