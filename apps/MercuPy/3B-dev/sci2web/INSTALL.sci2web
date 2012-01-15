@@ -1,9 +1,0 @@
-Sci2Web Application
-=======================================
-
-To start using this application please follow the instructions below:
-
-- Compile the binaries:
-
-  make utilbuild
-

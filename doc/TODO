@@ -10,6 +10,12 @@
 
 To Do:
 
+- Block runs when adminsitrative tasks are being performed
+
+- Block always newly created version
+
+- Change naming of the MercuPy versions
+
 - Sort database searches by different criteria
 
 - If a run is repeated avoid to create it again

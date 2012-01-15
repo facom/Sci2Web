@@ -158,7 +158,7 @@ switch($Action){
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
 		print "Provide the MySQL root password:\n\t";
-		sysCmd("cat $ROOTDIR/doc/install/sci2web.sql $ROOTDIR/apps/MercuPy/2B-dev/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/3B-dev/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/2B-1.0/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/3B-1.0/sci2web/controlvars.sql > /tmp/db.$$");
+		sysCmd("cat $ROOTDIR/doc/install/sci2web.sql $ROOTDIR/apps/MercuPy/1.0-2B/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/1.0-3B/sci2web/controlvars.sql > /tmp/db.$$");
 		`mysql -u root -p < /tmp/db.$$`;
 		die("Failed authentication") if($?);
 		$qclean=1;
@@ -850,6 +850,12 @@ apps_code='$appname'
 	    rprint "Copying files into version dir...";
 	    sysCmd("tar cf - * .[a-zA-Z]* | tar xf - -C $verdir");
 	    sysCmd("cp -rf $licfile $verdir/LICENSE");
+
+	    #========================================
+	    #BLOCK NEW VERSIONS BY DEFAULT
+	    #========================================
+	    sysCmd("touch $verdir/sci2web/.newversion");
+
 	    #========================================
 	    #RELEASE TARBALLS
             #========================================

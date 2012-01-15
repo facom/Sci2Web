@@ -14,7 +14,7 @@
 #CREATE USER
 ###################################################
 #In order to create data base user run:
-# create user 'sci2web'@'localhost' identified by 'WebPoweredSAs'
+# create user 'sci2web'@'localhost' identified by '********'
 # grant all privileges on sci2web.* to 'sci2web'@'localhost'
 # flush privileges
 ###################################################
@@ -93,6 +93,9 @@ create table runs (
        users_email varchar(255)
 );
 
+create table `MercuPy_1.0-2B` (dbrunhash varchar(32));
+create table `MercuPy_1.0-3B` (dbrunhash varchar(32));
+
 ###################################################
 #POPULATE TABLES
 ###################################################
@@ -105,28 +108,16 @@ insert into users
 insert into apps 
        (app_code,users_emails_author,creation_date,versions_codes)
        values
-       ('MercuPy','test@sci2web.org;',date(now()),'2B-dev;3B-dev;2B-1.0;3B-1.0;');
+       ('MercuPy','test@sci2web.org;',date(now()),'1.0-2B;1.0-3B;');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
 	apps_code)
        values
-       ('2B-dev',date(now()),'test@sci2web.org;','MercuPy');
+       ('1.0-2B',date(now()),'test@sci2web.org;','MercuPy');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
 	apps_code)
        values
-       ('2B-1.0',date(now()),'test@sci2web.org;','MercuPy');
-
-insert into versions
-       (version_code,release_date,users_emails_contributor,
-	apps_code)
-       values
-       ('3B-dev',date(now()),'test@sci2web.org;','MercuPy');
-
-insert into versions
-       (version_code,release_date,users_emails_contributor,
-	apps_code)
-       values
-       ('3B-1.0',date(now()),'test@sci2web.org;','MercuPy');
+       ('1.0-3B',date(now()),'test@sci2web.org;','MercuPy');

@@ -31,7 +31,8 @@ function NOW
 function setStatus
 {
     status=$1;shift
-    cmd="perl sci2web/bin/sci2web.pl changestatus --rundir . --status "
+    echo "Setting status...";
+    cmd="perl $BIN/sci2web.pl changestatus --rundir . --status "
     case $status in
 	error)
 	    $cmd 0
