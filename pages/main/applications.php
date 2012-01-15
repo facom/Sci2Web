@@ -77,6 +77,7 @@ CONTENT;
   $j=1;
   foreach($ivers as $ver){
     if(isBlank($ver)) continue;
+    if(file_exists("$PROJ[APPSPATH]/$appcode/$ver/sci2web/.newversion")) continue;
     $version=getRow(mysqlCmd("select * from versions where version_code='$ver' and apps_code='$appcode' order by release_date"),0);
     $opsel="";
     readConfig("$PROJ[APPSPATH]/$appcode/$ver/sci2web/version.conf");
