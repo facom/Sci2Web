@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
 <title></title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -46,6 +46,10 @@ blockquote.epigraph {
 
 dl.docutils dd {
   margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
 
 /* Uncomment (and remove this text!) to get bold-faced definition list terms
 dl.docutils dt {
@@ -157,15 +161,21 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left, .figure.align-left{
+img.align-left, .figure.align-left, object.align-left {
   clear: left ;
   float: left ;
   margin-right: 1em }
 
-img.align-right, .figure.align-right {
+img.align-right, .figure.align-right, object.align-right {
   clear: right ;
   float: right ;
   margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .align-left {
   text-align: left }
@@ -179,7 +189,7 @@ img.align-right, .figure.align-right {
 
 /* reset inner alignment in figures */
 div.align-right {
-  text-align: left }
+  text-align: inherit }
 
 /* div.align-center * { */
 /*   text-align: left } */
@@ -239,7 +249,7 @@ pre.address {
   margin-top: 0 ;
   font: inherit }
 
-pre.literal-block, pre.doctest-block {
+pre.literal-block, pre.doctest-block, pre.math {
   margin-left: 2em ;
   margin-right: 2em }
 
@@ -354,6 +364,21 @@ Processed by unicode2rstsubs.py, part of Docutils:
 .. include:: <isoamso.txt>
 .. include:: <isoamsr.txt>
 .. include:: <isogrk1.txt> -->
+<!-- .
+//////////////////////////////////////////////////////////////////////
+//MACROS
+//////////////////////////////////////////////////////////////////////
+. -->
+<!-- .
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//LINKS
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+. -->
+<!-- .
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//IMAGES
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+. -->
 <img alt="../images/sci2web-mainlogo.jpg" src="../images/sci2web-mainlogo.jpg" style="height: 100px;" />
 <div class="section" id="developer-guide">
 <h1><a class="toc-backref" href="#id1">Developer Guide</a></h1>
@@ -513,20 +538,20 @@ properly solving all the potential dependencies.</p>
 </li>
 <li><p class="first">Initialize your application as a <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> application:</p>
 <pre class="literal-block">
-% SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorEmails&gt; --changeslog &lt;ShortDescription&gt;
+% SCI2WEB_PROJPATH/sci2web-admin init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorEmails&gt; --changeslog &lt;ShortDescription&gt;
 </pre>
 <p>For the first version of the newly ported application we recommend
 to use the name &quot;dev&quot; (development).  This version could be used by
 the developer to develop new improvements and will change in a
 rutinary way.  For the example application:</p>
 <pre class="literal-block">
-% SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test&#64;sci2web.org --changeslog &quot;Development version&quot;
+% SCI2WEB_PROJPATH/sci2web-admin init --appname Diffusion --vername dev --emails test&#64;sci2web.org --changeslog &quot;Development version&quot;
 </pre>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>At this point you can add the <tt class="docutils literal">SCI2WEB_PROJPATH</tt>
 path to your system path in order to make simpler the call to
-the <em>sci2web utility scripts</em> such as <tt class="docutils literal">sci2web.pl</tt>.  Perform
+the <em>sci2web utility scripts</em> such as <tt class="docutils literal"><span class="pre">sci2web-admin</span></tt>.  Perform
 this by adding to your <tt class="docutils literal">.bashrc</tt> file or any other equivalent
 session file the line:</p>
 <pre class="literal-block">
@@ -574,7 +599,7 @@ actions.  Also include code to check the status of the execution.</p>
 <li><p class="first">Compile information about the control and result variables and fill
 automatically other configuration files for the application:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.pl contvars --appdir .
+% sci2web/bin/sci2web-admin contvars --appdir .
 </pre>
 <p>Before continue check the <tt class="docutils literal">sci2web/controlvars.info</tt> file and
 check that the variable substitution rules and the tabs/group
@@ -585,7 +610,7 @@ the file <tt class="docutils literal"><span class="pre">sci2web/.hashvars</span>
 <li><p class="first">Check the generation of source files from template files using the
 default value of control variables:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+% sci2web/bin/sci2web-admin genfiles --runconf sci2web/templates/Default.conf --rundir .
 </pre>
 </li>
 </ol>
@@ -611,19 +636,19 @@ your makefile.</p>
 </li>
 <li><p class="first">Test the <em>run pipeline</em>:</p>
 <pre class="literal-block">
-% bash sci2web/bin/sci2web.sh clean
-% bash sci2web/bin/sci2web.sh compile
-% bash sci2web/bin/sci2web.sh submit
+% bash sci2web/bin/sci2web-control clean
+% bash sci2web/bin/sci2web-control compile
+% bash sci2web/bin/sci2web-control submit
 </pre>
 </li>
 <li><p class="first">Install your application version in the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> server site:</p>
 <pre class="literal-block">
-% SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+% SCI2WEB_PATH/bin/sci2web-admin install --appdir .
 </pre>
 </li>
 <li><p class="first">Create a release of the application (public version):</p>
 <pre class="literal-block">
-% SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
+% SCI2WEB_PATH/bin/sci2web-admin newversion --appname Diffusion --tempver dev --newver 1.0
 </pre>
 </li>
 <li><p class="first">Test it in the web!</p>
@@ -738,9 +763,9 @@ path.</p>
 stored in specially formatted files that should be copied and edited
 in the directory of your application.  You can initialize all those
 files with a single command using the perl <em>utility script</em>
-<tt class="docutils literal">sci2web.pl</tt>:</p>
+<tt class="docutils literal"><span class="pre">sci2web-admin</span></tt>:</p>
 <pre class="literal-block">
-% SCI2WEB_PROJPATH/sci2web.pl init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorsEmails&gt; --changeslog &lt;ShortDescription&gt;
+% SCI2WEB_PROJPATH/sci2web-admin init --appname &lt;ApplicationName&gt; --vername &lt;VersionName&gt; --emails &lt;ContributorsEmails&gt; --changeslog &lt;ShortDescription&gt;
 </pre>
 <p>where <tt class="docutils literal">&lt;ApplicationName&gt;</tt> is the name of your application and
 <tt class="docutils literal">&lt;VersionName&gt;</tt> is the name of the version you are presently
@@ -778,7 +803,7 @@ see that version.</p>
 </div>
 <p>To initialize our sample application the command will be:</p>
 <pre class="literal-block">
-% SCI2WEB_PROJPATH/sci2web.pl init --appname Diffusion --vername dev --emails test&#64;sci2web.org --changeslog &quot;Development version&quot;
+% SCI2WEB_PROJPATH/sci2web-admin init --appname Diffusion --vername dev --emails test&#64;sci2web.org --changeslog &quot;Development version&quot;
 </pre>
 <p>As has been said before the initialization step creates all the
 configuration files required to set up a Sci2Web application and
@@ -1047,7 +1072,7 @@ are ready to test the generation of source files for your runs from
 those templates.  This a critical step in the generation of new
 instances of the application.  To perform this important step run:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.pl contvars --appdir .
+% sci2web/bin/sci2web-admin contvars --appdir .
 </pre>
 <p>If an error occur or you want to change the parametrization remove the
 file <tt class="docutils literal"><span class="pre">sci2web/.hashvars</span></tt> and run again the previous command.</p>
@@ -1061,7 +1086,7 @@ and want to update the templates for all the application instances
 already created in <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> you should use the absolute path of the
 utility script:</p>
 <pre class="last literal-block">
-% SCI2WEB_PATH/sci2web/bin/sci2web.pl contvars --appdir .
+% SCI2WEB_PATH/sci2web/bin/sci2web-admin contvars --appdir .
 </pre>
 </div>
 <p>This command create three files in the <tt class="docutils literal">sci2web</tt> subdirectory:
@@ -1093,7 +1118,7 @@ using the template files and the default <em>run configuration file</em>
 (<tt class="docutils literal">sci2web/templates/Default.conf</tt>) just created.  To perform this
 run:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.pl genfiles --runconf sci2web/templates/Default.conf --rundir .
+% sci2web/bin/sci2web-admin genfiles --runconf sci2web/templates/Default.conf --rundir .
 </pre>
 <p>This command will create the run files corresponding to each template
 you have previously created.  In our sample they correspond to the
@@ -1105,7 +1130,7 @@ used in a particular run.</p>
 <p>You can play around modifying <tt class="docutils literal">run.conf</tt> and generating again the
 run files:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.pl genfiles --runconf run.conf --rundir .
+% sci2web/bin/sci2web-admin genfiles --runconf run.conf --rundir .
 </pre>
 <p>This exercise will give you an idea if your template files and control
 variable configuration files are properly prepared.</p>
@@ -1254,23 +1279,23 @@ previous example file the <tt class="docutils literal">STATUSSCR</tt> is execute
 that a <tt class="docutils literal">STATUSCMD</tt> has been also provided.</p>
 <p>It is strongly recommended to test the running pipeline
 configuration by trying to use the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> utility script
-<tt class="docutils literal">sci2web.sh</tt>.  This is the script that the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> web tools
+<tt class="docutils literal"><span class="pre">sci2web-control</span></tt>.  This is the script that the <a class="reference external" href="http://localhost/user/Sci2WebPP">Sci2Web</a> web tools
 will use when trying to control your application.  Test it by
 running:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.sh clean
+% sci2web/bin/sci2web-control clean
 </pre>
 <p>If it works as expected by executing the command or script
 you have configured in the <tt class="docutils literal">runpipeline.conf</tt> file, try to run
 other and more complex actions:</p>
 <blockquote>
-<p>% sci2web/bin/sci2web.sh compile
-% sci2web/bin/sci2web.sh pre</p>
+<p>% sci2web/bin/sci2web-control compile
+% sci2web/bin/sci2web-control pre</p>
 </blockquote>
 <p>The most critical action is the <em>Submit</em> one.  Verify that it works
 as expected:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.sh submit
+% sci2web/bin/sci2web-control submit
 Executing action submit:
 Signal: submit
 Set submit
@@ -1337,7 +1362,7 @@ pbs)
 at|pbs)
 </pre>
 </div>
-<p>The utility script <tt class="docutils literal">sci2web.sh</tt> includes another actions that
+<p>The utility script <tt class="docutils literal"><span class="pre">sci2web-control</span></tt> includes another actions that
 could be useful for other purposes: <strong>cleanall</strong>, cleans all the
 run directory including files generated by the control script;
 <strong>test</strong>, performs a complete test on the running instance
@@ -1345,7 +1370,7 @@ including pause, stop and resume commands; <strong>kill</strong>, kills the
 presently running instance; <strong>status</strong> check the status of the
 running instance.  You can run several action &quot;in tandem&quot;:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.sh cleanall compile pre submit
+% sci2web/bin/sci2web-control cleanall compile pre submit
 </pre>
 <p>This is the recommended way to test the running pipeline.</p>
 </li>
@@ -1580,20 +1605,20 @@ Before to perform this last and critical step be sure that the
 application directory is cleaned for all temporal files generated
 during the testing phases:</p>
 <pre class="literal-block">
-% sci2web/bin/sci2web.sh cleanall
+% sci2web/bin/sci2web-control cleanall
 </pre>
 <p>To install the application automatically use the utility script:</p>
 <pre class="literal-block">
-% SCI2WEB_PATH/bin/sci2web.pl install --appdir .
+% SCI2WEB_PATH/bin/sci2web-admin install --appdir .
 </pre>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>Notice that you should call the utility script
-<tt class="docutils literal">sci2web.pl</tt> using the absolute path instead of using the
+<tt class="docutils literal"><span class="pre">sci2web-admin</span></tt> using the absolute path instead of using the
 symbolic link to the <tt class="docutils literal">bin</tt> directory.  This command will fail to
 install your application:</p>
 <pre class="last literal-block">
-% sci2web/bin/sci2web.pl install --appdir .
+% sci2web/bin/sci2web-admin install --appdir .
 </pre>
 </div>
 <p>If accidentally you have installed your application including a lot of
@@ -1605,7 +1630,7 @@ command.</p>
 remove the application, correct the problems and reinstall it.  Remove
 the application using the command:</p>
 <pre class="literal-block">
-% SCI2WEB_PATH/bin/sci2web.pl remove --appname &lt;Application&gt;
+% SCI2WEB_PATH/bin/sci2web-admin remove --appname &lt;Application&gt;
 </pre>
 <div class="important">
 <p class="first admonition-title">Important</p>
@@ -1617,7 +1642,7 @@ to create a public version from a copy of the just created
 developmente version.  Run this command (we use here the names of
 the example application):</p>
 <pre class="literal-block">
-% SCI2WEB_PATH/bin/sci2web.pl newversion --appname Diffusion --tempver dev --newver 1.0
+% SCI2WEB_PATH/bin/sci2web-admin newversion --appname Diffusion --tempver dev --newver 1.0
 </pre>
 <p class="last">where <tt class="docutils literal">1.0</tt> is the code name of the new version.  Each time you
 create a new version from an existing one it is strongly
@@ -1733,15 +1758,15 @@ been properly created at the <a class="reference external" href="http://localhos
 can check the content of any table of the database from the
 command line using the command:</p>
 <pre class="literal-block">
-% bin/sci2web.pl showdb --describe --table &lt;table&gt;
-% bin/sci2web.pl showdb --entries --table &lt;table&gt;
+% bin/sci2web-admin showdb --describe --table &lt;table&gt;
+% bin/sci2web-admin showdb --entries --table &lt;table&gt;
 </pre>
 <p>where <tt class="docutils literal">&lt;table&gt;</tt> could be <tt class="docutils literal">users</tt>, <tt class="docutils literal">apps</tt>,
 <tt class="docutils literal">versions</tt>, <tt class="docutils literal">runs</tt> or <tt class="docutils literal">&lt;app&gt;_&lt;version&gt;</tt>.  To check
 which applications and versions exists run:</p>
 <pre class="last literal-block">
-% bin/sci2web.pl showdb --entries --table apps
-% bin/sci2web.pl showdb --entries --table versions
+% bin/sci2web-admin showdb --entries --table apps
+% bin/sci2web-admin showdb --entries --table versions
 </pre>
 </div>
 </blockquote>

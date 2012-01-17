@@ -80,6 +80,14 @@ server::
 Here the symbol ``%`` replaces the prompt and hereafter will be used
 to denote a command that should be executed in the linux console.
 
+Specially important is the installation of the MySQL server.  You can
+use simply::
+
+   % apt-get install mysql-server
+
+At some point the installation script will ask for the root user
+password.  Use an easy to recall password, e.g. the root password.
+
 .. Important:: Hereafter we will use also the follwoing aliases when
    referring to important directories, files or other global
    properties that could change from machine to machine:
@@ -210,18 +218,22 @@ To install a Sci2Web_ server site in your server follow these steps:
    Sci2Web_ require that a new user be created at the web server::
 
      % useradd -d PROJPATH -m sci2web -g www-data -G www-data
-     % passwd
+     % passwd sci2web
 
    The password should be the same as that of the database user.
 
    Once created you should give the Apache user the proper permissions
    to execute commands as the new user.  To do it edit the ``sudoers``
-   file (e.g. in debian create a new file ``etc/sudoers.d/sci2web``
+   file (e.g. in debian create a new file ``/etc/sudoers.d/sci2web``
    and add the following new lines::
 
      APACHE_USER       ALL=(sci2web)        ALL
      Defaults:APACHE_USER      targetpw
      Defaults:APACHE_USER      !requiretty
+
+   Change the permissions of the file:
+
+     % chmod 0440 /etc/sudoers.d/sci2web
 
 #. **Set permissions for critical directories**.  Several directories
    in your website should have reading and writing permission for the
@@ -388,12 +400,6 @@ avoid attacks to your server coming form the Sci2Web_ website.
   Normally this is performed by creating a symbolic link to
   ``/bin/dash`` as ``/bin/sh``.  Change this default configuration in
   order to make ``sh`` point out to ``bash``.
-
-+ **Create a dedicated sci2web user**::
-
-    % useradd -m -d PROJPATH -p ***** sci2web
-    
-  Where ***** is the database user password.
 
 -----------------------
 
