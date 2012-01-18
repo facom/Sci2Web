@@ -113,7 +113,7 @@ REPORT;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $report.="<p class='testsession'>Testing Sci2Web User</p>";
 
-$out=sci2webCmd("id sci2web");
+$out=systemCmd("id sci2web");
 if($PHP["?"]){
   $report.="<p class='testerror'>User 'sci2web' not found</p>";
   $nerror++;

@@ -5,7 +5,7 @@
 ARCH=$(shell uname -r | cut -f 3 -d '-')
 CC=g++
 CFLAGS_OPT=-O4
-CSPICE_PREFIX=cspice
+CSPICE_PREFIX=../../cspice
 CPPFLAGS=$(CFLAGS_OPT) -I. -I$(CSPICE_PREFIX)/include
 CSPICE_LIBDIR=$(CSPICE_PREFIX)/lib
 UTILPROGS=elem2state.out state2elem.out

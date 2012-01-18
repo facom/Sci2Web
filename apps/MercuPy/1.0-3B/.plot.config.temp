@@ -6,7 +6,7 @@ Jorge Zuluaga (C) 2011
 PLOT CONFIGURATION FILE
 """
 from mercupy import *
-state=loadconf("system.state")
+state=loadconf("system.config")
 
 PLOTS=[
 ###################################################
@@ -17,32 +17,32 @@ plot(
 type='phasespace',
 image='orbit-inertial.png',
 #USE CODES INSTEAD OF NAMES
-bodies=['BODY2','BODY3'],
-#DATA FILE EXTENSION
+bodies=[[[OrbitBodies]]],
+#DATA FILE EXTENSION: dat,ref
 extension='dat',
 #ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
-styles=[('r','-',2,'o',5),('b','-',1,'p',5)],
+styles=[[[OrbitStyles]]],
 #THREE COORDINATES.  ANY SET OF ELEMENTS
-coordinates=['x','y','z'],
+coordinates=[[[OrbitCoordinates]]],
 #ANGLE VIEW: PHI (XY-ANGLE), THETA (Z-ANGLE).  DEGREES.
-view=[30,60],
+view=[[[OrbitViewAngle]]],
 #YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
-tini=state.TIME_START,
-tend=state.TIME_STOP,
+tini=[[OrbitTimeIni]],
+tend=[[OrbitTimeEnd]],
 #INCLUDE A 2D GRID
-grid=0,
+grid=[[OrbitGrid]],
 #INCLUDE THE X,Y,Z AXIS IN THE PLOT
-axes=1,
+axes=[[OrbitAxis]],
 #INCLUDE THE BORDER OF THE XY-PLANE
-xyplane=1,
+xyplane=[[OrbitXYPlane]],
 #PLOT BOX
-plotbox=0,
+plotbox=[[OrbitBox]],
 #INCLUDE LABELS FOR ORBITS: NAME OF OBJECTS
-legends=1,
+legends=[[OrbitLegends]],
 #LABELS FOR THE 2D PLOT
-xlabel='AU',
+xlabel=[[OrbitXLabel]],
 #LABELS FOR THE 2D PLOT
-ylabel='AU'
+ylabel=[[OrbitXLabel]]
 ),#COMMA IS MANDATORY
 
 ###################################################
@@ -53,32 +53,32 @@ plot(
 type='phasespace',
 image='orbit-rotating.png',
 #USE CODES INSTEAD OF NAMES
-bodies=['BODY2','BODY3'],
+bodies=[[[OrbitBodies]]],
 #DATA FILE EXTENSION
 extension='ref',
 #ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
-styles=[('r','-',2,'o',5),('b','-',1,'p',5)],
+styles=[[[OrbitStyles]]],
 #THREE COORDINATES.  ANY SET OF ELEMENTS
-coordinates=['x','y','z'],
+coordinates=[[[OrbitCoordinates]]],
 #ANGLE VIEW: PHI (XY-ANGLE), THETA (Z-ANGLE).  DEGREES.
-view=[30,60],
+view=[[[OrbitViewAngle]]],
 #YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
-tini=state.TIME_START,
-tend=state.TIME_STOP,
+tini=[[OrbitTimeIni]],
+tend=[[OrbitTimeEnd]],
 #INCLUDE A 2D GRID
-grid=0,
+grid=[[OrbitGrid]],
 #INCLUDE THE X,Y,Z AXIS IN THE PLOT
-axes=1,
+axes=[[OrbitAxis]],
 #INCLUDE THE BORDER OF THE XY-PLANE
-xyplane=1,
+xyplane=[[OrbitXYPlane]],
 #PLOT BOX
-plotbox=0,
+plotbox=[[OrbitBox]],
 #INCLUDE LABELS FOR ORBITS: NAME OF OBJECTS
-legends=1,
+legends=[[OrbitLegends]],
 #LABELS FOR THE 2D PLOT
-xlabel='AU',
+xlabel=[[OrbitXLabel]],
 #LABELS FOR THE 2D PLOT
-ylabel='AU'
+ylabel=[[OrbitXLabel]]
 ),#COMMA IS MANDATORY
 
 ###################################################
@@ -89,20 +89,20 @@ plot(
 type='evolution',
 image='elements-inertial.png',
 #USE CODES INSTEAD OF NAMES
-bodies=['BODY3'],
+bodies=[[[ElementsBodies]]],
 #DATA FILE EXTENSION
 extension='dat',
 #ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
-styles=[('b','-',3,'s',2)],
+styles=[[[ElementsStyles]]],
 #ANY SET OF ELEMENTS
-elements=['a','e','i','M'],
+elements=[[[ElementsCoordinates]]],
 #LIMITS FOR Y-AXIS IN THE PLOT OF THE ELEMENT
-ylims=['Auto',(0,1),(0,90),(0,360)],
+ylims=[[[ElementsYLims]]],
 #SCALE FOR Y-AXIS
-yscales=['linear','log','linear','linear'],
+yscales=[[[ElementsScales]]],
 #YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
-tini=state.TIME_START,
-tend=state.TIME_STOP,
+tini=[[ElementsTimeIni]],
+tend=[[ElementsTimeEnd]],
 ),#COMMA IS MANDATORY
 
 ###################################################
@@ -113,20 +113,20 @@ plot(
 type='evolution',
 image='elements-rotating.png',
 #USE CODES INSTEAD OF NAMES
-bodies=['BODY3'],
+bodies=[[[ElementsBodies]]],
 #DATA FILE EXTENSION
 extension='ref',
 #ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
-styles=[('b','-',3,'s',2)],
+styles=[[[ElementsStyles]]],
 #ANY SET OF ELEMENTS
-elements=['a','e','i','M'],
+elements=[[[ElementsCoordinates]]],
 #LIMITS FOR Y-AXIS IN THE PLOT OF THE ELEMENT
-ylims=['Auto',(0,1),(0,90),(0,360)],
+ylims=[[[ElementsYLims]]],
 #SCALE FOR Y-AXIS
-yscales=['linear','log','linear','linear'],
+yscales=[[[ElementsScales]]],
 #YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
-tini=state.TIME_START,
-tend=state.TIME_STOP,
+tini=[[ElementsTimeIni]],
+tend=[[ElementsTimeEnd]],
 ),#COMMA IS MANDATORY
 
 ###################################################

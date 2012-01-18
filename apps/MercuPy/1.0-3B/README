@@ -40,3 +40,28 @@ Some of the funcionalities added to Mercury using this wrap are:
 
 You will find details about the installation and running of MercuPy in
 the doc/MANUAL.txt file.
+
+Quickstart
+==========
+
+Before you can use MercuPy it is required that several third party
+software be compiled::
+
+  % make utilbuild
+
+To start using MercuPy follow the instructions below:
+
+- Describe the properties of your system using the configuration file
+  system.config.
+
+- Prepare the simulation files::
+
+  % make prepare
+
+- Build the binaries::
+
+  % make build
+
+- Run Mercury::
+
+  % make run

@@ -9,15 +9,14 @@ Jorge Zuluaga (C) 2011
 #IMPORT UTILITIES
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 from mercupy import *
-conf=loadconf("%s/mercupy.conf"%ROOTDIR)
-inifile="system.state"
-if not os.path.lexists(inifile):
-    error("Initial state file '%s' does not exist."%inifile)
 BP="."
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #LOAD CONFIGURATION FILE
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+inifile="system.config"
+if not os.path.lexists(inifile):
+    error("Initial state file '%s' does not exist."%inifile)
 print "Reading initial file: %s"%inifile
 state=loadconf(inifile)
 
@@ -30,17 +29,39 @@ BID=dict()#DICTIONARY OF IDS
 i=0
 cbody=state.BODIES[0]
 ShowObjects=""
-fobj=open("%s/objects.txt"%BP,"w")
+fobj=open("%s/objects.out"%BP,"w")
 for body in state.BODIES:
 
     #SET ID OF BODIES
     BID[body["Code"]]=i
     body["Id"]=i
+    bcode=body["Code"]
+    body["Simulate"]=True
     i=i+1
 
-    #REFERENCE BODY
-    fbody=state.BODIES[BID[body["Frame"]]]
-    ObjectProperties(body,fbody,cbody,COORDINATES)
+    #CHECK IF A PREVIOUS STATE ALREADY EXIST
+    datfile="%s.state"%bcode
+    if os.path.lexists(datfile):
+        body["Units"]=MERCURY
+        lstate=System("cat %s"%datfile,out=True)
+        if "COLLISION" in lstate:
+            body["Simulate"]=False
+            continue
+        bstate=[float(x) for x in lstate.split()]
+        if OBJVERB:print "PREVIOUS STATE:",bstate
+        body["State"]="%e %e %e %e %e %e"%\
+            (bstate[1],bstate[2],bstate[3],\
+                 bstate[4],bstate[5],bstate[6])
+        body["Mass"]=bstate[20]*UMMERC
+        if OBJVERB:print "PREVIOUS MASS:",body["Mass"]
+        fbody=cbody
+        coordinates=['Cartesian']*3
+    else:
+        #REFERENCE BODY
+        fbody=state.BODIES[BID[body["Frame"]]]
+        coordinates=COORDINATES
+
+    ObjectProperties(body,fbody,cbody,coordinates)
     ShowBody(body)
     ShowBody(body,fhl=fobj)
 
@@ -55,6 +76,9 @@ for body in state.BODIES:
 fobj.close()
 
 COORDINATES[BIG]=COORDINATES[SMALL]="Cartesian"
+
+#TIMES
+#state.TIME_STOP=state.TIME_START+state.TIME_ELAPSED
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #UNITS OF TIME
@@ -73,7 +97,6 @@ else:
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CREATE IN/INC FILES
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 #====================
 #big.in
 #====================
@@ -85,6 +108,7 @@ print>>f,"""\
 style (Cartesian, Asteroidal, Cometary) = %s
 epoch (in days) = %e\
 """%(state.COORDINATES[BIG],state.EPOCH)
+
 i=0
 for big in dbig:
     i+=1
@@ -106,6 +130,7 @@ print>>f,"""\
 )O+_06
 style (Cartesian, Asteroidal, Cometary) = %s\
 """%state.COORDINATES[SMALL]
+
 i=0
 for small in dsmall:
     i+=1
@@ -221,10 +246,11 @@ c-------------------------------------------------------------------------
 #====================
 #element.in
 #====================
-elist=["els","xyz"]
+elist=["pos","orb","phy"]
 i=0
-for FRM in [conf.FRM_ELEMENTS+conf.FRM_COMPLEMENTARY,
-            conf.FRM_COORDINATES+conf.FRM_PHYSICAL]:
+for FRM in [state.POSITION_ELEMENTS,
+            state.ORBITAL_ELEMENTS,
+            state.PHYSICAL_ELEMENTS]:
     fname="%s/element-%s.in"%(BP,elist[i])
     i+=1
     print "Generating %s..."%fname
@@ -572,13 +598,3 @@ print>>f,"""\
 199  0 
 200  0 
 """
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#COMPILE
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-print "Compiling build directory '%s'..."%BP
-print System("make -s -C %s clean all"%BP,out=True)
-for exefile in conf.EXEC_FILES:
-    if not os.path.exists("%s/%s"%(BP,exefile)):
-        error("Compilation has a problem in '%s'"%BP)
-print "Done."
