@@ -1,4 +1,4 @@
-Show#Format:
+#Format:
 #  VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly
 #
 #Where:
@@ -36,7 +36,7 @@ Show#Format:
 [[TimeUnits::hours;;days;;months;;years==days::varchar::Time Units::Simulation::Times::Enter the units for times in simulation]]
 [[Epoch::0.0::float::Epoch::Simulation::Times::Enter the initial epoch of the simulation]]
 [[TimeStart::0<<==0.0::float::Time of start::Simulation::Times::In Time Units]]
-[[TimeStop::0<<==365.25::float::Time of end::Simulation::Times::In Time Units]]
+[[TimeElapsed::365.25::float::Simulation time::Simulation::Times::In Time Units]]
 [[TimeStep::0<<==1E-3::float::Time step::Simulation::Times::In Time Units]]
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,8 @@ Show#Format:
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [[StopIntegration::yes;;no==no::varchar::Stop Integration?::Integrator::Behavior::Stop integration after a close encounter]]
 [[Collisions::yes;;no==no::varchar::Allow collisions?::Integrator::Behavior::Allow collisions to occur]]
+[[ContinueIntegration::1::boolean::Continue integration::Integrator::Behavior::Do you want that the integration continue in the last point?]]
+[[StorePreviousResults::1::boolean::Store previous results::Integrator::Behavior::Do you want to store previous results when continuing?]]
 
 #################################################################################
 #TAB: BODIES
@@ -133,3 +135,12 @@ Show#Format:
 [[ElementsScales::'linear','linear','linear'::varchar::Y scales::Plot::Elements::Scale for elements plots]]
 [[ElementsTimeIni::state.TIME_START::varchar::Initial time::Plot::Elements::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM]]
 [[ElementsTimeEnd::state.TIME_STOP::varchar::Final time::Plot::Elements::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM]]
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP: ERRORS
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[[ComputeClose::0::boolean::Compute close encounters::Plot::Errors::Compute the position of the bodies during the close encounters]]
+[[ComputeErrors::0::boolean::Compute errors::Plot::Errors::Check if you want to compute the errors between two integration phases]]
+[[BodyExtension::dat;;ref==dat::varchar::Source of data::Plot::Errors::'dat' contains the Mercury output data, 'ref' contains the change of reference frame results]]
+[[BodyPhase1::1::int::Phase 1::Plot::Errors::Phase to compare]]
+[[BodyPhase2::2::int::Phase 2::Plot::Errors::Phase to compare]]

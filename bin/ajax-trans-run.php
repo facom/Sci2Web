@@ -261,6 +261,8 @@ if($PHP["Action"]=="New")
   $sqlcmd=rtrim($sqlcmd,",");
   $resmat=mysqlCmd($sqlcmd);
   if($PHP["?"]){$qerror=true;$error.="<p>Database could not be updated</p>";goto next;}
+  sci2webCmd("cd $runpath;bash sci2web/bin/sci2web.sh clean");
+  if($PHP["?"]){$qerror=true;$error.="$runcode not cleaned.";goto next;}
   }
   $result.="$PHP[NumRuns] runs created...";
 }
@@ -282,7 +284,7 @@ if($PHP["Action"]=="Clean")
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  sci2webCmd("cd $runpath;bash sci2web/bin/sci2web.sh cleanall");
+  sci2webCmd("cd $runpath;bash sci2web/bin/sci2web.sh clean");
   if($PHP["?"]){$qerror=true;$error.="$runcode not cleaned.";goto next;}
   $status=$S2C["clean"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
@@ -296,11 +298,13 @@ if($PHP["Action"]=="Compile")
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //CLEANING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  /*
   sci2webCmd("cd $runpath;bash sci2web/bin/sci2web.sh clean");
   if($PHP["?"]){$qerror=true;$error.="$runcode not cleaned.";goto next;}
   $status=$S2C["clean"];
   mysqlCmd("update runs set run_status='$status' where run_code='$runcode'");
   if($PHP["?"]){$qerror=true;$error.="Failed status clean for $runcode";goto next;}
+  */
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   //COMPILING
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&

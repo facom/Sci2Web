@@ -1,7 +1,7 @@
 makefile
 *.for
 element6.sh
-examples
+close6.sh
 doc
 bin
 README

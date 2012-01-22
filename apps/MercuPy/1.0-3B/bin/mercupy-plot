@@ -64,6 +64,7 @@ plt.close("all")
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for plot in plot.PLOTS:
     plot=dictobj(plot)
+    if not plot.activate:continue
     if plot.type is "phasespace":
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #PHASE SPACE PLOT
@@ -98,8 +99,12 @@ for plot in plot.PLOTS:
                               usecols=(0,icoord))
 
                 cv=[]
+                i=0
                 for t,cr in tc:
-                    if t>=plot.tini and t<=plot.tend:
+                    if i==0:
+                        tref=t
+                        i+=1
+                    if abs(t-tref)>=abs(plot.tini) and abs(t-tref)<=abs(plot.tend):
                         cv+=[cr]
                 c+=[np.array(cv)]
             
@@ -319,8 +324,12 @@ for plot in plot.PLOTS:
                               usecols=(0,icoord))
                 cv=[]
                 tv=[]
+                i=0
                 for t,cr in tc:
-                    if t>=plot.tini and t<=plot.tend:
+                    if i==0:
+                        tref=t
+                        i+=1
+                    if abs(t-tref)>=abs(plot.tini) and abs(t-tref)<=abs(plot.tend):
                         cv+=[cr]
                         tv+=[t]
                 c+=[np.array(cv)]
@@ -349,9 +358,9 @@ for plot in plot.PLOTS:
         #--------------------
         #XLIM & XTICKS
         #--------------------
-        ax[0].set_xlim((plot.tini,plot.tend))
-        xticks=ax[0].get_xticks()
-        ax[0].set_xticks(xticks[1:-1])
+        #ax[0].set_xlim((plot.tini,plot.tend))
+        #xticks=np.linspace(plot.tini,plot.tend,10)
+        #ax[0].set_xticks(xticks[1:-1])
         #--------------------
         #X LABEL
         #--------------------

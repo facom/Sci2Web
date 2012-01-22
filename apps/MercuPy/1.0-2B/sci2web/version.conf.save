@@ -12,7 +12,7 @@ AppBrief = Integrates a system of many body systems using multiple type of integ
 #VERSION PROPERTIES
 #------------------------------------------------------------
 #Name of this version.  Do not modify in installed applications.
-Version = 2B-dev
+Version = 3B-dev
 #Emails of the contributors. User with permissions to edit app.
 EmailsContributors = sci2web@gmail.com
 #Brief description of the changes log
@@ -44,4 +44,4 @@ ControlButtons = true
 #DEFAULT RUN PROPERTIES
 #------------------------------------------------------------
 #Default run name
-DefaultRunName = Two body system
+DefaultRunName = Three body system

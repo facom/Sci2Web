@@ -25,17 +25,18 @@ helems=\
     state.PHYSICAL_ELEMENTS.split()
 NELS=len(helems)
 
-header="%-12s "%("#1:t")
+f=state.OUTPUT_FORMAT.replace("e","s")+" "
+header="#"+f%("1:t")
 i=2
 for el in helems:
-    header+="%-12s "%("%d:%s"%(i,el))
+    header+=f%("%d:%s"%(i,el))
     i+=1
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #CHECK IF A PREVIOUS PHASE WAS RAN
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if os.path.lexists(OUTDIR+"/phase"):
-    phase,time=System("cat output/phase",out=True).split()
+if os.path.lexists(OUTDIR+"/prevphase"):
+    phase,time=System("cat output/prevphase",out=True).split()
     endtime=float(time)
 else:
     endtime=0
@@ -83,5 +84,5 @@ for body in state.BODIES:
             jo+=nels
             io+=1
                     
-        np.savetxt(fstore,datsel,fmt=('%-12.5e'))
+        np.savetxt(fstore,datsel,fmt=(state.OUTPUT_FORMAT))
         System("(echo '%s';cat %s)>%s"%(header,fstore,fplain))

@@ -26,6 +26,7 @@ ROOTDIR=os.path.dirname(os.path.abspath(argv[0]))
 PACKNAME="MercuPy"
 VERBOSE=False
 SIMULATE=False
+OUTDIR="output"
 
 ################################################################################
 #PHYSICAL QUANTITIES
@@ -72,11 +73,11 @@ URHOMERC=1E3 #kg/m^3
 ################################################################################
 #DATA INDEXING
 ################################################################################
-XYZINDEX={'x':1,'y':2,'z':3,
-          'vx':4,'vy':5,'vz':6,
-          's':7,'o':8,'d':9,'m':10}
-ELSINDEX={'a':1,'e':2,'i':3,'g':4,'n':5,'M':6,
-          'r':7,'q':8,'Q':9,'l':10,'f':11}
+ELSINDEX={'x':1,'y':2,'z':3,'vx':4,'vy':5,'vz':6,'r':7,
+          'a':8,'e':9,'i':10,'g':11,'n':12,'M':13,
+          'q':14,'Q':15,'l':16,'f':17,
+          's':18,'o':19,'m':20,'d':21
+          }
 
 ################################################################################
 #OTHER CONSTANTS
@@ -304,8 +305,8 @@ def MassRadiusRelationship(Mp,ObjectClass):
     rho=Mp/(4*np.pi*(1E3*Rp)**3/3) #kg/m3
     return Rp,rho
 
-#OBJVERB=True
-OBJVERB=False
+OBJVERB=True
+#OBJVERB=False
 def ObjectProperties(body,fbody,cbody,COORDINATES):
     """
     body: dictionary
@@ -376,18 +377,21 @@ def ObjectProperties(body,fbody,cbody,COORDINATES):
         CT=1.0/UTMERC
         CV=1.0/UVMERC
 
+    if OBJVERB:print "System of coordinates:",COORDINATES[btype]
     if OBJVERB:print "Units conversion (CL,CT,CV):",CL,CT,CV
 
     #==============================
     #STATE VECTOR -> CSPICE FORMAT
     #==============================
     stvec=np.array([float(st) for st in body["State"].split()])
+    qtransform=False
     if "Ast" in COORDINATES[btype]:
         stvec[0]*=CL
         q=stvec[0]*(1-stvec[1])
         state="%e "%q
         state+="%e %e %e %e %e "%tuple(stvec[1:6])
         state+="%e %e %e"%(body["Ep"],body["Mu"],body["Ep"])
+        qtransform=True
 
     elif "Com" in COORDINATES[btype]:
         stvec[0]*=CL
@@ -395,18 +399,21 @@ def ObjectProperties(body,fbody,cbody,COORDINATES):
         state="%e "%stvec[0]
         state+="%e %e %e %e %e "%tuple(stvec[1:6])
         state+="%e %e %e"%(body["Ep"],body["Mu"],body["Ep"])
+        qtransform=True
 
     elif "Car" in COORDINATES[btype]:
-        state=body["State"]+" %e 0.0 %e"%(body["Ep"],body["Ep"])
+        state=body["State"]
         stvec[0:3]*=CL
         stvec[2:6]*=CV
         statec="%e %e %e %e %e %e"%tuple(stvec)
+        qtransform=False
 
     if OBJVERB:print "State (Mercury units):",stvec
     if 'Cartesian' in body:
         if OBJVERB:print "Cartesian:",body["Cartesian"]
         pass
     
+    if OBJVERB:print "CSPICE transformation:",qtransform
     #==================================================
     #CONVERT ALL POSITIONS TO CENTRAL BODY POSITIONS
     #==================================================
@@ -415,8 +422,10 @@ def ObjectProperties(body,fbody,cbody,COORDINATES):
     body["Frame"]=cbody["Code"]
 
     #CSPICE CONVERSION FROM ELEMENTS TO STATE
-    print "State:",state
-    statec=System("bin/elem2state %s"%state,out=True,sim=False)
+    if OBJVERB:print "State previous to CSPICE:",state
+    if qtransform:
+        statec=System("bin/elem2state %s"%state,out=True,sim=False)
+
     print "State coordinates:",statec
     if OBJVERB:print "State from CSPICE:",statec
    
@@ -468,3 +477,30 @@ def ShowBody(body,fhl=sys.stdout):
     states="%+e km %+e km %+e km %+e km/s %+e km/s %+e km/s"%tuple(state)
     print>>fhl, "\t\t",states
     print>>fhl
+
+def rotate3D(R,phi,theta):
+    from scipy import dot
+    X,Y,Z=0,1,2
+    #ROTATION MATRIX
+    p=phi*PI/180
+    t=theta*PI/180
+    c=np.cos
+    s=np.sin
+    R3=np.array(
+        [
+            [c(p),s(p),0],
+            [-s(p)*c(t),c(p)*c(t),s(t)],
+            [s(p)*s(t),-c(p)*s(t),c(t)]
+         ]
+        );
+    Xv=[]
+    Yv=[]
+    Zv=[]
+    for r in R:
+        rv=dot(R3,r)
+        Xv+=[rv[X]]
+        Yv+=[rv[Y]]
+        Zv+=[rv[Z]]
+
+    return Xv,Yv,Zv
+

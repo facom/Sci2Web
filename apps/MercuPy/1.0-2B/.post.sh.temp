@@ -1,0 +1,28 @@
+#!/bin/bash
+export MPLCONFIGDIR="."
+
+echo "Regenerating output..."
+cp -rf data.out xv.out
+make prepare 
+./element6.sh
+make out
+rm -rf xv.out
+
+echo "Regenerating change of reference frame..."
+make ref
+
+echo "Computing close..."
+if [ [[ComputeClose]] -gt 0 ];then
+    make close
+fi
+
+echo "Plotting results..."
+make plot
+
+if [ [[ComputeErrors]] -gt 0 ];then
+    echo "Computing errors..."
+    bin/mercupy-diff output/BODY.[[BodyExtension]].PH[[BodyPhase1]] output/BODY.[[BodyExtension]].PH[[BodyPhase2]] 
+fi
+
+echo "Saving results variables..."
+bash results.sh

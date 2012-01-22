@@ -295,6 +295,63 @@ function submitForm(formid,script,
   x.send();
 }
 
+function trim(s)
+{
+    return rtrim(ltrim(s));
+}
+
+function ltrim(s)
+{
+    var l=0;
+    while(l < s.length && s[l] == ' ')
+	{l++; }
+    return s.substring(l, s.length);
+}
+
+function rtrim(s)
+{
+    var r=s.length -1;
+    while(r > 0 && s[r] == ' ')
+	{r-=1;}
+    return s.substring(0, r+1);
+}
+
+function rtrimc(s,c)
+{
+    var r=s.length -1;
+    while(r > 0 && s[r] == c)
+	{r-=1;}
+    return s.substring(0, r+1);
+}
+
+/*
+  SUBMIT FORM 
+ */
+function multipleAction(formid,script,parameter,winprops)
+{
+  var form=document.getElementById(formid);
+
+  //GET SUBMIT FORM ELEMENTS
+  i=0;
+  inputscr="";
+  while(formel=form.elements[i]){
+      if($(formel).attr("type")=="checkbox" &&
+	 $(formel).attr("name")!="objall"){
+	  if(formel.checked){
+	      obj=$(formel).attr("represent");
+	      inputscr+=obj+",";
+	  }
+      }
+      i++;
+  }
+  if(inputscr!=""){
+      subscr=script+"&"+parameter+"="+rtrimc(inputscr,',');
+      Open(subscr,'Multiple Action',winprops);
+  }else{
+      alert("You must select at least one data file");
+  }
+}
+
 function notDiv(notid,text)
 {
     $('#'+notid).html(text);

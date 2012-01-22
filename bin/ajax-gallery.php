@@ -23,6 +23,9 @@ include_once("$RELATIVE/lib/sci2web.php");
 //////////////////////////////////////////////////////////////////////////////////
 $result="";
 $dir=$PHP["Dir"];
+if(isset($PHP["SubDir"])){
+  $dir.="/$PHP[SubDir]";
+}
 $path="$PHP[ROOTPATH]/$dir";
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +122,7 @@ RESULT;
     }
     $imgsrc="$dir/.$image.thumb";
     $pos=$width*$i+2*$i;
+    $imagestr=substr($image,0,10)."...";
 $result.=<<<RESULT
     <div style="
 		position:absolute;
@@ -127,8 +131,10 @@ $result.=<<<RESULT
 		border:solid black 1px;
 		width:${width}%;
 		">
-      <a href="JavaScript:Open('$imgsrc','Image','$PROJ[SECWIN]')">
-	$image
+      <a href="JavaScript:Open('$imgsrc','Image','$PROJ[SECWIN]')"
+         onmouseover="explainThis(this)"
+	 explanation="$image">
+	$imagestr
       </a>
       <a href="JavaScript:void(null)"
 	 onclick="$('#loadimgnum').attr('value','$i');

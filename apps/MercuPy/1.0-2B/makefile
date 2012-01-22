@@ -5,40 +5,81 @@
 FC=gfortran
 PROGRAMS=mercury6_2.exe element6.exe close6.exe
 
-build:
-	bin/mercupy-build
-
-%.exe:%.for
-	$(FC) $^ -o $@ 2> errors.log
-
+#################################################################################
+#BASIC RULS
+#################################################################################
 all:$(PROGRAMS)
 
-clean:
-	rm -rf *.aei *.dat *.dat.* *.clo *.out *.dmp *.xyz *.els *.ref *.png
-	find . -name "*~" -exec rm -rf {} \;
-
-cleanfiles:
-	rm -rf *.tmp *.exe *~ *.in *.log *.txt *.inc
-	rm -rf tmp/*
-
-cleanutil:
-	make -C util clean
-
-cleanall:clean cleanfiles cleanutil
+%.exe:%.for
+	$(FC) $^ -o $@ &>> errors.log
 
 utilbuild:
 	echo "Compiling util programs..."
-	make -C util all install
+	make -s -C util all install
+
+#################################################################################
+#MERCUPY PIPELINE
+#################################################################################
+prepare:
+	bin/mercupy-prepare
+
+build:
+	make all
 
 run:$(PROGRAMS)
 	time ./mercury6_2.exe
+	$(shell if [ -e "output/phase" ];\
+	then cp -rf output/phase output/prevphase;fi)
 	./element6.sh
-	./close6.exe
 #THIS LINE WAS ADDED FOR THE RUN PIPELINE OF SCI2WEB
 	date +%s.%N > end.sig
 
-plain:
-	bin/mercupy-plain
+close:
+	./close6.sh
 
-plot:plain
+out:
+	bin/mercupy-output
+
+ref:
+	bin/mercupy-ref2ref
+
+plot:
 	bin/mercupy-plot
+
+continue:
+	bin/mercupy-continue
+
+go:
+	make run out ref plot continue
+
+#################################################################################
+#CLEAN RULES
+#################################################################################
+clean:cleanprepare
+
+cleanprepare:cleanbuild
+	rm -rf  *.in *.inc
+
+cleanbuild:cleanrun
+	rm -rf *.exe
+
+cleanrun:cleanout
+	rm -rf *.out *.dmp *.tmp
+	rm -rf *.state
+
+cleanout:cleanref
+	rm -rf output/*
+
+cleanref:cleanplot
+	rm -rf output/*.ref
+
+cleanplot:cleantmp
+	rm -rf output/*.png
+
+cleantmp:
+	rm -rf *~ *.tmp *.dmp *.log tmp/*
+
+#ADDED FOR THE RUN PIPELINE OF SCI2WEB
+cleansci2web:
+	rm -rf *.sig
+	rm -rf run.sh run.conf submit.sh

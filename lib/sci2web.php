@@ -792,6 +792,17 @@ submitForm
    )
 AJAX;
 
+$plotmult=<<<PLOT
+newdir=$('input[name=DownloadDir_Submit]').attr('value');
+multipleAction
+  (
+   'formfiles',
+   '$PROJ[BINDIR]/plot.php?Dir='+newdir,
+   'File',
+   '$PROJ[PLOTWIN]'
+   );
+PLOT;
+
 $table=<<<TABLE
 $onload
 <form id="formfiles" action="JavaScript:void(null)" 
@@ -804,6 +815,26 @@ $onload
   <tr class="buttons">
     <td colspan=4>
       <div style="position:relative">
+	<div style="position:relative;top:0px;left:0px;float:left">
+	  <div class="actionbutton">
+	    <button id="plotbut" class="image"
+		    onmouseover="explainThis(this)"
+		    explanation="Plot multiple data files"
+		    onclick="$plotmult">
+	      $BUTTONS[Plot]
+	    </button>
+	  </div>
+	  <div class="actionbutton">
+	    <button id="downbut" class="image" name="Action"
+		    onmouseover="explainThis(this)"
+		    explanation="Download"
+		    onclick="$('#action').attr('value','DownloadFiles');$ajax_down">
+	      $BUTTONS[Down]
+	    </button>
+	    <input id="action" type="hidden" name="Action_Submit" value="None">
+	    <input id="action" type="hidden" name="DownloadDir_Submit" value="$dir">
+	  </div>
+	</div>
 	<div style="position:absolute;float:right;top:0px;right:0px"
 	     onmouseover="explainThis(this)"
 	     explanation="Use ls-style strings, e.g. '*.c', 'plot*.ps2w'">
@@ -813,22 +844,14 @@ $onload
 	     onmouseover="explainThis(this)"
 	     explanation="Update & Search">$BUTTONS[Update]</a>
 	</div>
-	<div style="position:relative;float:left;top:0px;left:0px;">
-	  <button id="downbut" class="image" name="Action"
-		  onmouseover="explainThis(this)"
-		  explanation="Download"
-		  onclick="$('#action').attr('value','DownloadFiles');$ajax_down">
-	    $BUTTONS[Down]
-	  </button>
-	  <input id="action" type="hidden" name="Action_Submit" value="None">
-	  <input id="action" type="hidden" name="DownloadDir_Submit" value="$dir">
-	</div>
-	<div id="down_wait" 
-	     style="prosition:absolute;float:left;bottom:0px;display:none;">
-	  $BUTTONS[Wait]
-	</div>
-	<div id="down_divlink"
-	     style="prosition:absolute;float:left;bottom:0px;">
+	<div class="actionbutton">
+	  <div id="down_wait" 
+	       style="prosition:absolute;float:left;bottom:0px;display:none;">
+	    $BUTTONS[Wait]
+	  </div>
+	  <div id="down_divlink"
+	       style="prosition:absolute;float:left;bottom:0px;">
+	  </div>
 	</div>
       </div>
     </td>
@@ -1151,6 +1174,7 @@ function toggleButtons2($status)
     $display["Kill"]=$disp;
   }
   if($status=="end"){
+    $display["Kill"]=$disp;
   }
   if($status=="fail" or
      $status=="stop" or
@@ -1373,11 +1397,13 @@ function statusIcon($status,$width="")
     $status_bg="lightgray";
     break;
   case "clean":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=File&Dir=$PROJ[TMPDIR]&File=phpout-ajax-trans-run-$PHP[SESSID]','Watch Output','$PROJ[SECWIN]')";
     $status_text="Cleaned";
     $status_color="black";
     $status_bg="orange";
     break;
   case "ready":
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=File&Dir=$PROJ[TMPDIR]&File=phpout-ajax-trans-run-$PHP[SESSID]','Watch Output','$PROJ[SECWIN]')";
     $status_text="Ready";
     $status_color="white";
     $status_bg="green";
@@ -1416,7 +1442,13 @@ function statusIcon($status,$width="")
     $status_bg="black";
     break;
   case "end":
-    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=FullStatus&RunCode=$PHP[RunCode]','Watch Run Status','$PROJ[SECWIN]')";
+    $runcode=$PHP["RunCode"];
+    $runhash=mysqlGetField("select * from runs where run_code='$runcode'",
+			   0,"run_hash");
+    $appname="$_SESSION[AppVersion]";
+    $runsdir="$PROJ[RUNSDIR]/$_SESSION[User]/$appname";
+    $rundir="$runsdir/$runhash";
+    $status_link="JavaScript:Open('$PROJ[BINDIR]/watch.php?Watch=File&Dir=$rundir&File=post.oxt','Watch Post File','$PROJ[SECWIN]')";
     $status_text="Finishing...";
     $status_color="white";
     $status_bg="blue";
@@ -1841,7 +1873,6 @@ $status=<<<STATUS
 	      background-color:$COLORS[dark];
 	      padding:0px;
 	      color:$COLORS[back];
-	      padding:4px;
 	      font-size:12px;">
     $bstatus%
   </div>
@@ -1863,7 +1894,8 @@ function sci2webCmd($cmd)
 
   $getpasscmd="grep DBPASS $PROJ[LIBPATH]/sci2web.db | awk -F'=' '{print \$2}' | sed -e 's/[\";]//gi'"; 
 
-  $out=systemCmd("echo \$($getpasscmd) | sudo -u sci2web -S bash -c '$cmd'");
+  $out=systemCmd("echo \$($getpasscmd) | sudo -u sci2web -S bash -c '$cmd'",
+		 false,false);
 
   return $out;
 }

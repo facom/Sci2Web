@@ -13,7 +13,6 @@ from matplotlib import use as mluse
 mluse("Agg")
 from pylab import *
 from mercupy import *
-conf=loadconf("%s/mercupy.conf"%ROOTDIR)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #MACROS
@@ -21,49 +20,29 @@ conf=loadconf("%s/mercupy.conf"%ROOTDIR)
 #PLOT
 plt=matplotlib.pyplot
 fonts=matplotlib.font_manager.FontProperties
-
 #INDEXES
 X,Y,Z=0,1,2
 PHI,THETA=0,1
-
 #NUM POINT IN AXES
 NAXES=100
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#ROUTINES
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def rotate3D(R,phi,theta):
-    #ROTATION MATRIX
-    p=phi*PI/180
-    t=theta*PI/180
-    c=np.cos
-    s=np.sin
-    R3=np.array(
-        [
-            [c(p),s(p),0],
-            [-s(p)*c(t),c(p)*c(t),s(t)],
-            [s(p)*s(t),-c(p)*s(t),c(t)]
-         ]
-        );
-    Xv=[]
-    Yv=[]
-    Zv=[]
-    for r in R:
-        rv=dot(R3,r)
-        Xv+=[rv[X]]
-        Yv+=[rv[Y]]
-        Zv+=[rv[Z]]
-
-    return Xv,Yv,Zv
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #LOADING SYSTEM CONFIGURATION FILE
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-inifile="system.state"
+inifile="system.config"
 if not os.path.lexists(inifile):
     error("Initial state file '%s' does not exist."%inifile)
 print "Reading initial file: %s"%inifile
 state=loadconf(inifile)
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#LOADING PLOT CONFIGURATION FILE
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+plotfile="plot.config"
+if not os.path.lexists(plotfile):
+    error("Plot configuration file '%s' does not exist."%plotfile)
+print "Reading plot configuration: %s"%plotfile
+plot=loadconf(plotfile)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #INDEXING BODIES
@@ -76,23 +55,16 @@ for body in state.BODIES:
     i+=1
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#LOADING PLOT CONFIGURATION FILE
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-plotfile="plot.conf"
-if not os.path.lexists(plotfile):
-    error("Plot configuration file '%s' does not exist."%plotfile)
-print "Reading plot configuration: %s"%plotfile
-plot=loadconf(plotfile)
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #PREPARE PLOT
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 plt.close("all")
+
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #MAIN PLOT LOOP
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for plot in plot.PLOTS:
     plot=dictobj(plot)
+    if not plot.activate:continue
     if plot.type is "phasespace":
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #PHASE SPACE PLOT
@@ -115,23 +87,24 @@ for plot in plot.PLOTS:
             #READ DATA
             #==============================
             print "Getting data for %s (%s)..."%(bcode,bname)
-            if not os.path.lexists('%s.xyz.%s'%(bcode,plot.extension)):
+            if not os.path.lexists('%s/%s.%s'%(OUTDIR,bcode,plot.extension)):
+                print "FILE: '%s/%s.%s'"%(OUTDIR,bcode,plot.extension)
                 print "Body '%s' has no data '%s'"%(bcode,plot.extension)
                 continue
 
             c=[]
             for coord in plot.coordinates:
-                if coord in XYZINDEX:
-                    icoord=XYZINDEX[coord]
-                    tc=np.loadtxt('%s.xyz.%s'%(bcode,plot.extension),
-                                  usecols=(0,icoord))
-                elif coord in ELSINDEX:
-                    icoord=ELSINDEX[coord]
-                    tc=np.loadtxt('%s.els.%s'%(bcode,plot.extension),
-                                  usecols=(0,icoord))
+                icoord=ELSINDEX[coord]
+                tc=np.loadtxt('%s/%s.%s'%(OUTDIR,bcode,plot.extension),
+                              usecols=(0,icoord))
+
                 cv=[]
+                i=0
                 for t,cr in tc:
-                    if t>=plot.tini and t<=plot.tend:
+                    if i==0:
+                        tref=t
+                        i+=1
+                    if abs(t-tref)>=abs(plot.tini) and abs(t-tref)<=abs(plot.tend):
                         cv+=[cr]
                 c+=[np.array(cv)]
             
@@ -274,7 +247,7 @@ for plot in plot.PLOTS:
         if ib is 0:
             print "No bodies to plot"
         else:
-            plt.savefig(plot.image)
+            plt.savefig(OUTDIR+"/"+plot.image)
 
     if plot.type is "evolution":
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,26 +312,24 @@ for plot in plot.PLOTS:
             #READ DATA
             #==============================
             print "Getting data for %s (%s)..."%(bcode,bname)
-            if not os.path.lexists('%s.xyz.%s'%(bcode,plot.extension)):
+            if not os.path.lexists('%s/%s.%s'%(OUTDIR,bcode,plot.extension)):
+                print "FILE: '%s/%s.%s'"%(OUTDIR,bcode,plot.extension)
                 print "Body '%s' has no data '%s'"%(bcode,plot.extension)
                 continue
 
             c=[]
             for coord in plot.elements:
-                if coord in XYZINDEX:
-                    icoord=XYZINDEX[coord]
-                    print "\tIndex for physical coord. '%s' : %d"%(coord,icoord)
-                    tc=np.loadtxt('%s.xyz.%s'%(bcode,plot.extension),
-                                  usecols=(0,icoord))
-                elif coord in ELSINDEX:
-                    icoord=ELSINDEX[coord]
-                    print "\tIndex for elements coord. '%s' : %d"%(coord,icoord)
-                    tc=np.loadtxt('%s.els.%s'%(bcode,plot.extension),
-                                  usecols=(0,icoord))
+                icoord=ELSINDEX[coord]
+                tc=np.loadtxt('%s/%s.%s'%(OUTDIR,bcode,plot.extension),
+                              usecols=(0,icoord))
                 cv=[]
                 tv=[]
+                i=0
                 for t,cr in tc:
-                    if t>=plot.tini and t<=plot.tend:
+                    if i==0:
+                        tref=t
+                        i+=1
+                    if abs(t-tref)>=abs(plot.tini) and abs(t-tref)<=abs(plot.tend):
                         cv+=[cr]
                         tv+=[t]
                 c+=[np.array(cv)]
@@ -387,9 +358,9 @@ for plot in plot.PLOTS:
         #--------------------
         #XLIM & XTICKS
         #--------------------
-        ax[0].set_xlim((plot.tini,plot.tend))
-        xticks=ax[0].get_xticks()
-        ax[0].set_xticks(xticks[1:-1])
+        #ax[0].set_xlim((plot.tini,plot.tend))
+        #xticks=np.linspace(plot.tini,plot.tend,10)
+        #ax[0].set_xticks(xticks[1:-1])
         #--------------------
         #X LABEL
         #--------------------
@@ -435,4 +406,4 @@ for plot in plot.PLOTS:
         if ib is 0:
             print "No bodies to plot"
         else:
-            plt.savefig(plot.image)
+            plt.savefig(OUTDIR+"/"+plot.image)

@@ -102,10 +102,10 @@ function checkSig
 	    fi
 	    ;;
 	"compile")
-	    if [ ! -e "clean.sig" ];then
-		echo "$signal:application not cleaned"
-		exit 1
-	    fi
+	    # if [ ! -e "clean.sig" ];then
+	    # 	echo "$signal:application not cleaned"
+	    # 	exit 1
+	    # fi
 	    ;;
 	"pre")
 	    if [ ! -e "compile.sig" ];then

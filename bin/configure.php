@@ -694,7 +694,7 @@ $title.=<<<TITLE
 	    font-weight:bold;
 	    border-bottom:solid $COLORS[dark] 2px
 	    ">
-Configuration of Run $PHP[RunCode]
+Configuration Window
 </div>
 TITLE;
 

@@ -1,0 +1,80 @@
+"""
+################################################################################
+MercuPy Wrap
+Jorge Zuluaga (C) 2011
+################################################################################
+PLOT CONFIGURATION FILE
+"""
+from mercupy import *
+state=loadconf("system.config")
+
+PLOTS=[
+###################################################
+#PLOT: ORBIT
+###################################################
+plot(
+#VALID: phasespace,evolution
+type='phasespace',
+#ACTIVATE/DEACIVATE
+activate=1,
+#IMAGE FILE
+image='orbit.png',
+#USE CODES INSTEAD OF NAMES
+bodies=['BODY'],
+#EXTENSION
+extension='dat',
+#ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
+styles=[[[OrbitStyles]]],
+#THREE COORDINATES.  ANY SET OF ELEMENTS
+coordinates=[[[OrbitCoordinates]]],
+#ANGLE VIEW: PHI (XY-ANGLE), THETA (Z-ANGLE).  DEGREES.
+view=[[[OrbitViewAngle]]],
+#YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
+tini=[[OrbitTimeIni]],
+tend=[[OrbitTimeEnd]],
+#INCLUDE A 2D GRID
+grid=[[OrbitGrid]],
+#INCLUDE THE X,Y,Z AXIS IN THE PLOT
+axes=[[OrbitAxis]],
+#INCLUDE THE BORDER OF THE XY-PLANE
+xyplane=[[OrbitXYPlane]],
+#PLOT BOX
+plotbox=[[OrbitBox]],
+#INCLUDE LABELS FOR ORBITS: NAME OF OBJECTS
+legends=[[OrbitLegends]],
+#LABELS FOR THE 2D PLOT
+xlabel=[[OrbitXLabel]],
+#LABELS FOR THE 2D PLOT
+ylabel=[[OrbitXLabel]]
+),#COMMA IS MANDATORY
+
+###################################################
+#PLOT: ELEMENTS
+###################################################
+plot(
+#VALID: phasespace,evolution
+type='evolution',
+#ACTIVATE/DEACIVATE
+activate=1,
+#IMAGE FILE
+image='elements.png',
+#USE CODES INSTEAD OF NAMES
+bodies=['BODY'],
+#EXTENSION
+extension='dat',
+#ONE STYLE FOR BODY.  IF JUST ONE ALL BODIES SAME STYLE
+styles=[[[ElementsStyles]]],
+#ANY SET OF ELEMENTS
+elements=[[[ElementsCoordinates]]],
+#LIMITS FOR Y-AXIS IN THE PLOT OF THE ELEMENT
+ylims=[[[ElementsYLims]]],
+#SCALE FOR Y-AXIS
+yscales=[[[ElementsScales]]],
+#YOU CAN USE state VARIABLES.  UNITS ARE THE SAME AS IN SYSTEM.STATE
+tini=[[ElementsTimeIni]],
+tend=[[ElementsTimeEnd]],
+),#COMMA IS MANDATORY
+###################################################
+#END PLOTS
+###################################################
+]

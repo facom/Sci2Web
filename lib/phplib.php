@@ -153,7 +153,7 @@ function hashFile($file)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //EXCUTE AN EXTERNAL COMMAND
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function systemCmd($cmd,$preserve=false)
+function systemCmd($cmd,$preserve=false,$showcmd=true)
 {
   global $PHP;
 
@@ -167,7 +167,8 @@ Command $PHP[SYSCOUNTER]:
     $ocmd
 DBOUT;
     blankFunc();
-    shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
+    if($showcmd)
+        shell_exec("echo \"$dbout\" >> $PHP[TMPPATH]/$PHP[CMDOUTFILE]");
     $cmd="($cmd) 2>> $PHP[TMPPATH]/$PHP[CMDOUTFILE]";
   }
 

@@ -15,6 +15,9 @@ PLOTS=[
 plot(
 #VALID: phasespace,evolution
 type='phasespace',
+#ACTIVATE/DEACIVATE
+activate=[[OrbitActivate]],
+#IMAGE FILE
 image='orbit-inertial.png',
 #USE CODES INSTEAD OF NAMES
 bodies=[[[OrbitBodies]]],
@@ -51,6 +54,9 @@ ylabel=[[OrbitXLabel]]
 plot(
 #VALID: phasespace,evolution
 type='phasespace',
+#ACTIVATE/DEACIVATE
+activate=[[OrbitActivate]],
+#IMAGE FILE
 image='orbit-rotating.png',
 #USE CODES INSTEAD OF NAMES
 bodies=[[[OrbitBodies]]],
@@ -87,6 +93,9 @@ ylabel=[[OrbitXLabel]]
 plot(
 #VALID: phasespace,evolution
 type='evolution',
+#ACTIVATE/DEACIVATE
+activate=[[ElementsActivate]],
+#IMAGE FILE
 image='elements-inertial.png',
 #USE CODES INSTEAD OF NAMES
 bodies=[[[ElementsBodies]]],
@@ -111,6 +120,9 @@ tend=[[ElementsTimeEnd]],
 plot(
 #VALID: phasespace,evolution
 type='evolution',
+#ACTIVATE/DEACIVATE
+activate=[[ElementsActivate]],
+#IMAGE FILE
 image='elements-rotating.png',
 #USE CODES INSTEAD OF NAMES
 bodies=[[[ElementsBodies]]],

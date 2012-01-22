@@ -102,7 +102,9 @@ loadContent
     if(hash!=hex_md5(rtext)){
       $(element).attr('hash',hex_md5(rtext));
       element.innerHTML=rtext;
-      if(hash && $('#statusicon').attr('status')=='finish'){
+      if(hash && 
+	 ($('#statusicon').attr('status')=='finish' ||
+	  $('#statusicon').attr('status')=='clean')){
 	window.location.reload();
       }
     }
@@ -379,7 +381,7 @@ $title.=<<<TITLE
 	    font-weight:bold;
 	    border-bottom:solid $COLORS[dark] 2px
 	    ">
-Results of Run $PHP[RunCode]
+Results Window
 </div>
 TITLE;
 
@@ -395,7 +397,7 @@ CLOSE;
 }
 $header.=<<<HEADER
 <div class="actionbutton">
-  <span style="font-size:18px"><b>Results for Run</b>: $PHP[RunCode]</span>
+  <span style="font-size:18px"><b>Run</b>: $run_name</span>
 </div>
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px;">

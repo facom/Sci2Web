@@ -71,7 +71,12 @@ for body in state.BODIES:
 #print "Replacing starting time by %e in system configuration file..."%tini
 #System("sed -i -e 's/TIME_START[ ]*=.*/TIME_START=%e/' system.config"%tini)
 print "Removing binary data..."
-System("rm -rf *.tmp *.dmp xv.out ce.out info.out")
+#STORE PREVIOUS DATA
+System("mv info.out information.out")
+System("mv xv.out data.out")
+System("mv ce.out close.out")
+#REMOVE TEMPORAL
+System("rm -rf *.tmp *.dmp")
 if not cont.STORE_PREVIOUS:
     print "Previous data will not be stored..."
     System("rm -rf output/*")
@@ -98,6 +103,6 @@ else:
         ext=parts[-1]
         if "PH" not in ext:
             ext+=".PH%d"%phase
-            System("mv %s %s.%s"%(file,name,ext))
+            System("cp -rf %s %s.%s"%(file,name,ext))
 
 print "Now you can continue your simulation..."

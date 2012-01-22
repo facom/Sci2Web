@@ -413,7 +413,8 @@ $checkcol=<<<CHECK
        onchange="popOutHidden(this)" 
        onclick="deselectAll('objall')"
        color_unchecked="$COLORS[clear]"
-       color_checked="$COLORS[text]">
+       color_checked="$COLORS[text]"
+       represent="$file">
 <input type="hidden" name="obj${seli}_Submit" value="off">
 <input type="hidden" name="objfile${seli}_Submit" value="$file">
 CHECK;

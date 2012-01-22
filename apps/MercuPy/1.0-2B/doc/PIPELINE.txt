@@ -1,0 +1,40 @@
+- Initial state:
+
+  Input files: system.config, plain.config, ref2ref.config, plot.config
+  Sources: mercury6_2.for, element6.for, element6.sh, close6.for
+
+- Build:
+
+  Generates: {big,close,files,message,param,small}.in, 
+  	     {element-els,element-xyz}.in
+	     {mercury,swidt}.inc, 
+	     {element2state,errors}.log
+
+- Execute:
+
+  Generates: BODY#.{xyz,els,clo}
+	     {ce,element,info,xv}.out
+	     {big,param,restart,small}.dmp           
+
+- Plain:
+
+  Generates: BODY#.{xyz,els}.dat.fr#
+             BODY#.state
+
+  If previous data (xyz,els,dat,fr) exists:
+    Generates: 
+      BODY#.{xyz,els}.dat.fr#.ph(#+1)
+
+  If previous data .state.ph# exist:
+    Generates:
+      BODY#.state.ph(#+1)
+
+- Ref2Ref:
+
+  Generates: BODY#.{xyz,els}.fr#.ref
+
+  If previous (xyz,els,fr,ref) exist:
+
+    Generates:
+      BODY#.{xyz,els}.fr#.ref.ph(#+1)
+

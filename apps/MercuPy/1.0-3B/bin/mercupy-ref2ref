@@ -102,8 +102,9 @@ except:
 i=0
 nbdata=dict()
 nbedata=dict()
-ntimes=int(state.TIME_ELAPSED/state.DT_DATADUMPS)
+ntimes=int(state.TIME_ELAPSED/state.DT_OUTPUTELEM)
 ntfreq=int(ntimes/10)
+if ntfreq<1:ntfreq=1
 print "Number of times:",ntimes
 print "Frequency of output:",ntfreq
 bshow=[]

@@ -110,6 +110,7 @@ ShowObject=[[Body3Show]],
 POSITION_ELEMENTS="x15e y15e z15e u15e v15e w15e r15e"
 ORBITAL_ELEMENTS="a15e e15e i15e g15e n15e l15e q15e b15e p15e f15e"
 PHYSICAL_ELEMENTS="s8.5 o8.5 m10e d8.5"
+OUTPUT_FORMAT="%-15.10e"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GENERAL BEHAVIOR OF THE INTEGRATOR

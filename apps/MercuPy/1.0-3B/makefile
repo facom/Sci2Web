@@ -26,15 +26,16 @@ prepare:
 build:
 	make all
 
-continue:
-	bin/mercupy-continue
-
 run:$(PROGRAMS)
 	time ./mercury6_2.exe
+	$(shell if [ -e "output/phase" ];\
+	then cp -rf output/phase output/prevphase;fi)
 	./element6.sh
-	./close6.sh
 #THIS LINE WAS ADDED FOR THE RUN PIPELINE OF SCI2WEB
 	date +%s.%N > end.sig
+
+close:
+	./close6.sh
 
 out:
 	bin/mercupy-output
@@ -45,8 +46,11 @@ ref:
 plot:
 	bin/mercupy-plot
 
+continue:
+	bin/mercupy-continue
+
 go:
-	make prepare build run out ref plot
+	make run out ref plot continue
 
 #################################################################################
 #CLEAN RULES
@@ -57,14 +61,11 @@ cleanprepare:cleanbuild
 	rm -rf  *.in *.inc
 
 cleanbuild:cleanrun
-	rm -rf *.exe bin/*.pyc
+	rm -rf *.exe
 
 cleanrun:cleanout
 	rm -rf *.out *.dmp *.tmp
 	rm -rf *.state
-#ADDED FOR THE RUN PIPELINE OF SCI2WEB
-	rm -rf *.sig
-	rm -rf run.sh run.conf submit.sh
 
 cleanout:cleanref
 	rm -rf output/*
@@ -77,3 +78,8 @@ cleanplot:cleantmp
 
 cleantmp:
 	rm -rf *~ *.tmp *.dmp *.log tmp/*
+
+#ADDED FOR THE RUN PIPELINE OF SCI2WEB
+cleansci2web:
+	rm -rf *.sig
+	rm -rf run.sh run.conf submit.sh

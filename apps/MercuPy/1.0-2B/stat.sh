@@ -5,4 +5,4 @@
 time=$(cat stdout.oxt | grep Time: | tail -n 1 | awk -F':' '{print $2}' | awk '{print $1}')
 
 #COMPUTE THE FRACTION OF THE TOTAL TIME COMPLETED
-calc "$time/(365.25-0.0)"
+calc "$time/(29.0)"

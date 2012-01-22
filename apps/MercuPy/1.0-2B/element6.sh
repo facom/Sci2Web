@@ -1,4 +1,6 @@
 #!/bin/bash
+outdir=output
+
 function changeAEI
 {
     ext=$1;shift
@@ -7,7 +9,7 @@ function changeAEI
     do
 	objname=$(echo $file | awk -F'.aei' '{print $1}')
 	echo "Changing $file to $objname.$ext..."
-	mv $objname.aei $objname.$ext
+	mv $objname.aei $outdir/$objname.$ext
     done
 }
 
