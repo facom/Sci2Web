@@ -188,6 +188,10 @@ get an usable web interface to your SA in a couple of minutes.
 
       % SCI2WEB_PATH/bin/sci2web-admin newversion --appname Diffusion --tempver dev --newver 1.0
 
+#. Check that everything is OK and make public your application::
+
+     % rm -rf apps/Diffusion/1.0/sci2web/.newversion
+
 #. Test it in the web!   
 
 Detailed procedure

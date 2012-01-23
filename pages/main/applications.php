@@ -82,6 +82,9 @@ CONTENT;
     $opsel="";
     readConfig("$PROJ[APPSPATH]/$appcode/$ver/sci2web/version.conf");
     $changeslog=$CONFIG["ChangesLog"];
+    if($j==1){
+      $lastversion=$version["version_code"];
+    }
     $appvercode="${appcode}_$version[version_code]";
 $verstr.=<<<VERSION
 <option id="${appcode}_$j" $opsel value="$version[version_code]">Version $version[version_code] ($version[release_date])
@@ -143,7 +146,7 @@ explanation="Open application web page"
 </button>
 </td>
 <td class="description">
-<a href="JavaScript:Open('$appdir/$appcode-desc.html','Application description','$PROJ[SECWIN]')">
+  <a href="JavaScript:Open('$appdir/$lastversion/sci2web/pages/desc.html','Application description','$PROJ[SECWIN]')">
 <b
    style="font-size:20px"
    onmouseover="explainThis(this)"

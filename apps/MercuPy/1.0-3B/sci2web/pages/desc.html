@@ -1,0 +1,35 @@
+<p>
+	<span style="font-size: 16px; ">MercuPy is a </span><strong style="font-size: 16px; ">Python Wrap</strong><span style="font-size: 16px; "> for </span><strong style="font-size: 16px; ">Mercury</strong><span style="font-size: 16px; ">, the well known advanced n-body integrator used widely in planetary sciences studies.</span></p>
+<p>
+	<span style="font-size:16px;">The <strong>Mercury</strong> integrator was originally written by J.E. Chambers (<a href="http://adsabs.harvard.edu/abs/1999MNRAS.304..793C">Chambers, 1999</a>)&nbsp;as an extension of the original and very succesful <strong>Swift Integrator</strong>&nbsp;designed by H. F. Levinson and M.J. Duncan (<a href="http://adsabs.harvard.edu/abs/1994Icar..108...18L">Levinson and Duncan, 1994</a>).&nbsp; Mercury uses simple albeit powerful algorithms to integrate the equation of motion of systems composed by n gravitationally interacting bodies. &nbsp;It uses symplectic algorithms along with other complex and more precise integration methods, to evolve conservative systems while minimizing the numerical variation of total energy and angular momentum. &nbsp;Mercury is able to integrate precisely the trajectories of the bodies when close encounters happen, something that the traditional fast symplectic integrators are unable to perform with the required precision. &nbsp;I</span><span style="font-size: 16px; ">t could also track the collisions among interacting bodies and compute the change in the axial tilt and angular momentum of rotation of the bodies.</span></p>
+<p>
+	<span style="font-size: 16px; "><strong>Mercury</strong> was originally written in <strong>Fortran 77</strong>&nbsp;and has a rather simple and unfriendly user interface. &nbsp;The program is initialaized using a set of simple plain text files written in a very specific and hard to remember format. &nbsp;The preparation of the input files, specially for large number of interacting bodies and the manipulation and analysis of the output data could be challenging. &nbsp;</span><span style="font-size: 16px; ">For the newbie and even for advanced users, Mercury could be a hard to use piece of software.</span></p>
+<p>
+	<span style="font-size: 16px; "><strong>MercuPy</strong> improves the experience using Mercury by providing:</span></p>
+<ul>
+	<li>
+		<span style="font-size: 16px; ">An advanced and easy to configure user interface.</span></li>
+	<li>
+		<span style="font-size: 16px; ">A set of python scripts to manipulate and represent final results.</span></li>
+	<li>
+		<span style="font-size: 16px; ">A powerful plotting script to convert final data into high quality plots.</span></li>
+</ul>
+<p>
+	<span style="font-size:16px;">Other carachteristics added to Mercury by the <strong>MercuPy wrap</strong> includes but are not limited to:</span></p>
+<ul>
+	<li>
+		<span style="font-size:16px;">The initial position of bodies can be described relative to an arbitrary&nbsp;reference frame using and in cartesian or classical elements respect to that frame of reference.</span></li>
+	<li>
+		<span style="font-size:16px;">The final elements and state of the bodies can be translated and rotated to an arbitrary reference frame.</span></li>
+	<li>
+		<span style="font-size:16px;">Once an integration has been completed you can continue it from the last state.</span></li>
+	<li>
+		<span style="font-size:16px;">You can invert the direction of time and compare the results of a given integration with a&nbsp;previous trajectory in order to compute the precision of a given set of integrator parameters.</span></li>
+</ul>
+<p>
+	<span style="font-size: 16px; ">If you publish the results of calculations using <strong>MercuPy</strong> please reference the package using:&nbsp;</span></p>
+<p style="margin-left: 40px; ">
+	<strong><span style="font-size: 16px; ">J.I. Zuluaga (2012), Sci2Web: a novel model to publish scientific applications in the web. &nbsp;In preparation.</span><br />
+	<br />
+	<span style="font-size: 16px; ">J.E. Chambers (1999), A Hybrid&nbsp;Symplectic Integrator that Permits Close Encounters between&nbsp;Massive Bodies. &nbsp;MNRAS, Vol. 304, 793 </span></strong><br />
+	<span style="font-size: 16px; ">(<a href="http://adsabs.harvard.edu/abs/1999MNRAS.304..793C">ADS Entry</a>)</span></p>

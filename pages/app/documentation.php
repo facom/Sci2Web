@@ -3,7 +3,7 @@ session_start();
 //////////////////////////////////////////////////////////////////////////////////
 //FILE WITH CONTENT
 //////////////////////////////////////////////////////////////////////////////////
-$FILE="$_SESSION[App]-doc.html";
+$FILE="doc.html";
 //////////////////////////////////////////////////////////////////////////////////
 ?>
 
@@ -20,8 +20,9 @@ include("$RELATIVE/lib/sci2web.php");
 $bugbut="";
 $bugform="";
 $APPNAME="$_SESSION[App]";
-$APPDIR="$PROJ[APPSDIR]/$APPNAME";
-$APPPATH="$PROJ[APPSPATH]/$APPNAME";
+$VERNAME="$_SESSION[VersionId]";
+$APPDIR="$PROJ[APPSDIR]/$APPNAME/$VERNAME/sci2web/pages";
+$APPPATH="$PROJ[APPSPATH]/$APPNAME/$VERNAME/sci2web/pages";
 $FHASH=md5($FILE);
 $LINK="";
 $RID=$PHP["RANDID"];

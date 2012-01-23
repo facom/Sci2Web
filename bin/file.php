@@ -121,7 +121,9 @@ switch($ftype){
    if($Mode=="Gallery"){
      $fgallery=imagesGallery("$Dir/$File");
 $fcontent.=<<<CONTENT
+<div style="position:relative">
 $fgallery
+</div>
 CONTENT;
    }else{
    $ftable=filesTable("$Dir/$File","","Parent");

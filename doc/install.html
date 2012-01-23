@@ -500,6 +500,13 @@ server:</p>
 </pre>
 <p>Here the symbol <tt class="docutils literal">%</tt> replaces the prompt and hereafter will be used
 to denote a command that should be executed in the linux console.</p>
+<p>Specially important is the installation of the MySQL server.  You can
+use simply:</p>
+<pre class="literal-block">
+% apt-get install mysql-server
+</pre>
+<p>At some point the installation script will ask for the root user
+password.  Use an easy to recall password, e.g. the root password.</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p>Hereafter we will use also the follwoing aliases when
@@ -812,12 +819,6 @@ uses by default <tt class="docutils literal">dash</tt> as the default scripting 
 Normally this is performed by creating a symbolic link to
 <tt class="docutils literal">/bin/dash</tt> as <tt class="docutils literal">/bin/sh</tt>.  Change this default configuration in
 order to make <tt class="docutils literal">sh</tt> point out to <tt class="docutils literal">bash</tt>.</p>
-</li>
-<li><p class="first"><strong>Create a dedicated sci2web user</strong>:</p>
-<pre class="literal-block">
-% useradd -m -d PROJPATH -p ***** sci2web
-</pre>
-<p>Where <strong>*</strong> is the database user password.</p>
 </li>
 </ul>
 <hr class="docutils" />

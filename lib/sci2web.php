@@ -731,7 +731,92 @@ function readParamModel($varsconf)
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 function imagesGallery($dir)
 {
-  return "Gallery";
+  global $PHP,$PROJ,$BUTTONS;
+
+  $imgload=genLoadImg("animated/loader-circle.gif");
+  $tabrefresh=-1;
+  //========================================
+  //GET IMAGE
+  //========================================
+$ajax_gallery_image=<<<AJAX
+loadimgnum=$('#loadimgnum').attr('value');
+loadContent
+  ('$PROJ[BINDIR]/ajax-gallery.php?Get=Image&Dir=$dir&ImgNum='+loadimgnum,
+   'gallery_image',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     $(element).html('$imgload');
+   },
+   function(element,rtext){
+     element.innerHTML='ERROR';
+   },
+   $tabrefresh,
+   true
+   )
+AJAX;
+  blankFunc();
+  $onload_gallery_image=genOnLoad($ajax_gallery_image,'load');
+
+$tabcont.=<<<TAB
+$onload_gallery_image
+<input type="hidden" id="loadimgcmd" value="$ajax_gallery_image">
+<input type="hidden" id="loadimgnum" value="0">
+<div id="gallery_image" 
+     style="
+	    position:relative;
+	    height:80%;
+	    background-color:$COLOR[back];
+	    text-align:center;
+	    "
+     >
+</div>
+TAB;
+
+  blankFunc();
+  //========================================
+  //GET THUMBS
+  //========================================
+$ajax_gallery_thumbs=<<<AJAX
+loadContent
+  ('$PROJ[BINDIR]/ajax-gallery.php?Get=Thumbnails&Dir=$dir&$opts',
+   'gallery_thumbnails',
+   function(element,rtext){
+     element.innerHTML=rtext;
+   },
+   function(element,rtext){
+     $(element).html('$imgload');
+   },
+   function(element,rtext){
+     element.innerHTML='ERROR';
+   },
+   $tabrefresh,
+   true
+   )
+AJAX;
+
+  blankFunc();
+  $onload_gallery_thumbs=genOnLoad($ajax_gallery_thumbs,'load');
+
+$tabcont.=<<<TAB
+<input type="hidden" id="loadthumbscmd" value="$ajax_gallery_thumbs">
+$onload_gallery_thumbs
+<div id="gallery_thumbnails" 
+     style="
+	    position:relative;
+	    height:20%;
+	    overflow:auto;
+	    background-color:$COLORS[back];
+	    border-top:solid $COLORS[dark] 1px;
+	    text-align:center;
+	    "
+     >
+</div>
+TAB;
+
+  blankFunc();
+  return $tabcont;
 }
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -835,11 +920,19 @@ $onload
 	    <input id="action" type="hidden" name="DownloadDir_Submit" value="$dir">
 	  </div>
 	</div>
-	<div style="position:absolute;float:right;top:0px;right:0px"
+	<div style="position:absolute;float:right;top:0px;right:0px">
+	  <a href="JavaScript:void(null)"
 	     onmouseover="explainThis(this)"
+	     explanation="Open Directory in Gallery mode"
+	     onclick="dir=$('input[name=DownloadDir_Submit]').attr('value');
+		      Open('$PROJ[BINDIR]/file.php?Dir='+dir+'&File=.&Mode=Gallery','Directory Gallery','$PROJ[SECWIN]');">
+	  Gallery mode
+	  </a> |    
+	  <i onmouseover="explainThis(this)" 
 	     explanation="Use ls-style strings, e.g. '*.c', 'plot*.ps2w'">
 	  Search: 
 	  <input id="searchfile$rid" type="text" value="">
+	  </i>
 	  <a href="JavaScript:$ajax_filelist"
 	     onmouseover="explainThis(this)"
 	     explanation="Update & Search">$BUTTONS[Update]</a>

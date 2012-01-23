@@ -118,7 +118,7 @@ switch($Action){
 	    rprint "Cleaning runs directory...";
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
-		sysCmd("rm -rf $ROOTDIR/runs/[^db.]*");
+		sysCmd("rm -rf $ROOTDIR/runs/*@*");
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		#CLEANING RUNS TABLE
 		#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
