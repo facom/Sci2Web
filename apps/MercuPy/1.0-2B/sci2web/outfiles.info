@@ -1,13 +1,6 @@
 output
-*.dmp
-*.dat
 *.in
-*.els*
-*.clo*
-*.xyz*
-*.ref*
 *.out
 *.oxt
 *.txt
 *.log
-*.png

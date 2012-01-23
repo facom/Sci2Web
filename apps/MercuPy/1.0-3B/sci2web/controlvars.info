@@ -4,151 +4,153 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Custom Units
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CustomUL::1.0*AU::varchar::Custom Longitud Units::Units of longitude in MKS.  Available Macros RSUN, AU::::variables.info,
-CustomUM::1.0*MSUN::varchar::Custom Mass Units::Units of mass in MKS.  Available Macros MMOON, MEARTH, MSUN, MJUP::::variables.info,
+CustomUL::1.0*AU::varchar::Custom Longitud Units::Units of longitude in MKS.  Available Macros RSUN, AU::NoDB::::variables.info,
+CustomUM::1.0*MSUN::varchar::Custom Mass Units::Units of mass in MKS.  Available Macros MMOON, MEARTH, MSUN, MJUP::NoDBNoDB::::variables.info,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Times
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TimeUnits::hours;;days;;months;;years==days::varchar::Time Units::Enter the units for times in simulation::::variables.info,system.config,
-Epoch::0.0::float::Epoch::Enter the initial epoch of the simulation::::variables.info,system.config,
-TimeStart::0.0::float::Time of start::In Time Units::::variables.info,system.config,
-TimeElapsed::18.0::float::Simulation time::In Time Units::::variables.info,stat.sh,system.config,
-TimeStep::0<<==1E-3::float::Time step::In Time Units::::variables.info,system.config,
+TimeUnits::hours;;days;;months;;years==days::varchar::Time Units::Enter the units for times in simulation::::::variables.info,system.config,
+Epoch::0.0::float::Epoch::Enter the initial epoch of the simulation::::::variables.info,system.config,
+TimeStart::0.0::float::Time of start::In Time Units::NoDB::::variables.info,system.config,
+TimeElapsed::18.0::float::Simulation time::In Time Units::NoDB::::variables.info,stat.sh,system.config,
+TimeStep::0<<==1E-3::float::Time step::In Time Units::NoDB::::variables.info,system.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Input/Output
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DtOutput::0<<==0.1::float::Time between internal output::Enter the time between internal output in Time Units::::variables.info,system.config,
-DtOutputElements::0<<==1.0::float::Time between element output::Enter the time between output of elements in the results files in Time Units::::variables.info,system.config,
-DtDataDumps::0<<==1.0::float::Time between dumps::Enter the time between the storing of data dumps::::variables.info,system.config,
-CentralReference::Central;;Barycentric;;Jacobi==Central::varchar::Type of elements::Type of elements::::variables.info,system.config,
-TimeRelativeIntegration::yes;;no==yes::varchar::Time origin::Express time relative to integration start time::::variables.info,system.config,
+DtOutput::0<<==0.1::float::Time between internal output::Enter the time between internal output in Time Units::::::variables.info,system.config,
+DtOutputElements::0<<==1.0::float::Time between element output::Enter the time between output of elements in the results files in Time Units::NoDB::::variables.info,system.config,
+DtDataDumps::0<<==1.0::float::Time between dumps::Enter the time between the storing of data dumps::NoDB::::variables.info,system.config,
+CentralReference::Central;;Barycentric;;Jacobi==Central::varchar::Type of elements::Type of elements::::::variables.info,system.config,
+TimeRelativeIntegration::yes;;no==yes::varchar::Time origin::Express time relative to integration start time::::::variables.info,system.config,
 #######################################################################
 #TAB:Bodies
 #######################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:General
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SystemDescription::This is a n-body system::text::System description::Give a complete description of the simulation::::variables.info,system.config,
-CoordinatesCentral::Cartesian;;Asteroidal;;Cometary==Cartesian::varchar::Coordinates for the Central Object::System of coordinates for the central object::::variables.info,system.config,
-CoordinatesBig::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Big Object::System of coordinates for small objects::::variables.info,system.config,
-CoordinatesSmall::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Small Object::System of coordinates for small objects::::variables.info,system.config,
+SystemDescription::This is a n-body system::text::System description::Give a complete description of the simulation::::::variables.info,system.config,
+CoordinatesCentral::Cartesian;;Asteroidal;;Cometary==Cartesian::varchar::Coordinates for the Central Object::System of coordinates for the central object::NoDB::::variables.info,system.config,
+CoordinatesBig::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Big Object::System of coordinates for small objects::NoDB::::variables.info,system.config,
+CoordinatesSmall::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Small Object::System of coordinates for small objects::NoDB::::variables.info,system.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Body 1
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Body1Name::Sun::varchar::Name::Name of the body::::variables.info,system.config,
-Body1Mass::1.0*MSUN::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::variables.info,system.config,
-Body1Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==NORMALSTAR::varchar::Class::Physical class of the body::::variables.info,system.config,
-Body1Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body1Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body1Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::variables.info,system.config,
-Body1State::0.0 0.0 0.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body: x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::variables.info,system.config,
-Body1J2::0.0<<==0.0::float::J2::J2::::variables.info,system.config,
-Body1J4::0.0<<==0.0::float::J4::J4::::variables.info,system.config,
-Body1J6::0.0<<==0.0::float::J6::J6::::variables.info,system.config,
+Body1Name::Sun::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body1Mass::1.0*MSUN::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body1Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==NORMALSTAR::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body1Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body1Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body1Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body1State::0.0 0.0 0.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body: x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body1J2::0.0<<==0.0::float::J2::J2::::::variables.info,system.config,
+Body1J4::0.0<<==0.0::float::J4::J4::::::variables.info,system.config,
+Body1J6::0.0<<==0.0::float::J6::J6::::::variables.info,system.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Body 2
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Body2Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::variables.info,system.config,
-Body2Name::Earth::varchar::Name::Name of the body::::variables.info,system.config,
-Body2Mass::1.0*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::variables.info,system.config,
-Body2Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::variables.info,system.config,
-Body2Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body2Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body2Reference::BODY1;;BODY3==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::variables.info,system.config,
-Body2Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::variables.info,system.config,
-Body2State::1.0 0.0167 0.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::variables.info,system.config,
-Body2As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::variables.info,system.config,
-Body2Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::variables.info,system.config,
-Body2Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::variables.info,system.config,
-Body2Show::1::boolean::Show object::Show object::::variables.info,system.config,
+Body2Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body2Name::Earth::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body2Mass::1.0*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body2Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body2Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body2Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body2Reference::BODY1;;BODY3==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body2Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body2State::1.0 0.0167 0.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body2StateFile::BODY2.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body2As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body2Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body2Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body2Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Body 3
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Body3Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::variables.info,system.config,
-Body3Name::Moon::varchar::Name::Name of the body::::variables.info,system.config,
-Body3Mass::1.0*MMOON::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::variables.info,system.config,
-Body3Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::variables.info,system.config,
-Body3Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body3Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::variables.info,system.config,
-Body3Reference::BODY1;;BODY2==BODY2::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::variables.info,system.config,
-Body3Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==ORBITAL::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::variables.info,system.config,
-Body3State::3.84E5 0.0 5.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::variables.info,system.config,
-Body3As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::variables.info,system.config,
-Body3Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::variables.info,system.config,
-Body3Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::variables.info,system.config,
-Body3Show::1::boolean::Show object::Show object::::variables.info,system.config,
+Body3Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body3Name::Moon::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body3Mass::1.0*MMOON::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body3Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body3Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body3Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body3Reference::BODY1;;BODY2==BODY2::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body3Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==ORBITAL::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body3State::3.84E5 0.0 5.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body3StateFile::BODY3.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body3As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body3Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body3Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body3Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
 #######################################################################
 #TAB:Integrator
 #######################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:General
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IntegrationAlgorithm::HYB;;MVS;;BS;;BS2;;RADAU==HYB::varchar::Integrator algorithm::Integrator Algorithm::::variables.info,system.config,
-IntegrationAccuracy::0<<==1E-12::float::Integrator accuracy::Accuracy of the integrator (adimensional)::::variables.info,system.config,
-IntegrationPrecision::low;;medium;;high==medium::varchar::Integrator precision::Precision of the integrator: low (4), medium (9) and high (15 digits)::::variables.info,system.config,
-IntegrationChangeOver::0.0--10.0--0.1==3.0::float::Integrator changeover::Distance for integrator algorithm changeover in Hill-Radius::::variables.info,system.config,
-DStepPeriodic::1<<==100::int::Number of timesteps between periodic effects::Number of timesteps between periodic effects::::variables.info,system.config,
+IntegrationAlgorithm::HYB;;MVS;;BS;;BS2;;RADAU==HYB::varchar::Integrator algorithm::Integrator Algorithm::::::variables.info,system.config,
+IntegrationAccuracy::0<<==1E-12::float::Integrator accuracy::Accuracy of the integrator (adimensional)::::::variables.info,system.config,
+IntegrationPrecision::low;;medium;;high==medium::varchar::Integrator precision::Precision of the integrator: low (4), medium (9) and high (15 digits)::::::variables.info,system.config,
+IntegrationChangeOver::0.0--10.0--0.1==3.0::float::Integrator changeover::Distance for integrator algorithm changeover in Hill-Radius::::::variables.info,system.config,
+DStepPeriodic::1<<==100::int::Number of timesteps between periodic effects::Number of timesteps between periodic effects::::::variables.info,system.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Behavior
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-StopIntegration::yes;;no==no::varchar::Stop Integration?::Stop integration after a close encounter::::variables.info,system.config,
-Collisions::yes;;no==no::varchar::Allow collisions?::Allow collisions to occur::::variables.info,system.config,
-ContinueIntegration::1::boolean::Continue integration::Do you want that the integration continue in the last point?::::variables.info,continue.config,
-StorePreviousResults::1::boolean::Store previous results::Do you want to store previous results when continuing?::::variables.info,continue.config,
+StopIntegration::yes;;no==no::varchar::Stop Integration?::Stop integration after a close encounter::::::variables.info,system.config,
+Collisions::yes;;no==no::varchar::Allow collisions?::Allow collisions to occur::::::variables.info,system.config,
+ContinueIntegration::1::boolean::Continue integration::Do you want that the integration continue in the last point?::NoDB::::variables.info,continue.config,
+StorePreviousResults::1::boolean::Store previous results::Do you want to store previous results when continuing?::NoDB::::variables.info,continue.config,
 #######################################################################
 #TAB:Plot
 #######################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Reference Frame
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ReferenceRotate::1::boolean::Rotate to other reference system::Select if you want to rotate to other reference system::::variables.info,ref2ref.config,
-ReferenceBody::BODY1;;BODY2;;BODY3==BODY2::varchar::Reference body::Choose the body respect to which the elements will be computed::::variables.info,ref2ref.config,
-BodyAxis1::BODY1;;BODY2;;BODY3;;INERTIAL==BODY2::varchar::Reference axis point 1::Choose the point 1 of the reference axis.  INERTIAL is a fixed point at (0,0,0)::::variables.info,ref2ref.config,
-BodyAxis2::BODY1;;BODY2;;BODY3;;INERTIALX;;INERTIALY;;INERTIALZ==INERTIALX::varchar::Reference axis point 2::Choose the point 1 of the reference axis.  INERTIAL* is a fixed point at one of the three axis::::variables.info,ref2ref.config,
-ReferenceType::Rotating;;==Rotating::varchar::Type of reference system::Type of reference system: Rotating or Pulsating::::variables.info,ref2ref.config,
-BodiesToRotate::'BODY2','BODY3'::varchar::Bodies to rotate::Select the bodies to rotate. Apostrophe and commas are mandatory::::variables.info,ref2ref.config,
+ReferenceRotate::1::boolean::Rotate to other reference system::Select if you want to rotate to other reference system::NoDB::::variables.info,ref2ref.config,
+ReferenceBody::BODY1;;BODY2;;BODY3==BODY2::varchar::Reference body::Choose the body respect to which the elements will be computed::NoDB::::variables.info,ref2ref.config,
+BodyAxis1::BODY1;;BODY2;;BODY3;;INERTIAL==BODY2::varchar::Reference axis point 1::Choose the point 1 of the reference axis.  INERTIAL is a fixed point at (0,0,0)::NoDB::::variables.info,ref2ref.config,
+BodyAxis2::BODY1;;BODY2;;BODY3;;INERTIALX;;INERTIALY;;INERTIALZ==INERTIALX::varchar::Reference axis point 2::Choose the point 1 of the reference axis.  INERTIAL* is a fixed point at one of the three axis::NoDB::::variables.info,ref2ref.config,
+ReferenceType::Rotating;;==Rotating::varchar::Type of reference system::Type of reference system: Rotating or Pulsating::NoDB::::variables.info,ref2ref.config,
+BodiesToRotate::'BODY2','BODY3'::varchar::Bodies to rotate::Select the bodies to rotate. Apostrophe and commas are mandatory::NoDB::::variables.info,ref2ref.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Elements
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ElementsActivate::1::boolean::Activate plot::Activate this plot?::::variables.info,plot.config,plot.config,
-ElementsBodies::'BODY3'::varchar::Bodies::Bodies whose elements will be plotted::::variables.info,plot.config,plot.config,
-ElementsStyles::('b','-',3,'s',2)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::::variables.info,plot.config,plot.config,
-ElementsCoordinates::'a','q','e','i','g'::varchar::Elements::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::::variables.info,plot.config,plot.config,
-ElementsYLims::'Auto','Auto',(0,1),(0,90),(0,360)::varchar::Y limits::Limits for elements plots::::variables.info,plot.config,plot.config,
-ElementsScales::'linear','linear','log','linear','linear'::varchar::Y scales::Scale for elements plots::::variables.info,plot.config,plot.config,
-ElementsTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::::variables.info,plot.config,plot.config,
-ElementsTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::::variables.info,plot.config,plot.config,
+ElementsActivate::1::boolean::Activate plot::Activate this plot?::NoDB::::variables.info,plot.config,plot.config,
+ElementsBodies::'BODY3'::varchar::Bodies::Bodies whose elements will be plotted::NoDB::::variables.info,plot.config,plot.config,
+ElementsStyles::('b','-',3,'s',2)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::NoDB::::variables.info,plot.config,plot.config,
+ElementsCoordinates::'a','q','e','i','g'::varchar::Elements::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::NoDB::::variables.info,plot.config,plot.config,
+ElementsYLims::'Auto','Auto',(0,1),(0,90),(0,360)::varchar::Y limits::Limits for elements plots::NoDB::::variables.info,plot.config,plot.config,
+ElementsScales::'linear','linear','log','linear','linear'::varchar::Y scales::Scale for elements plots::NoDB::::variables.info,plot.config,plot.config,
+ElementsTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+ElementsTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Orbit
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-OrbitActivate::1::boolean::Activate plot::Activate this plot?::::variables.info,plot.config,plot.config,
-OrbitBodies::'BODY2','BODY3'::varchar::Bodies::Bodies whose orbit will be plotted::::variables.info,plot.config,plot.config,
-OrbitStyles::('r','-',2,'o',5),('b','-',1,'p',5)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::::variables.info,plot.config,plot.config,
-OrbitCoordinates::'x','y','z'::varchar::Coordinates::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::::variables.info,plot.config,plot.config,
-OrbitViewAngle::30,60::varchar::Viewing angle::Angles: phi(horizontal angle), theta(polar angle) in degrees::::variables.info,plot.config,plot.config,
-OrbitTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::::variables.info,plot.config,plot.config,
-OrbitTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::::variables.info,plot.config,plot.config,
-OrbitBox::0::boolean::Show 2D axis::Show 2D axis::::variables.info,plot.config,plot.config,
-OrbitGrid::0::boolean::Show 2D grid::Show 2D grid (if the 2D axis are set)::::variables.info,plot.config,plot.config,
-OrbitAxis::1::boolean::Show xyz-axis::Show xyz-axis::::variables.info,plot.config,plot.config,
-OrbitXYPlane::1::boolean::Show xy-plane::Show xy-plane::::variables.info,plot.config,plot.config,
-OrbitLegends::1::boolean::Show body legend::Show body legend::::variables.info,plot.config,plot.config,
-OrbitXLabel::'AU'::varchar::X label::X-label (if the 2D axis are set)::::variables.info,plot.config,plot.config,plot.config,plot.config,
-OrbitYLabel::'AU'::varchar::Y label::Y-label (if the 2D axis are set)::::variables.info,
+OrbitActivate::1::boolean::Activate plot::Activate this plot?::NoDB::::variables.info,plot.config,plot.config,
+OrbitBodies::'BODY2','BODY3'::varchar::Bodies::Bodies whose orbit will be plotted::NoDB::::variables.info,plot.config,plot.config,
+OrbitStyles::('r','-',2,'o',5),('b','-',1,'p',5)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::NoDB::::variables.info,plot.config,plot.config,
+OrbitCoordinates::'x','y','z'::varchar::Coordinates::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::NoDB::::variables.info,plot.config,plot.config,
+OrbitViewAngle::30,60::varchar::Viewing angle::Angles: phi(horizontal angle), theta(polar angle) in degrees::NoDB::::variables.info,plot.config,plot.config,
+OrbitTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+OrbitTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+OrbitBox::0::boolean::Show 2D axis::Show 2D axis::NoDB::::variables.info,plot.config,plot.config,
+OrbitGrid::0::boolean::Show 2D grid::Show 2D grid (if the 2D axis are set)::NoDB::::variables.info,plot.config,plot.config,
+OrbitAxis::1::boolean::Show xyz-axis::Show xyz-axis::NoDB::::variables.info,plot.config,plot.config,
+OrbitXYPlane::1::boolean::Show xy-plane::Show xy-plane::NoDB::::variables.info,plot.config,plot.config,
+OrbitLegends::1::boolean::Show body legend::Show body legend::NoDB::::variables.info,plot.config,plot.config,
+OrbitXLabel::'AU'::varchar::X label::X-label (if the 2D axis are set)::NoDB::::variables.info,plot.config,plot.config,plot.config,plot.config,
+OrbitYLabel::'AU'::varchar::Y label::Y-label (if the 2D axis are set)::NoDB::::variables.info,
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:Errors
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ComputeClose::0::boolean::Compute close encounters::Compute the position of the bodies during the close encounters::::variables.info,post.sh,
-ComputeErrors::0::boolean::Compute errors::Check if you want to compute the errors between two integration phases::::variables.info,post.sh,
-BodyErrors::BODY2;;BODY3==BODY3::varchar::Body to compute errors::Errors for the orbit of this body will be computed::::variables.info,post.sh,post.sh,
-BodyExtension::dat;;ref==dat::varchar::Source of data::'dat' contains the Mercury output data, 'ref' contains the change of reference frame results::::variables.info,post.sh,post.sh,
-BodyPhase1::1::int::Phase 1::Phase to compare::::variables.info,post.sh,
-BodyPhase2::2::int::Phase 2::Phase to compare::::variables.info,post.sh,
+ComputeClose::0::boolean::Compute close encounters::Compute the position of the bodies during the close encounters::NoDB::::variables.info,post.sh,
+ComputeErrors::0::boolean::Compute errors::Check if you want to compute the errors between two integration phases::NoDB::::variables.info,post.sh,
+BodyErrors::BODY2;;BODY3==BODY3::varchar::Body to compute errors::Errors for the orbit of this body will be computed::NoDB::::variables.info,post.sh,post.sh,
+BodyExtension::dat;;ref==dat::varchar::Source of data::'dat' contains the Mercury output data, 'ref' contains the change of reference frame results::NoDB::::variables.info,post.sh,post.sh,
+BodyPhase1::1::int::Phase 1::Phase to compare::NoDB::::variables.info,post.sh,
+BodyPhase2::2::int::Phase 2::Phase to compare::NoDB::::variables.info,post.sh,
 #######################################################################
 #TAB:Results
 #######################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #GROUP:General
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ChangeEnergy::0::float::Fractional change in energy due to integrator::Fractional change in energy due to integrator::::results.info,
-ChangeMomentum::0::float::Fractional change in angular momentum::Fractional change in angular momentum::::results.info,
+ChangeEnergy::0::float::Fractional change in energy due to integrator::Fractional change in energy due to integrator::::::results.info,
+ChangeMomentum::0::float::Fractional change in angular momentum::Fractional change in angular momentum::::::results.info,

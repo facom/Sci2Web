@@ -730,6 +730,15 @@ $header.=<<<HEADER
   $BUTTONS[Save]
 </button> 
 </div>
+<div class="actionbutton">
+  <!-- -------------------- RELOAD BUTTON -------------------- -->
+  <a href="JavaScript:void(null)" class="image" 
+     onclick="Reload()"
+     onmouseover="explainThis(this)" explanation="Results">
+    $BUTTONS[Update]
+  </a>
+</div>
+
 <div class="actionbutton"
      style="position:absolute;right:0px;top:10px">
   <!-- -------------------- BUG BUTTON -------------------- -->

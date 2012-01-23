@@ -54,7 +54,7 @@ $BACKUP=0;
 #VARIABLES
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #FORMATTING SYNTAX: VarName::DefaultValue::DataType::Variable Name::Tab::Group
-@VARSCOMP=("var","defval","datatype","varname","vartab","vargroup","vardesc","varprot");
+@VARSCOMP=("var","defval","datatype","varname","vartab","vargroup","vardesc","vardb","varprot");
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #DIRECTORIES

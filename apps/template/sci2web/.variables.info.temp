@@ -1,5 +1,5 @@
 #Format:
-#  VariableName::DefaultValue::TypeOfVariable::CompleteName::Tab::Group::HelpText::ReadOnly
+#  VariableName::DefaultValue::TypeOfVariable[::CompleteName::Tab::Group::HelpText::NoDB::ReadOnly]
 #
 #Where:
 #

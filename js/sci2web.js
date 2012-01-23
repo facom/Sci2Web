@@ -356,7 +356,7 @@ function notDiv(notid,text)
 {
     $('#'+notid).html(text);
     $('#'+notid).fadeIn(1000,null);
-    setTimeout("$('#"+notid+"').fadeOut(3000,null)",2000);
+    setTimeout("$('#"+notid+"').fadeOut(5000,null)",2000);
 }
 
 function explainThis(object)

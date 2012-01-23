@@ -243,8 +243,7 @@ TEXT;
 		"notDiv('notlogin','Check your e-mail for a new password')");
 	}else{
 	  $onload=
-	    genOnLoad(
-		"notDiv('notlogin','This server does not support e-mail notifications.<br/>Contact the web master to know your new password')");
+	    genOnLoad("notDiv('notlogin','This server does not support e-mail notifications.<br/>Your new password is <b>$newpass</b>')");
 	}
       }
       return $onload;
@@ -310,7 +309,8 @@ TEXT;
 	  if($PROJ["ENABLEMAIL"]){
 	    $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>Check your e-mail.')");
 	  }else{
-	    $onload=genOnLoad("notDiv('notlogin','Your account has been created.<br/>This server does not support e-mail notifications.<br/>Contact the web master to activate your account.')");
+	    $onload=genOnLoad("notDiv('notlogin','This server does not support e-mail notifications. <a href=$acturl>Click here to activate</a>')");
+	    
 	  }
 	  return $onload;
 	}else{

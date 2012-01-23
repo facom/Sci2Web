@@ -37,7 +37,7 @@ Error "You should provide an action" if($Action=~/-/ or $Action!~/\w/);
 @cmdopt=("help|?","verbose|V","man|m");
 switch($Action){
     case "clean" {
-	push(@cmdopt,("tmp|t","runs|r","db|d","log|l","all|a","results|R"));
+	push(@cmdopt,("tmp|t","runs|r","db|d","log|l","all|a","results|R","users|u"));
     }
     case "init" {
 	push(@cmdopt,("appname|a=s","vername|v=s"));
@@ -158,8 +158,19 @@ switch($Action){
 	    $ans=promptAns("Do you want to proceed?(y/n)",$ans) if($ans!~/a/i);
 	    if($ans=~/[ya]/i){
 		print "Provide the MySQL root password:\n\t";
+		if(!$options{users}){
+		    #USER BACKUP
+		    `mysqldump -u $DBUSER --password=$DBPASS $DBNAME users > /tmp/dback.$$`;
+		}
+		#TABLE CREATION
 		sysCmd("cat $ROOTDIR/doc/install/sci2web.sql $ROOTDIR/apps/MercuPy/1.0-2B/sci2web/controlvars.sql $ROOTDIR/apps/MercuPy/1.0-3B/sci2web/controlvars.sql > /tmp/db.$$");
+		#TABLE CREATION
 		`mysql -u root -p < /tmp/db.$$`;
+		die("Failed authentication") if($?);
+		if(!$options{users}){
+		    #USER RECOVERY
+		    $out=`mysql -u $DBUSER --password=$DBPASS $DBNAME < /tmp/dback.$$`;
+		}
 		die("Failed authentication") if($?);
 		$qclean=1;
 	    }
@@ -489,9 +500,11 @@ SQL
 		foreach $j (@{$vtivars}){
 		    $varname=$VARS{$j,"var"};
 		    $vartype=$VARS{$j,"datatype"};
+		    $vardb=$VARS{$j,"vardb"};
 		    $vartype=~s/varchar$/varchar\(255\)/;
 		    $vartype=~s/boolean/tinyint\(1\)/;
 		    $vartype=~s/file/varchar\(255\)/;
+		    next if($vardb=~/nodb/i);
 		    rprint "\t\t\tInserting variable $varname of type $vartype";
 		    $sql.="$varname $vartype,\n";
 		}
@@ -1133,23 +1146,32 @@ apps_code='$appname'
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $sql=<<SQL;
 replace into `$tbname` set
+SQL
+
+        for $field (keys(%conf_conf)){
+	    next if($conf_conf{"$field"}!~/\w/);
+	    $out=sysCmd("grep '^${field}::' $rundir/sci2web/controlvars.info | grep -i '::nodb'");
+	    if($out!~/\w/){
+		$sql.="$field=\"".$conf_conf{"$field"}."\",\n";
+	    }
+        }
+	$runhash=md5_hex($sql);
+
+        for $field (keys(%conf_results)){
+	    next if($conf_results{"$field"}!~/\w/);
+	    $sql.="$field=\"".$conf_results{"$field"}."\",\n";
+        }
+
+$sql.=<<SQL;
 dbrunhash='$runhash',
 runs_runcode='$runcode',
 dbauthor='$author',
 dbname='$runname',
 dbtemplate='$template',
-dbdate='$rundate',
+dbdate='$rundate'
 SQL
 
-        for $field (keys(%conf_conf)){
-	    next if($conf_conf{"$field"}!~/\w/);
-	    $sql.="$field=\"".$conf_conf{"$field"}."\",\n";
-        }
-        for $field (keys(%conf_results)){
-	    next if($conf_results{"$field"}!~/\w/);
-	    $sql.="$field=\"".$conf_results{"$field"}."\",\n";
-        }
-	$sql=~s/,$//;
+	print "SQL:$sql\n";
 	rprint "Storing result in database...";
 	mysqlDo($sql);
 
@@ -1158,17 +1180,13 @@ SQL
 	#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	rprint "Storing results files...";
 	$dbdir="$RUNSDIR/db/$appname/$vername";
-	if(-d $dbdir){
-	    sysCmd("mkdir -p $dbdir/$runhash");
-	    sysCmd("echo -e '*' > $dbdir/$runhash/.s2wfiles");
-	    sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $dbdir/$runhash");
-	    sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $dbdir/$runhash");
-	    sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");
-	    sysCmd("chmod g+rw $dbdir/$runhash.tar.gz");
-	    sysCmd("rm -rf $dbdir/$runhash");
-	}else{
-	    rprint "Database directory $dbdir not found.";
-	}
+	sysCmd("mkdir -p $dbdir/$runhash");
+	sysCmd("echo -e '*' > $dbdir/$runhash/.s2wfiles");
+	sysCmd("cd $rundir;cp -rf *.conf *.info *.oxt $dbdir/$runhash");
+	sysCmd("cd $rundir;cp -rf \$(cat sci2web/outfiles.info) $dbdir/$runhash");
+	sysCmd("cd $dbdir;tar zcf $runhash.tar.gz $runhash");
+	sysCmd("chmod g+rw $dbdir/$runhash.tar.gz");
+	sysCmd("rm -rf $dbdir/$runhash");
 
 	rprint "Result $runhash saved","=";
     }
