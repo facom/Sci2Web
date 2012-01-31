@@ -305,8 +305,8 @@ def MassRadiusRelationship(Mp,ObjectClass):
     rho=Mp/(4*np.pi*(1E3*Rp)**3/3) #kg/m3
     return Rp,rho
 
-OBJVERB=True
-#OBJVERB=False
+#OBJVERB=True
+OBJVERB=False
 def ObjectProperties(body,fbody,cbody,COORDINATES):
     """
     body: dictionary

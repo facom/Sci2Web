@@ -144,7 +144,7 @@ case $action in
 	checkSig $action
 	if notBlank ${!SCR}
 	then
-	    cmd="bash " ${!SCR}
+	    cmd=$(echo -n "bash ";echo -n ${!SCR})
 	else
 	    cmd=${!CMD}
 	fi
@@ -164,6 +164,7 @@ setSig 'start'
 #############################################################
 #RUN COMMAND
 #############################################################
+rm -rf stdout.oxt
 ($cmd >> stdout.oxt 2>> stderr.oxt) & 
 
 #############################################################

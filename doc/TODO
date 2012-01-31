@@ -10,6 +10,8 @@
 
 To Do:
 
+- queues.sm should be configured as site specific
+
 - Block ajax scripts when a special input parameters not has been passed
 
 - Block runs when adminsitrative tasks are being performed

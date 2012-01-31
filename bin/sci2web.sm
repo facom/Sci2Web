@@ -337,6 +337,6 @@ function notBlank
 function calc
 {
     op=$1;shift
-    opn=$(echo $op | sed 's/E/\*10\^/' | sed 's/+//')
+    opn=$(echo "$op" | sed 's/E+//' | sed 's/E/\*10\^/')
     echo "scale=10;$opn" | bc -l 
 }

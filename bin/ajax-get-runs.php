@@ -58,12 +58,17 @@ if(!is_dir("$savedbpath")) systemCmd("mkdir -p $savedbpath");
 if(!isBlank($PHP["FilterQuery"])){
    $extraselect="and ($PHP[FilterQuery])";
 }
+
+$user="";
+if(true or !strstr($PROJ["ROOTEMAIL"],$_SESSION["User"]))
+  $user="users_email='$_SESSION[User]' and";
+
 $runs=mysqlCmd("select * from runs 
-where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]' $extraselect
+where $user apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]' $extraselect
 order by $PHP[Order] $PHP[OrderDirection]");
 if($PHP["?"]){
    $runs=mysqlCmd("select * from runs 
-where users_email='$_SESSION[User]' and apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]'
+where $user apps_code='$_SESSION[App]' and versions_code='$_SESSION[Version]'
 order by $PHP[Order]");
    echo genOnLoad("$('#filterquery').css('background-color','pink')","error");
  }else{

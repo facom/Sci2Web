@@ -109,6 +109,7 @@ print "Number of times:",ntimes
 print "Frequency of output:",ntfreq
 bshow=[]
 t=0
+qfirst=True
 for opos in odata:
     #========================================
     #POSITION OF THE ORIGIN
@@ -122,22 +123,22 @@ for opos in odata:
     vo=odata[it][4:7]
     masso=state.BODIES[BID[obody]]["Mass"]
     muo=GMERC*masso/UMMERC
+
     #========================================
     #AXES ORIENTATION
     #========================================
-    r1=ddata1[it][1:4]
-    r2=ddata2[it][1:4]
-    R=r2-r1
-    uxr=R/mod(R)
-    #print "uxr = ",uxr
-    uz=np.array([0,0,1])
-    pz=uxr*np.dot(uz,uxr)
-    #print "pz = ",pz
-    uzrn=uz-pz
-    uzr=uzrn/mod(uzrn)
-    #print "uzr = ",uzrn,uzr
-    uyr=np.cross(uzr,uxr)
-    #print "Basis at %e: "%t,uxr,uyr,uzr
+    if qfirst:
+        print "\tComputing unitary vectors..."
+        r1=ddata1[it][1:4]
+        r2=ddata2[it][1:4]
+        R=r2-r1
+        uxr=R/mod(R)
+        uz=np.array([0,0,1])
+        pz=uxr*np.dot(uz,uxr)
+        uzrn=uz-pz
+        uzr=uzrn/mod(uzrn)
+        uyr=np.cross(uzr,uxr)
+        if "INERTIAL" in dbody2:qfirst=False
 
     for bname in sbodies:
         ib=BID[bname]

@@ -66,6 +66,7 @@ cleanbuild:cleanrun
 cleanrun:cleanout
 	rm -rf *.out *.dmp *.tmp
 	rm -rf *.state
+	rm -rf *.oxt
 
 cleanout:cleanref
 	rm -rf output/*
@@ -81,5 +82,5 @@ cleantmp:
 
 #ADDED FOR THE RUN PIPELINE OF SCI2WEB
 cleansci2web:
-	rm -rf *.sig
-	rm -rf run.sh run.conf submit.sh
+	rm -rf *.sig 
+	rm -rf run.conf submit.sh run.sh
