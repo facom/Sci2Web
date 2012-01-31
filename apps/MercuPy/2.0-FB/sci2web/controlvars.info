@@ -1,0 +1,285 @@
+#######################################################################
+#TAB:Simulation
+#######################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Custom Units
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CustomUL::1.0*AU::varchar::Custom Longitud Units::Units of longitude in MKS.  Available Macros RSUN, AU::NoDB::::variables.info,
+CustomUM::1.0*MSUN::varchar::Custom Mass Units::Units of mass in MKS.  Available Macros MMOON, MEARTH, MSUN, MJUP::NoDBNoDB::::variables.info,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Times
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NumberPhases::1::int::Number of phases::Number of phases to be simulated::::::variables.info,run-mercupy.sh,stat.sh,
+TimeUnits::hours;;days;;months;;years==years::varchar::Time Units::Enter the units for times in simulation::::::variables.info,system.config,
+Epoch::0.0::float::Epoch::Enter the initial epoch of the simulation::::::variables.info,system.config,
+TimeStart::0.0::float::Time of start::In Time Units::NoDB::::variables.info,system.config,
+TimeElapsed::100.0::float::Simulation time::In Time Units::NoDB::::variables.info,system.config,stat.sh,
+TimeStep::0<<==1E-4::float::Time step::In Time Units::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Input/Output
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DtOutput::0<<==0.1::float::Time between internal output::Enter the time between internal output in Time Units::::::variables.info,system.config,
+DtOutputElements::0<<==0.1::float::Time between element output::Enter the time between output of elements in the results files in Time Units::NoDB::::variables.info,system.config,
+DtDataDumps::0<<==1.0::float::Time between dumps::Enter the time between the storing of data dumps::NoDB::::variables.info,system.config,
+CentralReference::Central;;Barycentric;;Jacobi==Central::varchar::Type of elements::Type of elements::::::variables.info,system.config,
+TimeRelativeIntegration::yes;;no==yes::varchar::Time origin::Express time relative to integration start time::::::variables.info,system.config,
+#######################################################################
+#TAB:Bodies
+#######################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:General
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SystemDescription::This is a n-body system::text::System description::Give a complete description of the simulation::::::variables.info,system.config,
+CoordinatesCentral::Cartesian;;Asteroidal;;Cometary==Cartesian::varchar::Coordinates for the Central Object::System of coordinates for the central object::NoDB::::variables.info,system.config,
+CoordinatesBig::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Big Object::System of coordinates for small objects::NoDB::::variables.info,system.config,
+CoordinatesSmall::Cartesian;;Asteroidal;;Cometary==Asteroidal::varchar::Coordinates for Small Object::System of coordinates for small objects::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 1
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body1Name::Sun::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body1Mass::1.0*MSUN::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body1Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==NORMALSTAR::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body1Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body1Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body1Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body1State::0.0 0.0 0.0 0.0 0.0 0.0::varchar::Initial state::Initial state of the body: x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body1J2::0.0<<==0.0::float::J2::J2::::::variables.info,system.config,
+Body1J4::0.0<<==0.0::float::J4::J4::::::variables.info,system.config,
+Body1J6::0.0<<==0.0::float::J6::J6::::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 2
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body2Activate::1::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body2Type::BIG;;SMALL==SMALL::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body2Name::Halley Comet::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body2Mass::2.2E14::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body2Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==ICEPLSIMAL::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body2Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body2Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body2Reference::BODY1;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body2Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body2State::17.8 0.967 162.3 0.0 0.0 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body2StateFile::BODY2.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body2As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body2Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body2Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body2Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 3
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body3Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body3Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body3Name::Mercury::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body3Mass::0.055*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body3Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDIRON::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body3Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body3Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body3Reference::BODY1;;BODY2;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body3Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body3State::0.3871 0.2056 7.005 48.332 29.125 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body3StateFile::BODY3.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body3As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body3Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body3Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body3Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 4
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body4Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body4Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body4Name::Venus::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body4Mass::0.815*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body4Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body4Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body4Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body4Reference::BODY1;;BODY2;;BODY3;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body4Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body4State::0.7233 0.0068 3.395 76.68 54.852 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body4StateFile::BODY4.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body4As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body4Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body4Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body4Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 5
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body5Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body5Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body5Name::Earth::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body5Mass::1.0*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body5Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body5Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body5Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body5Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body5Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body5State::1.0 0.0167 0.0 -11.26 114.208 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body5StateFile::BODY5.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body5As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body5Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body5Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body5Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 6
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body6Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body6Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body6Name::Mars::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body6Mass::1.52*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body6Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==SOLIDROCKY::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body6Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body6Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body6Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body6Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body6State::1.5237 0.0934 1.8506 49.58 286.46 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body6StateFile::BODY6.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body6As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body6Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body6Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body6Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 7
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body7Activate::1::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body7Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body7Name::Jupiter::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body7Mass::317.8*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body7Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==GASGIANT::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body7Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body7Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body7Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body7Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body7State::5.203 0.048 1.305 100.556 -85.802 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body7StateFile::BODY7.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body7As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body7Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body7Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body7Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 8
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body8Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body8Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body8Name::Saturn::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body8Mass::95.16*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body8Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==GASGIANT::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body8Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body8Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body8Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY9;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body8Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body8State::9.537 0.05415 2.484 113.715 -21.283 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body8StateFile::BODY8.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body8As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body8Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body8Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body8Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 9
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body9Activate::0::boolean::Activate object::Activate object::::::variables.info,system.config,
+Body9Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,system.config,
+Body9Name::Uranus::varchar::Name::Name of the body::NoDB::::variables.info,system.config,
+Body9Mass::14.5*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,system.config,
+Body9Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==ICEGIANT::varchar::Class::Physical class of the body::::::variables.info,system.config,
+Body9Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body9Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,system.config,
+Body9Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY10==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,system.config,
+Body9Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,system.config,
+Body9State::19.19 0.0472 0.76986 74.22988 96.73 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,system.config,
+Body9StateFile::BODY9.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body9As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,system.config,
+Body9Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,system.config,
+Body9Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,system.config,
+Body9Show::1::boolean::Show object::Show object::NoDB::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Body 10
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Body10Activate::0::boolean::Activate object::Activate object::::::variables.info,
+Body10Type::BIG;;SMALL==BIG::varchar::Type of object::Type of object: BIG (produces and fells gravitational field), SMALL (only feels gravitational field)::::::variables.info,
+Body10Name::Neptune::varchar::Name::Name of the body::NoDB::::variables.info,
+Body10Mass::17.2*MEARTH::varchar::Mass::Mass in kg.  You can use the following macros MSUN, MEARTH, MMOON, MJUP::::::variables.info,
+Body10Class::CUSTOMOBJECT;;ROCKYPLSIMAL;;ICEPLSIMAL;;NORMALSTAR;;WDSTAR;;NEUTRONSTAR;;GASGIANT;;ICEGIANT;;SOLIDROCKY;;SOLIDIRON;;SOLIDICE==ICEGIANT::varchar::Class::Physical class of the body::::::variables.info,
+Body10Density::0.0<<==0.0::float::Density::Density of the body in g/cc (only if the CUSTOMOBJECT class is selected)::::::variables.info,
+Body10Radius::0.0<<==0.0::float::Radius::Radius of the body in AU (only if the CUSTOMOBJECT class is selected)::::::variables.info,
+Body10Reference::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9==BODY1::varchar::Reference frame::Indicates the body with respect to the state of this body is given::::::variables.info,
+Body10Units::ORBITAL;;CUSTOM;;MERCURY;;BODY;;GRAVITATIONAL==MERCURY::varchar::Units::Units for the state of the body:ORBITAL(km,kg,s),MERCURY(MSun,AU,s),BODY(Ms,Rs,s,km/s),GRAVITATIONAL(Ms,RH,s,km/s)::::::variables.info,
+Body10State::30.06896 0.00858 1.769 131.7217 -86.75 0.0::varchar::Initial state::Initial state of the body:x,y,z,vx,vy,vz or a,e,i,n,g,M or q,e,i,g,n,T::::::variables.info,
+Body10StateFile::BODY10.state::file::State file::File with the initial state of the body::NoDB::::variables.info,
+Body10As::a1=0.0 a2=0.0 a3=0.0::varchar::Non-gravitational acceleration::Non-gravitational acceleration parameters::::::variables.info,
+Body10Spin::0.0 0.0 0.0::varchar::Spin angular momentum::Components of the apin angular momentum::::::variables.info,
+Body10Close::0<<==1E-4::float::Close encounter distance::Monimum distance for a close encounter in Hill-Radius::::::variables.info,
+Body10Show::1::boolean::Show object::Show object::NoDB::::variables.info,
+#######################################################################
+#TAB:Integrator
+#######################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:General
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IntegrationAlgorithm::HYB;;MVS;;BS;;BS2;;RADAU==HYB::varchar::Integrator algorithm::Integrator Algorithm::::::variables.info,system.config,
+IntegrationAccuracy::0<<==1E-12::float::Integrator accuracy::Accuracy of the integrator (adimensional)::::::variables.info,system.config,
+IntegrationPrecision::low;;medium;;high==medium::varchar::Integrator precision::Precision of the integrator: low (4), medium (9) and high (15 digits)::::::variables.info,system.config,
+IntegrationChangeOver::0.0--10.0--0.1==3.0::float::Integrator changeover::Distance for integrator algorithm changeover in Hill-Radius::::::variables.info,system.config,
+DStepPeriodic::1<<==100::int::Number of timesteps between periodic effects::Number of timesteps between periodic effects::::::variables.info,system.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Behavior
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StopIntegration::yes;;no==no::varchar::Stop Integration?::Stop integration after a close encounter::::::variables.info,system.config,
+Collisions::yes;;no==no::varchar::Allow collisions?::Allow collisions to occur::::::variables.info,system.config,
+ContinueIntegration::1::boolean::Continue integration::Do you want that the integration continue in the last point?::NoDB::::variables.info,continue.config,
+StorePreviousResults::1::boolean::Store previous results::Do you want to store previous results when continuing?::NoDB::::variables.info,continue.config,
+#######################################################################
+#TAB:Plot
+#######################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Reference Frame
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ReferenceRotate::0::boolean::Rotate to other reference system::Select if you want to rotate to other reference system::NoDB::::variables.info,ref2ref.config,
+ReferenceBody::BODY1;;BODY2;;BODY3BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10==BODY1::varchar::Reference body::Choose the body respect to which the elements will be computed::NoDB::::variables.info,ref2ref.config,
+BodyAxis1::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10;;INERTIAL==BODY1::varchar::Reference axis point 1::Choose the point 1 of the reference axis.  INERTIAL is a fixed point at (0,0,0)::NoDB::::variables.info,ref2ref.config,
+BodyAxis2::BODY1;;BODY2;;BODY3;;BODY4;;BODY5;;BODY6;;BODY7;;BODY8;;BODY9;;BODY10;;INERTIALX;;INERTIALY;;INERTIALZ==INERTIALX::varchar::Reference axis point 2::Choose the point 1 of the reference axis.  INERTIAL* is a fixed point at one of the three axis::NoDB::::variables.info,ref2ref.config,
+ReferenceType::Rotating;;==Rotating::varchar::Type of reference system::Type of reference system: Rotating or Pulsating::NoDB::::variables.info,ref2ref.config,
+BodiesToRotate::'BODY2'::varchar::Bodies to rotate::Select the bodies to rotate. Apostrophe and commas are mandatory::NoDB::::variables.info,ref2ref.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Elements
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ElementsActivate::1::boolean::Activate plot::Activate this plot?::NoDB::::variables.info,plot.config,plot.config,
+ElementsBodies::'BODY2'::varchar::Bodies::Bodies whose elements will be plotted::NoDB::::variables.info,plot.config,plot.config,
+ElementsStyles::('b','-',3,'s',2)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::NoDB::::variables.info,plot.config,plot.config,
+ElementsCoordinates::'a','e','q','Q','i'::varchar::Elements::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::NoDB::::variables.info,plot.config,plot.config,
+ElementsYLims::'Auto',(0,1),'Auto','Auto',(0,180)::varchar::Y limits::Limits for elements plots::NoDB::::variables.info,plot.config,plot.config,
+ElementsScales::'linear','log','linear','linear','linear'::varchar::Y scales::Scale for elements plots::NoDB::::variables.info,plot.config,plot.config,
+ElementsTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+ElementsTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Orbit
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrbitActivate::1::boolean::Activate plot::Activate this plot?::NoDB::::variables.info,plot.config,plot.config,
+OrbitBodies::'BODY2','BODY7'::varchar::Bodies::Bodies whose orbit will be plotted::NoDB::::variables.info,plot.config,plot.config,
+OrbitStyles::('b','-',2,'o',5),('r','-',2,'o',5)::varchar::Plot style::Format: (color,line style,line width,marker style,marker size).  Line styles: '-','--','-.',':'. Marker styles: 'o','s'::NoDB::::variables.info,plot.config,plot.config,
+OrbitCoordinates::'x','y','z'::varchar::Coordinates::Elements: x,y,z,vx,vy,vz,s,o,d,m,a,e,i,g,n,M,r,q,Q,l,f (see manual)::NoDB::::variables.info,plot.config,plot.config,
+OrbitViewAngle::30,60::varchar::Viewing angle::Angles: phi(horizontal angle), theta(polar angle) in degrees::NoDB::::variables.info,plot.config,plot.config,
+OrbitTimeIni::state.TIME_START::varchar::Initial time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+OrbitTimeEnd::state.TIME_STOP::varchar::Final time::It can be expressed in terms of state.TIME_START,state.TIME_STOP,state.TIME_STOP,state.DT_OUTPUT,state.DT_OUTPUTELEM::NoDB::::variables.info,plot.config,plot.config,
+OrbitBox::0::boolean::Show 2D axis::Show 2D axis::NoDB::::variables.info,plot.config,plot.config,
+OrbitGrid::0::boolean::Show 2D grid::Show 2D grid (if the 2D axis are set)::NoDB::::variables.info,plot.config,plot.config,
+OrbitAxis::1::boolean::Show xyz-axis::Show xyz-axis::NoDB::::variables.info,plot.config,plot.config,
+OrbitXYPlane::1::boolean::Show xy-plane::Show xy-plane::NoDB::::variables.info,plot.config,plot.config,
+OrbitLegends::1::boolean::Show body legend::Show body legend::NoDB::::variables.info,plot.config,plot.config,
+OrbitXLabel::'AU'::varchar::X label::X-label (if the 2D axis are set)::NoDB::::variables.info,plot.config,plot.config,plot.config,plot.config,
+OrbitYLabel::'AU'::varchar::Y label::Y-label (if the 2D axis are set)::NoDB::::variables.info,
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:Errors
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ComputeClose::0::boolean::Compute close encounters::Compute the position of the bodies during the close encounters::NoDB::::variables.info,post.sh,
+ComputeErrors::0::boolean::Compute errors::Check if you want to compute the errors between two integration phases::NoDB::::variables.info,post.sh,
+BodyErrors::BODY2;;BODY3==BODY3::varchar::Body to compute errors::Errors for the orbit of this body will be computed::NoDB::::variables.info,post.sh,post.sh,
+BodyExtension::dat;;ref==dat::varchar::Source of data::'dat' contains the Mercury output data, 'ref' contains the change of reference frame results::NoDB::::variables.info,post.sh,post.sh,
+BodyPhase1::1::int::Phase 1::Phase to compare::NoDB::::variables.info,post.sh,
+BodyPhase2::2::int::Phase 2::Phase to compare::NoDB::::variables.info,post.sh,
+#######################################################################
+#TAB:Results
+#######################################################################
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#GROUP:General
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ChangeEnergy::0::float::Fractional change in energy due to integrator::Fractional change in energy due to integrator::::::results.info,
+ChangeMomentum::0::float::Fractional change in angular momentum::Fractional change in angular momentum::::::results.info,

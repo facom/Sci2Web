@@ -1,0 +1,76 @@
+   ////////////////////////////////////////////////////////////////////////
+   //           _ ___               _					 //
+   //          (_)__ \             | |					 //
+   //  ___  ___ _   ) |_      _____| |					 //
+   // / __|/ __| | / /\ \ /\ / / _ \ '_ \				 //
+   // \__ \ (__| |/ /_ \ V  V /  __/ |_) |				 //
+   // |___/\___|_|____| \_/\_/ \___|_.__/				 //
+   // 		     	    						 //
+   // Bringing naturally developed scientific applications to the web	 //
+   // Jorge Zuluaga (2011)	   	      		      	  	 //
+   ////////////////////////////////////////////////////////////////////////
+
+This README describe the files used by Sci2Web to configure a ported
+application.  Please read carefully this guide in order to configure
+your application.  A detailed example of how to port an application
+including how to edit the configuration files found in this directory
+could be read in the developer guide.
+
+This directory contains the following objects:
+
+- bin: a symbolic link to the binary directory of Sci2Web_.  Two
+  particularly important scripts could be found there: sci2web.pl, the
+  configuration utility script and sci2web.sh, the control utility
+  script.
+
+- templates: a directory that will contain the configuration templates
+  created by the community using this version of your application.
+
+- changeslog.html: a web page describing the particular details of
+  this version of your application.  This file can be edited on-line.
+
+- version.conf: the master configuration file of your version.  In
+  this file you can describe several attributes and customize many
+  working properties of this version of your application.
+
+- actions.conf: a critical configuration file that contains the list
+  of commands or scripts used at each step of the application life
+  cycle.  Here you can configure how the application is compiled,
+  cleane, ran, etc.
+
+- resultswindow.conf: a configuration file describing the content of the
+  results window of the Sci2Web interface to your application.  Here
+  you will be able to customize which information will be displayed in
+  the result window when a run has been completed.  For more
+  information about how to properly edit this file see the developers
+  guide.
+
+- links.info, outfiles.info: this two info files list the files of a
+  gicen run of your application that are common to all runs and should
+  be simply linked in the run directory (links.info).  This avoid an
+  unnecessary use of storage space in your web server.  outfiles.info
+  list the files and directories produced as new information by your
+  run.  The objects listed in this file will be preserved in the
+  database of results associated to your application so it is strongly
+  recommended to select them properly.
+
+- controlvars.info: an "info" file containing the descriprion of the
+  control variables of this particular version of your application
+  (for an explanation about what the control variables are see the
+  developers guide).  This file is created automatically by the
+  configuration utility script and it is not recommended to edit it
+  manually.
+
+- controlvars.sql: a sql file containing the commands required to
+  create a table in the Sci2Web database intended to store the
+  properties of all the runs of your application created by the
+  community.  This file is created automatically by the configuration
+  utility script and it is not recommended to edit it manually.
+
+- .resultsvars.info.temp: an "info" template file containing the list
+  of variables used to report a summary of the results obtained by the
+  application run.  The variables in this file should be formatted
+  with the syntax of the substitution rules explained in the devloper
+  guide.
+
+

@@ -1,0 +1,32 @@
+#!/bin/bash
+. sci2web/bin/sci2web.sm
+
+#GET THE TOTAL SIMULATION TIME 
+if [ -e "stdout.oxt" ];then
+    time=$(cat stdout.oxt | grep Time: | tail -n 1 | awk -F':' '{print $2}' | awk '{print $1}')
+
+    #CHECK PREVIOUS PHASES
+    if [ -e "output/phase" ];then
+	phase=$(cut -f 1 -d ' ' output/phase)
+    else
+	phase=0
+    fi
+    
+    #CONTINUATION
+    phase=$((phase%[[NumberPhases]]))
+    
+    #COMPUTE THE FRACTION OF THE TOTAL TIME COMPLETED
+    if [ [[NumberPhases]] -gt 1 ];then
+	elapsed=$(calc "[[TimeElapsed]]*[[NumberPhases]]")
+    else
+	elapsed=[[TimeElapsed]]
+    fi
+    
+    #ADVANCED STATUS
+    stat=$(calc "($time+[[TimeElapsed]]*$phase)/$elapsed")
+else
+    stat=-1
+fi
+
+#REPORT STATUS
+echo $stat

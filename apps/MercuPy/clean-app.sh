@@ -1,7 +1,8 @@
 #!/bin/bash
 #CLEAN APP FOR COMMIT PURPOSES
-for version in 1.0-2B 1.0-3B
+for version in $(ls -d */sci2web)
 do
+    version=$(dirname $version)
     echo "Cleaning util..."
     make -C $version clean
     make -C $version/util clean

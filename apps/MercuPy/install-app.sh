@@ -4,8 +4,9 @@ qerror=0
 echo > /tmp/db.$$
 if [ ! -e .installed ];then
     echo;echo 
-    for version in 1.0-2B 1.0-3B
+    for version in $(ls -d */sci2web)
     do
+	version=$(dirname $version)
 	echo 
 	echo "Copying big files..."
 	cp -rf cspice $version/util

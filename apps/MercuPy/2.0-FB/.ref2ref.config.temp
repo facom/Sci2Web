@@ -1,0 +1,23 @@
+"""
+################################################################################
+MercuPy Wrap
+Jorge Zuluaga (C) 2011
+################################################################################
+CONFIGURATION FILE FOR CHANGE OF REFERENCE FRAME 
+"""
+from mercupy import *
+
+#TRANSFORM BODIES TO ANOTHER REFERENCE FRAME
+TRANSFORM=[[ReferenceRotate]]
+
+#BODIES TO TRANSFORM
+BODIES=[[[BodiesToRotate]]]
+
+#VALID BODIES: CODES AS DESCRIBED IN SYSTEM.CONFIG
+REFERENCE_BODY="[[ReferenceBody]]"
+
+#[ORIGIN,POINT TO]. AXIS EXTREMES COULD BE: BODIES OR INERTIAL
+REFERENCE_AXIS=["[[BodyAxis1]]","[[BodyAxis2]]"]
+
+#VALID TYPES:Rotating,Pulsating
+REFERENCE_TYPE="[[ReferenceType]]"
