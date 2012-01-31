@@ -1,0 +1,67 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MercuPy
+Advanced Python Wrap to the Mercury Package
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Last version: August 23, 2011.
+
+Presentation
+============
+
+MercuPy is a wrap to the Mercury package (Chambers, 1999) intended to
+provide an improved interface to this advanced N-body integrator.
+
+To see details about Mercury see the package documentation
+(doc/mercury6.pdf).
+
+Some of the funcionalities added to Mercury using this wrap are:
+
+- Higher level format for the initial state of the bodies in the
+  system (the original Mercury package use simple ascii files big.in
+  and small.in)
+
+- Building and execution python scripts that simplifies the
+  preparation of the input files and post processing tasks
+  (e.g. generation of table of orbital elements and its conversion to
+  tables of state vector)
+
+- Scalability of the Mercury package, i.e. possibility to run
+  muiltiple instances of the package for example to perform parametric
+  studies in multiprocessors machines or in clusters.
+
+- Physics routines to compute the properties of the simulated bodies.
+
+- Postprocessing routines including conversion between state and
+  elements vectors, change of reference frame (rotating frame of
+  reference), resampling of the output, automatic plot.
+
+- Automatic generation of information about simulations readable
+  through the web.
+
+You will find details about the installation and running of MercuPy in
+the doc/MANUAL.txt file.
+
+Quickstart
+==========
+
+Before you can use MercuPy it is required that several third party
+software be compiled::
+
+  % make utilbuild
+
+To start using MercuPy follow the instructions below:
+
+- Describe the properties of your system using the configuration file
+  system.config.
+
+- Prepare the simulation files::
+
+  % make prepare
+
+- Build the binaries::
+
+  % make build
+
+- Run Mercury::
+
+  % make run
