@@ -123,7 +123,7 @@ if($PHP["?"]){
 
 sci2webCmd("pwd");
 if($PHP["?"]){
-  $report.="<p class='testerror'>Error executing command as 'sci2web' user</p>";
+  $report.="<p class='testerror'>Error executing command as 'sci2web' user.  Please check if you have already created the account, configured the sudoers file and assigned the right password to the accound</p>";
   $nerror++;
 }else{
   $report.="<p class='testsuccess'>Success executing command</p>";
@@ -155,7 +155,7 @@ foreach($dirs as $dir){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 $report.="<p class='testsession'>Sample Application</p>";
 $sampleapp="MercuPy";
-foreach(array("1.0-2B","1.0-3B") as $version){
+foreach(array("1.0-2B","1.0-3B","1.0-4B","2.0-FB") as $version){
   systemCmd("ls $PROJ[APPSPATH]/$sampleapp/$version/bin/elem2state");
   if($PHP["?"]){
     $report.="<p class='testerror'>Version '$version' of the sample application not compiled yet</p>";
