@@ -95,6 +95,8 @@ create table runs (
 
 create table `MercuPy_1.0-2B` (dbrunhash varchar(32));
 create table `MercuPy_1.0-3B` (dbrunhash varchar(32));
+create table `MercuPy_1.0-4B` (dbrunhash varchar(32));
+create table `MercuPy_2.0-FB` (dbrunhash varchar(32));
 
 ###################################################
 #POPULATE TABLES
@@ -108,7 +110,7 @@ insert into users
 insert into apps 
        (app_code,users_emails_author,creation_date,versions_codes)
        values
-       ('MercuPy','test@sci2web.org;',date(now()),'1.0-2B;1.0-3B;');
+       ('MercuPy','test@sci2web.org;',date(now()),'1.0-2B;1.0-3B;1.0-4B;2.0-FB;');
 
 insert into versions
        (version_code,release_date,users_emails_contributor,
@@ -121,3 +123,15 @@ insert into versions
 	apps_code)
        values
        ('1.0-3B',date(now()),'test@sci2web.org;','MercuPy');
+
+insert into versions
+       (version_code,release_date,users_emails_contributor,
+	apps_code)
+       values
+       ('1.0-4B',date(now()),'test@sci2web.org;','MercuPy');
+
+insert into versions
+       (version_code,release_date,users_emails_contributor,
+	apps_code)
+       values
+       ('2.0-FB',date(now()),'test@sci2web.org;','MercuPy');
